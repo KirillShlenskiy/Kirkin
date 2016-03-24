@@ -24,7 +24,7 @@ namespace Kirkin.Threading.Locks
         /// </summary>
         public MonitorLock(object lockObject)
         {
-            this.LockObject = lockObject;
+            LockObject = lockObject;
         }
 
         /// <summary>
@@ -33,11 +33,11 @@ namespace Kirkin.Threading.Locks
         /// </summary>
         public IDisposable Lock()
         {
-            var lockObject = this.LockObject;
+            var lockObject = LockObject;
 
             if (lockObject == null)
             {
-                throw new ObjectDisposedException(this.GetType().Name);
+                throw new ObjectDisposedException(GetType().Name);
             }
 
             Monitor.Enter(lockObject);
@@ -50,7 +50,7 @@ namespace Kirkin.Threading.Locks
         /// </summary>
         public void Dispose()
         {
-            this.LockObject = null;
+            LockObject = null;
         }
     }
 }

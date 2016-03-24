@@ -22,8 +22,8 @@ namespace Kirkin.Validation
         {
             if (validator == null) throw new ArgumentNullException("validator");
 
-            this.Validator = validator;
-            this.IsValid = isValid;
+            Validator = validator;
+            IsValid = isValid;
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Kirkin.Threading.Locks
 
         public DiagnosticSyncLock(IReaderWriterLock syncLock)
         {
-            this.InnerLock = syncLock;
+            InnerLock = syncLock;
         }
 
         public IDisposable ReadLock(/*[CallerMemberName] string caller = null*/)
@@ -55,7 +55,7 @@ namespace Kirkin.Threading.Locks
 
 #else
 
-            return this.InnerLock.ReadLock();
+            return InnerLock.ReadLock();
 
 #endif
         }
@@ -96,7 +96,7 @@ namespace Kirkin.Threading.Locks
 
 #else
 
-            return this.InnerLock.WriteLock();
+            return InnerLock.WriteLock();
 
 #endif
         }

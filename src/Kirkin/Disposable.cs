@@ -102,12 +102,12 @@ namespace Kirkin
 
             public SimpleDisposable(Action disposeAction)
             {
-                this.DisposeAction = disposeAction;
+                DisposeAction = disposeAction;
             }
 
             public void Dispose()
             {
-                this.DisposeAction();
+                DisposeAction();
             }
         }
 
@@ -123,7 +123,7 @@ namespace Kirkin
             /// </summary>
             public DisposableActor(Action action)
             {
-                this.Action = action;
+                Action = action;
             }
 
             /// <summary>
@@ -132,7 +132,7 @@ namespace Kirkin
             /// </summary>
             public void Dispose()
             {
-                var action = Interlocked.Exchange(ref this.Action, null);
+                var action = Interlocked.Exchange(ref Action, null);
 
                 if (action != null)
                 {
@@ -154,8 +154,8 @@ namespace Kirkin
             /// </summary>
             public ParametrisedDisposableActor(T arg, Action<T> action)
             {
-                this.Arg = arg;
-                this.Action = action;
+                Arg = arg;
+                Action = action;
             }
 
             /// <summary>
@@ -164,11 +164,11 @@ namespace Kirkin
             /// </summary>
             public void Dispose()
             {
-                var action = Interlocked.Exchange(ref this.Action, null);
+                var action = Interlocked.Exchange(ref Action, null);
 
                 if (action != null)
                 {
-                    action(this.Arg);
+                    action(Arg);
                 }
             }
         }

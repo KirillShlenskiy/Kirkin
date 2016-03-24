@@ -19,8 +19,8 @@ namespace Kirkin.Threading.Locks
         /// <param name="writeLock">Write lock or null.</param>
         public CustomReaderWriterLock(ILock readLock, ILock writeLock)
         {
-            this.RLock = readLock;
-            this.WLock = writeLock;
+            RLock = readLock;
+            WLock = writeLock;
         }
 
         /// <summary>
@@ -29,12 +29,12 @@ namespace Kirkin.Threading.Locks
         /// </summary>
         public IDisposable ReadLock()
         {
-            if (this.RLock == null)
+            if (RLock == null)
             {
                 return Disposable.Empty;
             }
 
-            return this.RLock.Lock();
+            return RLock.Lock();
         }
 
         /// <summary>
@@ -43,12 +43,12 @@ namespace Kirkin.Threading.Locks
         /// </summary>
         public IDisposable WriteLock()
         {
-            if (this.WLock == null)
+            if (WLock == null)
             {
                 return Disposable.Empty;
             }
 
-            return this.WLock.Lock();
+            return WLock.Lock();
         }
 
         /// <summary>

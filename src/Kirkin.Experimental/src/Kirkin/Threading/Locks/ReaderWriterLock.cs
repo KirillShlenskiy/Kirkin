@@ -34,8 +34,8 @@ namespace Kirkin.Threading.Locks
         /// </summary>
         public ReaderWriterSyncLock(ReaderWriterLockSlim @lock, bool ownsLock)
         {
-            this.Lock = @lock;
-            this.OwnsLock = ownsLock;
+            Lock = @lock;
+            OwnsLock = ownsLock;
         }
 
         /// <summary>
@@ -45,15 +45,15 @@ namespace Kirkin.Threading.Locks
         public IDisposable ReadLock()
         {
             // Common case optimisation.
-            if (this.Lock.IsReadLockHeld || this.Lock.IsWriteLockHeld)
+            if (Lock.IsReadLockHeld || Lock.IsWriteLockHeld)
             {
                 // Null refs can be used by *using* statements.
                 return null;
             }
 
-            this.Lock.EnterReadLock();
+            Lock.EnterReadLock();
 
-            return Disposable.Create(this.Lock, l => l.ExitReadLock());
+            return Disposable.Create(Lock, l => l.ExitReadLock());
         }
 
         /// <summary>
@@ -63,15 +63,15 @@ namespace Kirkin.Threading.Locks
         public IDisposable WriteLock()
         {
             // Common case optimisation.
-            if (this.Lock.IsWriteLockHeld)
+            if (Lock.IsWriteLockHeld)
             {
                 // Null refs can be used by *using* statements.
                 return null;
             }
 
-            this.Lock.EnterWriteLock();
+            Lock.EnterWriteLock();
 
-            return Disposable.Create(this.Lock, l => l.ExitWriteLock());
+            return Disposable.Create(Lock, l => l.ExitWriteLock());
         }
 
         /// <summary>
@@ -79,9 +79,9 @@ namespace Kirkin.Threading.Locks
         /// </summary>
         public void Dispose()
         {
-            if (this.OwnsLock)
+            if (OwnsLock)
             {
-                this.Lock.Dispose();
+                Lock.Dispose();
             }
         }
     }

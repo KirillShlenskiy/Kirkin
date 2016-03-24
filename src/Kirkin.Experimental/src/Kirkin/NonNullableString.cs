@@ -37,7 +37,7 @@ namespace Kirkin
                 // struct is reassigned during execution, causing the wrong
                 // OriginalValue to be seen on second access, and ultimately
                 // allowing null to be returned.
-                var value = this.OriginalValue;
+                var value = OriginalValue;
 
                 return value ?? string.Empty;
             }
@@ -48,7 +48,7 @@ namespace Kirkin
         /// </summary>
         public NonNullableString(string value)
         {
-            this.OriginalValue = value;
+            OriginalValue = value;
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace Kirkin
         /// </summary>
         public bool Equals(NonNullableString other)
         {
-            return this.Value == other.Value;
+            return Value == other.Value;
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Kirkin
         /// </summary>
         public bool Equals(string other)
         {
-            return string.Equals(this.Value, other);
+            return string.Equals(Value, other);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Kirkin
         /// </summary>
         public override int GetHashCode()
         {
-            return this.Value.GetHashCode();
+            return Value.GetHashCode();
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Kirkin
         /// </summary>
         public override string ToString()
         {
-            return this.Value;
+            return Value;
         }
 
         #region System.String proxies
@@ -167,93 +167,93 @@ namespace Kirkin
         // Helper.
         private IConvertible AsConvertible()
         {
-            return (IConvertible)this.Value;
+            return (IConvertible)Value;
         }
 
         // Proxies.
         TypeCode IConvertible.GetTypeCode()
         {
-            return this.AsConvertible().GetTypeCode();
+            return AsConvertible().GetTypeCode();
         }
 
         bool IConvertible.ToBoolean(IFormatProvider provider)
         {
-            return this.AsConvertible().ToBoolean(provider);
+            return AsConvertible().ToBoolean(provider);
         }
 
         byte IConvertible.ToByte(IFormatProvider provider)
         {
-            return this.AsConvertible().ToByte(provider);
+            return AsConvertible().ToByte(provider);
         }
 
         char IConvertible.ToChar(IFormatProvider provider)
         {
-            return this.AsConvertible().ToChar(provider);
+            return AsConvertible().ToChar(provider);
         }
 
         DateTime IConvertible.ToDateTime(IFormatProvider provider)
         {
-            return this.AsConvertible().ToDateTime(provider);
+            return AsConvertible().ToDateTime(provider);
         }
 
         decimal IConvertible.ToDecimal(IFormatProvider provider)
         {
-            return this.AsConvertible().ToDecimal(provider);
+            return AsConvertible().ToDecimal(provider);
         }
 
         double IConvertible.ToDouble(IFormatProvider provider)
         {
-            return this.AsConvertible().ToDouble(provider);
+            return AsConvertible().ToDouble(provider);
         }
 
         short IConvertible.ToInt16(IFormatProvider provider)
         {
-            return this.AsConvertible().ToInt16(provider);
+            return AsConvertible().ToInt16(provider);
         }
 
         int IConvertible.ToInt32(IFormatProvider provider)
         {
-            return this.AsConvertible().ToInt32(provider);
+            return AsConvertible().ToInt32(provider);
         }
 
         long IConvertible.ToInt64(IFormatProvider provider)
         {
-            return this.AsConvertible().ToInt64(provider);
+            return AsConvertible().ToInt64(provider);
         }
 
         sbyte IConvertible.ToSByte(IFormatProvider provider)
         {
-            return this.AsConvertible().ToSByte(provider);
+            return AsConvertible().ToSByte(provider);
         }
 
         float IConvertible.ToSingle(IFormatProvider provider)
         {
-            return this.AsConvertible().ToSingle(provider);
+            return AsConvertible().ToSingle(provider);
         }
 
         string IConvertible.ToString(IFormatProvider provider)
         {
-            return this.AsConvertible().ToString(provider);
+            return AsConvertible().ToString(provider);
         }
 
         object IConvertible.ToType(Type conversionType, IFormatProvider provider)
         {
-            return this.AsConvertible().ToType(conversionType, provider);
+            return AsConvertible().ToType(conversionType, provider);
         }
 
         ushort IConvertible.ToUInt16(IFormatProvider provider)
         {
-            return this.AsConvertible().ToUInt16(provider);
+            return AsConvertible().ToUInt16(provider);
         }
 
         uint IConvertible.ToUInt32(IFormatProvider provider)
         {
-            return this.AsConvertible().ToUInt32(provider);
+            return AsConvertible().ToUInt32(provider);
         }
 
         ulong IConvertible.ToUInt64(IFormatProvider provider)
         {
-            return this.AsConvertible().ToUInt64(provider);
+            return AsConvertible().ToUInt64(provider);
         }
 
         #endregion

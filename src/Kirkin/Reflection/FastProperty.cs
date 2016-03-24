@@ -40,8 +40,8 @@ namespace Kirkin.Reflection
             if (property == null) throw new ArgumentNullException("property");
             if (property.IsStatic()) throw new ArgumentException("The property cannot be static.");
 
-            this.Property = property;
-            this.ValueTypeNullSemantics = property.PropertyType.IsValueType;
+            Property = property;
+            ValueTypeNullSemantics = property.PropertyType.IsValueType;
         }
 
         /// <summary>
@@ -59,12 +59,12 @@ namespace Kirkin.Reflection
             // if it happens to be initialised multiple times.
             if (_getter == null)
             {
-                if (!this.Property.CanRead)
+                if (!Property.CanRead)
                 {
                     throw new InvalidOperationException("The property does not define a getter.");
                 }
 
-                _getter = this.DynamicCreateGetter();
+                _getter = DynamicCreateGetter();
             }
 
             return _getter.Invoke(instance);
@@ -85,18 +85,18 @@ namespace Kirkin.Reflection
             // if it happens to be initialised multiple times.
             if (_setter == null)
             {
-                if (!this.Property.CanWrite)
+                if (!Property.CanWrite)
                 {
                     throw new InvalidOperationException("The property does not define a setter.");
                 }
 
-                _setter = this.DynamicCreateSetter();
+                _setter = DynamicCreateSetter();
             }
 
-            if (this.ValueTypeNullSemantics && value == null)
+            if (ValueTypeNullSemantics && value == null)
             {
                 // Value type handling consistent with PropertyInfo.SetValue(obj, null).
-                _setter.Invoke(instance, Activator.CreateInstance(this.Property.PropertyType));
+                _setter.Invoke(instance, Activator.CreateInstance(Property.PropertyType));
             }
             else
             {
@@ -109,7 +109,7 @@ namespace Kirkin.Reflection
         /// </summary>
         private Func<object, object> DynamicCreateGetter()
         {
-            var getMethod = this.Property.GetGetMethod();
+            var getMethod = Property.GetGetMethod();
 
             if (getMethod == null)
             {
@@ -117,10 +117,10 @@ namespace Kirkin.Reflection
             }
 
             var getter = new DynamicMethod(
-                name: "<FastProperty>_Get" + this.Property.Name,
+                name: "<FastProperty>_Get" + Property.Name,
                 returnType: typeof(object),
                 parameterTypes: new[] { typeof(object) },
-                m: this.Property.Module,
+                m: Property.Module,
                 skipVisibility: true
             );
 
@@ -128,12 +128,12 @@ namespace Kirkin.Reflection
 
             generator.DeclareLocal(typeof(object));
             generator.Emit(OpCodes.Ldarg_0);
-            generator.Emit(OpCodes.Castclass, this.Property.DeclaringType);
+            generator.Emit(OpCodes.Castclass, Property.DeclaringType);
             generator.EmitCall(OpCodes.Callvirt, getMethod, null);
 
-            if (this.Property.PropertyType.IsValueType)
+            if (Property.PropertyType.IsValueType)
             {
-                generator.Emit(OpCodes.Box, this.Property.PropertyType);
+                generator.Emit(OpCodes.Box, Property.PropertyType);
             }
 
             generator.Emit(OpCodes.Ret);
@@ -146,7 +146,7 @@ namespace Kirkin.Reflection
         /// </summary>
         private Action<object, object> DynamicCreateSetter()
         {
-            var setMethod = this.Property.GetSetMethod();
+            var setMethod = Property.GetSetMethod();
 
             if (setMethod == null)
             {
@@ -154,26 +154,26 @@ namespace Kirkin.Reflection
             }
 
             var setter = new DynamicMethod(
-                name: "<FastProperty>_Set" + this.Property.Name,
+                name: "<FastProperty>_Set" + Property.Name,
                 returnType: typeof(void),
                 parameterTypes: new[] { typeof(object), typeof(object) },
-                m: this.Property.Module,
+                m: Property.Module,
                 skipVisibility: true
             );
 
             var generator = setter.GetILGenerator();
 
             generator.Emit(OpCodes.Ldarg_0);
-            generator.Emit(OpCodes.Castclass, this.Property.DeclaringType);
+            generator.Emit(OpCodes.Castclass, Property.DeclaringType);
             generator.Emit(OpCodes.Ldarg_1);
 
-            if (this.Property.PropertyType.IsValueType)
+            if (Property.PropertyType.IsValueType)
             {
-                generator.Emit(OpCodes.Unbox_Any, this.Property.PropertyType);
+                generator.Emit(OpCodes.Unbox_Any, Property.PropertyType);
             }
             else
             {
-                generator.Emit(OpCodes.Castclass, this.Property.PropertyType);
+                generator.Emit(OpCodes.Castclass, Property.PropertyType);
             }
 
             generator.EmitCall(OpCodes.Callvirt, setMethod, null);

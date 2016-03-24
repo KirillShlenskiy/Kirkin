@@ -21,7 +21,7 @@ namespace Kirkin.Collections.Specialised
         {
             get
             {
-                return this.Index >= 0;
+                return Index >= 0;
             }
         }
 
@@ -32,7 +32,7 @@ namespace Kirkin.Collections.Specialised
         {
             get
             {
-                return this.Index < this.Count - 1;
+                return Index < Count - 1;
             }
         }
 
@@ -52,7 +52,7 @@ namespace Kirkin.Collections.Specialised
 
                 _capacity = value;
 
-                this.TrimToCapacity();
+                TrimToCapacity();
             }
         }
 
@@ -63,7 +63,7 @@ namespace Kirkin.Collections.Specialised
         {
             get
             {
-                return this.Items.Count;
+                return Items.Count;
             }
         }
 
@@ -75,12 +75,12 @@ namespace Kirkin.Collections.Specialised
         {
             get
             {
-                if (this.Index < 0)
+                if (Index < 0)
                 {
                     throw new InvalidOperationException("Current is undefined when the Index is negative.");
                 }
 
-                return this.Items[this.Index];
+                return Items[Index];
             }
         }
 
@@ -94,7 +94,7 @@ namespace Kirkin.Collections.Specialised
         /// </summary>
         public UndoRedoCollection()
         {
-            this.Index = -1;
+            Index = -1;
         }
         
         /// <summary>
@@ -102,8 +102,8 @@ namespace Kirkin.Collections.Specialised
         /// </summary>
         public void Clear()
         {
-            this.Index = -1;
-            this.Items.Clear();
+            Index = -1;
+            Items.Clear();
         }
 
         /// <summary>
@@ -111,9 +111,9 @@ namespace Kirkin.Collections.Specialised
         /// </summary>
         public void Undo()
         {
-            if (!this.CanUndo) throw new InvalidOperationException();
+            if (!CanUndo) throw new InvalidOperationException();
 
-            this.Index--;
+            Index--;
         }
 
         /// <summary>
@@ -121,9 +121,9 @@ namespace Kirkin.Collections.Specialised
         /// </summary>
         public void Redo()
         {
-            if (!this.CanRedo) throw new InvalidOperationException();
+            if (!CanRedo) throw new InvalidOperationException();
 
-            this.Index++;
+            Index++;
         }
 
         /// <summary>
@@ -132,30 +132,30 @@ namespace Kirkin.Collections.Specialised
         /// </summary>
         public void Add(T value)
         {
-            int newIndex = this.Index + 1;
+            int newIndex = Index + 1;
 
-            if (newIndex == this.Items.Count)
+            if (newIndex == Items.Count)
             {
                 // There is nothing on the redo
                 // stack. Just add the new item.
-                this.Items.Add(value);
+                Items.Add(value);
 
-                this.Index = newIndex;
+                Index = newIndex;
 
-                this.TrimToCapacity();
+                TrimToCapacity();
             }
             else
             {
                 // Replace item at next index.
-                this.Items[newIndex] = value;
+                Items[newIndex] = value;
 
-                if (newIndex < this.Items.Count - 1)
+                if (newIndex < Items.Count - 1)
                 {
                     // Truncate the redo portion.
-                    this.Items.RemoveRange(newIndex + 1, this.Items.Count - (newIndex + 1));
+                    Items.RemoveRange(newIndex + 1, Items.Count - (newIndex + 1));
                 }
 
-                this.Index = newIndex;
+                Index = newIndex;
             }
         }
 
@@ -164,7 +164,7 @@ namespace Kirkin.Collections.Specialised
         /// </summary>
         public IEnumerator<T> GetEnumerator()
         {
-            return this.Items.GetEnumerator();
+            return Items.GetEnumerator();
         }
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace Kirkin.Collections.Specialised
         /// </summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return this.GetEnumerator();
+            return GetEnumerator();
         }
 
         /// <summary>
@@ -180,15 +180,15 @@ namespace Kirkin.Collections.Specialised
         /// </summary>
         private void TrimToCapacity()
         {
-            if (this.Capacity == 0)
+            if (Capacity == 0)
                 return;
 
-            if (this.Items.Count > this.Capacity)
+            if (Items.Count > Capacity)
             {
-                int removeCount = this.Items.Count - this.Capacity;
+                int removeCount = Items.Count - Capacity;
 
-                this.Index -= removeCount;
-                this.Items.RemoveRange(0, removeCount);
+                Index -= removeCount;
+                Items.RemoveRange(0, removeCount);
             }
         }
     }

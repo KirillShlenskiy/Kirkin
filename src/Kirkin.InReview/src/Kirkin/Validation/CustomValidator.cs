@@ -16,7 +16,7 @@ namespace Kirkin.Validation
         /// </summary>
         internal CustomValidator(Func<bool> validation)
         {
-            this.Validation = validation;
+            Validation = validation;
         }
 
         /// <summary>
