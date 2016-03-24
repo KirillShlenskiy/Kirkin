@@ -10,7 +10,7 @@ namespace Kirkin.ChangeTracking
     /// Tracks property values of a particular object
     /// and detects when a property value change occurs.
     /// </summary>
-    public sealed class ChangeTracker<T> : IChangeTracker<T>
+    public sealed class ChangeTracker<T>
         where T : class
     {
         internal PropertyValueSnapshot<T> Snapshot;

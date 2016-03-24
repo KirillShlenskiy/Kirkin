@@ -12,7 +12,7 @@ namespace Kirkin.Tests.ChangeTracking
         public void DetectChanges()
         {
             Dummy dummy = new Dummy();
-            IChangeTracker<Dummy> tracker = new ChangeTracker<Dummy>(dummy);
+            ChangeTracker<Dummy> tracker = new ChangeTracker<Dummy>(dummy);
 
             Assert.False(tracker.DetectChanges().Any());
 
@@ -51,7 +51,7 @@ namespace Kirkin.Tests.ChangeTracking
         public void DetectChangesBenchmark()
         {
             Dummy dummy = new Dummy();
-            IChangeTracker<Dummy> tracker = new ChangeTracker<Dummy>(dummy);
+            ChangeTracker<Dummy> tracker = new ChangeTracker<Dummy>(dummy);
 
             for (int i = 0; i < 1000000; i++)
             {
@@ -68,7 +68,7 @@ namespace Kirkin.Tests.ChangeTracking
 
             for (int i = 0; i < 1000000; i++)
             {
-                IChangeTracker<Dummy> tracker = new ChangeTracker<Dummy>(dummy);
+                ChangeTracker<Dummy> tracker = new ChangeTracker<Dummy>(dummy);
             }
         }
 
@@ -77,7 +77,7 @@ namespace Kirkin.Tests.ChangeTracking
         {
             Dummy dummy = new Dummy();
 
-            IChangeTracker<Dummy> tracker = new ChangeTracker<Dummy>(
+            ChangeTracker<Dummy> tracker = new ChangeTracker<Dummy>(
                 dummy, TypeMapping<Dummy>.Default.Without(d => d.Value)
             );
 
