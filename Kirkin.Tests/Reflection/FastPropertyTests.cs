@@ -1,0 +1,158 @@
+﻿using System;
+using System.Reflection;
+
+using Kirkin.Reflection;
+
+using Xunit;
+
+namespace Kirkin.Tests.Reflection
+{
+    public class FastPropertyTests
+    {
+        private const int BENCHMARK_ITERATIONS = 1000000;
+
+        [Fact]
+        public void FastPropertyBenchmark()
+        {
+            var fastValue = new FastProperty<Dummy, string>(typeof(Dummy).GetProperty("Value"));
+
+            for (var i = 0; i < BENCHMARK_ITERATIONS; i++)
+            {
+                var dummy = new Dummy();
+
+                Assert.True(fastValue.GetValue(dummy) == null);
+
+                fastValue.SetValue(dummy, "Whatever");
+
+                Assert.Equal("Whatever", fastValue.GetValue(dummy));
+                Assert.Equal("Whatever", dummy.Value);
+            }
+        }
+
+        [Fact]
+        public void DowncastGenericFastPropertyBenchmark()
+        {
+            var fastValue = (FastProperty)new FastProperty<Dummy, string>(typeof(Dummy).GetProperty("Value"));
+
+            for (var i = 0; i < BENCHMARK_ITERATIONS; i++)
+            {
+                var dummy = new Dummy();
+
+                Assert.True(fastValue.GetValue(dummy) == null);
+
+                fastValue.SetValue(dummy, "Whatever");
+
+                Assert.Equal("Whatever", fastValue.GetValue(dummy));
+                Assert.Equal("Whatever", dummy.Value);
+            }
+        }
+
+        [Fact]
+        public void NonGenericFastPropertyBenchmark()
+        {
+            var fastValue = new FastProperty(typeof(Dummy).GetProperty("Value"));
+
+            for (var i = 0; i < BENCHMARK_ITERATIONS; i++)
+            {
+                var dummy = new Dummy();
+
+                Assert.True(fastValue.GetValue(dummy) == null);
+
+                fastValue.SetValue(dummy, "Whatever");
+
+                Assert.Equal("Whatever", fastValue.GetValue(dummy));
+                Assert.Equal("Whatever", dummy.Value);
+            }
+        }
+
+        [Fact]
+        public void DirectAccessBenchmark()
+        {
+            for (var i = 0; i < BENCHMARK_ITERATIONS; i++)
+            {
+                var dummy = new Dummy();
+
+                Assert.True(dummy.Value == null);
+
+                dummy.Value = "Whatever";
+
+                Assert.Equal("Whatever", dummy.Value);
+                Assert.Equal("Whatever", dummy.Value);
+            }
+        }
+
+        [Fact]
+        public void ReflectionBenchmark()
+        {
+            var valueProperty = typeof(Dummy).GetProperty("Value");
+
+            for (var i = 0; i < BENCHMARK_ITERATIONS; i++)
+            {
+                var dummy = new Dummy();
+
+                Assert.True(valueProperty.GetValue(dummy, null) == null);
+
+                valueProperty.SetValue(dummy, "Whatever", null);
+
+                Assert.Equal("Whatever", valueProperty.GetValue(dummy, null));
+                Assert.Equal("Whatever", dummy.Value);
+            }
+        }
+
+        [Fact]
+        public void PublicPropertyTest()
+        {
+            var id = new FastProperty<Dummy, int>(typeof(Dummy).GetProperty("ID"));
+            var dummy = new Dummy();
+
+            id.SetValue(dummy, 42);
+
+            Assert.Equal(42, id.GetValue(dummy));
+        }
+
+        [Fact]
+        public void PrivatePropertyTest()
+        {
+            var prop = new FastProperty<Dummy, int>(
+                typeof(Dummy).GetProperty("PrivateProp", BindingFlags.Instance | BindingFlags.NonPublic)
+            );
+
+            var dummy = new Dummy();
+
+            prop.SetValue(dummy, 42);
+
+            Assert.Equal(42, prop.GetValue(dummy));
+        }
+
+        [Fact]
+        public void PrivateSetterPropertyTest()
+        {
+            var prop = new FastProperty<Dummy, int>(typeof(Dummy).GetProperty("PrivateSetterProp"));
+            var dummy = new Dummy();
+
+            Assert.Throws<InvalidOperationException>(() => prop.SetValue(dummy, 42));
+        }
+
+        [Fact]
+        public void NonGenericTest()
+        {
+            var prop = new FastProperty(typeof(Dummy).GetProperty("ID"));
+            var dummy = new Dummy();
+
+            prop.SetValue(dummy, 42);
+
+            Assert.Equal(42, prop.GetValue(dummy));
+        }
+
+        private class Dummy
+        {
+            public int ID { get; set; }
+            public string Value { get; set; }
+            private int PrivateProp { get; set; }
+
+            private int _privateSetterProp = 0;
+
+            public int PrivateSetterProp { get { return _privateSetterProp; } }
+        }
+    }
+}

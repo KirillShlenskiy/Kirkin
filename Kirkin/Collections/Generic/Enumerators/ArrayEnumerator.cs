@@ -1,0 +1,62 @@
+﻿// *NOT* original work by Kirill Shlenskiy.
+// Copied from Microsoft's open-sourced System.Collections.Immutable.ImmutableArray<T>.Enumerator and adapted for our purposes.
+namespace Kirkin.Collections.Generic.Enumerators
+{
+    /// <summary>
+    /// An array enumerator.
+    /// </summary>
+    /// <remarks>
+    /// It is important that this enumerator does NOT implement <see cref="System.IDisposable"/>.
+    /// We want the iterator to inline when we do foreach and to not result in
+    /// a try/finally frame in the client.
+    /// </remarks>
+    public struct ArrayEnumerator<T>
+    {
+        /// <summary> 
+        /// The array being enumerated.
+        /// </summary>
+        private readonly T[] _array;
+
+        /// <summary>
+        /// The currently enumerated position.
+        /// </summary>
+        /// <value>
+        /// -1 before the first call to <see cref="MoveNext"/>.
+        /// >= this.array.Length after <see cref="MoveNext"/> returns false.
+        /// </value>
+        private int _index;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ArrayEnumerator{T}"/> struct.
+        /// </summary>
+        /// <param name="array">The array to enumerate.</param>
+        internal ArrayEnumerator(T[] array)
+        {
+            _array = array;
+            _index = -1;
+        }
+
+        /// <summary>
+        /// Gets the currently enumerated value.
+        /// </summary>
+        public T Current
+        {
+            get
+            {
+                // PERF: no need to do a range check, we already did in MoveNext.
+                // if user did not call MoveNext or ignored its result (incorrect use)
+                // he will still get an exception from the array access range check.
+                return _array[_index];
+            }
+        }
+
+        /// <summary>
+        /// Advances to the next value to be enumerated.
+        /// </summary>
+        /// <returns><c>true</c> if another item exists in the array; <c>false</c> otherwise.</returns>
+        public bool MoveNext()
+        {
+            return ++_index < _array.Length;
+        }
+    }
+}

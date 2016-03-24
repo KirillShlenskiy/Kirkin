@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>df3ee3f0-2396-442c-925a-ef3d161e1087</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Kirkin.InReview</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Caching\Cache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Caching\CacheThreadSafetyMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Caching\ICache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Async\AsyncHandover.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Async\AsyncHandoverBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Async\BoundedCapacityAsyncHandover.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Async\TakeResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Specialised\OneElementReadOnlyList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Specialised\UndoRedoCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\CustomEqualityComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Linq\CollectionFilter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Linq\ICollectionFilter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Logging\EntryFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Logging\FileLogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Logging\LogEntryBlock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Logging\LogFileMonitor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Logging\Logger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\ReferenceCounting\Borrowed.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\ReferenceCounting\SharedResourceManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Text\TextUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\CustomValidator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\ISideEffect.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\IValidator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\IValidatorProxy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\ManualValidator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\MultiValidatorProxy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\SideEffectDelegate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\ValidatedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\ValidatingEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\Validator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\ValidatorBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\ValidatorExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\ValidatorProxy.cs" />
+  </ItemGroup>
+</Project>

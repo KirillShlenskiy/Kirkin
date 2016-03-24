@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Kirkin.Experimental", "Kirkin.Experimental\Kirkin.Experimental.shproj", "{D3C20C73-657E-4317-B694-6F233D093496}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Kirkin.InReview", "Kirkin.InReview\Kirkin.InReview.shproj", "{DF3EE3F0-2396-442C-925A-EF3D161E1087}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirkin", "Kirkin\Kirkin.csproj", "{6422229E-69F4-4FC5-A79C-EEAAAD04DA5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirkin.Tests", "Kirkin.Tests\Kirkin.Tests.csproj", "{79EDDF89-8B87-43FB-9B9B-A27E7EAD74EA}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Kirkin.Experimental\Kirkin.Experimental.projitems*{d3c20c73-657e-4317-b694-6f233d093496}*SharedItemsImports = 13
+		Kirkin.Experimental\Kirkin.Experimental.projitems*{6422229e-69f4-4fc5-a79c-eeaaad04da5c}*SharedItemsImports = 4
+		Kirkin.InReview\Kirkin.InReview.projitems*{6422229e-69f4-4fc5-a79c-eeaaad04da5c}*SharedItemsImports = 4
+		Kirkin.InReview\Kirkin.InReview.projitems*{df3ee3f0-2396-442c-925a-ef3d161e1087}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6422229E-69F4-4FC5-A79C-EEAAAD04DA5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6422229E-69F4-4FC5-A79C-EEAAAD04DA5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6422229E-69F4-4FC5-A79C-EEAAAD04DA5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6422229E-69F4-4FC5-A79C-EEAAAD04DA5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79EDDF89-8B87-43FB-9B9B-A27E7EAD74EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79EDDF89-8B87-43FB-9B9B-A27E7EAD74EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79EDDF89-8B87-43FB-9B9B-A27E7EAD74EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79EDDF89-8B87-43FB-9B9B-A27E7EAD74EA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
