@@ -58,7 +58,6 @@
     <Compile Include="Dependencies\DisposableRegistrationException.cs" />
     <Compile Include="Dependencies\ResolutionFailedException.cs" />
     <Compile Include="Disposable.cs" />
-    <Compile Include="Functional\FuncUtil.cs" />
     <Compile Include="Functional\Retryable.cs" />
     <Compile Include="IO\StreamUtil.cs" />
     <Compile Include="Linq\ArrayExtensions.cs" />
@@ -93,13 +92,10 @@
     <Compile Include="Reflection\TypeUtil.cs" />
     <Compile Include="Reflection\TypeUtil`.cs" />
     <Compile Include="Text\UrlUtil.cs" />
-    <Compile Include="Threading\Atomic.cs" />
     <Compile Include="Threading\Cancellation.cs" />
     <Compile Include="Threading\Tasks\ParallelTaskOptions.cs" />
     <Compile Include="Threading\Tasks\ParallelTasks.cs" />
     <Compile Include="Threading\Tasks\TaskEx.cs" />
-    <Compile Include="Transactions\PropertyTrackingTransaction.cs" />
-    <Compile Include="Transactions\PropertyTrackingTransaction`.cs" />
     <Compile Include="TypeMapping.cs" />
     <Compile Include="TypeMappingEqualityComparer.cs" />
     <Compile Include="Utilities\Hash.cs" />
