@@ -19,7 +19,7 @@ namespace Kirkin.Tests.Benchmarking
             Output = output;
         }
 
-        //[Fact]
+        [Fact]
         public void Collections()
         {
             string report = Benchmarks.Run<CollectionPerf>();

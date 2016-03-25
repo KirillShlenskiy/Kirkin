@@ -1,6 +1,4 @@
-﻿//#define USE_POOLED_BUILDER
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -82,29 +80,8 @@ namespace Kirkin.Collections.Generic
         /// </summary>
         public static Vector<T> CreateRange<T>(IEnumerable<T> items)
         {
-            if (items == null) throw new ArgumentNullException(nameof(items));
-#if USE_POOLED_BUILDER
-            ICollection<T> collection = items as ICollection<T>;
-
-            if (collection != null)
-            {
-                T[] array = new T[collection.Count];
-
-                collection.CopyTo(array, 0);
-
-                return new Vector<T>(array);
-            }
-
-            PooledArrayBuilder<T> builder = new PooledArrayBuilder<T>();
-
-            foreach (T item in items) {
-                builder.Add(item);
-            }
-
-            return new Vector<T>(builder.ToArray());
-#else
+            // Arg null validation performed by ToArray.
             return new Vector<T>(items.ToArray());
-#endif
         }
 
         #endregion
