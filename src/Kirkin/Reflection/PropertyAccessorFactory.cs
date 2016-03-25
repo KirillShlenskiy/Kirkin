@@ -49,7 +49,7 @@ namespace Kirkin.Reflection
             
             if (!GenericTypeUtilPropertyDelegates.TryGetValue(propertyInfo.DeclaringType, out propertyFunc))
             {
-                Type typeUtilType = typeof(TypeUtil<>).MakeGenericType(propertyInfo.DeclaringType);
+                Type typeUtilType = typeof(PropertyAccessorFactory<>).MakeGenericType(propertyInfo.DeclaringType);
                 MethodInfo propertyMethod = typeUtilType.GetMethod("Property", new[] { typeof(PropertyInfo) });
 
                 var newPropertyFunc = (Func<PropertyInfo, IPropertyAccessor>)Delegate.CreateDelegate(

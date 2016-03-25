@@ -12,7 +12,7 @@ namespace Kirkin.Reflection
     /// Provides Reflection-related
     /// methods on the given type.
     /// </summary>
-    public static class TypeUtil<T>
+    public static class PropertyAccessorFactory<T>
     {
         #region PropertyAccessor<T,> Cache
 

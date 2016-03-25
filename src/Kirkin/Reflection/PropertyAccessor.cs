@@ -24,8 +24,8 @@ namespace Kirkin.Reflection
         public PropertyInfo Property { get; }
 
         // Backing fields.
-        private Func<TTarget, TProperty> _getter;
-        private Action<TTarget, TProperty> _setter;
+        private Func<TTarget, TProperty> _compiledGetter;
+        private Action<TTarget, TProperty> _compiledSetter;
 
         /// <summary>
         /// Creates a new instance wrapping the given PropertyInfo.
@@ -47,11 +47,11 @@ namespace Kirkin.Reflection
         {
             // This code obviously has a race condition, but as long as _getter is not publicly
             // visible, it doesn't really matter if it happens to be initialised multiple times.
-            if (_getter == null) {
-                _getter = CompileGetter(Property);
+            if (_compiledGetter == null) {
+                _compiledGetter = CompileGetter(Property);
             }
 
-            return _getter.Invoke(instance);
+            return _compiledGetter.Invoke(instance);
         }
 
         /// <summary>
@@ -61,11 +61,11 @@ namespace Kirkin.Reflection
         {
             // This code obviously has a race condition, but as long as _setter is not publicly
             // visible, it doesn't really matter if it happens to be initialised multiple times.
-            if (_setter == null) {
-                _setter = CompileSetter(Property);
+            if (_compiledSetter == null) {
+                _compiledSetter = CompileSetter(Property);
             }
 
-            _setter.Invoke(instance, value);
+            _compiledSetter.Invoke(instance, value);
         }
 
         object IPropertyAccessor.GetValue(object instance)

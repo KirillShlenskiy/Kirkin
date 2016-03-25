@@ -17,7 +17,7 @@ namespace Kirkin.Tests.Reflection
         public void PropertyResolutionBenchmark()
         {
             for (int i = 0; i < 10000000; i++) {
-                TypeUtil<Dummy>.Property(s_idExpr);
+                PropertyAccessorFactory<Dummy>.Property(s_idExpr);
             }
         }
 
@@ -27,7 +27,7 @@ namespace Kirkin.Tests.Reflection
             for (var i = 0; i < 100000; i++)
             {
                 var dummy = new Dummy();
-                var idProp = TypeUtil<Dummy>.Property(d => d.ID);
+                var idProp = PropertyAccessorFactory<Dummy>.Property(d => d.ID);
 
                 idProp.SetValue(dummy, 100);
 
@@ -42,7 +42,7 @@ namespace Kirkin.Tests.Reflection
             for (var i = 0; i < 100000; i++)
             {
                 var dummy = new Dummy();
-                var idProp = TypeUtil<Dummy>.Property<int>("ID");
+                var idProp = PropertyAccessorFactory<Dummy>.Property<int>("ID");
 
                 idProp.SetValue(dummy, 100);
 
@@ -57,7 +57,7 @@ namespace Kirkin.Tests.Reflection
             for (var i = 0; i < 100000; i++)
             {
                 var dummy = new Dummy();
-                var idProp = TypeUtil<Dummy>.Property("ID");
+                var idProp = PropertyAccessorFactory<Dummy>.Property("ID");
 
                 idProp.SetValue(dummy, 100);
 
@@ -87,7 +87,7 @@ namespace Kirkin.Tests.Reflection
             for (var i = 0; i < 100000; i++)
             {
                 var dummy = new Dummy();
-                var properties = TypeUtil<Dummy>.Properties();
+                var properties = PropertyAccessorFactory<Dummy>.Properties();
                 var idProp = properties.Single(p => p.Property.Name == "ID");
 
                 idProp.SetValue(dummy, 100);
@@ -178,7 +178,7 @@ namespace Kirkin.Tests.Reflection
 
             for (var i = 0; i < 100000; i++)
             {
-                var prop = TypeUtil<Dummy>.Property(expr);
+                var prop = PropertyAccessorFactory<Dummy>.Property(expr);
 
                 prop.SetValue(dummy, prop.GetValue(dummy) + 1);
             }
@@ -191,7 +191,7 @@ namespace Kirkin.Tests.Reflection
 
             for (var i = 0; i < 100000; i++)
             {
-                var prop = TypeUtil<Dummy>.Property<int>("ID");
+                var prop = PropertyAccessorFactory<Dummy>.Property<int>("ID");
 
                 prop.SetValue(dummy, prop.GetValue(dummy) + 1);
             }
