@@ -58,7 +58,7 @@ namespace Kirkin
         /// operations, and all properties which have accessible
         /// getters and setters for write (copy/clone) operations.
         /// </summary>
-        public static TypeMapping<T> Default { get; } = new TypeMapping<T>(PropertyAccessorFactory.Properties(typeof(T)));
+        public static TypeMapping<T> Default { get; } = new TypeMapping<T>(PropertyAccessor.ResolveAll(typeof(T)));
 
         private readonly IPropertyAccessor[] _propertyAccessors;
 

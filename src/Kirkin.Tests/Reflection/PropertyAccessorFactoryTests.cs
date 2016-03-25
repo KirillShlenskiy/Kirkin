@@ -17,7 +17,7 @@ namespace Kirkin.Tests.Reflection
             var id = typeof(Dummy).GetProperty("ID");
 
             for (int i = 0; i < 1000000; i++) {
-                PropertyAccessorFactory.Property(id);
+                PropertyAccessor.Resolve(id);
             }
         }
 
@@ -57,7 +57,22 @@ namespace Kirkin.Tests.Reflection
             for (var i = 0; i < 100000; i++)
             {
                 var dummy = new Dummy();
-                var idProp = PropertyAccessorFactory<Dummy>.Property("ID");
+                var idProp = PropertyAccessor.Resolve<Dummy>("ID");
+
+                idProp.SetValue(dummy, 100);
+
+                Assert.Equal(100, idProp.GetValue(dummy));
+                Assert.Equal(100, dummy.ID);
+            }
+        }
+
+        [Fact]
+        public void NonGenericPropertyByExpression()
+        {
+            for (var i = 0; i < 100000; i++)
+            {
+                var dummy = new Dummy();
+                var idProp = PropertyAccessor.Resolve<Dummy>(d => d.ID);
 
                 idProp.SetValue(dummy, 100);
 
@@ -72,7 +87,7 @@ namespace Kirkin.Tests.Reflection
             for (var i = 0; i < 100000; i++)
             {
                 var dummy = new Dummy();
-                var idProp = PropertyAccessorFactory.Property(typeof(Dummy), "ID");
+                var idProp = PropertyAccessor.Resolve(typeof(Dummy), "ID");
 
                 idProp.SetValue(dummy, 100);
 
@@ -87,7 +102,7 @@ namespace Kirkin.Tests.Reflection
             for (var i = 0; i < 100000; i++)
             {
                 var dummy = new Dummy();
-                var properties = PropertyAccessorFactory<Dummy>.Properties();
+                var properties = PropertyAccessor.ResolveAll<Dummy>();
                 var idProp = properties.Single(p => p.Property.Name == "ID");
 
                 idProp.SetValue(dummy, 100);
@@ -103,7 +118,7 @@ namespace Kirkin.Tests.Reflection
             for (var i = 0; i < 100000; i++)
             {
                 var dummy = new Dummy();
-                var properties = PropertyAccessorFactory.Properties(typeof(Dummy));
+                var properties = PropertyAccessor.ResolveAll(typeof(Dummy));
                 var idProp = properties.Single(p => p.Property.Name == "ID");
 
                 idProp.SetValue(dummy, 100);
@@ -204,7 +219,7 @@ namespace Kirkin.Tests.Reflection
 
             for (var i = 0; i < 100000; i++)
             {
-                var prop = PropertyAccessorFactory.Property(typeof(Dummy), "ID");
+                var prop = PropertyAccessor.Resolve(typeof(Dummy), "ID");
 
                 prop.SetValue(dummy, (int)prop.GetValue(dummy) + 1);
             }

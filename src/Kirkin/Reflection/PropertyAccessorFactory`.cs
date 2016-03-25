@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -12,7 +11,7 @@ namespace Kirkin.Reflection
     /// Provides Reflection-related
     /// methods on the given type.
     /// </summary>
-    public static class PropertyAccessorFactory<T>
+    internal static class PropertyAccessorFactory<T>
     {
         #region PropertyAccessor<T,> Cache
 
@@ -133,33 +132,6 @@ namespace Kirkin.Reflection
             }
 
             return accessor;
-        }
-
-        #endregion
-
-        #region Properties overloads
-
-        /// <summary>
-        /// Provides fast access to public instance properties.
-        /// </summary>
-        public static IEnumerable<IPropertyAccessor> Properties()
-        {
-            return Properties(BindingFlags.Instance | BindingFlags.Public);
-        }
-
-        /// <summary>
-        /// Provides fast access to instance properties matching the given binding flags.
-        /// </summary>
-        public static IEnumerable<IPropertyAccessor> Properties(BindingFlags bindingFlags)
-        {
-            if (bindingFlags.HasFlag(BindingFlags.Static)) {
-                throw new ArgumentException("BindingFlags.Static is not allowed.");
-            }
-
-            // Resolve fast properties.
-            foreach (PropertyInfo propertyInfo in typeof(T).GetProperties(bindingFlags)) {
-                yield return Property(propertyInfo);
-            }
         }
 
         #endregion

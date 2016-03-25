@@ -85,9 +85,9 @@
     <Compile Include="Percentage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\IPropertyAccessor.cs" />
-    <Compile Include="Reflection\PropertyAccessor.cs" />
+    <Compile Include="Reflection\PropertyAccessor`2.cs" />
     <Compile Include="Reflection\PropertyInfoEqualityComparer.cs" />
-    <Compile Include="Reflection\PropertyAccessorFactory.cs" />
+    <Compile Include="Reflection\PropertyAccessor.cs" />
     <Compile Include="Reflection\PropertyAccessorFactory`.cs" />
     <Compile Include="Text\UrlUtil.cs" />
     <Compile Include="Threading\Cancellation.cs" />

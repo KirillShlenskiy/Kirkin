@@ -1,143 +1,119 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Reflection;
+
+using Kirkin.Linq.Expressions;
 
 namespace Kirkin.Reflection
 {
     /// <summary>
-    /// Provides fast access to property getter and setter. 
+    /// <see cref="IPropertyAccessor"/> factory methods.
     /// </summary>
-    /// <remarks>
-    /// Instances of this type are meant to be cached and reused due to
-    /// the considerable cost of compiling getter and setter delegates
-    /// incurred when GetValue and SetValue are called for the first time.
-    /// </remarks>
-    public sealed class PropertyAccessor<TTarget, TProperty>
-        : IPropertyAccessor
+    public static class PropertyAccessor
     {
-        /// <summary>
-        /// Property specified when this instance was created.
-        /// </summary>
-        public PropertyInfo Property { get; }
+        // Cached PropertyAccessFactory<>.Property(PropertyInfo) delegates.
+        private static readonly ConcurrentDictionary<Type, Func<PropertyInfo, IPropertyAccessor>> GenericPropertyAccessorFactoryDelegates
+            = new ConcurrentDictionary<Type, Func<PropertyInfo, IPropertyAccessor>>();
 
-        // Backing fields.
-        private Func<TTarget, TProperty> _compiledGetter;
-        private Action<TTarget, TProperty> _compiledSetter;
+        #region Resolve overloads
 
         /// <summary>
-        /// Creates a new instance wrapping the given PropertyInfo.
+        /// Returns an accessor for the property identified by the given expression.
         /// </summary>
-        internal PropertyAccessor(PropertyInfo property)
+        public static IPropertyAccessor Resolve<T>(Expression<Func<T, object>> propertyExpr)
         {
-            if (property == null) throw new ArgumentNullException(nameof(property));
-            if (IsStatic(property)) throw new ArgumentException("The property cannot be static.");
-            if (property.DeclaringType != typeof(TTarget)) throw new ArgumentException("Property declaring type does not match fast property type.");
-            if (property.PropertyType != typeof(TProperty)) throw new ArgumentException("Property return type does not match fast property type.");
+            if (propertyExpr == null) throw new ArgumentNullException(nameof(propertyExpr));
 
-            Property = property;
+            PropertyInfo propertyInfo = ExpressionUtil.Property(propertyExpr);
+
+            return Resolve(propertyInfo);
         }
 
         /// <summary>
-        /// Invokes the property getter.
+        /// Provides fast access to the given public or non-public property.
         /// </summary>
-        public TProperty GetValue(TTarget instance)
+        internal static IPropertyAccessor Resolve<T>(string propertyName,
+                                                     BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
         {
-            // This code obviously has a race condition, but as long as _getter is not publicly
-            // visible, it doesn't really matter if it happens to be initialised multiple times.
-            if (_compiledGetter == null) {
-                _compiledGetter = CompileGetter(Property);
+            return Resolve(typeof(T), propertyName, bindingFlags);
+        }
+
+        /// <summary>
+        /// Provides fast access to the given property.
+        /// </summary>
+        internal static IPropertyAccessor Resolve(Type type,
+                                                  string propertyName,
+                                                  BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+        {
+            PropertyInfo propertyInfo = type.GetProperty(propertyName, bindingFlags);
+
+            return propertyInfo == null ? null : Resolve(propertyInfo);
+        }
+
+        /// <summary>
+        /// Provides fast access to the given public or non-public property.
+        /// </summary>
+        public static IPropertyAccessor Resolve(PropertyInfo propertyInfo)
+        {
+            // Argument validation.
+            if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
+
+            // Resolve cached PropertyAccessFactory<T>.Property(PropertyInfo)
+            // delegate, or create a new one with Reflection.
+            Func<PropertyInfo, IPropertyAccessor> propertyFunc;
+            
+            if (!GenericPropertyAccessorFactoryDelegates.TryGetValue(propertyInfo.DeclaringType, out propertyFunc))
+            {
+                Type genericPropertyAccessorFactoryType = typeof(PropertyAccessorFactory<>).MakeGenericType(propertyInfo.DeclaringType);
+
+                MethodInfo propertyMethod = genericPropertyAccessorFactoryType.GetMethod(
+                    nameof(PropertyAccessorFactory<object>.Property), new[] { typeof(PropertyInfo) }
+                );
+
+                var newPropertyFunc = (Func<PropertyInfo, IPropertyAccessor>)Delegate.CreateDelegate(
+                    typeof(Func<PropertyInfo, IPropertyAccessor>), propertyMethod
+                );
+
+                propertyFunc = GenericPropertyAccessorFactoryDelegates.GetOrAdd(
+                    propertyInfo.DeclaringType, newPropertyFunc
+                );
             }
 
-            return _compiledGetter.Invoke(instance);
+            return propertyFunc(propertyInfo);
+        }
+
+        #endregion
+
+        #region ResolveAll overloads
+
+        /// <summary>
+        /// Provides fast access to public instance properties.
+        /// </summary>
+        public static IEnumerable<IPropertyAccessor> ResolveAll<T>(BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public)
+        {
+            return ResolveAll(typeof(T), bindingFlags);
         }
 
         /// <summary>
-        /// Invokes the property setter.
+        /// Provides fast access to properties matching the given binding flags.
         /// </summary>
-        public void SetValue(TTarget instance, TProperty value)
+        public static IEnumerable<IPropertyAccessor> ResolveAll(Type type,
+                                                                BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public)
         {
-            // This code obviously has a race condition, but as long as _setter is not publicly
-            // visible, it doesn't really matter if it happens to be initialised multiple times.
-            if (_compiledSetter == null) {
-                _compiledSetter = CompileSetter(Property);
+            if (type == null) throw new ArgumentNullException(nameof(type));
+
+            if (bindingFlags.HasFlag(BindingFlags.Static)) {
+                throw new ArgumentException("BindingFlags.Static is not allowed.");
             }
 
-            _compiledSetter.Invoke(instance, value);
-        }
-
-        /// <summary>
-        /// Explicit non-generic getter implementation.
-        /// </summary>
-        object IPropertyAccessor.GetValue(object instance)
-        {
-            return GetValue((TTarget)instance);
-        }
-
-        /// <summary>
-        /// Explicit non-generic setter implementation.
-        /// </summary>
-        void IPropertyAccessor.SetValue(object instance, object value)
-        {
-            SetValue((TTarget)instance, (TProperty)value);
-        }
-
-        /// <summary>
-        /// Creates and stores the getter delegate.
-        /// </summary>
-        private static Func<TTarget, TProperty> CompileGetter(PropertyInfo property)
-        {
-            if (!property.CanRead) {
-                throw new InvalidOperationException("The property does not define a getter.");
+            // Resolve fast properties.
+            foreach (PropertyInfo propertyInfo in type.GetProperties(bindingFlags)) {
+                yield return Resolve(propertyInfo);
             }
-#if __MOBILE__
-            // TODO: compiled delegate on platforms that support it?
-            return target => (TProperty)property.GetValue(target);
-#else
-            return (Func<TTarget, TProperty>)Delegate.CreateDelegate(
-                typeof(Func<TTarget, TProperty>), property.GetGetMethod(nonPublic: true)
-            );
-#endif
         }
 
-        /// <summary>
-        /// Creates and stores the setter delegate.
-        /// </summary>
-        private static Action<TTarget, TProperty> CompileSetter(PropertyInfo property)
-        {
-            if (!property.CanWrite) {
-                throw new InvalidOperationException("The property does not define a setter.");
-            }
-#if __MOBILE__
-            // TODO: compiled delegate on platforms that support it?
-            return (target, value) => property.SetValue(target, value);
-#else
-            return (Action<TTarget, TProperty>)Delegate.CreateDelegate(
-                typeof(Action<TTarget, TProperty>), property.GetSetMethod(nonPublic: true)
-            );
-#endif
-        }
-
-        /// <summary>
-        /// Determines whether this PropertyInfo
-        /// instance describes a static property.
-        /// </summary>
-        internal static bool IsStatic(PropertyInfo propertyInfo)
-        {
-            // Check the getter.
-            if (propertyInfo.CanRead) {
-                return propertyInfo.GetGetMethod(nonPublic: true).IsStatic;
-            }
-
-            // Check the setter.
-            if (propertyInfo.CanWrite) {
-                return propertyInfo.GetSetMethod(nonPublic: true).IsStatic;
-            }
-
-            // Ask the declaring type - slightly slower.
-            PropertyInfo staticPropertyInfo = propertyInfo.DeclaringType.GetProperty(
-                propertyInfo.Name, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
-            );
-
-            return staticPropertyInfo != null;
-        }
+        #endregion
     }
 }
