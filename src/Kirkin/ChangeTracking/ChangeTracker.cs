@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 
 using Kirkin.Collections.Generic;
+using Kirkin.Reflection;
 
 namespace Kirkin.ChangeTracking
 {
@@ -96,7 +97,7 @@ namespace Kirkin.ChangeTracking
             for (int i = 0; i < propertyValues.Length; i++)
             {
                 PropertyValue original = propertyValues[i];
-                TypeMapping<T>.PropertyAccessor accessor = TypeMapping.PropertyAccessors[i];
+                IPropertyAccessor accessor = TypeMapping.PropertyAccessors[i];
 
                 //Debug.Assert(original.Property == accessor.Property, "Original and current value order mismatch.");
                 if (original.Property != accessor.Property) {

@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Kirkin.Collections.Generic;
+using Kirkin.Reflection;
 
 namespace Kirkin.ChangeTracking
 {
@@ -55,7 +56,7 @@ namespace Kirkin.ChangeTracking
 
             for (int i = 0; i < propertyValues.Length; i++)
             {
-                TypeMapping<T>.PropertyAccessor accessor = typeMapping.PropertyAccessors[i];
+                IPropertyAccessor accessor = typeMapping.PropertyAccessors[i];
 
                 propertyValues[i] = new PropertyValue(accessor.Property, accessor.GetValue(target));
             }
@@ -69,7 +70,7 @@ namespace Kirkin.ChangeTracking
         {
             for (int i = 0; i < TypeMapping.PropertyAccessors.Length; i++)
             {
-                TypeMapping<T>.PropertyAccessor accessor = TypeMapping.PropertyAccessors[i];
+                IPropertyAccessor accessor = TypeMapping.PropertyAccessors[i];
                 PropertyValue snapshotPropertyValue = __propertyValues[i];
 
                 //Debug.Assert(accessor.Property == snapshotPropertyValue.Property, "Property order mismatch.");

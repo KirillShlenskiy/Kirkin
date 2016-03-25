@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
+using Kirkin.Reflection;
+
 namespace Kirkin
 {
     /// <summary>
@@ -43,7 +45,7 @@ namespace Kirkin
             if (ReferenceEquals(x, null)) return ReferenceEquals(y, null);
             if (ReferenceEquals(y, null)) return false;
 
-            foreach (TypeMapping<T>.PropertyAccessor prop in TypeMapping.PropertyAccessors)
+            foreach (IPropertyAccessor prop in TypeMapping.PropertyAccessors)
             {
                 object xValue = prop.GetValue(x);
                 object yValue = prop.GetValue(y);
@@ -70,7 +72,7 @@ namespace Kirkin
             {
                 int hashCode = 17;
 
-                foreach (TypeMapping<T>.PropertyAccessor prop in TypeMapping.PropertyAccessors)
+                foreach (IPropertyAccessor prop in TypeMapping.PropertyAccessors)
                 {
                     object value = prop.GetValue(obj);
 
@@ -121,7 +123,7 @@ namespace Kirkin
                 if (ReferenceEquals(x, null)) return ReferenceEquals(y, null);
                 if (ReferenceEquals(y, null)) return false;
 
-                foreach (TypeMapping<T>.PropertyAccessor prop in TypeMapping.PropertyAccessors)
+                foreach (IPropertyAccessor prop in TypeMapping.PropertyAccessors)
                 {
                     object xValue = prop.GetValue(x);
                     object yValue = prop.GetValue(y);
@@ -157,7 +159,7 @@ namespace Kirkin
                 {
                     int hashCode = 17;
 
-                    foreach (TypeMapping<T>.PropertyAccessor prop in TypeMapping.PropertyAccessors)
+                    foreach (IPropertyAccessor prop in TypeMapping.PropertyAccessors)
                     {
                         object value = prop.GetValue(obj);
 

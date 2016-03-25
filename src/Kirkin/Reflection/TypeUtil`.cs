@@ -28,8 +28,8 @@ namespace Kirkin.Reflection
         ///   One of these is created per T ensuring
         ///   that the keys (property names) are unique.
         /// </remarks>
-        private static readonly ConcurrentDictionary<string, IFastProperty> FastProperties
-            = new ConcurrentDictionary<string, IFastProperty>();
+        private static readonly ConcurrentDictionary<string, IPropertyAccessor> FastProperties
+            = new ConcurrentDictionary<string, IPropertyAccessor>();
 
         #endregion
 
@@ -38,27 +38,27 @@ namespace Kirkin.Reflection
         /// <summary>
         /// Provides fast access to the given public instance property.
         /// </summary>
-        public static FastProperty<T, TProperty> Property<TProperty>(Expression<Func<T, TProperty>> propertyExpr)
+        public static PropertyAccessor<T, TProperty> Property<TProperty>(Expression<Func<T, TProperty>> propertyExpr)
         {
             var propertyInfo = ExpressionUtil.Property(propertyExpr);
 
             // Resolve the cached entry or create a new one.
-            IFastProperty fastProperty;
+            IPropertyAccessor fastProperty;
 
             if (!FastProperties.TryGetValue(propertyInfo.Name, out fastProperty))
             {
                 fastProperty = FastProperties.GetOrAdd(
-                    propertyInfo.Name, new FastProperty<T, TProperty>(propertyInfo)
+                    propertyInfo.Name, new PropertyAccessor<T, TProperty>(propertyInfo)
                 );
             }
 
-            return (FastProperty<T, TProperty>)fastProperty;
+            return (PropertyAccessor<T, TProperty>)fastProperty;
         }
 
         /// <summary>
         /// Provides fast access to the given public or non-public instance property.
         /// </summary>
-        public static FastProperty<T, TProperty>Property<TProperty>(string propertyName)
+        public static PropertyAccessor<T, TProperty>Property<TProperty>(string propertyName)
         {
             return TypeUtil<T>.Property<TProperty>(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         }
@@ -66,7 +66,7 @@ namespace Kirkin.Reflection
         /// <summary>
         /// Provides fast access to the given property.
         /// </summary>
-        public static FastProperty<T, TProperty> Property<TProperty>(string propertyName, BindingFlags bindingFlags)
+        public static PropertyAccessor<T, TProperty> Property<TProperty>(string propertyName, BindingFlags bindingFlags)
         {
             var propertyInfo = typeof(T).GetProperty(propertyName, bindingFlags);
 
@@ -75,22 +75,22 @@ namespace Kirkin.Reflection
             }
 
             // Resolve the cached entry or create a new one.
-            IFastProperty fastProperty;
+            IPropertyAccessor fastProperty;
 
             if (!FastProperties.TryGetValue(propertyInfo.Name, out fastProperty))
             {
                 fastProperty = FastProperties.GetOrAdd(
-                    propertyInfo.Name, new FastProperty<T, TProperty>(propertyInfo)
+                    propertyInfo.Name, new PropertyAccessor<T, TProperty>(propertyInfo)
                 );
             }
 
-            return (FastProperty<T, TProperty>)fastProperty;
+            return (PropertyAccessor<T, TProperty>)fastProperty;
         }
 
         /// <summary>
         /// Provides fast access to the given public or non-public instance property.
         /// </summary>
-        public static IFastProperty Property(string propertyName)
+        public static IPropertyAccessor Property(string propertyName)
         {
             return TypeUtil<T>.Property(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         }
@@ -98,7 +98,7 @@ namespace Kirkin.Reflection
         /// <summary>
         /// Provides fast access to the given property.
         /// </summary>
-        public static IFastProperty Property(string propertyName, BindingFlags bindingFlags)
+        public static IPropertyAccessor Property(string propertyName, BindingFlags bindingFlags)
         {
             var propertyInfo = typeof(T).GetProperty(propertyName, bindingFlags);
 
@@ -108,13 +108,13 @@ namespace Kirkin.Reflection
         /// <summary>
         /// Provides fast access to the given public or non-public instance property.
         /// </summary>
-        public static IFastProperty Property(PropertyInfo propertyInfo)
+        public static IPropertyAccessor Property(PropertyInfo propertyInfo)
         {
             // Argument validation.
             if (propertyInfo == null) throw new ArgumentNullException("propertyInfo");
 
             // Resolve the cached entry or create a new one.
-            IFastProperty fastProperty;
+            IPropertyAccessor fastProperty;
 
             if (!FastProperties.TryGetValue(propertyInfo.Name, out fastProperty))
             {
@@ -129,7 +129,7 @@ namespace Kirkin.Reflection
                 // We'll use some Reflection to create a
                 // generic FastProperty, because it's faster
                 // and ultimately that's what we want to cache.
-                var closedType = typeof(FastProperty<,>).MakeGenericType(propertyInfo.DeclaringType, propertyInfo.PropertyType);
+                var closedType = typeof(PropertyAccessor<,>).MakeGenericType(propertyInfo.DeclaringType, propertyInfo.PropertyType);
                 var constructor = closedType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(PropertyInfo) }, null);
 
                 if (constructor == null)
@@ -138,7 +138,7 @@ namespace Kirkin.Reflection
                 }
 
                 fastProperty = FastProperties.GetOrAdd(
-                    propertyInfo.Name, (IFastProperty)constructor.Invoke(new[] { propertyInfo })
+                    propertyInfo.Name, (IPropertyAccessor)constructor.Invoke(new[] { propertyInfo })
                 );
             }
 
@@ -152,7 +152,7 @@ namespace Kirkin.Reflection
         /// <summary>
         /// Provides fast access to public instance properties.
         /// </summary>
-        public static IEnumerable<IFastProperty> Properties()
+        public static IEnumerable<IPropertyAccessor> Properties()
         {
             return TypeUtil<T>.Properties(BindingFlags.Instance | BindingFlags.Public);
         }
@@ -160,7 +160,7 @@ namespace Kirkin.Reflection
         /// <summary>
         /// Provides fast access to instance properties matching the given binding flags.
         /// </summary>
-        public static IEnumerable<IFastProperty> Properties(BindingFlags bindingFlags)
+        public static IEnumerable<IPropertyAccessor> Properties(BindingFlags bindingFlags)
         {
             if (bindingFlags.HasFlag(BindingFlags.Static))
             {

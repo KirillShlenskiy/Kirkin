@@ -14,7 +14,7 @@ namespace Kirkin.Tests.Reflection
         [Fact]
         public void FastPropertyBenchmark()
         {
-            var fastValue = new FastProperty<Dummy, string>(typeof(Dummy).GetProperty("Value"));
+            var fastValue = new PropertyAccessor<Dummy, string>(typeof(Dummy).GetProperty("Value"));
 
             for (var i = 0; i < BENCHMARK_ITERATIONS; i++)
             {
@@ -32,7 +32,7 @@ namespace Kirkin.Tests.Reflection
         [Fact]
         public void DowncastGenericFastPropertyBenchmark()
         {
-            var fastValue = (IFastProperty)new FastProperty<Dummy, string>(typeof(Dummy).GetProperty("Value"));
+            var fastValue = (IPropertyAccessor)new PropertyAccessor<Dummy, string>(typeof(Dummy).GetProperty("Value"));
 
             for (var i = 0; i < BENCHMARK_ITERATIONS; i++)
             {
@@ -102,7 +102,7 @@ namespace Kirkin.Tests.Reflection
         [Fact]
         public void PublicPropertyTest()
         {
-            var id = new FastProperty<Dummy, int>(typeof(Dummy).GetProperty("ID"));
+            var id = new PropertyAccessor<Dummy, int>(typeof(Dummy).GetProperty("ID"));
             var dummy = new Dummy();
 
             id.SetValue(dummy, 42);
@@ -113,7 +113,7 @@ namespace Kirkin.Tests.Reflection
         [Fact]
         public void PrivatePropertyTest()
         {
-            var prop = new FastProperty<Dummy, int>(
+            var prop = new PropertyAccessor<Dummy, int>(
                 typeof(Dummy).GetProperty("PrivateProp", BindingFlags.Instance | BindingFlags.NonPublic)
             );
 
@@ -127,7 +127,7 @@ namespace Kirkin.Tests.Reflection
         [Fact]
         public void PrivateSetterPropertyTest()
         {
-            var prop = new FastProperty<Dummy, int>(typeof(Dummy).GetProperty("PrivateSetterProp"));
+            var prop = new PropertyAccessor<Dummy, int>(typeof(Dummy).GetProperty("PrivateSetterProp"));
             var dummy = new Dummy();
 
             Assert.Throws<InvalidOperationException>(() => prop.SetValue(dummy, 42));

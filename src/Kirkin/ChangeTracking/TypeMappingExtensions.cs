@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Kirkin.Reflection;
+
 namespace Kirkin.ChangeTracking
 {
     /// <summary>
@@ -27,7 +29,7 @@ namespace Kirkin.ChangeTracking
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
 
-            foreach (TypeMapping<T>.PropertyAccessor accessor in typeMapping.PropertyAccessors) {
+            foreach (IPropertyAccessor accessor in typeMapping.PropertyAccessors) {
                 yield return new PropertyValue(accessor.Property, accessor.GetValue(target));
             }
         }

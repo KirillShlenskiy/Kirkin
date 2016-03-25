@@ -84,8 +84,8 @@
     <Compile Include="Mapping\NullableBehaviour.cs" />
     <Compile Include="Percentage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reflection\IFastProperty.cs" />
-    <Compile Include="Reflection\FastProperty.cs" />
+    <Compile Include="Reflection\IPropertyAccessor.cs" />
+    <Compile Include="Reflection\PropertyAccessor.cs" />
     <Compile Include="Reflection\PropertyInfoExtensions.cs" />
     <Compile Include="Reflection\TypeUtil.cs" />
     <Compile Include="Reflection\TypeUtil`.cs" />

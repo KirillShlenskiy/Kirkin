@@ -9,7 +9,7 @@ namespace Kirkin.Reflection
     /// of creating getter and setter delegates incurred
     /// when Get or Set is called for the first time.
     /// </summary>
-    public interface IFastProperty
+    public interface IPropertyAccessor
     {
         /// <summary>
         /// Property specified when this instance was created.

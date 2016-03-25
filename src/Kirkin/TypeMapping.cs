@@ -6,10 +6,7 @@ using System.Text;
 
 using Kirkin.Collections.Generic;
 using Kirkin.Linq.Expressions;
-
-#if !__MOBILE__
 using Kirkin.Reflection;
-#endif
 
 namespace Kirkin
 {
@@ -74,12 +71,12 @@ namespace Kirkin
         /// </summary>
         private static TypeMapping<T> CreateDefault()
         {
-            Array<PropertyAccessor>.Builder accessors = new Array<PropertyAccessor>.Builder();
+            Array<IPropertyAccessor>.Builder accessors = new Array<IPropertyAccessor>.Builder();
 
             foreach (PropertyInfo prop in typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
                 if (prop.CanRead) {
-                    accessors.Add(new PropertyAccessor(prop));
+                    accessors.Add(TypeUtil.Property(prop));
                 }
             }
 
@@ -89,7 +86,7 @@ namespace Kirkin
         /// <summary>
         /// Accessors for readable properties mapped by this instance.
         /// </summary>
-        internal readonly Vector<PropertyAccessor> PropertyAccessors;
+        internal readonly Vector<IPropertyAccessor> PropertyAccessors;
 
         /// <summary>
         /// Gets the properties which are mapped by this instance.
@@ -98,7 +95,7 @@ namespace Kirkin
         {
             get
             {
-                foreach (PropertyAccessor accessor in PropertyAccessors) {
+                foreach (IPropertyAccessor accessor in PropertyAccessors) {
                     yield return accessor.Property;
                 }
             }
@@ -107,7 +104,7 @@ namespace Kirkin
         /// <summary>
         /// Copy constructor.
         /// </summary>
-        private TypeMapping(Vector<PropertyAccessor> propertyAccessors)
+        private TypeMapping(Vector<IPropertyAccessor> propertyAccessors)
         {
             PropertyAccessors = propertyAccessors;
         }
@@ -122,9 +119,9 @@ namespace Kirkin
             if (propertyExpr == null) throw new ArgumentNullException("propertyExpr");
 
             PropertyInfo excludedProperty = ExpressionUtil.Property(propertyExpr);
-            Array<PropertyAccessor>.Builder accessors = new Array<PropertyAccessor>.Builder(PropertyAccessors.Length - 1);
+            Array<IPropertyAccessor>.Builder accessors = new Array<IPropertyAccessor>.Builder(PropertyAccessors.Length - 1);
 
-            foreach (PropertyAccessor accessor in PropertyAccessors)
+            foreach (IPropertyAccessor accessor in PropertyAccessors)
             {
                 if (!TokenEquals(accessor.Property, excludedProperty)) {
                     accessors.Add(accessor);
@@ -155,7 +152,7 @@ namespace Kirkin
             if (source == null) throw new ArgumentNullException("source");
             if (target == null) throw new ArgumentNullException("target");
 
-            foreach (PropertyAccessor accessor in PropertyAccessors)
+            foreach (IPropertyAccessor accessor in PropertyAccessors)
             {
                 if (accessor.Property.CanWrite)
                 {
@@ -184,7 +181,7 @@ namespace Kirkin
 
             changeCount = 0;
 
-            foreach (PropertyAccessor accessor in PropertyAccessors)
+            foreach (IPropertyAccessor accessor in PropertyAccessors)
             {
                 if (accessor.Property.CanWrite)
                 {
@@ -223,7 +220,7 @@ namespace Kirkin
 
             bool needComma = false;
 
-            foreach (PropertyAccessor accessor in PropertyAccessors)
+            foreach (IPropertyAccessor accessor in PropertyAccessors)
             {
                 if (needComma) {
                     sb.Append(", ");
@@ -283,60 +280,5 @@ namespace Kirkin
 
             return sb.ToString();
         }
-
-        #region PropertyAccessor definition
-
-#if !__MOBILE__
-        internal struct PropertyAccessor
-        {
-            private readonly IFastProperty __property;
-
-            public PropertyInfo Property
-            {
-                get { return __property.Property; }
-            }
-
-            public PropertyAccessor(PropertyInfo property)
-            {
-                __property = TypeUtil<T>.Property(property);
-            }
-
-            public object GetValue(object obj)
-            {
-                return __property.GetValue(obj);
-            }
-
-            public void SetValue(object obj, object value)
-            {
-                __property.SetValue(obj, value);
-            }
-        }
-#else
-        internal struct PropertyAccessor
-        {
-            private readonly PropertyInfo __property;
-
-            public PropertyInfo Property
-            {
-                get { return __property; }
-            }
-
-            public PropertyAccessor(PropertyInfo property)
-            {
-                __property = property;
-            }
-
-            public object GetValue(object obj)
-            {
-                return __property.GetValue(obj, null);
-            }
-
-            public void SetValue(object obj, object value)
-            {
-                __property.SetValue(obj, value, null);
-            }
-        }
-#endif
-        #endregion
     }
 }

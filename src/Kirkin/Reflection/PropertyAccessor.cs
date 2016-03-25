@@ -15,8 +15,8 @@ namespace Kirkin.Reflection
     ///   20% slower than direct property access, and
     ///   10+ times faster than traditional reflection.
     /// </remarks>
-    public sealed class FastProperty<TTarget, TProperty>
-        : IFastProperty
+    public sealed class PropertyAccessor<TTarget, TProperty>
+        : IPropertyAccessor
     {
         /// <summary>
         /// Property specified when this instance was created.
@@ -30,7 +30,7 @@ namespace Kirkin.Reflection
         /// <summary>
         /// Creates a new instance wrapping the given PropertyInfo.
         /// </summary>
-        internal FastProperty(PropertyInfo property)
+        internal PropertyAccessor(PropertyInfo property)
         {
             if (property == null) throw new ArgumentNullException(nameof(property));
             if (property.IsStatic()) throw new ArgumentException("The property cannot be static.");
@@ -104,12 +104,12 @@ namespace Kirkin.Reflection
 #endif
         }
 
-        object IFastProperty.GetValue(object instance)
+        object IPropertyAccessor.GetValue(object instance)
         {
             return GetValue((TTarget)instance);
         }
 
-        void IFastProperty.SetValue(object instance, object value)
+        void IPropertyAccessor.SetValue(object instance, object value)
         {
             SetValue((TTarget)instance, (TProperty)value);
         }
