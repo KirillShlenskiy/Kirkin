@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Kirkin.Tests.Reflection
 {
-    public class FastPropertyTests
+    public class PropertyAccessorTests
     {
         private const int BENCHMARK_ITERATIONS = 1000000;
 
@@ -153,6 +153,19 @@ namespace Kirkin.Tests.Reflection
             private int _privateSetterProp = 0;
 
             public int PrivateSetterProp { get { return _privateSetterProp; } }
+        }
+
+        [Fact]
+        public void IsStaticBenchmark()
+        {
+            var idProperty = typeof(Dummy).GetProperty("ID");
+            var valueProperty = typeof(Dummy).GetProperty("Value");
+
+            for (var i = 0; i < 10000; i++)
+            {
+                Assert.False(PropertyAccessor<object, object>.IsStatic(idProperty));
+                Assert.True(PropertyAccessor<object, object>.IsStatic(valueProperty));
+            }
         }
     }
 }

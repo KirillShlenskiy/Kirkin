@@ -297,7 +297,7 @@ namespace Kirkin.Tests
             };
 
             for (int i = 0; i < 100000; i++) {
-            Assert.Equal("Dummy { ID = 1, Value = Text }", mapping.ToString(dummy));
+                Assert.Equal("Dummy { ID = 1, Value = Text }", mapping.ToString(dummy));
             }
         }
 
