@@ -11,8 +11,8 @@ namespace Kirkin.Reflection
     /// </summary>
     public static class PropertyAccessorFactory
     {
-        // Cached TypeUtil<>.Property(PropertyInfo) delegates.
-        private static readonly ConcurrentDictionary<Type, Func<PropertyInfo, IPropertyAccessor>> GenericTypeUtilPropertyDelegates
+        // Cached PropertyAccessFactory<>.Property(PropertyInfo) delegates.
+        private static readonly ConcurrentDictionary<Type, Func<PropertyInfo, IPropertyAccessor>> GenericPropertyAccessorFactoryDelegates
             = new ConcurrentDictionary<Type, Func<PropertyInfo, IPropertyAccessor>>();
 
         #region Property overloads
@@ -41,22 +41,25 @@ namespace Kirkin.Reflection
         public static IPropertyAccessor Property(PropertyInfo propertyInfo)
         {
             // Argument validation.
-            if (propertyInfo == null) throw new ArgumentNullException("propertyInfo");
+            if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
 
-            // Resolve cached TypeUtil<T>.Property(PropertyInfo)
+            // Resolve cached PropertyAccessFactory<T>.Property(PropertyInfo)
             // delegate, or create a new one with Reflection.
             Func<PropertyInfo, IPropertyAccessor> propertyFunc;
             
-            if (!GenericTypeUtilPropertyDelegates.TryGetValue(propertyInfo.DeclaringType, out propertyFunc))
+            if (!GenericPropertyAccessorFactoryDelegates.TryGetValue(propertyInfo.DeclaringType, out propertyFunc))
             {
-                Type typeUtilType = typeof(PropertyAccessorFactory<>).MakeGenericType(propertyInfo.DeclaringType);
-                MethodInfo propertyMethod = typeUtilType.GetMethod("Property", new[] { typeof(PropertyInfo) });
+                Type genericPropertyAccessorFactoryType = typeof(PropertyAccessorFactory<>).MakeGenericType(propertyInfo.DeclaringType);
+
+                MethodInfo propertyMethod = genericPropertyAccessorFactoryType.GetMethod(
+                    nameof(PropertyAccessorFactory<object>.Property), new[] { typeof(PropertyInfo) }
+                );
 
                 var newPropertyFunc = (Func<PropertyInfo, IPropertyAccessor>)Delegate.CreateDelegate(
                     typeof(Func<PropertyInfo, IPropertyAccessor>), propertyMethod
                 );
 
-                propertyFunc = GenericTypeUtilPropertyDelegates.GetOrAdd(
+                propertyFunc = GenericPropertyAccessorFactoryDelegates.GetOrAdd(
                     propertyInfo.DeclaringType, newPropertyFunc
                 );
             }
@@ -81,7 +84,7 @@ namespace Kirkin.Reflection
         /// </summary>
         public static IEnumerable<IPropertyAccessor> Properties(Type type, BindingFlags bindingFlags)
         {
-            if (type == null) throw new ArgumentNullException("type");
+            if (type == null) throw new ArgumentNullException(nameof(type));
 
             if (bindingFlags.HasFlag(BindingFlags.Static)) {
                 throw new ArgumentException("BindingFlags.Static is not allowed.");

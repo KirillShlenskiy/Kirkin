@@ -103,7 +103,7 @@ namespace Kirkin.Reflection
         public static IPropertyAccessor Property(PropertyInfo propertyInfo)
         {
             // Argument validation.
-            if (propertyInfo == null) throw new ArgumentNullException("propertyInfo");
+            if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
 
             // Resolve the cached entry or create a new one.
             IPropertyAccessor accessor;
@@ -111,8 +111,8 @@ namespace Kirkin.Reflection
             if (!PropertyAccessors.TryGetValue(propertyInfo, out accessor))
             {
                 // PropertyInfo validation.
-                // It is permissible for TypeUtil<T> to
-                // store properties declared in T's base.
+                // It is permissible for PropertyAccessorFactory<T>
+                // to store properties declared in T's base.
                 if (!propertyInfo.DeclaringType.IsAssignableFrom(typeof(T))) {
                     throw new InvalidOperationException("Property declaring type mismatch.");
                 }

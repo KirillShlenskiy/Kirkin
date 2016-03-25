@@ -9,15 +9,15 @@ using Xunit;
 
 namespace Kirkin.Tests.Reflection
 {
-    public class TypeUtilTests
+    public class PropertyAccessorFactoryTests
     {
-        System.Linq.Expressions.Expression<Func<Dummy, int>> s_idExpr = d => d.ID;
-
         [Fact]
         public void PropertyResolutionBenchmark()
         {
-            for (int i = 0; i < 10000000; i++) {
-                PropertyAccessorFactory<Dummy>.Property(s_idExpr);
+            var id = typeof(Dummy).GetProperty("ID");
+
+            for (int i = 0; i < 1000000; i++) {
+                PropertyAccessorFactory.Property(id);
             }
         }
 
@@ -67,7 +67,7 @@ namespace Kirkin.Tests.Reflection
         }
 
         [Fact]
-        public void NonGenericTypeUtilNonGenericPropertyByName()
+        public void NonGenericPropertyAccessorFactoryNonGenericPropertyByName()
         {
             for (var i = 0; i < 100000; i++)
             {

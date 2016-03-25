@@ -184,9 +184,6 @@ namespace Kirkin
             StringBuilder sb = new StringBuilder();
             Type actualType = obj.GetType();
 
-            // TypeName redefined here as opposed to TypeUtil in order to fix VS2015/ Xamarin
-            // compiler bug where TypeUtil is not visible even despite relevant compiler switches.
-            // Will need to revert to using TypeUtil.TypeName whenever the fix is rolled out.
             sb.Append(TypeName.NameIncludingGenericArguments(actualType));
             sb.Append(" { ");
 
