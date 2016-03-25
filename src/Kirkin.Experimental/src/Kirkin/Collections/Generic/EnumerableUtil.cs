@@ -17,7 +17,7 @@ namespace Kirkin.Collections.Generic
         {
             if (collection == null) throw new ArgumentNullException("collection");
             if (collection is ICollection<T>) return;
-#if NET_45
+#if !NET_40
             if (collection is IReadOnlyCollection<T>) return;
 #endif
             collection = collection.ToArray();

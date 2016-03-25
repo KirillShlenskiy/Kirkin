@@ -1,4 +1,4 @@
-﻿#if NET_45
+﻿#if !NET_40
 using System.Threading.Tasks;
 #endif
 
@@ -15,7 +15,7 @@ namespace Kirkin.Functional
         void Execute();
     }
 
-#if NET_45
+#if !NET_40
     /// <summary>
     /// Contract for an asynchronous executable operation.
     /// </summary>

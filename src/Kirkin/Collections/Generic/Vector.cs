@@ -134,7 +134,7 @@ namespace Kirkin.Collections.Generic
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public struct Vector<T>
         : IList<T>, IEquatable<Vector<T>>
-#if NET_45
+#if !NET_40
         , IReadOnlyList<T>
 #endif
     {
@@ -390,7 +390,7 @@ namespace Kirkin.Collections.Generic
             }
         }
 
-#if NET_45
+#if !NET_40
         /// <summary>
         /// Gets the number of elements in this vector.
         /// </summary>

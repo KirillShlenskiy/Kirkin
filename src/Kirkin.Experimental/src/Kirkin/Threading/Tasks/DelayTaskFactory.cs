@@ -18,7 +18,7 @@ namespace Kirkin.Threading.Tasks
 
         static DelayTaskFactory()
         {
-#if NET_45
+#if !NET_40
             s_completedTask = Task.FromResult(true);
 #else
             TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();

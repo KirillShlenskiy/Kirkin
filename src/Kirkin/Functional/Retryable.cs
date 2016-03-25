@@ -83,7 +83,7 @@ namespace Kirkin.Functional
             return new FuncRetryable<T>(func);
         }
 
-#if NET_45
+#if !NET_40
         /// <summary>
         /// Returns a retryable version of the given async delegate.
         /// </summary>
@@ -173,7 +173,7 @@ namespace Kirkin.Functional
             }
         }
 
-#if NET_45
+#if !NET_40
         sealed class TaskActionRetryable : Retryable<Func<Task>>
         {
             internal TaskActionRetryable(Func<Task> del)

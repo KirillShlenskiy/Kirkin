@@ -1,6 +1,6 @@
 ﻿using System;
 
-#if NET_45
+#if !NET_40
 using System.Threading.Tasks;
 #endif
 
@@ -35,7 +35,7 @@ namespace Kirkin.Functional
             );
         }
 
-#if NET_45
+#if !NET_40
         /// <summary>
         /// Returns an executable which keeps retrying the execution
         /// allowing for the given number of exceptions.

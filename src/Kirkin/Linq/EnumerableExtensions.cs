@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using Kirkin.Collections.Generic;
 
-#if NET_45
+#if !NET_40
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
@@ -192,7 +192,7 @@ namespace Kirkin.Linq
             }
         }
 
-#if NET_45
+#if !NET_40
         /// <summary>
         /// Returns an enumerable which eagerly iterates through the given collection on
         /// the thread pool and stores resulting elements in a buffer before yielding them.
@@ -335,7 +335,7 @@ namespace Kirkin.Linq
                 count = collectionOfT.Count;
                 return true;
             }
-#if NET_45
+#if !NET_40
             IReadOnlyCollection<T> readOnlyCollection = sequence as IReadOnlyCollection<T>;
 
             if (readOnlyCollection != null)

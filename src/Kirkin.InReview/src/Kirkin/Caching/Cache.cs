@@ -3,7 +3,7 @@ using System.Threading;
 
 using Kirkin.Threading;
 
-#if !NET_45
+#if NET_40
 using System.Runtime.CompilerServices;
 #endif
 
@@ -280,7 +280,7 @@ namespace Kirkin.Caching
             /// </summary>
             private void CheckReentrancy()
             {
-#if NET_45 && !__MOBILE__
+#if !NET_40 && !__MOBILE__
                 if (Monitor.IsEntered(StateLock)) {
                     throw new InvalidOperationException("StateLock already taken out. Re-entrancy prohibited.");
                 }
@@ -849,7 +849,7 @@ namespace Kirkin.Caching
         }
     }
 
-#if !NET_45
+#if NET_40
     /// <summary>
     /// Slow Volatile reimplementation for
     /// consumers targeting .NET 4.0 and below.

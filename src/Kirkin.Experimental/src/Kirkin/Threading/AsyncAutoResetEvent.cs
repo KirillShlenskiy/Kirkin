@@ -1,4 +1,4 @@
-﻿#if NET_45
+﻿#if !NET_40
 
 using System.Collections.Generic;
 using System.Threading.Tasks;

@@ -1,4 +1,4 @@
-﻿#if NET_45 && !__MOBILE__
+﻿#if !NET_40 && !__MOBILE__
 
 using System;
 using System.Diagnostics;

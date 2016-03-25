@@ -222,7 +222,7 @@ namespace Kirkin.Logging
             }
         }
 
-        //#if NET_45
+        //#if !NET_40
         //        /// <summary>
         //        /// Returns a logger proxy which buffers messages
         //        /// and logs them when there is a large enough break.
