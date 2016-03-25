@@ -1,7 +1,4 @@
-﻿#if !__MOBILE__
-
-using System;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Kirkin.Reflection
 {
@@ -30,5 +27,3 @@ namespace Kirkin.Reflection
         void SetValue(object instance, object value);
     }
 }
-
-#endif
