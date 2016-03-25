@@ -50,7 +50,6 @@
     <Compile Include="Collections\Generic\Enumerators\ArrayEnumerator.cs" />
     <Compile Include="Collections\Generic\Enumerators\ListEnumerator.cs" />
     <Compile Include="Collections\Generic\Enumerators\ListInterfaceEnumerator.cs" />
-    <Compile Include="Collections\Generic\IKeyedCollection.cs" />
     <Compile Include="Collections\Generic\KeyedCollection.cs" />
     <Compile Include="Collections\Generic\Vector.cs" />
     <Compile Include="Dependencies\Container.cs" />

@@ -74,7 +74,7 @@ namespace Kirkin.Collections.Generic
     /// Base type for generic collections which maintain an index of their items for fast lookup.
     /// </summary>
     public abstract class KeyedCollectionBase<TKey, TItem>
-        : IKeyedCollection<TKey, TItem>
+        : ICollection<TItem>
     {
         /// <summary>
         /// Underlying dictionary of items.
