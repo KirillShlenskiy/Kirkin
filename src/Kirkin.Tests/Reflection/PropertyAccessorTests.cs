@@ -153,13 +153,14 @@ namespace Kirkin.Tests.Reflection
             private int _privateSetterProp = 0;
 
             public int PrivateSetterProp { get { return _privateSetterProp; } }
+            public static int StaticValue { get; set; }
         }
 
         [Fact]
         public void IsStaticBenchmark()
         {
             var idProperty = typeof(Dummy).GetProperty("ID");
-            var valueProperty = typeof(Dummy).GetProperty("Value");
+            var valueProperty = typeof(Dummy).GetProperty("StaticValue");
 
             for (var i = 0; i < 10000; i++)
             {
