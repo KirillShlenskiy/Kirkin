@@ -4,16 +4,12 @@ using System.Reflection;
 namespace Kirkin.Reflection
 {
     /// <summary>
-    /// Provides fast access to property getter and setter.
-    /// The instances of this type are meant to be cached
-    /// and reused due to the considerable initial cost
-    /// of creating getter and setter delegates incurred
-    /// when Get or Set is called for the first time.
+    /// Provides fast access to property getter and setter. 
     /// </summary>
     /// <remarks>
-    ///   On an x64 machine this is only roughly
-    ///   20% slower than direct property access, and
-    ///   10+ times faster than traditional reflection.
+    /// Instances of this type are meant to be cached and reused due to
+    /// the considerable cost of compiling getter and setter delegates
+    /// incurred when GetValue and SetValue are called for the first time.
     /// </remarks>
     public sealed class PropertyAccessor<TTarget, TProperty>
         : IPropertyAccessor
@@ -68,11 +64,17 @@ namespace Kirkin.Reflection
             _compiledSetter.Invoke(instance, value);
         }
 
+        /// <summary>
+        /// Explicit non-generic getter implementation.
+        /// </summary>
         object IPropertyAccessor.GetValue(object instance)
         {
             return GetValue((TTarget)instance);
         }
 
+        /// <summary>
+        /// Explicit non-generic setter implementation.
+        /// </summary>
         void IPropertyAccessor.SetValue(object instance, object value)
         {
             SetValue((TTarget)instance, (TProperty)value);
