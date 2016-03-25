@@ -32,6 +32,28 @@ namespace Kirkin.Tests.Linq.Expressions
             Assert.Equal(123, dummy.ID);
         }
 
+        [Fact]
+        public void PropertyGetter()
+        {
+            Dummy dummy = new Dummy { ID = 123 };
+            PropertyInfo id = typeof(Dummy).GetProperty("ID");
+            Expression<Func<Dummy, int>> getter = ExpressionEngine.PropertyGetter<Dummy, int>(id);
+
+            Assert.Equal(123, getter.Compile().Invoke(dummy));
+        }
+
+        [Fact]
+        public void PropertySetter()
+        {
+            Dummy dummy = new Dummy { ID = 0 };
+            PropertyInfo id = typeof(Dummy).GetProperty("ID");
+            Expression<Action<Dummy, int>> setter = ExpressionEngine.PropertySetter<Dummy, int>(id);
+
+            setter.Compile().Invoke(dummy, 123);
+
+            Assert.Equal(123, dummy.ID);
+        }
+
         sealed class Dummy
         {
             private int _id;

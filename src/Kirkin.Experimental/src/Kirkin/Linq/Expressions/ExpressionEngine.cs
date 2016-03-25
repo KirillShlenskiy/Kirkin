@@ -33,5 +33,33 @@ namespace Kirkin.Linq.Expressions
                 value
             );
         }
+
+        public static Expression<Func<TObject, TProperty>> PropertyGetter<TObject, TProperty>(PropertyInfo propertyInfo)
+        {
+            if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
+
+            ParameterExpression param = Expression.Parameter(typeof(TObject), "o");
+
+            // o => o.Property;
+            return Expression.Lambda<Func<TObject, TProperty>>(
+                Expression.Property(param, propertyInfo),
+                param
+            );
+        }
+
+        public static Expression<Action<TObject, TProperty>> PropertySetter<TObject, TProperty>(PropertyInfo propertyInfo)
+        {
+            if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
+
+            ParameterExpression param = Expression.Parameter(typeof(TObject), "o");
+            ParameterExpression value = Expression.Parameter(typeof(TProperty), "value");
+
+            // (o, value) => o.Property = value;
+            return Expression.Lambda<Action<TObject, TProperty>>(
+                Expression.Assign(Expression.Property(param, propertyInfo), value),
+                param,
+                value
+            );
+        }
     }
 }
