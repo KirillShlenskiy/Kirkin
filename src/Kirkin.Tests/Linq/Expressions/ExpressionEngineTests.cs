@@ -10,6 +10,16 @@ namespace Kirkin.Tests.Linq.Expressions
 {
     public class ExpressionEngineTests
     {
+        [Fact] // 155
+        public void Perf()
+        {
+            FieldInfo id = typeof(Dummy).GetField("_id", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            for (int i = 0; i < 100000; i++) {
+                ExpressionEngine.FieldGetter<Dummy, int>(id);
+            }
+        }
+
         [Fact]
         public void FieldGetter()
         {
