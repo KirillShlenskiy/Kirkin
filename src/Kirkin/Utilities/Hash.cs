@@ -20,7 +20,7 @@
         /// <summary>
         /// Combines the given hashes according to VB's Anonymous Types rules.
         /// </summary>
-        private static int Combine(int hash, int newKey)
+        public static int Combine(int hash, int newKey)
         {
             return unchecked(hash * Multiplier + newKey);
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
@@ -64,35 +65,28 @@ namespace Kirkin
         /// </summary>
         static TypeMapping()
         {
-            Default = new TypeMapping<T>(
-                TypeUtil.Properties(typeof(T)).ToVector()
-            );
+            Default = new TypeMapping<T>(TypeUtil.Properties(typeof(T)));
         }
+
+        private readonly IPropertyAccessor[] _propertyAccessors;
 
         /// <summary>
         /// Accessors for readable properties mapped by this instance.
         /// </summary>
-        internal readonly Vector<IPropertyAccessor> PropertyAccessors;
-
-        /// <summary>
-        /// Gets the properties which are mapped by this instance.
-        /// </summary>
-        public IEnumerable<PropertyInfo> MappedProperties
+        public Vector<IPropertyAccessor> PropertyAccessors
         {
             get
             {
-                foreach (IPropertyAccessor accessor in PropertyAccessors) {
-                    yield return accessor.Property;
-                }
+                return new Vector<IPropertyAccessor>(_propertyAccessors);
             }
         }
 
         /// <summary>
         /// Copy constructor.
         /// </summary>
-        private TypeMapping(Vector<IPropertyAccessor> propertyAccessors)
+        private TypeMapping(IEnumerable<IPropertyAccessor> propertyAccessors)
         {
-            PropertyAccessors = propertyAccessors;
+            _propertyAccessors = propertyAccessors.ToArray();
         }
 
         /// <summary>
@@ -105,11 +99,11 @@ namespace Kirkin
             if (propertyExpr == null) throw new ArgumentNullException("propertyExpr");
 
             PropertyInfo excludedProperty = ExpressionUtil.Property(propertyExpr);
-            Array<IPropertyAccessor>.Builder accessors = new Array<IPropertyAccessor>.Builder(PropertyAccessors.Length - 1);
+            Array<IPropertyAccessor>.Builder accessors = new Array<IPropertyAccessor>.Builder(_propertyAccessors.Length - 1);
 
-            foreach (IPropertyAccessor accessor in PropertyAccessors)
+            foreach (IPropertyAccessor accessor in _propertyAccessors)
             {
-                if (!TokenEquals(accessor.Property, excludedProperty)) {
+                if (!PropertyInfoEqualityComparer.Instance.Equals(accessor.Property, excludedProperty)) {
                     accessors.Add(accessor);
                 }
             }
@@ -138,7 +132,7 @@ namespace Kirkin
             if (source == null) throw new ArgumentNullException("source");
             if (target == null) throw new ArgumentNullException("target");
 
-            foreach (IPropertyAccessor accessor in PropertyAccessors)
+            foreach (IPropertyAccessor accessor in _propertyAccessors)
             {
                 if (accessor.Property.CanWrite)
                 {
@@ -167,7 +161,7 @@ namespace Kirkin
 
             changeCount = 0;
 
-            foreach (IPropertyAccessor accessor in PropertyAccessors)
+            foreach (IPropertyAccessor accessor in _propertyAccessors)
             {
                 if (accessor.Property.CanWrite)
                 {
@@ -206,7 +200,7 @@ namespace Kirkin
 
             bool needComma = false;
 
-            foreach (IPropertyAccessor accessor in PropertyAccessors)
+            foreach (IPropertyAccessor accessor in _propertyAccessors)
             {
                 if (needComma) {
                     sb.Append(", ");
@@ -222,18 +216,6 @@ namespace Kirkin
             sb.Append(" }");
 
             return sb.ToString();
-        }
-
-        /// <summary>
-        /// Performs advanced equality testing for scenarios
-        /// where Equals does not suffice (i.e. PropertyInfo
-        /// instances which were obtained from base and derived
-        /// types respectively).
-        /// </summary>
-        private static bool TokenEquals(PropertyInfo propertyInfo, PropertyInfo other)
-        {
-            return propertyInfo.Module == other.Module
-                && propertyInfo.MetadataToken == other.MetadataToken;
         }
     }
 }

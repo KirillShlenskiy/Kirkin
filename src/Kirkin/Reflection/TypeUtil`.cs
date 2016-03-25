@@ -27,7 +27,7 @@ namespace Kirkin.Reflection
         ///   that the keys (property names) are unique.
         /// </remarks>
         private static readonly ConcurrentDictionary<PropertyInfo, IPropertyAccessor> FastProperties
-            = new ConcurrentDictionary<PropertyInfo, IPropertyAccessor>();
+            = new ConcurrentDictionary<PropertyInfo, IPropertyAccessor>(PropertyInfoEqualityComparer.Instance);
 
         #endregion
 
