@@ -16,6 +16,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Async\AsyncHandoverBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Async\BoundedCapacityAsyncHandover.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Async\TakeResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Generic\Enumerators\ListInterfaceEnumerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Specialised\OneElementReadOnlyList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Specialised\UndoRedoCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\CustomEqualityComparer.cs" />
