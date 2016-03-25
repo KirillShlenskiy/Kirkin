@@ -14,8 +14,8 @@ namespace Kirkin.Tests.Reflection
 
             for (var i = 0; i < 10000; i++)
             {
-                Assert.False(idProperty.IsStatic());
-                Assert.True(valueProperty.IsStatic());
+                Assert.False(PropertyAccessor<object, object>.IsStatic(idProperty));
+                Assert.True(PropertyAccessor<object, object>.IsStatic(valueProperty));
             }
         }
 

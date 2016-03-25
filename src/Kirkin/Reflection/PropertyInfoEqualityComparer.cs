@@ -10,7 +10,7 @@ namespace Kirkin.Reflection
     /// <see cref="PropertyInfo"/> objects. Required in cases where the <see cref="PropertyInfo"/> objects
     /// are retrieved from different levels of type hierarchy (i.e. one from base and another from derived).
     /// </summary>
-    internal class PropertyInfoEqualityComparer
+    internal sealed class PropertyInfoEqualityComparer
         : IEqualityComparer<PropertyInfo>
     {
         public static readonly PropertyInfoEqualityComparer Instance = new PropertyInfoEqualityComparer();

@@ -87,7 +87,6 @@
     <Compile Include="Reflection\IPropertyAccessor.cs" />
     <Compile Include="Reflection\PropertyAccessor.cs" />
     <Compile Include="Reflection\PropertyInfoEqualityComparer.cs" />
-    <Compile Include="Reflection\PropertyInfoExtensions.cs" />
     <Compile Include="Reflection\TypeUtil.cs" />
     <Compile Include="Reflection\TypeUtil`.cs" />
     <Compile Include="Text\UrlUtil.cs" />

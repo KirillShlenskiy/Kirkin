@@ -33,7 +33,7 @@ namespace Kirkin.Reflection
         internal PropertyAccessor(PropertyInfo property)
         {
             if (property == null) throw new ArgumentNullException(nameof(property));
-            if (property.IsStatic()) throw new ArgumentException("The property cannot be static.");
+            if (IsStatic(property)) throw new ArgumentException("The property cannot be static.");
             if (property.DeclaringType != typeof(TTarget)) throw new ArgumentException("Property declaring type does not match fast property type.");
             if (property.PropertyType != typeof(TProperty)) throw new ArgumentException("Property return type does not match fast property type.");
 
@@ -66,6 +66,16 @@ namespace Kirkin.Reflection
             }
 
             _setter.Invoke(instance, value);
+        }
+
+        object IPropertyAccessor.GetValue(object instance)
+        {
+            return GetValue((TTarget)instance);
+        }
+
+        void IPropertyAccessor.SetValue(object instance, object value)
+        {
+            SetValue((TTarget)instance, (TProperty)value);
         }
 
         /// <summary>
@@ -104,14 +114,28 @@ namespace Kirkin.Reflection
 #endif
         }
 
-        object IPropertyAccessor.GetValue(object instance)
+        /// <summary>
+        /// Determines whether this PropertyInfo
+        /// instance describes a static property.
+        /// </summary>
+        internal static bool IsStatic(PropertyInfo propertyInfo)
         {
-            return GetValue((TTarget)instance);
-        }
+            // Check the getter.
+            if (propertyInfo.CanRead) {
+                return propertyInfo.GetGetMethod(nonPublic: true).IsStatic;
+            }
 
-        void IPropertyAccessor.SetValue(object instance, object value)
-        {
-            SetValue((TTarget)instance, (TProperty)value);
+            // Check the setter.
+            if (propertyInfo.CanWrite) {
+                return propertyInfo.GetSetMethod(nonPublic: true).IsStatic;
+            }
+
+            // Ask the declaring type - slightly slower.
+            PropertyInfo staticPropertyInfo = propertyInfo.DeclaringType.GetProperty(
+                propertyInfo.Name, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
+            );
+
+            return staticPropertyInfo != null;
         }
     }
 }

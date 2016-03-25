@@ -11,11 +11,11 @@ namespace Kirkin.Reflection
     /// </summary>
     public static class TypeUtil
     {
-        #region Property overloads
-
         // Cached TypeUtil<>.Property(PropertyInfo) delegates.
         private static readonly ConcurrentDictionary<Type, Func<PropertyInfo, IPropertyAccessor>> GenericTypeUtilPropertyDelegates
             = new ConcurrentDictionary<Type, Func<PropertyInfo, IPropertyAccessor>>();
+
+        #region Property overloads
 
         /// <summary>
         /// Provides fast access to the given public or non-public property.
@@ -92,35 +92,6 @@ namespace Kirkin.Reflection
                 yield return Property(propertyInfo);
             }
         }
-
-        #endregion
-
-        #region Method delegate resolution
-
-        // Untested.
-
-        ///// <summary>
-        ///// Provides fast access to the given
-        ///// public or non-public static method.
-        ///// </summary>
-        //public static TDelegate StaticMethod<TDelegate>(Type type, string methodName)
-        //{
-        //    if (type == null) throw new ArgumentNullException("type");
-
-        //    MethodInfo method = type.GetMethod(
-        //        methodName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
-        //    );
-
-        //    if (method == null)
-        //    {
-        //        throw new MissingMethodException(
-        //            string.Format("{0}.{1} method cannot be resolved.", type.Name, methodName)
-        //        );
-        //    }
-
-        //    // Ugly double cast but whatever.
-        //    return (TDelegate)(object)Delegate.CreateDelegate(typeof(TDelegate), method);
-        //}
 
         #endregion
     }
