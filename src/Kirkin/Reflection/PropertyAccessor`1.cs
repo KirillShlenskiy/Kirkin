@@ -19,7 +19,7 @@ namespace Kirkin.Reflection
         /// value is a generic PropertyAccessor{T,} upcast to the non-generic interface.
         /// </summary>
         private static readonly ConcurrentDictionary<PropertyInfo, IPropertyAccessor> PropertyAccessors
-            = new ConcurrentDictionary<PropertyInfo, IPropertyAccessor>(PropertyInfoEqualityComparer.Instance);
+            = new ConcurrentDictionary<PropertyInfo, IPropertyAccessor>(MemberInfoEqualityComparer.Instance);
 
         #endregion
 

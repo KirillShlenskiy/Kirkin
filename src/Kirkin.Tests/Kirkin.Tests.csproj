@@ -132,6 +132,7 @@
     <Compile Include="Mapping\ExpressMapperTests.cs" />
     <Compile Include="Mapping\MapperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reflection\MemberInfoEqualityComparerTests.cs" />
     <Compile Include="Reflection\PropertyAccessorTests.cs" />
     <Compile Include="Reflection\PropertyAccessorFactoryTests.cs" />
     <Compile Include="Scratchpad.cs" />

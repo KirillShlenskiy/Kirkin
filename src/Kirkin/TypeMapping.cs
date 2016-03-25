@@ -96,7 +96,7 @@ namespace Kirkin
 
             foreach (IPropertyAccessor accessor in _propertyAccessors)
             {
-                if (!PropertyInfoEqualityComparer.Instance.Equals(accessor.Property, excludedProperty)) {
+                if (!MemberInfoEqualityComparer.Instance.Equals(accessor.Property, excludedProperty)) {
                     accessors.Add(accessor);
                 }
             }
