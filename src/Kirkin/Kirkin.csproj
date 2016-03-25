@@ -88,7 +88,7 @@
     <Compile Include="Reflection\PropertyAccessor`2.cs" />
     <Compile Include="Reflection\PropertyInfoEqualityComparer.cs" />
     <Compile Include="Reflection\PropertyAccessor.cs" />
-    <Compile Include="Reflection\PropertyAccessorFactory`.cs" />
+    <Compile Include="Reflection\PropertyAccessor`1.cs" />
     <Compile Include="Text\UrlUtil.cs" />
     <Compile Include="Threading\Cancellation.cs" />
     <Compile Include="Threading\Tasks\ParallelTaskOptions.cs" />

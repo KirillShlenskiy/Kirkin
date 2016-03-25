@@ -27,7 +27,7 @@ namespace Kirkin.Tests.Reflection
             for (var i = 0; i < 100000; i++)
             {
                 var dummy = new Dummy();
-                var idProp = PropertyAccessorFactory<Dummy>.Property(d => d.ID);
+                var idProp = PropertyAccessor<Dummy>.Resolve(d => d.ID);
 
                 idProp.SetValue(dummy, 100);
 
@@ -42,7 +42,7 @@ namespace Kirkin.Tests.Reflection
             for (var i = 0; i < 100000; i++)
             {
                 var dummy = new Dummy();
-                var idProp = PropertyAccessorFactory<Dummy>.Property<int>("ID");
+                var idProp = PropertyAccessor<Dummy>.Resolve<int>("ID");
 
                 idProp.SetValue(dummy, 100);
 
@@ -193,7 +193,7 @@ namespace Kirkin.Tests.Reflection
 
             for (var i = 0; i < 100000; i++)
             {
-                var prop = PropertyAccessorFactory<Dummy>.Property(expr);
+                var prop = PropertyAccessor<Dummy>.Resolve(expr);
 
                 prop.SetValue(dummy, prop.GetValue(dummy) + 1);
             }
@@ -206,7 +206,7 @@ namespace Kirkin.Tests.Reflection
 
             for (var i = 0; i < 100000; i++)
             {
-                var prop = PropertyAccessorFactory<Dummy>.Property<int>("ID");
+                var prop = PropertyAccessor<Dummy>.Resolve<int>("ID");
 
                 prop.SetValue(dummy, prop.GetValue(dummy) + 1);
             }

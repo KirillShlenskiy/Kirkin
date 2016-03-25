@@ -13,8 +13,8 @@ namespace Kirkin.Reflection
     /// </summary>
     public static class PropertyAccessor
     {
-        // Cached PropertyAccessFactory<>.Property(PropertyInfo) delegates.
-        private static readonly ConcurrentDictionary<Type, Func<PropertyInfo, IPropertyAccessor>> GenericPropertyAccessorFactoryDelegates
+        // Cached PropertyAccessor<>.GetOrCreateAccessor(PropertyInfo) delegates.
+        private static readonly ConcurrentDictionary<Type, Func<PropertyInfo, IPropertyAccessor>> GetOrCreateAccessorDelegates
             = new ConcurrentDictionary<Type, Func<PropertyInfo, IPropertyAccessor>>();
 
         #region Resolve overloads
@@ -32,7 +32,7 @@ namespace Kirkin.Reflection
         }
 
         /// <summary>
-        /// Provides fast access to the given public or non-public property.
+        /// Returns an accessor for the property with the given name.
         /// </summary>
         internal static IPropertyAccessor Resolve<T>(string propertyName,
                                                      BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
@@ -41,7 +41,7 @@ namespace Kirkin.Reflection
         }
 
         /// <summary>
-        /// Provides fast access to the given property.
+        /// Returns an accessor for the property with the given name.
         /// </summary>
         internal static IPropertyAccessor Resolve(Type type,
                                                   string propertyName,
@@ -53,35 +53,39 @@ namespace Kirkin.Reflection
         }
 
         /// <summary>
-        /// Provides fast access to the given public or non-public property.
+        /// Returns an accessor for the given property.
         /// </summary>
         public static IPropertyAccessor Resolve(PropertyInfo propertyInfo)
         {
             // Argument validation.
             if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
 
-            // Resolve cached PropertyAccessFactory<T>.Property(PropertyInfo)
-            // delegate, or create a new one with Reflection.
-            Func<PropertyInfo, IPropertyAccessor> propertyFunc;
+            // Resolve cached PropertyAccessor<T>.GetOrCreateAccessor(PropertyInfo)
+            // delegate, or create a new one using Reflection.
+            Func<PropertyInfo, IPropertyAccessor> getOrCreateAccessorFunc;
             
-            if (!GenericPropertyAccessorFactoryDelegates.TryGetValue(propertyInfo.DeclaringType, out propertyFunc))
+            if (!GetOrCreateAccessorDelegates.TryGetValue(propertyInfo.DeclaringType, out getOrCreateAccessorFunc))
             {
-                Type genericPropertyAccessorFactoryType = typeof(PropertyAccessorFactory<>).MakeGenericType(propertyInfo.DeclaringType);
+                Type genericPropertyAccessorType = typeof(PropertyAccessor<>).MakeGenericType(propertyInfo.DeclaringType);
 
-                MethodInfo propertyMethod = genericPropertyAccessorFactoryType.GetMethod(
-                    nameof(PropertyAccessorFactory<object>.Property), new[] { typeof(PropertyInfo) }
+                MethodInfo getOrCreateAccessorMethod = genericPropertyAccessorType.GetMethod(
+                    nameof(PropertyAccessor<object>.GetOrCreateAccessor),
+                    BindingFlags.Static | BindingFlags.NonPublic,
+                    null,
+                    new[] { typeof(PropertyInfo) },
+                    null
                 );
 
                 var newPropertyFunc = (Func<PropertyInfo, IPropertyAccessor>)Delegate.CreateDelegate(
-                    typeof(Func<PropertyInfo, IPropertyAccessor>), propertyMethod
+                    typeof(Func<PropertyInfo, IPropertyAccessor>), getOrCreateAccessorMethod
                 );
 
-                propertyFunc = GenericPropertyAccessorFactoryDelegates.GetOrAdd(
+                getOrCreateAccessorFunc = GetOrCreateAccessorDelegates.GetOrAdd(
                     propertyInfo.DeclaringType, newPropertyFunc
                 );
             }
 
-            return propertyFunc(propertyInfo);
+            return getOrCreateAccessorFunc(propertyInfo);
         }
 
         #endregion
@@ -89,7 +93,8 @@ namespace Kirkin.Reflection
         #region ResolveAll overloads
 
         /// <summary>
-        /// Provides fast access to public instance properties.
+        /// Returns accessor for all properties matching the
+        /// given binding flags (public, instance by default).
         /// </summary>
         public static IEnumerable<IPropertyAccessor> ResolveAll<T>(BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public)
         {
@@ -97,7 +102,8 @@ namespace Kirkin.Reflection
         }
 
         /// <summary>
-        /// Provides fast access to properties matching the given binding flags.
+        /// Returns accessor for all properties matching the
+        /// given binding flags (public, instance by default).
         /// </summary>
         public static IEnumerable<IPropertyAccessor> ResolveAll(Type type,
                                                                 BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public)
@@ -108,7 +114,6 @@ namespace Kirkin.Reflection
                 throw new ArgumentException("BindingFlags.Static is not allowed.");
             }
 
-            // Resolve fast properties.
             foreach (PropertyInfo propertyInfo in type.GetProperties(bindingFlags)) {
                 yield return Resolve(propertyInfo);
             }

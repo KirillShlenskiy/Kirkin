@@ -8,10 +8,9 @@ using Kirkin.Linq.Expressions;
 namespace Kirkin.Reflection
 {
     /// <summary>
-    /// Provides Reflection-related
-    /// methods on the given type.
+    /// <see cref="PropertyAccessor{TTarget, TProperty}"/> factory methods.
     /// </summary>
-    internal static class PropertyAccessorFactory<T>
+    public static class PropertyAccessor<T>
     {
         #region PropertyAccessor<T,> Cache
 
@@ -27,13 +26,32 @@ namespace Kirkin.Reflection
         #region Property overloads
 
         /// <summary>
-        /// Provides fast access to the given public instance property.
+        /// Returns an accessor for the property identified by the given expression.
         /// </summary>
-        public static PropertyAccessor<T, TProperty> Property<TProperty>(Expression<Func<T, TProperty>> propertyExpr)
+        public static PropertyAccessor<T, TProperty> Resolve<TProperty>(Expression<Func<T, TProperty>> propertyExpr)
         {
             PropertyInfo propertyInfo = ExpressionUtil.Property(propertyExpr);
 
-            // Resolve the cached entry or create a new one.
+            return ResolveFast<TProperty>(propertyInfo);
+        }
+
+        /// <summary>
+        /// Returns an accessor for the property with the given name.
+        /// </summary>
+        public static PropertyAccessor<T, TProperty> Resolve<TProperty>(string propertyName,
+                                                                        BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+        {
+            PropertyInfo propertyInfo = typeof(T).GetProperty(propertyName, bindingFlags);
+
+            return ResolveFast<TProperty>(propertyInfo);
+        }
+
+        /// <summary>
+        /// Gets or creates an accessor for the given property.
+        /// Faster than <see cref="GetOrCreateAccessor(PropertyInfo)"/>.
+        /// </summary>
+        private static PropertyAccessor<T, TProperty> ResolveFast<TProperty>(PropertyInfo propertyInfo)
+        {
             IPropertyAccessor accessor;
 
             if (!PropertyAccessors.TryGetValue(propertyInfo, out accessor))
@@ -49,57 +67,7 @@ namespace Kirkin.Reflection
         /// <summary>
         /// Provides fast access to the given public or non-public instance property.
         /// </summary>
-        public static PropertyAccessor<T, TProperty>Property<TProperty>(string propertyName)
-        {
-            return Property<TProperty>(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-        }
-
-        /// <summary>
-        /// Provides fast access to the given property.
-        /// </summary>
-        public static PropertyAccessor<T, TProperty> Property<TProperty>(string propertyName, BindingFlags bindingFlags)
-        {
-            PropertyInfo propertyInfo = typeof(T).GetProperty(propertyName, bindingFlags);
-
-            if (propertyInfo == null) {
-                return null;
-            }
-
-            // Resolve the cached entry or create a new one.
-            IPropertyAccessor accessor;
-
-            if (!PropertyAccessors.TryGetValue(propertyInfo, out accessor))
-            {
-                accessor = PropertyAccessors.GetOrAdd(
-                    propertyInfo, new PropertyAccessor<T, TProperty>(propertyInfo)
-                );
-            }
-
-            return (PropertyAccessor<T, TProperty>)accessor;
-        }
-
-        /// <summary>
-        /// Provides fast access to the given public or non-public instance property.
-        /// </summary>
-        public static IPropertyAccessor Property(string propertyName)
-        {
-            return Property(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-        }
-
-        /// <summary>
-        /// Provides fast access to the given property.
-        /// </summary>
-        public static IPropertyAccessor Property(string propertyName, BindingFlags bindingFlags)
-        {
-            PropertyInfo propertyInfo = typeof(T).GetProperty(propertyName, bindingFlags);
-
-            return (propertyInfo == null) ? null : Property(propertyInfo);
-        }
-
-        /// <summary>
-        /// Provides fast access to the given public or non-public instance property.
-        /// </summary>
-        public static IPropertyAccessor Property(PropertyInfo propertyInfo)
+        internal static IPropertyAccessor GetOrCreateAccessor(PropertyInfo propertyInfo)
         {
             // Argument validation.
             if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
