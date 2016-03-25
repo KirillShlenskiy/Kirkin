@@ -2,7 +2,6 @@
 
 using System;
 using System.Reflection;
-using System.Reflection.Emit;
 
 namespace Kirkin.Reflection
 {
@@ -15,22 +14,20 @@ namespace Kirkin.Reflection
     /// </summary>
     /// <remarks>
     ///   On an x64 machine this is only roughly
-    ///   100% slower than direct property access, and
-    ///   5+ times faster than traditional reflection.
+    ///   20% slower than direct property access, and
+    ///   10+ times faster than traditional reflection.
     /// </remarks>
-    public class FastProperty
+    public sealed class FastProperty<TTarget, TProperty>
+        : IFastProperty
     {
-        // Read-only fields.
-        private readonly bool ValueTypeNullSemantics;
-
-        // Backing fields.
-        private Func<object, object> _getter;
-        private Action<object, object> _setter;
-
         /// <summary>
         /// Property specified when this instance was created.
         /// </summary>
         public PropertyInfo Property { get; }
+
+        // Backing fields.
+        private Func<TTarget, TProperty> _getter;
+        private Action<TTarget, TProperty> _setter;
 
         /// <summary>
         /// Creates a new instance wrapping the given PropertyInfo.
@@ -41,30 +38,23 @@ namespace Kirkin.Reflection
             if (property.IsStatic()) throw new ArgumentException("The property cannot be static.");
 
             Property = property;
-            ValueTypeNullSemantics = property.PropertyType.IsValueType;
+
+            if (property.DeclaringType != typeof(TTarget))
+                throw new ArgumentException("Property declaring type does not match fast property type.");
+
+            if (property.PropertyType != typeof(TProperty))
+                throw new ArgumentException("Property return type does not match fast property type.");
         }
 
         /// <summary>
         /// Invokes the property getter.
         /// </summary>
-        public object GetValue(object instance)
+        public TProperty GetValue(TTarget instance)
         {
-            // The Getter property doesn't seem to get
-            // inlined properly, so duplicating the code
-            // here yields a slight performance improvement.
-            //
-            // This code obviously has a race condition,
-            // but as long as the value of _getter is not
-            // publically available, it doesn't really matter
-            // if it happens to be initialised multiple times.
-            if (_getter == null)
-            {
-                if (!Property.CanRead)
-                {
-                    throw new InvalidOperationException("The property does not define a getter.");
-                }
-
-                _getter = DynamicCreateGetter();
+            // This code obviously has a race condition, but as long as _getter is not publicly
+            // visible, it doesn't really matter if it happens to be initialised multiple times.
+            if (_getter == null) {
+                CreateGetter();
             }
 
             return _getter.Invoke(instance);
@@ -73,113 +63,53 @@ namespace Kirkin.Reflection
         /// <summary>
         /// Invokes the property setter.
         /// </summary>
-        public void SetValue(object instance, object value)
+        public void SetValue(TTarget instance, TProperty value)
         {
-            // The Setter property doesn't seem to get
-            // inlined properly, so duplicating the code
-            // here yields a slight performance improvement.
-            //
-            // This code obviously has a race condition,
-            // but as long as the value of _setter is not
-            // publically available, it doesn't really matter
-            // if it happens to be initialised multiple times.
-            if (_setter == null)
-            {
-                if (!Property.CanWrite)
-                {
-                    throw new InvalidOperationException("The property does not define a setter.");
-                }
-
-                _setter = DynamicCreateSetter();
+            // This code obviously has a race condition, but as long as _setter is not publicly
+            // visible, it doesn't really matter if it happens to be initialised multiple times.
+            if (_setter == null) {
+                CreateSetter();
             }
 
-            if (ValueTypeNullSemantics && value == null)
-            {
-                // Value type handling consistent with PropertyInfo.SetValue(obj, null).
-                _setter.Invoke(instance, Activator.CreateInstance(Property.PropertyType));
-            }
-            else
-            {
-                _setter.Invoke(instance, value);
-            }
+            _setter.Invoke(instance, value);
         }
 
         /// <summary>
-        /// Creates a non-generic getter delegate.
+        /// Creates and stores the getter delegate.
         /// </summary>
-        private Func<object, object> DynamicCreateGetter()
+        private void CreateGetter()
         {
-            var getMethod = Property.GetGetMethod();
-
-            if (getMethod == null)
-            {
-                throw new InvalidOperationException("Unable to resolve Get method.");
+            if (!Property.CanRead) {
+                throw new InvalidOperationException("The property does not define a getter.");
             }
 
-            var getter = new DynamicMethod(
-                name: "<FastProperty>_Get" + Property.Name,
-                returnType: typeof(object),
-                parameterTypes: new[] { typeof(object) },
-                m: Property.Module,
-                skipVisibility: true
+            _getter = (Func<TTarget, TProperty>)Delegate.CreateDelegate(
+                typeof(Func<TTarget, TProperty>), Property.GetGetMethod(nonPublic: true)
             );
-
-            var generator = getter.GetILGenerator();
-
-            generator.DeclareLocal(typeof(object));
-            generator.Emit(OpCodes.Ldarg_0);
-            generator.Emit(OpCodes.Castclass, Property.DeclaringType);
-            generator.EmitCall(OpCodes.Callvirt, getMethod, null);
-
-            if (Property.PropertyType.IsValueType)
-            {
-                generator.Emit(OpCodes.Box, Property.PropertyType);
-            }
-
-            generator.Emit(OpCodes.Ret);
-
-            return (Func<object, object>)getter.CreateDelegate(typeof(Func<object, object>));
         }
 
         /// <summary>
-        /// Creates a non-generic setter delegate.
+        /// Creates and stores the setter delegate.
         /// </summary>
-        private Action<object, object> DynamicCreateSetter()
+        private void CreateSetter()
         {
-            var setMethod = Property.GetSetMethod();
-
-            if (setMethod == null)
-            {
-                throw new InvalidOperationException("Unable to resolve Set method.");
+            if (!Property.CanWrite) {
+                throw new InvalidOperationException("The property does not define a setter.");
             }
 
-            var setter = new DynamicMethod(
-                name: "<FastProperty>_Set" + Property.Name,
-                returnType: typeof(void),
-                parameterTypes: new[] { typeof(object), typeof(object) },
-                m: Property.Module,
-                skipVisibility: true
+            _setter = (Action<TTarget, TProperty>)Delegate.CreateDelegate(
+                typeof(Action<TTarget, TProperty>), Property.GetSetMethod(nonPublic: true)
             );
+        }
 
-            var generator = setter.GetILGenerator();
+        object IFastProperty.GetValue(object instance)
+        {
+            return GetValue((TTarget)instance);
+        }
 
-            generator.Emit(OpCodes.Ldarg_0);
-            generator.Emit(OpCodes.Castclass, Property.DeclaringType);
-            generator.Emit(OpCodes.Ldarg_1);
-
-            if (Property.PropertyType.IsValueType)
-            {
-                generator.Emit(OpCodes.Unbox_Any, Property.PropertyType);
-            }
-            else
-            {
-                generator.Emit(OpCodes.Castclass, Property.PropertyType);
-            }
-
-            generator.EmitCall(OpCodes.Callvirt, setMethod, null);
-            generator.Emit(OpCodes.Ret);
-
-            return (Action<object, object>)setter.CreateDelegate(typeof(Action<object, object>));
+        void IFastProperty.SetValue(object instance, object value)
+        {
+            SetValue((TTarget)instance, (TProperty)value);
         }
     }
 }

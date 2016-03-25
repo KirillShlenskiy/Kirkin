@@ -289,7 +289,7 @@ namespace Kirkin
 #if !__MOBILE__
         internal struct PropertyAccessor
         {
-            private readonly FastProperty __property;
+            private readonly IFastProperty __property;
 
             public PropertyInfo Property
             {

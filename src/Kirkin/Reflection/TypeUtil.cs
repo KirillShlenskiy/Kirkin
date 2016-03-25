@@ -18,13 +18,13 @@ namespace Kirkin.Reflection
         #region Property overloads
 
         // Cached TypeUtil<>.Property(PropertyInfo) delegates.
-        private static readonly ConcurrentDictionary<Type, Func<PropertyInfo, FastProperty>> GenericTypeUtilPropertyDelegates
-            = new ConcurrentDictionary<Type, Func<PropertyInfo, FastProperty>>();
+        private static readonly ConcurrentDictionary<Type, Func<PropertyInfo, IFastProperty>> GenericTypeUtilPropertyDelegates
+            = new ConcurrentDictionary<Type, Func<PropertyInfo, IFastProperty>>();
 
         /// <summary>
         /// Provides fast access to the given public or non-public property.
         /// </summary>
-        public static FastProperty Property(Type type, string propertyName)
+        public static IFastProperty Property(Type type, string propertyName)
         {
             return TypeUtil.Property(type, propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         }
@@ -32,7 +32,7 @@ namespace Kirkin.Reflection
         /// <summary>
         /// Provides fast access to the given property.
         /// </summary>
-        public static FastProperty Property(Type type, string propertyName, BindingFlags bindingFlags)
+        public static IFastProperty Property(Type type, string propertyName, BindingFlags bindingFlags)
         {
             var propertyInfo = type.GetProperty(propertyName, bindingFlags);
 
@@ -42,22 +42,22 @@ namespace Kirkin.Reflection
         /// <summary>
         /// Provides fast access to the given public or non-public property.
         /// </summary>
-        public static FastProperty Property(PropertyInfo propertyInfo)
+        public static IFastProperty Property(PropertyInfo propertyInfo)
         {
             // Argument validation.
             if (propertyInfo == null) throw new ArgumentNullException("propertyInfo");
 
             // Resolve cached TypeUtil<T>.Property(PropertyInfo)
             // delegate, or create a new one with Reflection.
-            Func<PropertyInfo, FastProperty> propertyFunc;
+            Func<PropertyInfo, IFastProperty> propertyFunc;
             
             if (!TypeUtil.GenericTypeUtilPropertyDelegates.TryGetValue(propertyInfo.DeclaringType, out propertyFunc))
             {
                 var typeUtilType = typeof(TypeUtil<>).MakeGenericType(propertyInfo.DeclaringType);
                 var propertyMethod = typeUtilType.GetMethod("Property", new[] { typeof(PropertyInfo) });
 
-                var newPropertyFunc = (Func<PropertyInfo, FastProperty>)Delegate.CreateDelegate(
-                    typeof(Func<PropertyInfo, FastProperty>), propertyMethod
+                var newPropertyFunc = (Func<PropertyInfo, IFastProperty>)Delegate.CreateDelegate(
+                    typeof(Func<PropertyInfo, IFastProperty>), propertyMethod
                 );
 
                 propertyFunc = TypeUtil.GenericTypeUtilPropertyDelegates.GetOrAdd(
@@ -75,7 +75,7 @@ namespace Kirkin.Reflection
         /// <summary>
         /// Provides fast access to public instance properties.
         /// </summary>
-        public static IEnumerable<FastProperty> Properties(Type type)
+        public static IEnumerable<IFastProperty> Properties(Type type)
         {
             return TypeUtil.Properties(type, BindingFlags.Instance | BindingFlags.Public);
         }
@@ -83,7 +83,7 @@ namespace Kirkin.Reflection
         /// <summary>
         /// Provides fast access to properties matching the given binding flags.
         /// </summary>
-        public static IEnumerable<FastProperty> Properties(Type type, BindingFlags bindingFlags)
+        public static IEnumerable<IFastProperty> Properties(Type type, BindingFlags bindingFlags)
         {
             if (type == null) throw new ArgumentNullException("type");
 
