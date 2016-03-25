@@ -13,20 +13,18 @@ namespace Kirkin.Reflection
         /// </summary>
         public static bool IsStatic(this PropertyInfo propertyInfo)
         {
-            if (propertyInfo.CanRead)
-            {
-                // Check the getter.
+            // Check the getter.
+            if (propertyInfo.CanRead) {
                 return propertyInfo.GetGetMethod(true).IsStatic;
             }
 
-            if (propertyInfo.CanWrite)
-            {
-                // Check the setter.
+            // Check the setter.
+            if (propertyInfo.CanWrite) {
                 return propertyInfo.GetSetMethod(true).IsStatic;
             }
 
             // Ask the declaring type - slightly slower.
-            var staticPropertyInfo = propertyInfo.DeclaringType.GetProperty(
+            PropertyInfo staticPropertyInfo = propertyInfo.DeclaringType.GetProperty(
                 propertyInfo.Name, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
             );
 

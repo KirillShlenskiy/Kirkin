@@ -1,6 +1,4 @@
-﻿#if !__MOBILE__
-
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -60,7 +58,7 @@ namespace Kirkin.Reflection
         /// </summary>
         public static PropertyAccessor<T, TProperty>Property<TProperty>(string propertyName)
         {
-            return TypeUtil<T>.Property<TProperty>(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            return Property<TProperty>(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         }
 
         /// <summary>
@@ -92,7 +90,7 @@ namespace Kirkin.Reflection
         /// </summary>
         public static IPropertyAccessor Property(string propertyName)
         {
-            return TypeUtil<T>.Property(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            return Property(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         }
 
         /// <summary>
@@ -102,7 +100,7 @@ namespace Kirkin.Reflection
         {
             var propertyInfo = typeof(T).GetProperty(propertyName, bindingFlags);
 
-            return propertyInfo == null ? null : TypeUtil<T>.Property(propertyInfo);
+            return propertyInfo == null ? null : Property(propertyInfo);
         }
 
         /// <summary>
@@ -121,19 +119,17 @@ namespace Kirkin.Reflection
                 // PropertyInfo validation.
                 // It is permissible for TypeUtil<T> to
                 // store properties declared in T's base.
-                if (!propertyInfo.DeclaringType.IsAssignableFrom(typeof(T)))
-                {
+                if (!propertyInfo.DeclaringType.IsAssignableFrom(typeof(T))) {
                     throw new InvalidOperationException("Property declaring type mismatch.");
                 }
 
                 // We'll use some Reflection to create a
                 // generic FastProperty, because it's faster
                 // and ultimately that's what we want to cache.
-                var closedType = typeof(PropertyAccessor<,>).MakeGenericType(propertyInfo.DeclaringType, propertyInfo.PropertyType);
-                var constructor = closedType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(PropertyInfo) }, null);
+                Type closedType = typeof(PropertyAccessor<,>).MakeGenericType(propertyInfo.DeclaringType, propertyInfo.PropertyType);
+                ConstructorInfo constructor = closedType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(PropertyInfo) }, null);
 
-                if (constructor == null)
-                {
+                if (constructor == null) {
                     throw new MissingMethodException("Unable to resolve non-public " + closedType.Name + " constructor.");
                 }
 
@@ -154,7 +150,7 @@ namespace Kirkin.Reflection
         /// </summary>
         public static IEnumerable<IPropertyAccessor> Properties()
         {
-            return TypeUtil<T>.Properties(BindingFlags.Instance | BindingFlags.Public);
+            return Properties(BindingFlags.Instance | BindingFlags.Public);
         }
 
         /// <summary>
@@ -162,15 +158,13 @@ namespace Kirkin.Reflection
         /// </summary>
         public static IEnumerable<IPropertyAccessor> Properties(BindingFlags bindingFlags)
         {
-            if (bindingFlags.HasFlag(BindingFlags.Static))
-            {
+            if (bindingFlags.HasFlag(BindingFlags.Static)) {
                 throw new ArgumentException("BindingFlags.Static is not allowed.");
             }
 
             // Resolve fast properties.
-            foreach (var propertyInfo in typeof(T).GetProperties(bindingFlags))
-            {
-                yield return TypeUtil<T>.Property(propertyInfo);
+            foreach (PropertyInfo propertyInfo in typeof(T).GetProperties(bindingFlags)) {
+                yield return Property(propertyInfo);
             }
         }
 
@@ -184,9 +178,9 @@ namespace Kirkin.Reflection
         /// </summary>
         public static TDelegate StaticMethod<TDelegate>(string methodName)
         {
-            var type = typeof(T);
+            Type type = typeof(T);
 
-            var method = type.GetMethod(
+            MethodInfo method = type.GetMethod(
                 methodName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
             );
 
@@ -204,5 +198,3 @@ namespace Kirkin.Reflection
         #endregion
     }
 }
-
-#endif

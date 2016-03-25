@@ -1,10 +1,8 @@
 ﻿using System;
 
-#if !__MOBILE__
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
-#endif
 
 namespace Kirkin.Reflection
 {
@@ -13,7 +11,6 @@ namespace Kirkin.Reflection
     /// </summary>
     public static class TypeUtil
     {
-#if !__MOBILE__
         #region Property overloads
 
         // Cached TypeUtil<>.Property(PropertyInfo) delegates.
@@ -25,7 +22,7 @@ namespace Kirkin.Reflection
         /// </summary>
         public static IPropertyAccessor Property(Type type, string propertyName)
         {
-            return TypeUtil.Property(type, propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            return Property(type, propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         }
 
         /// <summary>
@@ -33,9 +30,9 @@ namespace Kirkin.Reflection
         /// </summary>
         public static IPropertyAccessor Property(Type type, string propertyName, BindingFlags bindingFlags)
         {
-            var propertyInfo = type.GetProperty(propertyName, bindingFlags);
+            PropertyInfo propertyInfo = type.GetProperty(propertyName, bindingFlags);
 
-            return propertyInfo == null ? null : TypeUtil.Property(propertyInfo);
+            return propertyInfo == null ? null : Property(propertyInfo);
         }
 
         /// <summary>
@@ -50,16 +47,16 @@ namespace Kirkin.Reflection
             // delegate, or create a new one with Reflection.
             Func<PropertyInfo, IPropertyAccessor> propertyFunc;
             
-            if (!TypeUtil.GenericTypeUtilPropertyDelegates.TryGetValue(propertyInfo.DeclaringType, out propertyFunc))
+            if (!GenericTypeUtilPropertyDelegates.TryGetValue(propertyInfo.DeclaringType, out propertyFunc))
             {
-                var typeUtilType = typeof(TypeUtil<>).MakeGenericType(propertyInfo.DeclaringType);
-                var propertyMethod = typeUtilType.GetMethod("Property", new[] { typeof(PropertyInfo) });
+                Type typeUtilType = typeof(TypeUtil<>).MakeGenericType(propertyInfo.DeclaringType);
+                MethodInfo propertyMethod = typeUtilType.GetMethod("Property", new[] { typeof(PropertyInfo) });
 
                 var newPropertyFunc = (Func<PropertyInfo, IPropertyAccessor>)Delegate.CreateDelegate(
                     typeof(Func<PropertyInfo, IPropertyAccessor>), propertyMethod
                 );
 
-                propertyFunc = TypeUtil.GenericTypeUtilPropertyDelegates.GetOrAdd(
+                propertyFunc = GenericTypeUtilPropertyDelegates.GetOrAdd(
                     propertyInfo.DeclaringType, newPropertyFunc
                 );
             }
@@ -76,7 +73,7 @@ namespace Kirkin.Reflection
         /// </summary>
         public static IEnumerable<IPropertyAccessor> Properties(Type type)
         {
-            return TypeUtil.Properties(type, BindingFlags.Instance | BindingFlags.Public);
+            return Properties(type, BindingFlags.Instance | BindingFlags.Public);
         }
 
         /// <summary>
@@ -86,15 +83,13 @@ namespace Kirkin.Reflection
         {
             if (type == null) throw new ArgumentNullException("type");
 
-            if (bindingFlags.HasFlag(BindingFlags.Static))
-            {
+            if (bindingFlags.HasFlag(BindingFlags.Static)) {
                 throw new ArgumentException("BindingFlags.Static is not allowed.");
             }
 
             // Resolve fast properties.
-            foreach (var propertyInfo in type.GetProperties(bindingFlags))
-            {
-                yield return TypeUtil.Property(propertyInfo);
+            foreach (PropertyInfo propertyInfo in type.GetProperties(bindingFlags)) {
+                yield return Property(propertyInfo);
             }
         }
 
@@ -112,7 +107,7 @@ namespace Kirkin.Reflection
         //{
         //    if (type == null) throw new ArgumentNullException("type");
 
-        //    var method = type.GetMethod(
+        //    MethodInfo method = type.GetMethod(
         //        methodName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
         //    );
 
@@ -128,6 +123,5 @@ namespace Kirkin.Reflection
         //}
 
         #endregion
-#endif
     }
 }

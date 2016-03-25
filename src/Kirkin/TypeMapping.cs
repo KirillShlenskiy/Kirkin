@@ -64,24 +64,9 @@ namespace Kirkin
         /// </summary>
         static TypeMapping()
         {
-            Default = CreateDefault();
-        }
-
-        /// <summary>
-        /// Creates an instance of <see cref="TypeMapping{T}"/> with default parameters.
-        /// </summary>
-        private static TypeMapping<T> CreateDefault()
-        {
-            Array<IPropertyAccessor>.Builder accessors = new Array<IPropertyAccessor>.Builder();
-
-            foreach (PropertyInfo prop in typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public))
-            {
-                if (prop.CanRead) {
-                    accessors.Add(TypeUtil.Property(prop));
-                }
-            }
-
-            return new TypeMapping<T>(accessors.ToVector());
+            Default = new TypeMapping<T>(
+                TypeUtil.Properties(typeof(T)).ToVector()
+            );
         }
 
         /// <summary>
