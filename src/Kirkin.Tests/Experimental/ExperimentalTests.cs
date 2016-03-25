@@ -229,6 +229,22 @@ namespace Kirkin.Tests.Experimental
             [FieldOffset(0)]
             public NonNullableString NonNullableString;
         }
+
+        [Fact]
+        public void PropertyInfoEq()
+        {
+            var p1 = typeof(Dummyz).GetProperties()[0];
+            var p2 = typeof(Dummyz).GetProperty("ID");
+
+            Assert.True(p1.Equals(p2));
+            Assert.True(Equals(p1, p2));
+            Assert.True(p1 == p2);
+        }
+
+        class Dummyz
+        {
+            public int ID { get; set; }
+        }
     }
 
     internal static class Mutation

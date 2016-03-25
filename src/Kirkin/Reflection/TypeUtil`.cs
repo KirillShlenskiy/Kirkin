@@ -26,8 +26,8 @@ namespace Kirkin.Reflection
         ///   One of these is created per T ensuring
         ///   that the keys (property names) are unique.
         /// </remarks>
-        private static readonly ConcurrentDictionary<string, IPropertyAccessor> FastProperties
-            = new ConcurrentDictionary<string, IPropertyAccessor>();
+        private static readonly ConcurrentDictionary<PropertyInfo, IPropertyAccessor> FastProperties
+            = new ConcurrentDictionary<PropertyInfo, IPropertyAccessor>();
 
         #endregion
 
@@ -38,15 +38,15 @@ namespace Kirkin.Reflection
         /// </summary>
         public static PropertyAccessor<T, TProperty> Property<TProperty>(Expression<Func<T, TProperty>> propertyExpr)
         {
-            var propertyInfo = ExpressionUtil.Property(propertyExpr);
+            PropertyInfo propertyInfo = ExpressionUtil.Property(propertyExpr);
 
             // Resolve the cached entry or create a new one.
             IPropertyAccessor fastProperty;
 
-            if (!FastProperties.TryGetValue(propertyInfo.Name, out fastProperty))
+            if (!FastProperties.TryGetValue(propertyInfo, out fastProperty))
             {
                 fastProperty = FastProperties.GetOrAdd(
-                    propertyInfo.Name, new PropertyAccessor<T, TProperty>(propertyInfo)
+                    propertyInfo, new PropertyAccessor<T, TProperty>(propertyInfo)
                 );
             }
 
@@ -66,7 +66,7 @@ namespace Kirkin.Reflection
         /// </summary>
         public static PropertyAccessor<T, TProperty> Property<TProperty>(string propertyName, BindingFlags bindingFlags)
         {
-            var propertyInfo = typeof(T).GetProperty(propertyName, bindingFlags);
+            PropertyInfo propertyInfo = typeof(T).GetProperty(propertyName, bindingFlags);
 
             if (propertyInfo == null) {
                 return null;
@@ -75,10 +75,10 @@ namespace Kirkin.Reflection
             // Resolve the cached entry or create a new one.
             IPropertyAccessor fastProperty;
 
-            if (!FastProperties.TryGetValue(propertyInfo.Name, out fastProperty))
+            if (!FastProperties.TryGetValue(propertyInfo, out fastProperty))
             {
                 fastProperty = FastProperties.GetOrAdd(
-                    propertyInfo.Name, new PropertyAccessor<T, TProperty>(propertyInfo)
+                    propertyInfo, new PropertyAccessor<T, TProperty>(propertyInfo)
                 );
             }
 
@@ -98,9 +98,9 @@ namespace Kirkin.Reflection
         /// </summary>
         public static IPropertyAccessor Property(string propertyName, BindingFlags bindingFlags)
         {
-            var propertyInfo = typeof(T).GetProperty(propertyName, bindingFlags);
+            PropertyInfo propertyInfo = typeof(T).GetProperty(propertyName, bindingFlags);
 
-            return propertyInfo == null ? null : Property(propertyInfo);
+            return (propertyInfo == null) ? null : Property(propertyInfo);
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace Kirkin.Reflection
             // Resolve the cached entry or create a new one.
             IPropertyAccessor fastProperty;
 
-            if (!FastProperties.TryGetValue(propertyInfo.Name, out fastProperty))
+            if (!FastProperties.TryGetValue(propertyInfo, out fastProperty))
             {
                 // PropertyInfo validation.
                 // It is permissible for TypeUtil<T> to
@@ -134,7 +134,7 @@ namespace Kirkin.Reflection
                 }
 
                 fastProperty = FastProperties.GetOrAdd(
-                    propertyInfo.Name, (IPropertyAccessor)constructor.Invoke(new[] { propertyInfo })
+                    propertyInfo, (IPropertyAccessor)constructor.Invoke(new[] { propertyInfo })
                 );
             }
 
