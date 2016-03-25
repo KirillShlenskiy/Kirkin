@@ -7,6 +7,7 @@ using System.Text;
 using Kirkin.Collections.Generic;
 using Kirkin.Linq.Expressions;
 using Kirkin.Reflection;
+using Kirkin.Utilities;
 
 namespace Kirkin
 {
@@ -215,7 +216,7 @@ namespace Kirkin
             // TypeName redefined here as opposed to TypeUtil in order to fix VS2015/ Xamarin
             // compiler bug where TypeUtil is not visible even despite relevant compiler switches.
             // Will need to revert to using TypeUtil.TypeName whenever the fix is rolled out.
-            sb.Append(TypeName(actualType));
+            sb.Append(TypeName.NameIncludingGenericArguments(actualType));
             sb.Append(" { ");
 
             bool needComma = false;
@@ -248,37 +249,6 @@ namespace Kirkin
         {
             return propertyInfo.Module == other.Module
                 && propertyInfo.MetadataToken == other.MetadataToken;
-        }
-
-        /// <summary>
-        /// Gets a meaningful description of the type, including any generic type arguments.
-        /// </summary>
-        private static string TypeName(Type type)
-        {
-            if (!type.IsGenericType) {
-                return type.Name;
-            }
-
-            Type[] genericArgTypes = type.GetGenericArguments();
-            StringBuilder sb = new StringBuilder();
-
-            sb.Append(type.Name, 0, type.Name.IndexOf('`'));
-            sb.Append('<');
-
-            for (int i = 0; i < genericArgTypes.Length; i++)
-            {
-                if (i != 0)
-                {
-                    sb.Append(',');
-                    sb.Append(' ');
-                }
-
-                sb.Append(TypeName(genericArgTypes[i]));
-            }
-
-            sb.Append('>');
-
-            return sb.ToString();
         }
     }
 }

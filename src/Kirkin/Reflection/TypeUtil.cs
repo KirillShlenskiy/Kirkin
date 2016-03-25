@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 
 #if !__MOBILE__
 using System.Collections.Concurrent;
@@ -130,39 +129,5 @@ namespace Kirkin.Reflection
 
         #endregion
 #endif
-        #region Misc
-
-        /// <summary>
-        /// Gets a meaningful description of the type, including any generic type arguments.
-        /// </summary>
-        public static string TypeName(Type type)
-        {
-            if (!type.IsGenericType) {
-                return type.Name;
-            }
-
-            Type[] genericArgTypes = type.GetGenericArguments();
-            StringBuilder sb = new StringBuilder();
-
-            sb.Append(type.Name, 0, type.Name.IndexOf('`'));
-            sb.Append('<');
-
-            for (int i = 0; i < genericArgTypes.Length; i++)
-            {
-                if (i != 0)
-                {
-                    sb.Append(',');
-                    sb.Append(' ');
-                }
-
-                sb.Append(TypeName(genericArgTypes[i]));
-            }
-
-            sb.Append('>');
-
-            return sb.ToString();
-        }
-
-        #endregion
     }
 }

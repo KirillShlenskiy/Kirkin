@@ -97,6 +97,7 @@
     <Compile Include="TypeMapping.cs" />
     <Compile Include="TypeMappingEqualityComparer.cs" />
     <Compile Include="Utilities\Hash.cs" />
+    <Compile Include="Utilities\TypeName.cs" />
   </ItemGroup>
   <Import Project="..\Kirkin.Experimental\Kirkin.Experimental.projitems" Label="Shared" />
   <Import Project="..\Kirkin.InReview\Kirkin.InReview.projitems" Label="Shared" />

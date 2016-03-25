@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Kirkin.Reflection;
+using Kirkin.Utilities;
 
 using Xunit;
 
@@ -208,11 +209,11 @@ namespace Kirkin.Tests.Reflection
         }
 
         [Fact]
-        public void TypeName()
+        public void TypeNames()
         {
-            Assert.Equal("Int32", TypeUtil.TypeName(typeof(int)));
-            Assert.Equal("Nullable<Int32>", TypeUtil.TypeName(typeof(int?)));
-            Assert.Equal("Dictionary<Int32, String>", TypeUtil.TypeName(typeof(Dictionary<int, string>)));
+            Assert.Equal("Int32", TypeName.NameIncludingGenericArguments(typeof(int)));
+            Assert.Equal("Nullable<Int32>", TypeName.NameIncludingGenericArguments(typeof(int?)));
+            Assert.Equal("Dictionary<Int32, String>", TypeName.NameIncludingGenericArguments(typeof(Dictionary<int, string>)));
         }
     }
 }
