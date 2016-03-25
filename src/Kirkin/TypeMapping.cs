@@ -89,7 +89,7 @@ namespace Kirkin
         /// </summary>
         public TypeMapping<T> Without<TProperty>(Expression<Func<T, TProperty>> propertyExpr)
         {
-            if (propertyExpr == null) throw new ArgumentNullException("propertyExpr");
+            if (propertyExpr == null) throw new ArgumentNullException(nameof(propertyExpr));
 
             PropertyInfo excludedProperty = ExpressionUtil.Property(propertyExpr);
             Array<IPropertyAccessor>.Builder accessors = new Array<IPropertyAccessor>.Builder(_propertyAccessors.Length - 1);
@@ -110,7 +110,7 @@ namespace Kirkin
         public TTarget Clone<TTarget>(TTarget original)
             where TTarget : T, new()
         {
-            if (original == null) throw new ArgumentNullException("original");
+            if (original == null) throw new ArgumentNullException(nameof(original));
 
             return Map(original, new TTarget());
         }
@@ -122,8 +122,8 @@ namespace Kirkin
         public TTarget Map<TTarget>(T source, TTarget target)
             where TTarget : T // Target can be derived from source.
         {
-            if (source == null) throw new ArgumentNullException("source");
-            if (target == null) throw new ArgumentNullException("target");
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (target == null) throw new ArgumentNullException(nameof(target));
 
             foreach (IPropertyAccessor accessor in _propertyAccessors)
             {
@@ -149,8 +149,8 @@ namespace Kirkin
         public TTarget Map<TTarget>(T source, TTarget target, out int changeCount)
             where TTarget : T // Target can be derived from source.
         {
-            if (source == null) throw new ArgumentNullException("source");
-            if (target == null) throw new ArgumentNullException("target");
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (target == null) throw new ArgumentNullException(nameof(target));
 
             changeCount = 0;
 
@@ -178,7 +178,7 @@ namespace Kirkin
         /// </summary>
         public string ToString(T obj)
         {
-            if (obj == null) throw new ArgumentNullException("obj");
+            if (obj == null) throw new ArgumentNullException(nameof(obj));
 
             // Comma-separated list of
             // property names and their values.
