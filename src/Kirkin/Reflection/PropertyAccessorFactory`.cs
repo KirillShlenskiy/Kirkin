@@ -14,19 +14,13 @@ namespace Kirkin.Reflection
     /// </summary>
     public static class TypeUtil<T>
     {
-        #region FastProperty<T,> Cache
+        #region PropertyAccessor<T,> Cache
 
         /// <summary>
-        /// FastProperty cache where the key is the
-        /// name of the property and the value is
-        /// a generic FastProperty{T,} downcast to
-        /// its non-generic FastProperty base.
+        /// IPropertyAccessor cache where the key is the name of the property and the
+        /// value is a generic PropertyAccessor{T,} upcast to the non-generic interface.
         /// </summary>
-        /// <remarks>
-        ///   One of these is created per T ensuring
-        ///   that the keys (property names) are unique.
-        /// </remarks>
-        private static readonly ConcurrentDictionary<PropertyInfo, IPropertyAccessor> FastProperties
+        private static readonly ConcurrentDictionary<PropertyInfo, IPropertyAccessor> PropertyAccessors
             = new ConcurrentDictionary<PropertyInfo, IPropertyAccessor>(PropertyInfoEqualityComparer.Instance);
 
         #endregion
@@ -41,16 +35,16 @@ namespace Kirkin.Reflection
             PropertyInfo propertyInfo = ExpressionUtil.Property(propertyExpr);
 
             // Resolve the cached entry or create a new one.
-            IPropertyAccessor fastProperty;
+            IPropertyAccessor accessor;
 
-            if (!FastProperties.TryGetValue(propertyInfo, out fastProperty))
+            if (!PropertyAccessors.TryGetValue(propertyInfo, out accessor))
             {
-                fastProperty = FastProperties.GetOrAdd(
+                accessor = PropertyAccessors.GetOrAdd(
                     propertyInfo, new PropertyAccessor<T, TProperty>(propertyInfo)
                 );
             }
 
-            return (PropertyAccessor<T, TProperty>)fastProperty;
+            return (PropertyAccessor<T, TProperty>)accessor;
         }
 
         /// <summary>
@@ -73,16 +67,16 @@ namespace Kirkin.Reflection
             }
 
             // Resolve the cached entry or create a new one.
-            IPropertyAccessor fastProperty;
+            IPropertyAccessor accessor;
 
-            if (!FastProperties.TryGetValue(propertyInfo, out fastProperty))
+            if (!PropertyAccessors.TryGetValue(propertyInfo, out accessor))
             {
-                fastProperty = FastProperties.GetOrAdd(
+                accessor = PropertyAccessors.GetOrAdd(
                     propertyInfo, new PropertyAccessor<T, TProperty>(propertyInfo)
                 );
             }
 
-            return (PropertyAccessor<T, TProperty>)fastProperty;
+            return (PropertyAccessor<T, TProperty>)accessor;
         }
 
         /// <summary>
@@ -112,9 +106,9 @@ namespace Kirkin.Reflection
             if (propertyInfo == null) throw new ArgumentNullException("propertyInfo");
 
             // Resolve the cached entry or create a new one.
-            IPropertyAccessor fastProperty;
+            IPropertyAccessor accessor;
 
-            if (!FastProperties.TryGetValue(propertyInfo, out fastProperty))
+            if (!PropertyAccessors.TryGetValue(propertyInfo, out accessor))
             {
                 // PropertyInfo validation.
                 // It is permissible for TypeUtil<T> to
@@ -124,7 +118,7 @@ namespace Kirkin.Reflection
                 }
 
                 // We'll use some Reflection to create a
-                // generic FastProperty, because it's faster
+                // generic PropertyAccessor, because it's faster
                 // and ultimately that's what we want to cache.
                 Type closedType = typeof(PropertyAccessor<,>).MakeGenericType(propertyInfo.DeclaringType, propertyInfo.PropertyType);
                 ConstructorInfo constructor = closedType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(PropertyInfo) }, null);
@@ -133,12 +127,12 @@ namespace Kirkin.Reflection
                     throw new MissingMethodException("Unable to resolve non-public " + closedType.Name + " constructor.");
                 }
 
-                fastProperty = FastProperties.GetOrAdd(
+                accessor = PropertyAccessors.GetOrAdd(
                     propertyInfo, (IPropertyAccessor)constructor.Invoke(new[] { propertyInfo })
                 );
             }
 
-            return fastProperty;
+            return accessor;
         }
 
         #endregion
@@ -166,33 +160,6 @@ namespace Kirkin.Reflection
             foreach (PropertyInfo propertyInfo in typeof(T).GetProperties(bindingFlags)) {
                 yield return Property(propertyInfo);
             }
-        }
-
-        #endregion
-
-        #region Method delegate resolution
-
-        /// <summary>
-        /// Provides fast access to the given
-        /// public or non-public static method.
-        /// </summary>
-        public static TDelegate StaticMethod<TDelegate>(string methodName)
-        {
-            Type type = typeof(T);
-
-            MethodInfo method = type.GetMethod(
-                methodName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
-            );
-
-            if (method == null)
-            {
-                throw new MissingMethodException(
-                    string.Format("{0}.{1} method cannot be resolved.", type.Name, methodName)
-                );
-            }
-
-            // Ugly double cast but whatever.
-            return (TDelegate)(object)Delegate.CreateDelegate(typeof(TDelegate), method);
         }
 
         #endregion

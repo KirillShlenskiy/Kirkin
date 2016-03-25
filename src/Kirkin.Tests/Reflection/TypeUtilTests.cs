@@ -72,21 +72,13 @@ namespace Kirkin.Tests.Reflection
             for (var i = 0; i < 100000; i++)
             {
                 var dummy = new Dummy();
-                var idProp = TypeUtil.Property(typeof(Dummy), "ID");
+                var idProp = PropertyAccessorFactory.Property(typeof(Dummy), "ID");
 
                 idProp.SetValue(dummy, 100);
 
                 Assert.Equal(100, idProp.GetValue(dummy));
                 Assert.Equal(100, dummy.ID);
             }
-        }
-
-        [Fact]
-        public void StaticMethod()
-        {
-            TypeUtil<Dummy>.StaticMethod<Action>("BlahVoid").Invoke();
-
-            Assert.Equal(42, TypeUtil<Dummy>.StaticMethod<Func<int>>("BlahFunc").Invoke());
         }
 
         [Fact]
@@ -111,7 +103,7 @@ namespace Kirkin.Tests.Reflection
             for (var i = 0; i < 100000; i++)
             {
                 var dummy = new Dummy();
-                var properties = TypeUtil.Properties(typeof(Dummy));
+                var properties = PropertyAccessorFactory.Properties(typeof(Dummy));
                 var idProp = properties.Single(p => p.Property.Name == "ID");
 
                 idProp.SetValue(dummy, 100);
@@ -212,7 +204,7 @@ namespace Kirkin.Tests.Reflection
 
             for (var i = 0; i < 100000; i++)
             {
-                var prop = TypeUtil.Property(typeof(Dummy), "ID");
+                var prop = PropertyAccessorFactory.Property(typeof(Dummy), "ID");
 
                 prop.SetValue(dummy, (int)prop.GetValue(dummy) + 1);
             }

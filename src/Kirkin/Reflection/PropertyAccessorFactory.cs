@@ -9,7 +9,7 @@ namespace Kirkin.Reflection
     /// <summary>
     /// Provides Reflection-related and other util methods on <see cref="Type" />.
     /// </summary>
-    public static class TypeUtil
+    public static class PropertyAccessorFactory
     {
         // Cached TypeUtil<>.Property(PropertyInfo) delegates.
         private static readonly ConcurrentDictionary<Type, Func<PropertyInfo, IPropertyAccessor>> GenericTypeUtilPropertyDelegates

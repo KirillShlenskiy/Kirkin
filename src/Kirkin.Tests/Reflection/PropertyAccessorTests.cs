@@ -12,7 +12,7 @@ namespace Kirkin.Tests.Reflection
         private const int BENCHMARK_ITERATIONS = 1000000;
 
         [Fact]
-        public void FastPropertyBenchmark()
+        public void PropertyAccessorBenchmark()
         {
             var fastValue = new PropertyAccessor<Dummy, string>(typeof(Dummy).GetProperty("Value"));
 
@@ -30,7 +30,7 @@ namespace Kirkin.Tests.Reflection
         }
 
         [Fact]
-        public void DowncastGenericFastPropertyBenchmark()
+        public void DowncastGenericPropertyAccessorBenchmark()
         {
             var fastValue = (IPropertyAccessor)new PropertyAccessor<Dummy, string>(typeof(Dummy).GetProperty("Value"));
 
@@ -48,9 +48,9 @@ namespace Kirkin.Tests.Reflection
         }
 
         [Fact(Skip = "Redo")]
-        public void NonGenericFastPropertyBenchmark()
+        public void NonGenericPropertyAccessorBenchmark()
         {
-            //var fastValue = new FastProperty(typeof(Dummy).GetProperty("Value"));
+            //var fastValue = new PropertyAccessor(typeof(Dummy).GetProperty("Value"));
 
             //for (var i = 0; i < BENCHMARK_ITERATIONS; i++)
             //{
@@ -136,7 +136,7 @@ namespace Kirkin.Tests.Reflection
         [Fact(Skip = "Redo")]
         public void NonGenericTest()
         {
-            //var prop = new FastProperty(typeof(Dummy).GetProperty("ID"));
+            //var prop = new PropertyAccessor(typeof(Dummy).GetProperty("ID"));
             //var dummy = new Dummy();
 
             //prop.SetValue(dummy, 42);
