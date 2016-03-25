@@ -107,31 +107,28 @@ namespace Kirkin.Reflection
             // Resolve the cached entry or create a new one.
             IPropertyAccessor accessor;
 
-            if (!PropertyAccessors.TryGetValue(propertyInfo, out accessor))
-            {
-                // PropertyInfo validation.
-                // It is permissible for PropertyAccessorFactory<T>
-                // to store properties declared in T's base.
-                if (!propertyInfo.DeclaringType.IsAssignableFrom(typeof(T))) {
-                    throw new InvalidOperationException("Property declaring type mismatch.");
-                }
-
-                // We'll use some Reflection to create a
-                // generic PropertyAccessor, because it's faster
-                // and ultimately that's what we want to cache.
-                Type closedType = typeof(PropertyAccessor<,>).MakeGenericType(propertyInfo.DeclaringType, propertyInfo.PropertyType);
-                ConstructorInfo constructor = closedType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(PropertyInfo) }, null);
-
-                if (constructor == null) {
-                    throw new MissingMethodException("Unable to resolve non-public " + closedType.Name + " constructor.");
-                }
-
-                accessor = PropertyAccessors.GetOrAdd(
-                    propertyInfo, (IPropertyAccessor)constructor.Invoke(new[] { propertyInfo })
-                );
+            if (PropertyAccessors.TryGetValue(propertyInfo, out accessor)) {
+                return accessor;
             }
 
-            return accessor;
+            // PropertyInfo validation.
+            // It is permissible for this type to store properties declared in T's base.
+            if (!propertyInfo.DeclaringType.IsAssignableFrom(typeof(T))) {
+                throw new InvalidOperationException("Property declaring type mismatch.");
+            }
+
+            // We'll use some Reflection to create a
+            // generic PropertyAccessor, because it's faster
+            // and ultimately that's what we want to cache.
+            accessor = (IPropertyAccessor)Activator.CreateInstance(
+                typeof(PropertyAccessor<,>).MakeGenericType(propertyInfo.DeclaringType, propertyInfo.PropertyType),
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.CreateInstance,
+                null,
+                new[] { propertyInfo },
+                null
+            );
+
+            return PropertyAccessors.GetOrAdd(propertyInfo, accessor);
         }
 
         #endregion

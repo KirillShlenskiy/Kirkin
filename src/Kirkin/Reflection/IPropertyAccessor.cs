@@ -3,11 +3,7 @@
 namespace Kirkin.Reflection
 {
     /// <summary>
-    /// Provides fast access to property getter and setter.
-    /// The instances of this type are meant to be cached
-    /// and reused due to the considerable initial cost
-    /// of creating getter and setter delegates incurred
-    /// when Get or Set is called for the first time.
+    /// Provides fast access to property getter and setter methods.
     /// </summary>
     public interface IPropertyAccessor
     {
