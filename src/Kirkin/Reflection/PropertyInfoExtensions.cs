@@ -15,12 +15,12 @@ namespace Kirkin.Reflection
         {
             // Check the getter.
             if (propertyInfo.CanRead) {
-                return propertyInfo.GetGetMethod(true).IsStatic;
+                return propertyInfo.GetGetMethod(nonPublic: true).IsStatic;
             }
 
             // Check the setter.
             if (propertyInfo.CanWrite) {
-                return propertyInfo.GetSetMethod(true).IsStatic;
+                return propertyInfo.GetSetMethod(nonPublic: true).IsStatic;
             }
 
             // Ask the declaring type - slightly slower.

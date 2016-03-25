@@ -37,13 +37,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\AsyncLock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\AsyncManualResetEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\Atomic`.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\Locks\CustomReaderWriterLock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\Locks\DiagnosticReaderWriterLock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\Locks\ILock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\Locks\IReaderWriterLock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\Locks\MonitorLock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\Locks\NullLock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\Locks\ReaderWriterLock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\Tasks\AwaitableCompletionSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\Tasks\Continuations.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\Tasks\DelayAwaitable.cs" />

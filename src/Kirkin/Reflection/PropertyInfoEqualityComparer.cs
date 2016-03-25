@@ -21,12 +21,7 @@ namespace Kirkin.Reflection
 
         public bool Equals(PropertyInfo x, PropertyInfo y)
         {
-            if (ReferenceEquals(x, y)) {
-                return true;
-            }
-
-            return x.Module == y.Module
-                && x.MetadataToken == y.MetadataToken;
+            return ReferenceEquals(x, y) || (x.Module == y.Module && x.MetadataToken == y.MetadataToken);
         }
 
         public int GetHashCode(PropertyInfo obj)
