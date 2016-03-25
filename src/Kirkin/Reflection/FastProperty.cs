@@ -34,16 +34,12 @@ namespace Kirkin.Reflection
         /// </summary>
         internal FastProperty(PropertyInfo property)
         {
-            if (property == null) throw new ArgumentNullException("property");
+            if (property == null) throw new ArgumentNullException(nameof(property));
             if (property.IsStatic()) throw new ArgumentException("The property cannot be static.");
+            if (property.DeclaringType != typeof(TTarget)) throw new ArgumentException("Property declaring type does not match fast property type.");
+            if (property.PropertyType != typeof(TProperty)) throw new ArgumentException("Property return type does not match fast property type.");
 
             Property = property;
-
-            if (property.DeclaringType != typeof(TTarget))
-                throw new ArgumentException("Property declaring type does not match fast property type.");
-
-            if (property.PropertyType != typeof(TProperty))
-                throw new ArgumentException("Property return type does not match fast property type.");
         }
 
         /// <summary>
@@ -54,7 +50,7 @@ namespace Kirkin.Reflection
             // This code obviously has a race condition, but as long as _getter is not publicly
             // visible, it doesn't really matter if it happens to be initialised multiple times.
             if (_getter == null) {
-                CreateGetter();
+                _getter = CreateGetter(Property);
             }
 
             return _getter.Invoke(instance);
@@ -68,7 +64,7 @@ namespace Kirkin.Reflection
             // This code obviously has a race condition, but as long as _setter is not publicly
             // visible, it doesn't really matter if it happens to be initialised multiple times.
             if (_setter == null) {
-                CreateSetter();
+                _setter = CreateSetter(Property);
             }
 
             _setter.Invoke(instance, value);
@@ -77,28 +73,28 @@ namespace Kirkin.Reflection
         /// <summary>
         /// Creates and stores the getter delegate.
         /// </summary>
-        private void CreateGetter()
+        private static Func<TTarget, TProperty> CreateGetter(PropertyInfo property)
         {
-            if (!Property.CanRead) {
+            if (!property.CanRead) {
                 throw new InvalidOperationException("The property does not define a getter.");
             }
 
-            _getter = (Func<TTarget, TProperty>)Delegate.CreateDelegate(
-                typeof(Func<TTarget, TProperty>), Property.GetGetMethod(nonPublic: true)
+            return (Func<TTarget, TProperty>)Delegate.CreateDelegate(
+                typeof(Func<TTarget, TProperty>), property.GetGetMethod(nonPublic: true)
             );
         }
 
         /// <summary>
         /// Creates and stores the setter delegate.
         /// </summary>
-        private void CreateSetter()
+        private static Action<TTarget, TProperty> CreateSetter(PropertyInfo property)
         {
-            if (!Property.CanWrite) {
+            if (!property.CanWrite) {
                 throw new InvalidOperationException("The property does not define a setter.");
             }
 
-            _setter = (Action<TTarget, TProperty>)Delegate.CreateDelegate(
-                typeof(Action<TTarget, TProperty>), Property.GetSetMethod(nonPublic: true)
+            return (Action<TTarget, TProperty>)Delegate.CreateDelegate(
+                typeof(Action<TTarget, TProperty>), property.GetSetMethod(nonPublic: true)
             );
         }
 
