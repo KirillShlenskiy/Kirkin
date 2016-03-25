@@ -30,6 +30,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\KeyValueEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Linq\ArrayExtensions.Untested.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Linq\ExperimentalEnumerableExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Linq\Expressions\ExpressionEngine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\NonNullableString.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Optional.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Text\Url.cs" />

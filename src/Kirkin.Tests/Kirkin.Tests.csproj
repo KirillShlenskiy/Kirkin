@@ -124,6 +124,7 @@
     <Compile Include="IO\StreamUtilTests.cs" />
     <Compile Include="Linq\CollectionFilterTests.cs" />
     <Compile Include="Linq\EnumerableExtensionsTests.cs" />
+    <Compile Include="Linq\Expressions\ExpressionEngineTests.cs" />
     <Compile Include="Linq\Expressions\ExpressionUtilTests.cs" />
     <Compile Include="Logging\LogEntryBlockTests.cs" />
     <Compile Include="Logging\LoggerTests.cs" />
