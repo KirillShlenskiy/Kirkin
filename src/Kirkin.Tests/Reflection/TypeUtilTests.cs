@@ -11,6 +11,16 @@ namespace Kirkin.Tests.Reflection
 {
     public class TypeUtilTests
     {
+        System.Linq.Expressions.Expression<Func<Dummy, int>> s_idExpr = d => d.ID;
+
+        [Fact]
+        public void PropertyResolutionBenchmark()
+        {
+            for (int i = 0; i < 10000000; i++) {
+                TypeUtil<Dummy>.Property(s_idExpr);
+            }
+        }
+
         [Fact]
         public void PropertyByExpression()
         {
