@@ -16,7 +16,7 @@ namespace Kirkin.Tests.Linq.Expressions
             FieldInfo id = typeof(Dummy).GetField("_id", BindingFlags.Instance | BindingFlags.NonPublic);
 
             for (int i = 0; i < 100000; i++) {
-                ExpressionEngine.FieldGetter<Dummy, int>(id);
+                ExpressionEngine.Getter<Dummy, int>(id);
             }
         }
 
@@ -25,7 +25,7 @@ namespace Kirkin.Tests.Linq.Expressions
         {
             Dummy dummy = new Dummy { ID = 123 };
             FieldInfo id = typeof(Dummy).GetField("_id", BindingFlags.Instance | BindingFlags.NonPublic);
-            Expression<Func<Dummy, int>> getter = ExpressionEngine.FieldGetter<Dummy, int>(id);
+            Expression<Func<Dummy, int>> getter = ExpressionEngine.Getter<Dummy, int>(id);
 
             Assert.Equal(123, getter.Compile().Invoke(dummy));
         }
@@ -35,7 +35,7 @@ namespace Kirkin.Tests.Linq.Expressions
         {
             Dummy dummy = new Dummy { ID = 0 };
             FieldInfo id = typeof(Dummy).GetField("_id", BindingFlags.Instance | BindingFlags.NonPublic);
-            Expression<Action<Dummy, int>> setter = ExpressionEngine.FieldSetter<Dummy, int>(id);
+            Expression<Action<Dummy, int>> setter = ExpressionEngine.Setter<Dummy, int>(id);
 
             setter.Compile().Invoke(dummy, 123);
 
@@ -47,7 +47,7 @@ namespace Kirkin.Tests.Linq.Expressions
         {
             Dummy dummy = new Dummy { ID = 123 };
             PropertyInfo id = typeof(Dummy).GetProperty("ID");
-            Expression<Func<Dummy, int>> getter = ExpressionEngine.PropertyGetter<Dummy, int>(id);
+            Expression<Func<Dummy, int>> getter = ExpressionEngine.Getter<Dummy, int>(id);
 
             Assert.Equal(123, getter.Compile().Invoke(dummy));
         }
@@ -57,7 +57,7 @@ namespace Kirkin.Tests.Linq.Expressions
         {
             Dummy dummy = new Dummy { ID = 0 };
             PropertyInfo id = typeof(Dummy).GetProperty("ID");
-            Expression<Action<Dummy, int>> setter = ExpressionEngine.PropertySetter<Dummy, int>(id);
+            Expression<Action<Dummy, int>> setter = ExpressionEngine.Setter<Dummy, int>(id);
 
             setter.Compile().Invoke(dummy, 123);
 
