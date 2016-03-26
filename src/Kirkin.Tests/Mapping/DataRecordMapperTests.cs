@@ -35,7 +35,7 @@ namespace Kirkin.Tests.Mapping
                 using (var reader = cmd.ExecuteReader())
                 {
                     var config = new DataRecordToObjectMapperConfig<PersonStub>(reader);
-                    var mapper = Mapper.Create(config);
+                    var mapper = Mapper.CreateMapper(config);
 
                     while (reader.Read())
                     {
@@ -69,7 +69,7 @@ namespace Kirkin.Tests.Mapping
 
                 using (var reader = cmd.ExecuteReader())
                 {
-                    var mapper = Mapper.Create(new DataRecordToObjectMapperConfig<PersonStub>(reader));
+                    var mapper = Mapper.CreateMapper(new DataRecordToObjectMapperConfig<PersonStub>(reader));
 
                     while (reader.Read())
                     {

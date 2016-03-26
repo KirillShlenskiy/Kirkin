@@ -51,7 +51,7 @@ namespace Kirkin.Tests.Mapping
             config.TargetMember(dst => dst.id).MapTo(src => src.ID + 1);
             config.TargetMember("value").MapTo(_ => "TEZD");
 
-            Mapper.Create(config).Map(source, target);
+            Mapper.CreateMapper(config).Map(source, target);
 
             Assert.Equal(source.ID + 1, target.id);
             Assert.Equal("TEZD", target.value);
@@ -71,7 +71,7 @@ namespace Kirkin.Tests.Mapping
             config.TargetMember(dst => dst.id).MapWithDelegate(src => src.ID + 1);
             config.TargetMember(dst => dst.value).MapWithDelegate(_ => "TEZD");
 
-            Mapper.Create(config).Map(source, target);
+            Mapper.CreateMapper(config).Map(source, target);
 
             Assert.Equal(source.ID + 1, target.id);
             Assert.Equal("TEZD", target.value);
@@ -88,7 +88,7 @@ namespace Kirkin.Tests.Mapping
 
             Assert.Equal(1, config.ProduceValidMemberMappings().Length);
 
-            var target = Mapper.Create(config).Map(new Dummy { ID = 123 });
+            var target = Mapper.CreateMapper(config).Map(new Dummy { ID = 123 });
 
             Assert.Equal(123, target.id);
         }
@@ -99,7 +99,7 @@ namespace Kirkin.Tests.Mapping
             var config = new MapperConfig<Dummy, LowercaseDummy> { MappingMode = MappingMode.Relaxed };
 
             Assert.Equal(0, config.ProduceValidMemberMappings().Length);
-            Mapper.Create(config).Map(new Dummy());
+            Mapper.CreateMapper(config).Map(new Dummy());
         }
 
         [Fact]
@@ -110,7 +110,7 @@ namespace Kirkin.Tests.Mapping
 
             config.TargetMember(d => d.Value).Ignore();
 
-            var target = Mapper.Create(config).Map(source);
+            var target = Mapper.CreateMapper(config).Map(source);
 
             Assert.Equal(5, target.ID);
             Assert.Null(target.Value);
@@ -178,7 +178,7 @@ namespace Kirkin.Tests.Mapping
         public void MapSameType()
         {
             var dummy1 = new Dummy { ID = 1, Value = "Test" };
-            var dummy2 = Mapper.Map<Dummy, Dummy>(dummy1);
+            var dummy2 = Mapper.DynamicMap<Dummy, Dummy>(dummy1);
 
             Assert.Equal(dummy1.ID, dummy2.ID);
             Assert.Equal(dummy1.Value, dummy2.Value);
@@ -190,7 +190,19 @@ namespace Kirkin.Tests.Mapping
             var dummy1 = new Dummy { ID = 1, Value = "Test" };
             var dummy2 = new ExtendedDummy();
 
-            Mapper.Map<Dummy, Dummy>(dummy1, dummy2);
+            Mapper.Map(dummy1, dummy2);
+
+            Assert.Equal(dummy1.ID, dummy2.ID);
+            Assert.Equal(dummy1.Value, dummy2.Value);
+        }
+
+        [Fact]
+        public void MapDerivedTypeDynamic()
+        {
+            var dummy1 = new Dummy { ID = 1, Value = "Test" };
+            var dummy2 = new ExtendedDummy();
+
+            Mapper.DynamicMap<Dummy, Dummy>(dummy1, dummy2);
 
             Assert.Equal(dummy1.ID, dummy2.ID);
             Assert.Equal(dummy1.Value, dummy2.Value);
@@ -202,7 +214,7 @@ namespace Kirkin.Tests.Mapping
             var dummy1 = new Dummy { ID = 1, Value = "Test" };
             var dummy2 = new ExtendedDummy();
 
-            Assert.Throws<MappingException>(() => Mapper.Map(dummy1, dummy2));
+            Assert.Throws<MappingException>(() => Mapper.DynamicMap(dummy1, dummy2));
         }
 
         [Fact]
@@ -211,7 +223,7 @@ namespace Kirkin.Tests.Mapping
             var dummy1 = new Dummy { ID = 1, Value = "Test" };
             var dummy2 = new LowercaseDummy();
 
-            Assert.Throws<MappingException>(() => Mapper.Map(dummy1, dummy2));
+            Assert.Throws<MappingException>(() => Mapper.DynamicMap(dummy1, dummy2));
         }
 
         [Fact]
@@ -220,7 +232,7 @@ namespace Kirkin.Tests.Mapping
             var dummy1 = new Dummy { ID = 1, Value = "Test" };
 
             var dummy2 = Mapper
-                .Create<Dummy, LowercaseDummy>(c => c.MemberNameComparer = StringComparer.OrdinalIgnoreCase)
+                .CreateMapper<Dummy, LowercaseDummy>(c => c.MemberNameComparer = StringComparer.OrdinalIgnoreCase)
                 .Map(dummy1);
 
             Assert.Equal(dummy1.ID, dummy2.id);
@@ -230,7 +242,7 @@ namespace Kirkin.Tests.Mapping
         [Fact]
         public void ArgumentValidation()
         {
-            Assert.Throws<ArgumentNullException>(() => Mapper.Map<object, object>(null, null));
+            Assert.Throws<ArgumentNullException>(() => Mapper.DynamicMap<object, object>(null, null));
         }
 
         [Fact]
@@ -239,7 +251,7 @@ namespace Kirkin.Tests.Mapping
             var dummy1 = new NullableDummy();
             var dummy2 = new Dummy { ID = 1 };
 
-            Mapper.Map(dummy1, dummy2);
+            Mapper.DynamicMap(dummy1, dummy2);
             Assert.Equal(0, dummy2.ID);
         }
 
@@ -249,7 +261,7 @@ namespace Kirkin.Tests.Mapping
             var dummy1 = new Dummy();
             var dummy2 = new NullableDummy { ID = 1 };
 
-            Mapper.Map(dummy1, dummy2);
+            Mapper.DynamicMap(dummy1, dummy2);
             Assert.Null(dummy2.ID);
         }
 
@@ -264,7 +276,7 @@ namespace Kirkin.Tests.Mapping
                 MappingMode = MappingMode.Relaxed
             };
 
-            Mapper.Create(config).Map(dummy1, dummy2);
+            Mapper.CreateMapper(config).Map(dummy1, dummy2);
             Assert.Equal(0, dummy2.ID);
         }
 
@@ -273,7 +285,7 @@ namespace Kirkin.Tests.Mapping
         {
             var dummy1 = new Dummy();
             var dummy2 = new NullableDummy { ID = 1 };
-            var mapper = Mapper.Create<Dummy, NullableDummy>(c => c.NullableBehaviour = NullableBehaviour.Error);
+            var mapper = Mapper.CreateMapper<Dummy, NullableDummy>(c => c.NullableBehaviour = NullableBehaviour.Error);
 
             Assert.Throws<MappingException>(() => mapper.Map(dummy1, dummy2));
         }
@@ -282,13 +294,13 @@ namespace Kirkin.Tests.Mapping
         public void MappingSucceeds()
         {
             var dummy = new Dummy { ID = 1, Value = "Test" };
-            var extendedDummy = Mapper.Create<Dummy, ExtendedDummy>(c => c.MappingMode = MappingMode.Relaxed).Map(dummy);
+            var extendedDummy = Mapper.CreateMapper<Dummy, ExtendedDummy>(c => c.MappingMode = MappingMode.Relaxed).Map(dummy);
 
             Assert.Equal(dummy.ID, extendedDummy.ID);
             Assert.Equal(dummy.Value, extendedDummy.Value);
 
-            Mapper.Create<Dummy, ExtendedDummy>(c => c.MappingMode = MappingMode.AllSourceMembers).Map(dummy, extendedDummy);
-            Mapper.Create<ExtendedDummy, Dummy>(c => c.MappingMode = MappingMode.AllTargetMembers).Map(extendedDummy, dummy);
+            Mapper.CreateMapper<Dummy, ExtendedDummy>(c => c.MappingMode = MappingMode.AllSourceMembers).Map(dummy, extendedDummy);
+            Mapper.CreateMapper<ExtendedDummy, Dummy>(c => c.MappingMode = MappingMode.AllTargetMembers).Map(extendedDummy, dummy);
         }
 
         [Fact]
@@ -314,7 +326,7 @@ namespace Kirkin.Tests.Mapping
         public void ConvertibleSupport()
         {
             var dummy = new Dummy { ID = 5 };
-            var target = Mapper.Map(dummy, new ConvertibleDummy());
+            var target = Mapper.DynamicMap(dummy, new ConvertibleDummy());
 
             Assert.Equal(5m, target.ID);
         }
@@ -323,18 +335,18 @@ namespace Kirkin.Tests.Mapping
         public void NullableConvertibleSupport()
         {
             var dummy = new Dummy { ID = 5 };
-            var target = Mapper.Map(dummy, new NullableConvertibleDummy());
+            var target = Mapper.DynamicMap(dummy, new NullableConvertibleDummy());
 
             Assert.Equal(5m, target.ID);
 
             dummy.ID = 0;
 
-            Mapper.Map(dummy, target);
+            Mapper.DynamicMap(dummy, target);
 
             Assert.False(target.ID.HasValue);
 
             Mapper
-                .Create<Dummy, NullableConvertibleDummy>(c => c.NullableBehaviour = NullableBehaviour.AssignDefaultAsIs)
+                .CreateMapper<Dummy, NullableConvertibleDummy>(c => c.NullableBehaviour = NullableBehaviour.AssignDefaultAsIs)
                 .Map(dummy, target);
 
             Assert.Equal(0, target.ID);
@@ -346,14 +358,14 @@ namespace Kirkin.Tests.Mapping
             var dummy = new Dummy { ID = 5, Value = "TEST" };
             var target = new EnumDummy();
 
-            Mapper.Map(dummy, target);
+            Mapper.DynamicMap(dummy, target);
 
             Assert.Equal(ValueEnum.Test, target.Value);
 
             // Null string to Enum.
             dummy.Value = null;
 
-            Assert.Throws<MappingException>(() => Mapper.Map(dummy, target));
+            Assert.Throws<MappingException>(() => Mapper.DynamicMap(dummy, target));
         }
 
         [Fact]
@@ -362,14 +374,14 @@ namespace Kirkin.Tests.Mapping
             var dummy = new Dummy { ID = 5, Value = "TEST" };
             var target = new NullableEnumDummy();
 
-            Mapper.Map(dummy, target);
+            Mapper.DynamicMap(dummy, target);
 
             Assert.Equal(ValueEnum.Test, target.Value);
 
             // Null string to Enum.
             dummy.Value = null;
 
-            Mapper.Map(dummy, target);
+            Mapper.DynamicMap(dummy, target);
 
             Assert.False(target.Value.HasValue); // This is questionable behaviour.
         }
@@ -380,7 +392,7 @@ namespace Kirkin.Tests.Mapping
             var source = new EnumDummy { Value = ValueEnum.Test };
             var target = new Dummy();
 
-            Mapper.Map(source, target);
+            Mapper.DynamicMap(source, target);
 
             Assert.Equal("Test", target.Value);
         }
@@ -389,7 +401,7 @@ namespace Kirkin.Tests.Mapping
         public void StructMapping()
         {
             var source = new Size { Width = 2, Height = 4 };
-            var target = Mapper.Map(source, new Size());
+            var target = Mapper.DynamicMap(source, new Size());
 
             Assert.Equal(2, target.Width);
             Assert.Equal(4, target.Height);
@@ -401,11 +413,11 @@ namespace Kirkin.Tests.Mapping
             var config = new MapperConfig<ExtendedDummy, Dummy>();
             var extendedDummy = new ExtendedDummy { ID = 123, Value = "Blah", Guid = Guid.NewGuid() };
 
-            Assert.Throws<MappingException>(() => Mapper.Create(config).Map(extendedDummy));
+            Assert.Throws<MappingException>(() => Mapper.CreateMapper(config).Map(extendedDummy));
 
             config.SourceMember(d => d.Guid).Ignore();
 
-            var dummy = Mapper.Create(config).Map(extendedDummy);
+            var dummy = Mapper.CreateMapper(config).Map(extendedDummy);
 
             Assert.Equal(123, dummy.ID);
             Assert.Equal("Blah", dummy.Value);
@@ -488,15 +500,15 @@ namespace Kirkin.Tests.Mapping
 
             config.NullableBehaviour = NullableBehaviour.Error;
 
-            Assert.Throws<MappingException>(() => Mapper.Create(config).Map(new Dummy())); // Value auto-mapped.
+            Assert.Throws<MappingException>(() => Mapper.CreateMapper(config).Map(new Dummy())); // Value auto-mapped.
 
             config.TargetMember(d => d.ID).MapTo("ID");
 
-            Assert.Throws<MappingException>(() => Mapper.Create(config).Map(new Dummy())); // Value manually mapped but nullable conversion fails.
+            Assert.Throws<MappingException>(() => Mapper.CreateMapper(config).Map(new Dummy())); // Value manually mapped but nullable conversion fails.
 
             config.NullableBehaviour = NullableBehaviour.DefaultMapsToNull;
 
-            var result = Mapper.Create(config).Map(new Dummy { ID = 0 }, new NullableDummy { ID = 123 });
+            var result = Mapper.CreateMapper(config).Map(new Dummy { ID = 0 }, new NullableDummy { ID = 123 });
 
             Assert.Null(result.ID);
         }

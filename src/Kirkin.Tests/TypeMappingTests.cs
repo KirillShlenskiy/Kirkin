@@ -9,14 +9,6 @@ namespace Kirkin.Tests
 {
     public class TypeMappingTests
     {
-        static TypeMappingTests()
-        {
-            Dummy d = new Dummy();
-
-            Mapper.Clone(d);
-            TypeMapping.Clone(d);
-        }
-
         [Fact]
         public void CopyBenchmarkLarge()
         {
@@ -30,7 +22,7 @@ namespace Kirkin.Tests
                 dummy1.Value = "Text " + i;
 
                 Assert.False(comparer.Equals(dummy1, dummy2));
-                TypeMapping.Map(dummy1, dummy2);
+                Mapper.Map(dummy1, dummy2);
                 Assert.True(comparer.Equals(dummy1, dummy2));
             }
         }
@@ -48,7 +40,7 @@ namespace Kirkin.Tests
                 dummy1.Value = "Text " + i;
 
                 Assert.False(comparer.Equals(dummy1, dummy2));
-                TypeMapping.Map(dummy1, dummy2);
+                Mapper.Map(dummy1, dummy2);
                 Assert.True(comparer.Equals(dummy1, dummy2));
             }
         }
@@ -66,7 +58,7 @@ namespace Kirkin.Tests
                 dummy1.Value = "Text " + i;
 
                 Assert.False(comparer.Equals(dummy1, dummy2));
-                TypeMapping.Map(dummy1, dummy2);
+                Mapper.Map(dummy1, dummy2);
                 Assert.True(comparer.Equals(dummy1, dummy2));
             }
         }
@@ -77,7 +69,7 @@ namespace Kirkin.Tests
             var comparer = new TypeMappingEqualityComparer<Dummy>(TypeMapping<Dummy>.Default);
             var dummy1 = new Dummy();
             var dummy2 = new Dummy();
-            var mapper = Mapper.Create<Dummy, Dummy>();
+            var mapper = Mapper.CreateMapper<Dummy, Dummy>();
 
             for (var i = 0; i < 1000000; i++)
             {
@@ -96,7 +88,7 @@ namespace Kirkin.Tests
             var comparer = new TypeMappingEqualityComparer<Dummy>(TypeMapping<Dummy>.Default);
             var dummy1 = new Dummy();
             var dummy2 = new Dummy();
-            var mapper = Mapper.Create<Dummy, Dummy>();
+            var mapper = Mapper.CreateMapper<Dummy, Dummy>();
 
             for (var i = 0; i < 10000; i++)
             {
@@ -140,7 +132,7 @@ namespace Kirkin.Tests
                 dummy1.Value = "Text " + i;
 
                 Assert.False(comparer.Equals(dummy1, dummy2));
-                Mapper.Map(dummy1, dummy2);
+                Mapper.DynamicMap(dummy1, dummy2);
                 Assert.True(comparer.Equals(dummy1, dummy2));
             }
         }
@@ -151,7 +143,7 @@ namespace Kirkin.Tests
             var comparer = new TypeMappingEqualityComparer<Dummy>(TypeMapping<Dummy>.Default);
             var dummy1 = new Dummy();
             var dummy2 = new Dummy();
-            var mapper = Mapper.Create<Dummy, Dummy>();
+            var mapper = Mapper.CreateMapper<Dummy, Dummy>();
 
             for (var i = 0; i < 10; i++)
             {
@@ -329,28 +321,6 @@ namespace Kirkin.Tests
         {
             public int Ignored1 { get; set; }
             public string Ignored2 { get; set; }
-        }
-
-        [Fact]
-        public void CloneBenchmarkTypeMapping()
-        {
-            Dummy d = new Dummy();
-
-            for (int i = 0; i < 1000000; i++)
-            {
-                TypeMapping.Clone(d);
-            }
-        }
-
-        [Fact]
-        public void CloneBenchmarkMapper()
-        {
-            Dummy d = new Dummy();
-
-            for (int i = 0; i < 1000000; i++)
-            {
-                Mapper.Clone(d);
-            }
         }
     }
 }

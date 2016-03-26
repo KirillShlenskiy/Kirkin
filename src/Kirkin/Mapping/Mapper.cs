@@ -16,7 +16,7 @@ namespace Kirkin.Mapping
         /// <summary>
         /// Creates and configures a new <see cref="IMapper{TSource, TTarget}"/> instance.
         /// </summary>
-        public static IMapper<TSource, TTarget> Create<TSource, TTarget>()
+        public static IMapper<TSource, TTarget> CreateMapper<TSource, TTarget>()
         {
             return Mapper<TSource, TTarget>.Default;
         }
@@ -24,7 +24,7 @@ namespace Kirkin.Mapping
         /// <summary>
         /// Creates and configures a new <see cref="IMapper{TSource, TTarget}"/> instance.
         /// </summary>
-        public static IMapper<TSource, TTarget> Create<TSource, TTarget>(Action<MapperConfig<TSource, TTarget>> configAction)
+        public static IMapper<TSource, TTarget> CreateMapper<TSource, TTarget>(Action<MapperConfig<TSource, TTarget>> configAction)
         {
             if (configAction == null) throw new ArgumentNullException(nameof(configAction));
 
@@ -38,7 +38,7 @@ namespace Kirkin.Mapping
         /// <summary>
         /// Creates a new <see cref="IMapper{TSource, TTarget}"/> instance with the given configuration.
         /// </summary>
-        public static IMapper<TSource, TTarget> Create<TSource, TTarget>(MapperConfig<TSource, TTarget> config)
+        public static IMapper<TSource, TTarget> CreateMapper<TSource, TTarget>(MapperConfig<TSource, TTarget> config)
         {
             if (config == null) throw new ArgumentNullException(nameof(config));
 
@@ -63,19 +63,31 @@ namespace Kirkin.Mapping
         /// source to target and returns the newly created target instance.
         /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
         /// </summary>
-        public static TTarget Map<TSource, TTarget>(TSource source)
+        public static TTarget DynamicMap<TSource, TTarget>(TSource source)
             where TTarget : new()
         {
-            return Map(source, new TTarget());
+            return DynamicMap(source, new TTarget());
         }
 
         /// <summary>
         /// Executes mapping from source to target and returns the target instance.
         /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
         /// </summary>
-        public static TTarget Map<TSource, TTarget>(TSource source, TTarget target)
+        public static TTarget DynamicMap<TSource, TTarget>(TSource source, TTarget target)
         {
             return Mapper<TSource, TTarget>.Default.Map(source, target);
+        }
+
+        /// <summary>
+        /// Executes mapping from source to target and returns the target instance.
+        /// Target instance must have the same type as source, or be derived from source.
+        /// </summary>
+        public static TTarget Map<TSource, TTarget>(TSource source, TTarget target)
+            where TTarget : TSource
+        {
+            // Treat target as TSource so as to prevent the default
+            // mapping from failing due to unmapped target members.
+            return (TTarget)DynamicMap<TSource, TSource>(source, target);
         }
 
         #endregion

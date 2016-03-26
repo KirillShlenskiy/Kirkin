@@ -11,42 +11,6 @@ using Kirkin.Utilities;
 namespace Kirkin
 {
     /// <summary>
-    /// Static <see cref="TypeMapping{T}.Default" /> proxy methods.
-    /// Supports basic cloning and mapping operations. If you need to
-    /// support advanced mapping scenarios (such as mapping via an interface
-    /// or mapping to a derived type, use <see cref="TypeMapping{T}"/> instead.
-    /// </summary>
-    /// <remarks>
-    /// The proxy methods are more restrictive than their counterparts defined on <see cref="TypeMapping{T}" />.
-    /// The reason for having them in the first place is scenarios where we're mapping instances of the same type.
-    /// In those cases it is often better to let type inference do its job than specify T manually, to prevent
-    /// possible data loss if parameter type changes to a more derived type, but T is not updated at the same time.
-    /// </remarks>
-    public static class TypeMapping
-    {
-        /// <summary>
-        /// TypeMapping{T}.Default.Clone proxy method.
-        /// Creates a shallow clone of the given object.
-        /// </summary>
-        [Obsolete("Use Mapper.Clone instead.")]
-        public static T Clone<T>(T original)
-            where T : new()
-        {
-            return TypeMapping<T>.Default.Clone(original);
-        }
-
-        /// <summary>
-        /// TypeMapping{T}.Default.Map proxy method.
-        /// Reconciles the differences where necessary,
-        /// and returns the target instance.
-        /// </summary>
-        public static T Map<T>(T source, T target)
-        {
-            return TypeMapping<T>.Default.Map(source, target);
-        }
-    }
-
-    /// <summary>
     /// Reflection-based property mapper.
     /// </summary>
     public sealed class TypeMapping<T>
