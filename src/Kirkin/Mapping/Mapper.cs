@@ -112,7 +112,8 @@ namespace Kirkin.Mapping
     /// <summary>
     /// Type which performs mapping between objects of source and target types.
     /// </summary>
-    internal sealed class Mapper<TSource, TTarget> : IMapper<TSource, TTarget>
+    internal sealed class Mapper<TSource, TTarget>
+        : IMapper<TSource, TTarget>
     {
         #region Static members
 
