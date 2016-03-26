@@ -513,6 +513,19 @@ namespace Kirkin.Tests.Mapping
             Assert.Null(result.ID);
         }
 
+        [Fact]
+        public void MapperFromTypeMapping()
+        {
+            Dummy d1 = new Dummy { ID = 123, Value = "Zzz" };
+
+            Dummy d2 = Mapper
+                .CreateMapper(TypeMapping<Dummy>.Default.Without(d => d.Value))
+                .Map(d1);
+
+            Assert.Equal(123, d2.ID);
+            Assert.Null(d2.Value);
+        }
+
         struct Size
         {
             public int Width { get; set; }

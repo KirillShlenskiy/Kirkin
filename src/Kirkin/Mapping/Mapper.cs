@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Kirkin.Mapping.Engine;
 using Kirkin.Mapping.Engine.Compilers;
+using Kirkin.Reflection;
 
 namespace Kirkin.Mapping
 {
@@ -43,6 +44,31 @@ namespace Kirkin.Mapping
             if (config == null) throw new ArgumentNullException(nameof(config));
 
             return new Mapper<TSource, TTarget>(config.ProduceValidMemberMappings());
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="IMapper{TSource, TTarget}"/> instance with
+        /// the same source and target type, using the given <see cref="TypeMapping{T}"/>
+        /// instance to configure property mappings.
+        /// </summary>
+        internal static IMapper<T, T> CreateMapper<T>(TypeMapping<T> typeMapping)
+        {
+            if (typeMapping == null) throw new ArgumentNullException(nameof(typeMapping));
+
+            MapperConfig<T, T> config = new MapperConfig<T, T> {
+                MappingMode = MappingMode.Relaxed // No need to validate mapping.
+            };
+
+            // TODO: IgnoreAll method.
+            foreach (Member member in config.TargetMembers) {
+                new MapperConfig<T, T>.TargetMemberConfig(config, member).Ignore();
+            }
+
+            foreach (IPropertyAccessor accessor in typeMapping.PropertyAccessors) {
+                config.TargetMember(accessor.Property.Name).Reset();
+            }
+
+            return new Mapper<T, T>(config.ProduceValidMemberMappings());
         }
 
         #endregion
