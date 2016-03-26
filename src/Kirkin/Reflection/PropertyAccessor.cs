@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -96,7 +95,7 @@ namespace Kirkin.Reflection
         /// Returns accessor for all properties matching the
         /// given binding flags (public, instance by default).
         /// </summary>
-        public static IEnumerable<IPropertyAccessor> ResolveAll<T>(BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public)
+        public static IPropertyAccessor[] ResolveAll<T>(BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public)
         {
             return ResolveAll(typeof(T), bindingFlags);
         }
@@ -105,8 +104,8 @@ namespace Kirkin.Reflection
         /// Returns accessor for all properties matching the
         /// given binding flags (public, instance by default).
         /// </summary>
-        public static IEnumerable<IPropertyAccessor> ResolveAll(Type type,
-                                                                BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public)
+        internal static IPropertyAccessor[] ResolveAll(Type type,
+                                                       BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
 
@@ -114,9 +113,14 @@ namespace Kirkin.Reflection
                 throw new ArgumentException("BindingFlags.Static is not allowed.");
             }
 
-            foreach (PropertyInfo propertyInfo in type.GetProperties(bindingFlags)) {
-                yield return Resolve(propertyInfo);
+            PropertyInfo[] properties = type.GetProperties(bindingFlags);
+            IPropertyAccessor[] accessors = new IPropertyAccessor[properties.Length];
+
+            for (int i = 0; i < properties.Length; i++) {
+                accessors[i] = Resolve(properties[i]);
             }
+
+            return accessors;
         }
 
         #endregion

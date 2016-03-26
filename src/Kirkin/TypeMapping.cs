@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
@@ -78,9 +76,9 @@ namespace Kirkin
         /// <summary>
         /// Copy constructor.
         /// </summary>
-        private TypeMapping(IEnumerable<IPropertyAccessor> propertyAccessors)
+        private TypeMapping(IPropertyAccessor[] propertyAccessors)
         {
-            _propertyAccessors = propertyAccessors.ToArray();
+            _propertyAccessors = propertyAccessors;
         }
 
         /// <summary>
@@ -102,7 +100,7 @@ namespace Kirkin
                 }
             }
 
-            return new TypeMapping<T>(accessors.ToVector());
+            return new TypeMapping<T>(accessors.ToArray());
         }
 
         /// <summary>
