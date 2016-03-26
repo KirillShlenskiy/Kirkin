@@ -42,17 +42,17 @@ namespace Kirkin.ChangeTracking
         {
             Target = target;
             TypeMapping = typeMapping;
-            CapturePropertyValues(ref __propertyValues, target, typeMapping);
+            __propertyValues = CapturePropertyValues(target, typeMapping);
         }
 
         /// <summary>
         /// Captures property values at the current point in time.
         /// </summary>
-        private static void CapturePropertyValues(ref PropertyValue[] propertyValues, T target, TypeMapping<T> typeMapping)
+        private static PropertyValue[] CapturePropertyValues(T target, TypeMapping<T> typeMapping)
         {
             // The order or property values must match the order of property accessors defined 
             // by the type mapping. Otherwise ChangeTracker<T>.DetectChanges and other places will break.
-            propertyValues = new PropertyValue[typeMapping.PropertyAccessors.Length];
+            PropertyValue[] propertyValues = new PropertyValue[typeMapping.PropertyAccessors.Length];
 
             for (int i = 0; i < propertyValues.Length; i++)
             {
@@ -60,6 +60,8 @@ namespace Kirkin.ChangeTracking
 
                 propertyValues[i] = new PropertyValue(accessor.Property, accessor.GetValue(target));
             }
+
+            return propertyValues;
         }
 
         /// <summary>

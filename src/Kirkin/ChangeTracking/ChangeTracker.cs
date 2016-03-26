@@ -32,6 +32,9 @@ namespace Kirkin.ChangeTracking
         /// </summary>
         public Vector<PropertyValue> OriginalValues
         {
+            // The reason to use a snapshot as opposed to a clone is that the
+            // caller might be interested in the original values of read-only
+            // properties, and there is no way to copy them onto the clone.
             get
             {
                 return Snapshot.PropertyValues;
