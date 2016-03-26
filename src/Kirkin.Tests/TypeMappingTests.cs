@@ -9,6 +9,14 @@ namespace Kirkin.Tests
 {
     public class TypeMappingTests
     {
+        static TypeMappingTests()
+        {
+            Dummy d = new Dummy();
+
+            Mapper.Clone(d);
+            TypeMapping.Clone(d);
+        }
+
         [Fact]
         public void CopyBenchmarkLarge()
         {
@@ -321,6 +329,28 @@ namespace Kirkin.Tests
         {
             public int Ignored1 { get; set; }
             public string Ignored2 { get; set; }
+        }
+
+        [Fact]
+        public void CloneBenchmarkTypeMapping()
+        {
+            Dummy d = new Dummy();
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                TypeMapping.Clone(d);
+            }
+        }
+
+        [Fact]
+        public void CloneBenchmarkMapper()
+        {
+            Dummy d = new Dummy();
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                Mapper.Clone(d);
+            }
         }
     }
 }

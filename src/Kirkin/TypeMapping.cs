@@ -30,6 +30,7 @@ namespace Kirkin
         /// TypeMapping{T}.Default.Clone proxy method.
         /// Creates a shallow clone of the given object.
         /// </summary>
+        [Obsolete("Use Mapper.Clone instead.")]
         public static T Clone<T>(T original)
             where T : new()
         {

@@ -50,6 +50,15 @@ namespace Kirkin.Mapping
         #region Convenience proxies
 
         /// <summary>
+        /// Creates a shallow clone of the given object.
+        /// </summary>
+        public static T Clone<T>(T source)
+            where T : new()
+        {
+            return Mapper<T, T>.Default.Map(source, new T());
+        }
+
+        /// <summary>
         /// Creates a new target instance, executes mapping from
         /// source to target and returns the newly created target instance.
         /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
