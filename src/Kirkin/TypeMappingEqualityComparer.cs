@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-using Kirkin.Mapping;
 using Kirkin.Reflection;
 
 namespace Kirkin

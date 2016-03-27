@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using System.Linq;
 
 using Kirkin.Collections.Generic;
-using Kirkin.Linq;
 
 using Xunit;
 

@@ -9,6 +9,7 @@ using System.Threading;
 using Kirkin.Collections.Generic;
 using Kirkin.Linq.Expressions;
 using Kirkin.Mapping;
+using Kirkin.Reflection;
 
 using Xunit;
 

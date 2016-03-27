@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Kirkin.Mapping;
+using Kirkin.Reflection;
 
 using Xunit;
 

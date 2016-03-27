@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Kirkin.Mapping;
+using Kirkin.Reflection;
 using Kirkin.Transactions;
 
 using Xunit;

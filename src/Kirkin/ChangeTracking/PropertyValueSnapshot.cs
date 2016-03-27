@@ -1,7 +1,6 @@
 ﻿using System;
 
 using Kirkin.Collections.Generic;
-using Kirkin.Mapping;
 using Kirkin.Reflection;
 
 namespace Kirkin.ChangeTracking

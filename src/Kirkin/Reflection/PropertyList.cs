@@ -5,10 +5,9 @@ using System.Text;
 
 using Kirkin.Collections.Generic;
 using Kirkin.Linq.Expressions;
-using Kirkin.Reflection;
 using Kirkin.Utilities;
 
-namespace Kirkin.Mapping
+namespace Kirkin.Reflection
 {
     /// <summary>
     /// Immutable collection of property definitions.
@@ -20,7 +19,15 @@ namespace Kirkin.Mapping
         /// </summary>
         public static PropertyList<T> Default { get; } = new PropertyList<T>(PropertyAccessor.ResolveAll<T>());
 
-        // PERF: slightly faster than Vector<T>.
+        /// <summary>
+        /// Empty list of properties of type T.
+        /// </summary>
+        public static PropertyList<T> Empty { get; } = new PropertyList<T>(Array<IPropertyAccessor>.Empty);
+
+        /// <summary>
+        /// Backing field for <see cref="PropertyAccessors"/>.
+        /// PERF: slightly faster than <see cref="Vector{IPropertyAccessor}"/>.
+        /// </summary>
         private readonly IPropertyAccessor[] _propertyAccessors;
 
         /// <summary>
@@ -40,6 +47,33 @@ namespace Kirkin.Mapping
         private PropertyList(IPropertyAccessor[] propertyAccessors)
         {
             _propertyAccessors = propertyAccessors;
+        }
+
+        /// <summary>
+        /// Returns a new <see cref="PropertyList{T}"/> instance including the given property.
+        /// </summary>
+        public PropertyList<T> Including<TProperty>(Expression<Func<T, TProperty>> propertyExpr)
+        {
+            if (propertyExpr == null) throw new ArgumentNullException(nameof(propertyExpr));
+
+            PropertyInfo includedProperty = ExpressionUtil.Property(propertyExpr);
+
+            foreach (IPropertyAccessor accessor in _propertyAccessors)
+            {
+                if (MemberInfoEqualityComparer.Instance.Equals(accessor.Property, includedProperty)) {
+                    return this;
+                }
+            }
+
+            IPropertyAccessor[] accessors = new IPropertyAccessor[_propertyAccessors.Length + 1];
+
+            if (_propertyAccessors.Length != 0) {
+                Array.Copy(_propertyAccessors, 0, accessors, 0, _propertyAccessors.Length);
+            }
+
+            accessors[accessors.Length - 1] = PropertyAccessor.Resolve(includedProperty);
+
+            return new PropertyList<T>(accessors);
         }
 
         /// <summary>

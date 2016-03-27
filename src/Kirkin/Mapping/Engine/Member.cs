@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
+using Kirkin.Reflection;
 using Kirkin.Utilities;
 
 namespace Kirkin.Mapping.Engine

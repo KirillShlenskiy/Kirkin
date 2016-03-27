@@ -1,7 +1,7 @@
 ﻿using System;
 
 using Kirkin.ChangeTracking;
-using Kirkin.Mapping;
+using Kirkin.Reflection;
 
 namespace Kirkin.Transactions
 {

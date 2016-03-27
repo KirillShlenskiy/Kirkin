@@ -1,10 +1,4 @@
-﻿using System;
-
-using Kirkin.Functional;
-
-using Xunit;
-
-namespace Kirkin.Tests.Functional
+﻿namespace Kirkin.Tests.Functional
 {
     public class FuncUtilTests
     {
