@@ -47,22 +47,21 @@ namespace Kirkin.Tests.Reflection
             }
         }
 
-        [Fact(Skip = "Redo")]
         public void NonGenericPropertyAccessorBenchmark()
         {
-            //var fastValue = new PropertyAccessor(typeof(Dummy).GetProperty("Value"));
+            var fastValue = PropertyAccessor.Resolve(typeof(Dummy).GetProperty("Value"));
 
-            //for (var i = 0; i < BENCHMARK_ITERATIONS; i++)
-            //{
-            //    var dummy = new Dummy();
+            for (var i = 0; i < BENCHMARK_ITERATIONS; i++)
+            {
+                var dummy = new Dummy();
 
-            //    Assert.True(fastValue.GetValue(dummy) == null);
+                Assert.True(fastValue.GetValue(dummy) == null);
 
-            //    fastValue.SetValue(dummy, "Whatever");
+                fastValue.SetValue(dummy, "Whatever");
 
-            //    Assert.Equal("Whatever", fastValue.GetValue(dummy));
-            //    Assert.Equal("Whatever", dummy.Value);
-            //}
+                Assert.Equal("Whatever", fastValue.GetValue(dummy));
+                Assert.Equal("Whatever", dummy.Value);
+            }
         }
 
         [Fact]
@@ -133,15 +132,14 @@ namespace Kirkin.Tests.Reflection
             Assert.Throws<InvalidOperationException>(() => prop.SetValue(dummy, 42));
         }
 
-        [Fact(Skip = "Redo")]
         public void NonGenericTest()
         {
-            //var prop = new PropertyAccessor(typeof(Dummy).GetProperty("ID"));
-            //var dummy = new Dummy();
+            var prop = PropertyAccessor.Resolve(typeof(Dummy).GetProperty("ID"));
+            var dummy = new Dummy();
 
-            //prop.SetValue(dummy, 42);
+            prop.SetValue(dummy, 42);
 
-            //Assert.Equal(42, prop.GetValue(dummy));
+            Assert.Equal(42, prop.GetValue(dummy));
         }
 
         private class Dummy

@@ -16,10 +16,7 @@ namespace Kirkin.Mapping
     public sealed class PropertyList<T>
     {
         /// <summary>
-        /// Default mapping instance for type T. Maps all properties
-        /// which have an accessible getter for read (compare/hash)
-        /// operations, and all properties which have accessible
-        /// getters and setters for write (copy/clone) operations.
+        /// Default property list fot type T. Contains all public instance properties.
         /// </summary>
         public static PropertyList<T> Default { get; } = new PropertyList<T>(PropertyAccessor.ResolveAll<T>());
 

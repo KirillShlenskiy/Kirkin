@@ -22,7 +22,6 @@ namespace Kirkin.Tests.Collections.Async
             Assert.Throws<InvalidOperationException>(() => handover.Add(1));
         }
 
-        [Fact(Skip = "Needs redoing")]
         public async Task Simple()
         {
             var handover = new AsyncHandover<int>();
@@ -38,35 +37,33 @@ namespace Kirkin.Tests.Collections.Async
             Assert.Equal(2, handover.Count);
             Assert.Equal(0, handover.WaiterCount);
 
-            //using (var enumerator = handover.GetConsumingAsyncEnumerable().GetAsyncEnumerator())
-            //{
-            //    Assert.True(await enumerator.MoveNextAsync());
-            //    Assert.Equal(1, enumerator.Current);
-            //    Assert.True(await enumerator.MoveNextAsync());
-            //    Assert.Equal(2, enumerator.Current);
-            //    Assert.Equal(0, handover.Count);
+            TakeResult<int> result;
 
-            //    var next = enumerator.MoveNextAsync();
+            Assert.True((result = await handover.TryTakeAsync()).Success);
+            Assert.Equal(1, result.Value);
+            Assert.True((result = await handover.TryTakeAsync()).Success);
+            Assert.Equal(2, result.Value);
+            Assert.Equal(0, handover.Count);
 
-            //    Assert.Equal(1, handover.WaiterCount);
+            var next = handover.TryTakeAsync();
 
-            //    // Ensure that we haven't completed synchronously.
-            //    Assert.False(next.IsCompleted);
+            Assert.Equal(1, handover.WaiterCount);
 
-            //    handover.Add(3);
+            // Ensure that we haven't completed synchronously.
+            Assert.False(next.IsCompleted);
 
-            //    Assert.Equal(0, handover.Count);
-            //    Assert.Equal(0, handover.WaiterCount); // Risky one.
-            //    Assert.True(await next);
-            //    Assert.Equal(3, enumerator.Current);
+            handover.Add(3);
 
-            //    handover.CompleteAdding();
+            Assert.Equal(0, handover.Count);
+            Assert.Equal(0, handover.WaiterCount); // Risky one.
+            Assert.True((result = await next).Success);
+            Assert.Equal(3, result.Value);
 
-            //    Assert.False(await enumerator.MoveNextAsync());
-            //}
+            handover.CompleteAdding();
+
+            Assert.False((await handover.TryTakeAsync()).Success);
         }
 
-        [Fact(Skip = "Needs redoing")]
         public async Task Pipeline()
         {
             var handover = new AsyncHandover<int>();
@@ -74,18 +71,16 @@ namespace Kirkin.Tests.Collections.Async
             var consumer = Task.Run(async () =>
             {
                 var i = 0;
+                TakeResult<int> result;
 
-                //using (var enumerator = handover.GetConsumingAsyncEnumerable().GetAsyncEnumerator())
-                //{
-                //    while (await enumerator.MoveNextAsync())
-                //    {
-                //        await Task.Delay(60);
+                while ((result = await handover.TryTakeAsync()).Success)
+                {
+                    await Task.Delay(60);
 
-                //        Assert.Equal(i, enumerator.Current);
+                    Assert.Equal(i, result.Value);
 
-                //        i++;
-                //    }
-                //}
+                    i++;
+                }
             });
 
             await Task.Delay(100);
