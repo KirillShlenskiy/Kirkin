@@ -1,8 +1,9 @@
 ﻿using System.Linq;
 
-using Xunit;
-
 using Kirkin.ChangeTracking;
+using Kirkin.Mapping;
+
+using Xunit;
 
 namespace Kirkin.Tests.ChangeTracking
 {
@@ -78,7 +79,7 @@ namespace Kirkin.Tests.ChangeTracking
             Dummy dummy = new Dummy();
 
             ChangeTracker<Dummy> tracker = new ChangeTracker<Dummy>(
-                dummy, TypeMapping<Dummy>.Default.Without(d => d.Value)
+                dummy, PropertyList<Dummy>.Default.Without(d => d.Value)
             );
 
             Assert.False(tracker.DetectChanges().Any());

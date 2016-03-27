@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Kirkin.Mapping;
 using Kirkin.Reflection;
 
 namespace Kirkin.ChangeTracking
 {
     /// <summary>
-    /// Common extensions for <see cref="TypeMapping{T}"/>.
+    /// Common extensions for <see cref="PropertyList{T}"/>.
     /// </summary>
     public static class TypeMappingExtensions
     {
@@ -14,7 +15,7 @@ namespace Kirkin.ChangeTracking
         /// Creates a snapshot of all readable properties
         /// of the target object mapped by this instance.
         /// </summary>
-        internal static PropertyValueSnapshot<T> Snapshot<T>(this TypeMapping<T> typeMapping, T target)
+        internal static PropertyValueSnapshot<T> Snapshot<T>(this PropertyList<T> typeMapping, T target)
         {
             if (target == null) throw new ArgumentNullException("target");
 
@@ -25,7 +26,7 @@ namespace Kirkin.ChangeTracking
         /// Enumerates the values of the target object's
         /// properties encapsulated by this mapping.
         /// </summary>
-        public static IEnumerable<PropertyValue> PropertyValues<T>(this TypeMapping<T> typeMapping, T target)
+        public static IEnumerable<PropertyValue> PropertyValues<T>(this PropertyList<T> typeMapping, T target)
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
 

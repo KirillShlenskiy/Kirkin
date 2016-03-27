@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Kirkin.Collections.Generic;
+using Kirkin.Mapping;
 using Kirkin.Reflection;
 
 namespace Kirkin.ChangeTracking
@@ -22,7 +23,7 @@ namespace Kirkin.ChangeTracking
         /// <summary>
         /// Type mapping used to create this snapshot.
         /// </summary>
-        public TypeMapping<T> TypeMapping { get; }
+        public PropertyList<T> TypeMapping { get; }
 
         /// <summary>
         /// Property values as at the time this instance was created.
@@ -38,7 +39,7 @@ namespace Kirkin.ChangeTracking
         /// <summary>
         /// Creates a new snapshot of an object's property values at a particular point in time.
         /// </summary>
-        internal PropertyValueSnapshot(T target, TypeMapping<T> typeMapping)
+        internal PropertyValueSnapshot(T target, PropertyList<T> typeMapping)
         {
             Target = target;
             TypeMapping = typeMapping;
@@ -48,7 +49,7 @@ namespace Kirkin.ChangeTracking
         /// <summary>
         /// Captures property values at the current point in time.
         /// </summary>
-        private static PropertyValue[] CapturePropertyValues(T target, TypeMapping<T> typeMapping)
+        private static PropertyValue[] CapturePropertyValues(T target, PropertyList<T> typeMapping)
         {
             // The order or property values must match the order of property accessors defined 
             // by the type mapping. Otherwise ChangeTracker<T>.DetectChanges and other places will break.

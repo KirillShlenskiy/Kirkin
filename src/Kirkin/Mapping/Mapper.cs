@@ -48,10 +48,10 @@ namespace Kirkin.Mapping
 
         /// <summary>
         /// Creates a new <see cref="IMapper{TSource, TTarget}"/> instance with
-        /// the same source and target type, using the given <see cref="TypeMapping{T}"/>
+        /// the same source and target type, using the given <see cref="PropertyList{T}"/>
         /// instance to configure property mappings.
         /// </summary>
-        internal static IMapper<T, T> CreateMapper<T>(TypeMapping<T> typeMapping)
+        internal static IMapper<T, T> CreateMapper<T>(PropertyList<T> typeMapping)
         {
             if (typeMapping == null) throw new ArgumentNullException(nameof(typeMapping));
 

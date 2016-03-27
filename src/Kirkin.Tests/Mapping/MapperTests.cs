@@ -519,7 +519,7 @@ namespace Kirkin.Tests.Mapping
             Dummy d1 = new Dummy { ID = 123, Value = "Zzz" };
 
             Dummy d2 = Mapper
-                .CreateMapper(TypeMapping<Dummy>.Default.Without(d => d.Value))
+                .CreateMapper(PropertyList<Dummy>.Default.Without(d => d.Value))
                 .Map(d1);
 
             Assert.Equal(123, d2.ID);

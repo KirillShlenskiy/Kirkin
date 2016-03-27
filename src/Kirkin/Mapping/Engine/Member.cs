@@ -79,7 +79,7 @@ namespace Kirkin.Mapping.Engine
         /// </summary>
         public override string ToString()
         {
-            return TypeMapping<Member>.Default.ToString(this);
+            return PropertyList<Member>.Default.ToString(this);
         }
     }
 }

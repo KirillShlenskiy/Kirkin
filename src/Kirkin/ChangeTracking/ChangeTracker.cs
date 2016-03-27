@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 
 using Kirkin.Collections.Generic;
+using Kirkin.Mapping;
 using Kirkin.Reflection;
 
 namespace Kirkin.ChangeTracking
@@ -45,7 +46,7 @@ namespace Kirkin.ChangeTracking
         /// Property mapping definition that determines which of the
         /// object properties have their values tracked by this instance.
         /// </summary>
-        public TypeMapping<T> TypeMapping
+        public PropertyList<T> TypeMapping
         {
             get
             {
@@ -71,7 +72,7 @@ namespace Kirkin.ChangeTracking
         /// properties of the given object which have a public getter.
         /// </summary>
         public ChangeTracker(T trackedObject)
-            : this(trackedObject, TypeMapping<T>.Default)
+            : this(trackedObject, PropertyList<T>.Default)
         {
         }
 
@@ -79,7 +80,7 @@ namespace Kirkin.ChangeTracking
         /// Creates a new change tracker which detects changes in all 
         /// properties of the given object specified by the given mapping.
         /// </summary>
-        public ChangeTracker(T trackedObject, TypeMapping<T> typeMapping)
+        public ChangeTracker(T trackedObject, PropertyList<T> typeMapping)
         {
             if (trackedObject == null) throw new ArgumentNullException("trackedObject");
             if (typeMapping == null) throw new ArgumentNullException("typeMapping");

@@ -8,12 +8,12 @@ using Kirkin.Linq.Expressions;
 using Kirkin.Reflection;
 using Kirkin.Utilities;
 
-namespace Kirkin
+namespace Kirkin.Mapping
 {
     /// <summary>
-    /// Reflection-based property mapper.
+    /// Immutable collection of property definitions.
     /// </summary>
-    public sealed class TypeMapping<T>
+    public sealed class PropertyList<T>
     {
         /// <summary>
         /// Default mapping instance for type T. Maps all properties
@@ -21,7 +21,7 @@ namespace Kirkin
         /// operations, and all properties which have accessible
         /// getters and setters for write (copy/clone) operations.
         /// </summary>
-        public static TypeMapping<T> Default { get; } = new TypeMapping<T>(PropertyAccessor.ResolveAll<T>());
+        public static PropertyList<T> Default { get; } = new PropertyList<T>(PropertyAccessor.ResolveAll<T>());
 
         // PERF: slightly faster than Vector<T>.
         private readonly IPropertyAccessor[] _propertyAccessors;
@@ -40,7 +40,7 @@ namespace Kirkin
         /// <summary>
         /// Copy constructor.
         /// </summary>
-        private TypeMapping(IPropertyAccessor[] propertyAccessors)
+        private PropertyList(IPropertyAccessor[] propertyAccessors)
         {
             _propertyAccessors = propertyAccessors;
         }
@@ -50,7 +50,7 @@ namespace Kirkin
         /// with the given property excluded from
         /// the collection of mapped properties.
         /// </summary>
-        public TypeMapping<T> Without<TProperty>(Expression<Func<T, TProperty>> propertyExpr)
+        public PropertyList<T> Without<TProperty>(Expression<Func<T, TProperty>> propertyExpr)
         {
             if (propertyExpr == null) throw new ArgumentNullException(nameof(propertyExpr));
 
@@ -64,75 +64,7 @@ namespace Kirkin
                 }
             }
 
-            return new TypeMapping<T>(accessors.ToArray());
-        }
-
-        /// <summary>
-        /// Creates a shallow clone of the given object.
-        /// </summary>
-        public TTarget Clone<TTarget>(TTarget original)
-            where TTarget : T, new()
-        {
-            if (original == null) throw new ArgumentNullException(nameof(original));
-
-            return Map(original, new TTarget());
-        }
-
-        /// <summary>
-        /// Reconciles the differences where necessary,
-        /// and returns the target instance.
-        /// </summary>
-        public TTarget Map<TTarget>(T source, TTarget target)
-            where TTarget : T // Target can be derived from source.
-        {
-            if (source == null) throw new ArgumentNullException(nameof(source));
-            if (target == null) throw new ArgumentNullException(nameof(target));
-
-            foreach (IPropertyAccessor accessor in _propertyAccessors)
-            {
-                if (accessor.Property.CanWrite)
-                {
-                    object newValue = accessor.GetValue(source);
-                    object oldValue = accessor.GetValue(target);
-
-                    if (!Equals(newValue, oldValue)) {
-                        accessor.SetValue(target, newValue);
-                    }
-                }
-            }
-
-            return target;
-        }
-
-        /// <summary>
-        /// Reconciles the differences where necessary,
-        /// and returns the target instance and number
-        /// of changes applied.
-        /// </summary>
-        public TTarget Map<TTarget>(T source, TTarget target, out int changeCount)
-            where TTarget : T // Target can be derived from source.
-        {
-            if (source == null) throw new ArgumentNullException(nameof(source));
-            if (target == null) throw new ArgumentNullException(nameof(target));
-
-            changeCount = 0;
-
-            foreach (IPropertyAccessor accessor in _propertyAccessors)
-            {
-                if (accessor.Property.CanWrite)
-                {
-                    object newValue = accessor.GetValue(source);
-                    object oldValue = accessor.GetValue(target);
-
-                    if (!Equals(newValue, oldValue))
-                    {
-                        accessor.SetValue(target, newValue);
-                        changeCount++;
-                    }
-                }
-            }
-
-            return target;
+            return new PropertyList<T>(accessors.ToArray());
         }
 
         /// <summary>

@@ -8,8 +8,7 @@ using System.Threading;
 
 using Kirkin.Collections.Generic;
 using Kirkin.Linq.Expressions;
-
-using AutoMapper;
+using Kirkin.Mapping;
 
 using Xunit;
 
@@ -19,8 +18,8 @@ namespace Kirkin.Tests.Experimental
     {
         public ExperimentalTests()
         {
-            Mapper.CreateMap<DatabaseDummy, Dummy>().ForMember(d => d.ID, c => c.NullSubstitute(0));
-            Mapper.AssertConfigurationIsValid();
+            AutoMapper.Mapper.CreateMap<DatabaseDummy, Dummy>().ForMember(d => d.ID, c => c.NullSubstitute(0));
+            AutoMapper.Mapper.AssertConfigurationIsValid();
         }
 
         [Fact]
@@ -81,7 +80,7 @@ namespace Kirkin.Tests.Experimental
 
             for (var i = 0; i < 100000; i++)
             {
-                Mapper.Map(databaseDummy, dummy);
+                AutoMapper.Mapper.Map(databaseDummy, dummy);
             }
 
             Assert.Equal(0, dummy.ID);
@@ -90,13 +89,13 @@ namespace Kirkin.Tests.Experimental
         [Fact]
         public void TypeMappingTest()
         {
-            var mapping = TypeMapping<Dummy>.Default;
+            var mapping = PropertyList<Dummy>.Default;
             var d1 = new Dummy { ID = 1 };
             var d2 = new Dummy { ID = 2 };
 
             for (var i = 0; i < 100000; i++)
             {
-                mapping.Map(d1, d2);
+                Mapper.Map(d1, d2);
             }
 
             Assert.Equal(1, d2.ID);

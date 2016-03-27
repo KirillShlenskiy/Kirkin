@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Kirkin.ChangeTracking;
+using Kirkin.Mapping;
 
 namespace Kirkin.Transactions
 {
@@ -24,7 +25,7 @@ namespace Kirkin.Transactions
         /// properties of the given object which have a public getter.
         /// </summary>
         public PropertyTrackingTransaction(T trackedObject)
-            : this(trackedObject, TypeMapping<T>.Default)
+            : this(trackedObject, PropertyList<T>.Default)
         {
         }
 
@@ -32,7 +33,7 @@ namespace Kirkin.Transactions
         /// Creates a new transaction  which detects changes in all 
         /// properties of the given object specified by the given mapping.
         /// </summary>
-        public PropertyTrackingTransaction(T trackedObject, TypeMapping<T> typeMapping)
+        public PropertyTrackingTransaction(T trackedObject, PropertyList<T> typeMapping)
         {
             if (trackedObject == null) throw new ArgumentNullException("trackedObject");
             if (typeMapping == null) throw new ArgumentNullException("typeMapping");

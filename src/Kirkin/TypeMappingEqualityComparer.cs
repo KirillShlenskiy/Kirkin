@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
+using Kirkin.Mapping;
 using Kirkin.Reflection;
 
 namespace Kirkin
@@ -15,20 +16,20 @@ namespace Kirkin
         /// <summary>
         /// Mapping which defines all properties used by this comparer.
         /// </summary>
-        public TypeMapping<T> TypeMapping { get; }
+        public PropertyList<T> TypeMapping { get; }
 
         /// <summary>
         /// Creates a new comparer instance based on the default TypeMapping.
         /// </summary>
         public TypeMappingEqualityComparer()
-            : this(TypeMapping<T>.Default)
+            : this(PropertyList<T>.Default)
         {
         }
 
         /// <summary>
         /// Creates a new comparer instance based on the given TypeMapping.
         /// </summary>
-        public TypeMappingEqualityComparer(TypeMapping<T> typeMapping)
+        public TypeMappingEqualityComparer(PropertyList<T> typeMapping)
         {
             if (typeMapping == null) throw new ArgumentNullException("typeMapping");
 
@@ -105,7 +106,7 @@ namespace Kirkin
             /// </summary>
             public StringComparer StringComparer { get; }
 
-            public TypeMappingEqualityComparerWithStringComparer(TypeMapping<T> typeMapping, StringComparer stringComparer)
+            public TypeMappingEqualityComparerWithStringComparer(PropertyList<T> typeMapping, StringComparer stringComparer)
                 : base(typeMapping)
             {
                 if (stringComparer == null) throw new ArgumentNullException("stringComparer");

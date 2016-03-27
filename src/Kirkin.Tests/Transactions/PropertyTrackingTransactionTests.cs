@@ -1,5 +1,6 @@
 ﻿using System;
 
+using Kirkin.Mapping;
 using Kirkin.Transactions;
 
 using Xunit;
@@ -48,7 +49,7 @@ namespace Kirkin.Tests.Transactions
         {
             var dummy = new Dummy(1) { Value = "1" };
 
-            using (var tran = new PropertyTrackingTransaction<Dummy>(dummy, TypeMapping<Dummy>.Default.Without(d => d.Value)))
+            using (var tran = new PropertyTrackingTransaction<Dummy>(dummy, PropertyList<Dummy>.Default.Without(d => d.Value)))
             {
                 dummy.ID = 2;
                 dummy.Value = "2";
