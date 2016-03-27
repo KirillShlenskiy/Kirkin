@@ -11,7 +11,7 @@ namespace Kirkin.ChangeTracking
     internal sealed class PropertyValueSnapshot<T>
     {
         // Important: order of PropertyValues has to match the
-        // order of property accessors defined by the type mapping.
+        // order of property accessors defined by PropertyList.
         private readonly PropertyValue[] __propertyValues;
 
         /// <summary>
@@ -20,9 +20,9 @@ namespace Kirkin.ChangeTracking
         public T Target { get; }
 
         /// <summary>
-        /// Type mapping used to create this snapshot.
+        /// List of properties used to create this snapshot.
         /// </summary>
-        public PropertyList<T> TypeMapping { get; }
+        public PropertyList<T> PropertyList { get; }
 
         /// <summary>
         /// Property values as at the time this instance was created.
@@ -38,25 +38,25 @@ namespace Kirkin.ChangeTracking
         /// <summary>
         /// Creates a new snapshot of an object's property values at a particular point in time.
         /// </summary>
-        internal PropertyValueSnapshot(T target, PropertyList<T> typeMapping)
+        internal PropertyValueSnapshot(T target, PropertyList<T> propertyList)
         {
             Target = target;
-            TypeMapping = typeMapping;
-            __propertyValues = CapturePropertyValues(target, typeMapping);
+            PropertyList = propertyList;
+            __propertyValues = CapturePropertyValues(target, propertyList);
         }
 
         /// <summary>
         /// Captures property values at the current point in time.
         /// </summary>
-        private static PropertyValue[] CapturePropertyValues(T target, PropertyList<T> typeMapping)
+        private static PropertyValue[] CapturePropertyValues(T target, PropertyList<T> propertyList)
         {
             // The order or property values must match the order of property accessors defined 
             // by the type mapping. Otherwise ChangeTracker<T>.DetectChanges and other places will break.
-            PropertyValue[] propertyValues = new PropertyValue[typeMapping.PropertyAccessors.Length];
+            PropertyValue[] propertyValues = new PropertyValue[propertyList.PropertyAccessors.Length];
 
             for (int i = 0; i < propertyValues.Length; i++)
             {
-                IPropertyAccessor accessor = typeMapping.PropertyAccessors[i];
+                IPropertyAccessor accessor = propertyList.PropertyAccessors[i];
 
                 propertyValues[i] = new PropertyValue(accessor.Property, accessor.GetValue(target));
             }
@@ -70,9 +70,9 @@ namespace Kirkin.ChangeTracking
         internal void Apply<TTarget>(TTarget target)
             where TTarget : T // Allow target to be derived from T.
         {
-            for (int i = 0; i < TypeMapping.PropertyAccessors.Length; i++)
+            for (int i = 0; i < PropertyList.PropertyAccessors.Length; i++)
             {
-                IPropertyAccessor accessor = TypeMapping.PropertyAccessors[i];
+                IPropertyAccessor accessor = PropertyList.PropertyAccessors[i];
                 PropertyValue snapshotPropertyValue = __propertyValues[i];
 
                 //Debug.Assert(accessor.Property == snapshotPropertyValue.Property, "Property order mismatch.");

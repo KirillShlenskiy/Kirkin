@@ -42,14 +42,14 @@ namespace Kirkin.ChangeTracking
         }
 
         /// <summary>
-        /// Property mapping definition that determines which of the
-        /// object properties have their values tracked by this instance.
+        /// Property definition collection definition that determines which of
+        /// the object properties have their values tracked by this instance.
         /// </summary>
-        public PropertyList<T> TypeMapping
+        public PropertyList<T> PropertyList
         {
             get
             {
-                return Snapshot.TypeMapping;
+                return Snapshot.PropertyList;
             }
         }
 
@@ -60,8 +60,8 @@ namespace Kirkin.ChangeTracking
         {
             get
             {
-                foreach (var p in TypeMapping.PropertyAccessors) {
-                    yield return new PropertyValue(p.Property, p.GetValue(TrackedObject));
+                foreach (IPropertyAccessor accessor in PropertyList.PropertyAccessors) {
+                    yield return new PropertyValue(accessor.Property, accessor.GetValue(TrackedObject));
                 }
             }
         }
@@ -77,14 +77,14 @@ namespace Kirkin.ChangeTracking
 
         /// <summary>
         /// Creates a new change tracker which detects changes in all 
-        /// properties of the given object specified by the given mapping.
+        /// properties of the given object found in the given property list.
         /// </summary>
-        public ChangeTracker(T trackedObject, PropertyList<T> typeMapping)
+        public ChangeTracker(T trackedObject, PropertyList<T> propertyList)
         {
-            if (trackedObject == null) throw new ArgumentNullException("trackedObject");
-            if (typeMapping == null) throw new ArgumentNullException("typeMapping");
+            if (trackedObject == null) throw new ArgumentNullException(nameof(trackedObject));
+            if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
 
-            Snapshot = typeMapping.Snapshot(trackedObject);
+            Snapshot = new PropertyValueSnapshot<T>(trackedObject, propertyList);
         }
 
         /// <summary>
@@ -95,12 +95,12 @@ namespace Kirkin.ChangeTracking
         {
             Vector<PropertyValue> propertyValues = Snapshot.PropertyValues;
 
-            Debug.Assert(propertyValues.Length == TypeMapping.PropertyAccessors.Length);
+            Debug.Assert(propertyValues.Length == PropertyList.PropertyAccessors.Length);
 
             for (int i = 0; i < propertyValues.Length; i++)
             {
                 PropertyValue original = propertyValues[i];
-                IPropertyAccessor accessor = TypeMapping.PropertyAccessors[i];
+                IPropertyAccessor accessor = PropertyList.PropertyAccessors[i];
 
                 //Debug.Assert(original.Property == accessor.Property, "Original and current value order mismatch.");
                 if (original.Property != accessor.Property) {
@@ -122,7 +122,7 @@ namespace Kirkin.ChangeTracking
         /// </summary>
         public void Reset()
         {
-            Snapshot = TypeMapping.Snapshot(TrackedObject);
+            Snapshot = new PropertyValueSnapshot<T>(TrackedObject, PropertyList);
         }
     }
 }
