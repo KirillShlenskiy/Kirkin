@@ -67,7 +67,6 @@
     <Compile Include="Mapping\Engine\Compilers\MappingCompiler.cs" />
     <Compile Include="Mapping\Engine\Compilers\MemberMappingCollection.cs" />
     <Compile Include="Mapping\Engine\Member.cs" />
-    <Compile Include="Mapping\Engine\MemberCollection.cs" />
     <Compile Include="Mapping\Engine\MemberMapping.cs" />
     <Compile Include="Mapping\Engine\MemberMappings\DefaultMemberMapping.cs" />
     <Compile Include="Mapping\Engine\MemberMappings\DelegateMemberMapping.cs" />

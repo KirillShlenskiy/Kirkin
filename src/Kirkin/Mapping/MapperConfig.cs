@@ -56,7 +56,7 @@ namespace Kirkin.Mapping
         /// <summary>
         /// Source member list.
         /// </summary>
-        internal MemberCollection SourceMembers
+        internal Member[] SourceMembers
         {
             get
             {
@@ -64,7 +64,7 @@ namespace Kirkin.Mapping
                     _sourceMembers = GetSourceMembers();
                 }
 
-                return new MemberCollection(_sourceMembers);
+                return _sourceMembers;
             }
         }
 
@@ -73,7 +73,7 @@ namespace Kirkin.Mapping
         /// <summary>
         /// Target member list.
         /// </summary>
-        internal MemberCollection TargetMembers
+        internal Member[] TargetMembers
         {
             get
             {
@@ -81,7 +81,7 @@ namespace Kirkin.Mapping
                     _targetMembers = GetTargetMembers();
                 }
 
-                return new MemberCollection(_targetMembers);
+                return _targetMembers;
             }
         }
 
@@ -143,7 +143,7 @@ namespace Kirkin.Mapping
         internal MemberMapping<TSource, TTarget>[] ProduceValidMemberMappings()
         {
             // Produce member map.
-            List<MemberMapping<TSource, TTarget>> memberMappings = new List<MemberMapping<TSource, TTarget>>(TargetMembers.Count);
+            List<MemberMapping<TSource, TTarget>> memberMappings = new List<MemberMapping<TSource, TTarget>>(TargetMembers.Length);
             Dictionary<string, Member> sourceMemberDict = BuildMemberDictionary(SourceMembers, IgnoredSourceMembers, MemberNameComparer, mustBeReadable: true);
             Dictionary<string, Member> targetMemberDict = BuildMemberDictionary(TargetMembers, IgnoredTargetMembers, MemberNameComparer, mustBeWriteable: true);
 
@@ -218,13 +218,13 @@ namespace Kirkin.Mapping
         /// Creates member dictionaries used for auto mapping.
         /// </summary>
         private static Dictionary<string, Member> BuildMemberDictionary(
-            MemberCollection members,
+            Member[] members,
             HashSet<Member> ignoredMembers,
             StringComparer memberNameComparer,
             bool mustBeReadable = false,
             bool mustBeWriteable = false)
         {
-            Dictionary<string, Member> dict = new Dictionary<string, Member>(members.Count, memberNameComparer);
+            Dictionary<string, Member> dict = new Dictionary<string, Member>(members.Length, memberNameComparer);
 
             foreach (Member member in members)
             {

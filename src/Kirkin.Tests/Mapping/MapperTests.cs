@@ -126,7 +126,7 @@ namespace Kirkin.Tests.Mapping
 
             config = new MapperConfig<Dummy, LowercaseDummy> { MappingMode = MappingMode.Relaxed };
 
-            config.TargetMember(m => m.id).MapTo(config.SourceMembers["ID"].Name);
+            config.TargetMember(m => m.id).MapTo(config.SourceMember(m => m.ID).Member.Name);
             config.TargetMember(m => m.value).Ignore();
             config.Validate();
         }
