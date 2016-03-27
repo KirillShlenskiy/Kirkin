@@ -18,7 +18,10 @@ namespace Kirkin.Tests.Experimental
     {
         public ExperimentalTests()
         {
-            AutoMapper.Mapper.CreateMap<DatabaseDummy, Dummy>().ForMember(d => d.ID, c => c.NullSubstitute(0));
+            AutoMapper.Mapper.Initialize(
+                config => config.CreateMap<DatabaseDummy, Dummy>().ForMember(d => d.ID, c => c.NullSubstitute(0))
+            );
+
             AutoMapper.Mapper.AssertConfigurationIsValid();
         }
 
