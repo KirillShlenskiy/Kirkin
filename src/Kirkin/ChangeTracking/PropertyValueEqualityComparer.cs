@@ -4,31 +4,41 @@ using System.Diagnostics;
 
 using Kirkin.Reflection;
 
-namespace Kirkin
+namespace Kirkin.ChangeTracking
 {
     /// <summary>
     /// Arbitrary type equality comparer based on PropertyList.
     /// </summary>
-    public class PropertyListEqualityComparer<T>
+    public class PropertyValueEqualityComparer<T>
         : IEqualityComparer<T>
     {
+        private static PropertyValueEqualityComparer<T> _default;
+
+        /// <summary>
+        /// <see cref="PropertyValueEqualityComparer{T}"/> which compares
+        /// all readable public instance properties of <see cref="T"/>.
+        /// </summary>
+        public static PropertyValueEqualityComparer<T> Default
+        {
+            get
+            {
+                if (_default == null) {
+                    _default = new PropertyValueEqualityComparer<T>(PropertyList<T>.Default);
+                }
+
+                return _default;
+            }
+        }
+
         /// <summary>
         /// Properties targeted by this comparer.
         /// </summary>
         public PropertyList<T> PropertyList { get; }
 
         /// <summary>
-        /// Creates a new comparer instance based on the default PropertyList.
+        /// Creates a new comparer instance based on the given <see cref="PropertyList{T}"/>.
         /// </summary>
-        public PropertyListEqualityComparer()
-            : this(PropertyList<T>.Default)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new comparer instance based on the given PropertyList.
-        /// </summary>
-        public PropertyListEqualityComparer(PropertyList<T> propertyList)
+        public PropertyValueEqualityComparer(PropertyList<T> propertyList)
         {
             if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
 
@@ -63,7 +73,7 @@ namespace Kirkin
         }
 
         /// <summary>
-        /// Returns the sum of hashcodes of
+        /// Returns the product of hashcodes of
         /// the values of all mapped properties.
         /// </summary>
         public virtual int GetHashCode(T obj)
@@ -87,7 +97,7 @@ namespace Kirkin
         /// Returns a new instance of PropertyListComparer
         /// with the given StringComparer option.
         /// </summary>
-        public PropertyListEqualityComparer<T> WithStringComparer(StringComparer stringComparer)
+        public PropertyValueEqualityComparer<T> WithStringComparer(StringComparer stringComparer)
         {
             if (stringComparer == null) throw new ArgumentNullException(nameof(stringComparer));
 
@@ -98,7 +108,7 @@ namespace Kirkin
         /// PropertyListComparer with StringComparer support for common scenarios.
         /// </summary>
         sealed class PropertyListEqualityComparerWithStringComparer
-            : PropertyListEqualityComparer<T>
+            : PropertyValueEqualityComparer<T>
         {
             /// <summary>
             /// Comparer used to check string instances for equality.

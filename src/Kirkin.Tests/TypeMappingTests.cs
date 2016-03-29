@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Kirkin.ChangeTracking;
 using Kirkin.Mapping;
 using Kirkin.Reflection;
 
@@ -13,7 +14,7 @@ namespace Kirkin.Tests
         [Fact]
         public void CopyBenchmarkLarge()
         {
-            var comparer = new PropertyListEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
+            var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
             var dummy1 = new Dummy();
             var dummy2 = new Dummy();
 
@@ -31,7 +32,7 @@ namespace Kirkin.Tests
         [Fact]
         public void CopyBenchmarkMedium()
         {
-            var comparer = new PropertyListEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
+            var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
             var dummy1 = new Dummy();
             var dummy2 = new Dummy();
 
@@ -49,7 +50,7 @@ namespace Kirkin.Tests
         [Fact]
         public void CopyBenchmarkSmall()
         {
-            var comparer = new PropertyListEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
+            var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
             var dummy1 = new Dummy();
             var dummy2 = new Dummy();
 
@@ -67,7 +68,7 @@ namespace Kirkin.Tests
         [Fact]
         public void CopyBenchmarkMapperLarge()
         {
-            var comparer = new PropertyListEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
+            var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
             var dummy1 = new Dummy();
             var dummy2 = new Dummy();
             var mapper = Mapper.CreateMapper<Dummy, Dummy>();
@@ -86,7 +87,7 @@ namespace Kirkin.Tests
         [Fact]
         public void CopyBenchmarkMapperMedium()
         {
-            var comparer = new PropertyListEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
+            var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
             var dummy1 = new Dummy();
             var dummy2 = new Dummy();
             var mapper = Mapper.CreateMapper<Dummy, Dummy>();
@@ -105,7 +106,7 @@ namespace Kirkin.Tests
         [Fact]
         public void CopyBenchmarkAutoMapperLargeDefaultMapper()
         {
-            var comparer = new PropertyListEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
+            var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
             var dummy1 = new Dummy();
             var dummy2 = new Dummy();
 
@@ -123,7 +124,7 @@ namespace Kirkin.Tests
         [Fact]
         public void CopyBenchmarkMapperLargeDefaultMapper()
         {
-            var comparer = new PropertyListEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
+            var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
             var dummy1 = new Dummy();
             var dummy2 = new Dummy();
 
@@ -141,7 +142,7 @@ namespace Kirkin.Tests
         [Fact]
         public void CopyBenchmarkMapperSmall()
         {
-            var comparer = new PropertyListEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
+            var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
             var dummy1 = new Dummy();
             var dummy2 = new Dummy();
             var mapper = Mapper.CreateMapper<Dummy, Dummy>();
@@ -160,7 +161,7 @@ namespace Kirkin.Tests
         [Fact]
         public void EqualityComparerBenchmark()
         {
-            IEqualityComparer<Dummy> comparer = new PropertyListEqualityComparer<Dummy>();
+            IEqualityComparer<Dummy> comparer = PropertyValueEqualityComparer<Dummy>.Default;
 
             for (var i = 0; i < 1000000; i++)
             {
@@ -186,7 +187,7 @@ namespace Kirkin.Tests
         [Fact]
         public void EqualsBenchmark()
         {
-            var comparer = new PropertyListEqualityComparer<Dummy>();
+            var comparer = PropertyValueEqualityComparer<Dummy>.Default;
 
             for (var i = 0; i < 1000000; i++)
             {
@@ -212,7 +213,7 @@ namespace Kirkin.Tests
         [Fact]
         public void EqualsNullity()
         {
-            var comparer = new PropertyListEqualityComparer<Dummy>();
+            var comparer = PropertyValueEqualityComparer<Dummy>.Default;
             var dummy1 = new Dummy();
             var dummy2 = new Dummy();
 
@@ -225,7 +226,7 @@ namespace Kirkin.Tests
         [Fact]
         public void EqualsStringComparer()
         {
-            var comparer = new PropertyListEqualityComparer<Dummy>();
+            var comparer = PropertyValueEqualityComparer<Dummy>.Default;
             var dummy1 = new Dummy { ID = 1, Value = "zzz" };
             var dummy2 = new Dummy { ID = 1, Value = "ZZZ" };
 
@@ -238,7 +239,7 @@ namespace Kirkin.Tests
         [Obsolete("Suppressing GetHashCode warnings.")]
         public new void GetHashCode()
         {
-            var comparer = new PropertyListEqualityComparer<Dummy>();
+            var comparer = PropertyValueEqualityComparer<Dummy>.Default;
             var dummy = new Dummy();
 
             dummy.ID = 1;
@@ -249,7 +250,7 @@ namespace Kirkin.Tests
 
             Assert.Equal((17 * 23 + dummy.ID.GetHashCode()) * 23 + dummy.Value.GetHashCode(), comparer.GetHashCode(dummy));
 
-            comparer = new PropertyListEqualityComparer<Dummy>(comparer.PropertyList.Without(d => d.Value));
+            comparer = new PropertyValueEqualityComparer<Dummy>(comparer.PropertyList.Without(d => d.Value));
 
             Assert.Equal(17 * 23 + dummy.ID.GetHashCode(), comparer.GetHashCode(dummy));
         }
@@ -257,7 +258,7 @@ namespace Kirkin.Tests
         [Fact]
         public void GetHashCodeStringComparer()
         {
-            var comparer = new PropertyListEqualityComparer<Dummy>();
+            var comparer = PropertyValueEqualityComparer<Dummy>.Default;
             var dummy1 = new Dummy { ID = 1, Value = "zzz" };
             var dummy2 = new Dummy { ID = 1, Value = "ZZZ" };
 
@@ -269,7 +270,7 @@ namespace Kirkin.Tests
         [Fact]
         public void SameGetHashCodeWhenEquals()
         {
-            var comparer = new PropertyListEqualityComparer<Dummy>();
+            var comparer = PropertyValueEqualityComparer<Dummy>.Default;
             var dummy1 = new Dummy();
             var dummy2 = new Dummy();
 

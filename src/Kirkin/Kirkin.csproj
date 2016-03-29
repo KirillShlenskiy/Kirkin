@@ -92,7 +92,7 @@
     <Compile Include="Threading\Tasks\ParallelTasks.cs" />
     <Compile Include="Threading\Tasks\TaskEx.cs" />
     <Compile Include="Reflection\PropertyList.cs" />
-    <Compile Include="TypeMappingEqualityComparer.cs" />
+    <Compile Include="ChangeTracking\PropertyValueEqualityComparer.cs" />
     <Compile Include="Utilities\Hash.cs" />
     <Compile Include="Utilities\TypeName.cs" />
   </ItemGroup>
