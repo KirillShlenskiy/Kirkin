@@ -50,8 +50,8 @@ namespace Kirkin.ChangeTracking
         /// </summary>
         private static PropertyValue[] CapturePropertyValues(T target, PropertyList<T> propertyList)
         {
-            // The order or property values must match the order of property accessors defined 
-            // by the type mapping. Otherwise ChangeTracker<T>.DetectChanges and other places will break.
+            // The order or property values must match the order of property accessors.
+            // Otherwise ChangeTracker<T>.DetectChanges and other places will break.
             PropertyValue[] propertyValues = new PropertyValue[propertyList.PropertyAccessors.Length];
 
             for (int i = 0; i < propertyValues.Length; i++)

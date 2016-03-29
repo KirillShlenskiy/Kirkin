@@ -94,7 +94,7 @@ namespace Kirkin.Reflection
         }
 
         /// <summary>
-        /// Returns a new instance of TypeMapping
+        /// Returns a new instance of PropertyList
         /// with the given property excluded from
         /// the collection of mapped properties.
         /// </summary>

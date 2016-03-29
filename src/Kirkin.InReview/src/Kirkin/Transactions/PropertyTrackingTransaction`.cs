@@ -30,15 +30,15 @@ namespace Kirkin.Transactions
         }
 
         /// <summary>
-        /// Creates a new transaction  which detects changes in all 
-        /// properties of the given object specified by the given mapping.
+        /// Creates a new transaction which detects changes in
+        /// any of the specified properties of the given object.
         /// </summary>
-        public PropertyTrackingTransaction(T trackedObject, PropertyList<T> typeMapping)
+        public PropertyTrackingTransaction(T trackedObject, PropertyList<T> propertyList)
         {
-            if (trackedObject == null) throw new ArgumentNullException("trackedObject");
-            if (typeMapping == null) throw new ArgumentNullException("typeMapping");
+            if (trackedObject == null) throw new ArgumentNullException(nameof(trackedObject));
+            if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
 
-            ChangeTracker = new ChangeTracker<T>(trackedObject, typeMapping);
+            ChangeTracker = new ChangeTracker<T>(trackedObject, propertyList);
         }
 
         /// <summary>

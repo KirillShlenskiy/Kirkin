@@ -7,32 +7,32 @@ using Kirkin.Reflection;
 namespace Kirkin
 {
     /// <summary>
-    /// Arbitrary type equality comparer based on TypeMapping.
+    /// Arbitrary type equality comparer based on PropertyList.
     /// </summary>
-    public class TypeMappingEqualityComparer<T>
+    public class PropertyListEqualityComparer<T>
         : IEqualityComparer<T>
     {
         /// <summary>
-        /// Mapping which defines all properties used by this comparer.
+        /// Properties targeted by this comparer.
         /// </summary>
-        public PropertyList<T> TypeMapping { get; }
+        public PropertyList<T> PropertyList { get; }
 
         /// <summary>
-        /// Creates a new comparer instance based on the default TypeMapping.
+        /// Creates a new comparer instance based on the default PropertyList.
         /// </summary>
-        public TypeMappingEqualityComparer()
+        public PropertyListEqualityComparer()
             : this(PropertyList<T>.Default)
         {
         }
 
         /// <summary>
-        /// Creates a new comparer instance based on the given TypeMapping.
+        /// Creates a new comparer instance based on the given PropertyList.
         /// </summary>
-        public TypeMappingEqualityComparer(PropertyList<T> typeMapping)
+        public PropertyListEqualityComparer(PropertyList<T> propertyList)
         {
-            if (typeMapping == null) throw new ArgumentNullException("typeMapping");
+            if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
 
-            TypeMapping = typeMapping;
+            PropertyList = propertyList;
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Kirkin
             if (ReferenceEquals(x, null)) return ReferenceEquals(y, null);
             if (ReferenceEquals(y, null)) return false;
 
-            foreach (IPropertyAccessor prop in TypeMapping.PropertyAccessors)
+            foreach (IPropertyAccessor prop in PropertyList.PropertyAccessors)
             {
                 object xValue = prop.GetValue(x);
                 object yValue = prop.GetValue(y);
@@ -72,7 +72,7 @@ namespace Kirkin
             {
                 int hashCode = 17;
 
-                foreach (IPropertyAccessor prop in TypeMapping.PropertyAccessors)
+                foreach (IPropertyAccessor prop in PropertyList.PropertyAccessors)
                 {
                     object value = prop.GetValue(obj);
 
@@ -84,31 +84,31 @@ namespace Kirkin
         }
 
         /// <summary>
-        /// Returns a new instance of TypeMappingComparer
+        /// Returns a new instance of PropertyListComparer
         /// with the given StringComparer option.
         /// </summary>
-        public TypeMappingEqualityComparer<T> WithStringComparer(StringComparer stringComparer)
+        public PropertyListEqualityComparer<T> WithStringComparer(StringComparer stringComparer)
         {
-            if (stringComparer == null) throw new ArgumentNullException("stringComparer");
+            if (stringComparer == null) throw new ArgumentNullException(nameof(stringComparer));
 
-            return new TypeMappingEqualityComparerWithStringComparer(TypeMapping, stringComparer);
+            return new PropertyListEqualityComparerWithStringComparer(PropertyList, stringComparer);
         }
 
         /// <summary>
-        /// TypeMappingComparer with StringComparer support for common scenarios.
+        /// PropertyListComparer with StringComparer support for common scenarios.
         /// </summary>
-        sealed class TypeMappingEqualityComparerWithStringComparer
-            : TypeMappingEqualityComparer<T>
+        sealed class PropertyListEqualityComparerWithStringComparer
+            : PropertyListEqualityComparer<T>
         {
             /// <summary>
-            /// Comparer used by this mapping to check string instances for equality.
+            /// Comparer used to check string instances for equality.
             /// </summary>
             public StringComparer StringComparer { get; }
 
-            public TypeMappingEqualityComparerWithStringComparer(PropertyList<T> typeMapping, StringComparer stringComparer)
-                : base(typeMapping)
+            public PropertyListEqualityComparerWithStringComparer(PropertyList<T> propertyList, StringComparer stringComparer)
+                : base(propertyList)
             {
-                if (stringComparer == null) throw new ArgumentNullException("stringComparer");
+                if (stringComparer == null) throw new ArgumentNullException(nameof(stringComparer));
 
                 StringComparer = stringComparer;
             }
@@ -123,7 +123,7 @@ namespace Kirkin
                 if (ReferenceEquals(x, null)) return ReferenceEquals(y, null);
                 if (ReferenceEquals(y, null)) return false;
 
-                foreach (IPropertyAccessor prop in TypeMapping.PropertyAccessors)
+                foreach (IPropertyAccessor prop in PropertyList.PropertyAccessors)
                 {
                     object xValue = prop.GetValue(x);
                     object yValue = prop.GetValue(y);
@@ -159,7 +159,7 @@ namespace Kirkin
                 {
                     int hashCode = 17;
 
-                    foreach (IPropertyAccessor prop in TypeMapping.PropertyAccessors)
+                    foreach (IPropertyAccessor prop in PropertyList.PropertyAccessors)
                     {
                         object value = prop.GetValue(obj);
 

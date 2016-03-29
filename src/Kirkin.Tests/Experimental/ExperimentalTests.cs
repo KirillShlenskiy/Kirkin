@@ -91,9 +91,9 @@ namespace Kirkin.Tests.Experimental
         }
 
         [Fact]
-        public void TypeMappingTest()
+        public void PropertyListTest()
         {
-            var mapping = PropertyList<Dummy>.Default;
+            var propertyList = PropertyList<Dummy>.Default;
             var d1 = new Dummy { ID = 1 };
             var d2 = new Dummy { ID = 2 };
 

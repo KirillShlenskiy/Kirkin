@@ -181,7 +181,7 @@ namespace Kirkin.Tests.Transactions
             public int ID { get; set; }
             public string Value { get; set; }
 
-            public Dummy(int id) // Here to ensure that TypeMapping.Map(Snapshot, T) is working with no new() constraint.
+            public Dummy(int id) // Here to ensure that PropertyList.Map(Snapshot, T) is working with no new() constraint.
             {
                 ID = id;
             }

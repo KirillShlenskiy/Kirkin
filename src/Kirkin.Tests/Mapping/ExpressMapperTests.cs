@@ -8,7 +8,7 @@ namespace Kirkin.Tests.Mapping
         [Fact]
         public void Config()
         {
-            //var m = new MemberConfiguration<TypeMapping, TypeMapping>().
+            //var m = new MemberConfiguration<PropertyList, PropertyList>().
 
             //IMappingService service;
 

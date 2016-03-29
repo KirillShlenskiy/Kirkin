@@ -74,7 +74,7 @@ namespace Kirkin.Tests.ChangeTracking
         }
 
         [Fact]
-        public void CustomTypeMapping()
+        public void CustomPropertyList()
         {
             Dummy dummy = new Dummy();
 
