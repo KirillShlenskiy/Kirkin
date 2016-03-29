@@ -47,25 +47,21 @@ namespace Kirkin.Mapping
         }
 
         /// <summary>
-        /// Creates a new <see cref="IMapper{TSource, TTarget}"/> instance with
-        /// the same source and target type, using the given <see cref="PropertyList{T}"/>
-        /// instance to configure property mappings.
+        /// Creates a new <see cref="IMapper{TSource, TTarget}"/> instance with the
+        /// same source and target type, mapping all the properties in the given list.
         /// </summary>
-        internal static IMapper<T, T> CreateMapper<T>(PropertyList<T> typeMapping)
+        internal static IMapper<T, T> CreateMapper<T>(PropertyList<T> propertyList)
         {
-            if (typeMapping == null) throw new ArgumentNullException(nameof(typeMapping));
+            if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
 
             MapperConfig<T, T> config = new MapperConfig<T, T> {
                 MappingMode = MappingMode.Relaxed // No need to validate mapping.
             };
 
-            // TODO: IgnoreAll method.
-            foreach (Member member in config.TargetMembers) {
-                new MapperConfig<T, T>.TargetMemberConfig(config, member).Ignore();
-            }
+            config.IgnoreAllTargetMembers();
 
-            foreach (IPropertyAccessor accessor in typeMapping.PropertyAccessors) {
-                config.TargetMember(accessor.Property.Name).Reset();
+            foreach (IPropertyAccessor propertyAccessor in propertyList.PropertyAccessors) {
+                config.TargetMember(propertyAccessor.Property.Name).Reset();
             }
 
             return new Mapper<T, T>(config.ProduceValidMemberMappings());

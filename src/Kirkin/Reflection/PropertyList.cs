@@ -31,13 +31,30 @@ namespace Kirkin.Reflection
         private readonly IPropertyAccessor[] _propertyAccessors;
 
         /// <summary>
-        /// Accessors for readable properties mapped by this instance.
+        /// Accessors for properties mapped by this instance.
         /// </summary>
         public Vector<IPropertyAccessor> PropertyAccessors
         {
             get
             {
                 return new Vector<IPropertyAccessor>(_propertyAccessors);
+            }
+        }
+
+        /// <summary>
+        /// Properties mapped by this instance.
+        /// </summary>
+        internal PropertyInfo[] Properties
+        {
+            get
+            {
+                PropertyInfo[] properties = new PropertyInfo[_propertyAccessors.Length];
+
+                for (int i = 0; i < _propertyAccessors.Length; i++) {
+                    properties[i] = _propertyAccessors[i].Property;
+                }
+
+                return properties;
             }
         }
 

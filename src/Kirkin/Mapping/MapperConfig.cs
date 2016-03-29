@@ -247,6 +247,15 @@ namespace Kirkin.Mapping
             return dict;
         }
 
+        internal void IgnoreAllTargetMembers()
+        {
+            foreach (Member targetMember in TargetMembers)
+            {
+                IgnoredTargetMembers.Add(targetMember);
+                CustomTargetMappingFactories.Remove(targetMember);
+            }
+        }
+
         static class ExpressionHelpers
         {
             /// <summary>
