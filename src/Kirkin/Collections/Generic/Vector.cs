@@ -703,7 +703,7 @@ namespace System.Linq
             if (collectionSelector == null || resultSelector == null)
             {
                 // throw the same exception as would LINQ
-                return Enumerable.SelectMany(vector, collectionSelector, resultSelector);
+                return Enumerable.SelectMany(vector.array, collectionSelector, resultSelector);
             }
 
             // This SelectMany overload is used by the C# compiler for a query of the form:
@@ -1185,19 +1185,15 @@ namespace System.Linq
             return result;
         }
 
-        ///// <summary>
-        ///// Copies the contents of this array to a mutable array.
-        ///// </summary>
-        //public static T[] ToArray<T>(this Vector<T> vector)
-        //{
-        //    vector.ThrowNullRefIfNotInitialized();
-        //    if (vector.array.Length == 0)
-        //    {
-        //        return Vector<T>.Empty.array;
-        //    }
+        /// <summary>
+        /// Copies the contents of this array to a mutable array.
+        /// </summary>
+        public static T[] ToArray<T>(this Vector<T> vector)
+        {
+            vector.ThrowNullRefIfNotInitialized();
 
-        //    return (T[])vector.array.Clone();
-        //}
+            return vector.array.ToArray();
+        }
 
         #endregion
 
