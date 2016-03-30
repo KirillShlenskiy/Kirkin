@@ -1,7 +1,8 @@
 ﻿namespace System.Linq
 {
     /// <summary>
-    /// LINQ extension method overrides that offer greater efficiency for arrays than the standard LINQ methods.
+    /// LINQ extension method overrides that offer greater
+    /// efficiency for arrays than the standard LINQ methods.
     /// </summary>
     public static class ArrayExtensions
     {
@@ -26,9 +27,9 @@
         {
             if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
-            for (int i = 0; i < array.Length; i++)
+            foreach (T item in array)
             {
-                if (predicate(array[i])) {
+                if (predicate(item)) {
                     return true;
                 }
             }
@@ -44,9 +45,9 @@
         {
             if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
-            for (int i = 0; i < array.Length; i++)
+            foreach (T item in array)
             {
-                if (!predicate(array[i])) {
+                if (!predicate(item)) {
                     return false;
                 }
             }
@@ -79,10 +80,10 @@
         {
             if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
-            foreach (T v in array)
+            foreach (T item in array)
             {
-                if (predicate(v)) {
-                    return v;
+                if (predicate(item)) {
+                    return item;
                 }
             }
 
@@ -114,10 +115,10 @@
         {
             if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
-            foreach (T v in array)
+            foreach (T item in array)
             {
-                if (predicate(v)) {
-                    return v;
+                if (predicate(item)) {
+                    return item;
                 }
             }
 
@@ -144,16 +145,16 @@
             bool first = true;
             T result = default(T);
 
-            foreach (T v in array)
+            foreach (T item in array)
             {
-                if (predicate(v))
+                if (predicate(item))
                 {
                     if (!first) {
                         Enumerable.Single(array); // LINQ exception.
                     }
 
                     first = false;
-                    result = v;
+                    result = item;
                 }
             }
 
@@ -185,16 +186,16 @@
             bool first = true;
             T result = default(T);
 
-            foreach (T v in array)
+            foreach (T item in array)
             {
-                if (predicate(v))
+                if (predicate(item))
                 {
                     if (!first) {
-                        Enumerable.Single(array); // throw the same exception as LINQ would
+                        Enumerable.Single(array); // LINQ exception.
                     }
 
                     first = false;
-                    result = v;
+                    result = item;
                 }
             }
 
