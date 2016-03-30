@@ -5,17 +5,17 @@
     /// </summary>
     public static class ArrayExtensions
     {
-        // Array null checks largely skipped if subsequently performing
-        // Length access, indexing into, or iterating over the array
-        // (NullReferenceException will be thrown - inconsistent
-        // with System.Linq, but consistent with ImmutableArray<T>).
+        // PERF: Array arg null checks largely skipped if subsequently
+        // accessing Length, indexing into, or iterating through the array.
+        // NullReferenceException will be thrown - inconsistent
+        // with System.Linq, but consistent with ImmutableArray<T>.
 
         /// <summary>
         /// Gets a value indicating whether any elements are in this collection.
         /// </summary>
         public static bool Any<T>(this T[] array)
         {
-            return array.Length > 0;
+            return array.Length != 0;
         }
 
         /// <summary>
@@ -26,9 +26,9 @@
         {
             if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
-            foreach (T item in array)
+            for (int i = 0; i < array.Length; i++)
             {
-                if (predicate(item)) {
+                if (predicate(array[i])) {
                     return true;
                 }
             }
@@ -67,11 +67,9 @@
         /// </summary>
         public static T ElementAtOrDefault<T>(this T[] array, int index)
         {
-            if (index < 0 || index >= array.Length) {
-                return default(T);
-            }
-
-            return array[index];
+            return (index < 0 || index >= array.Length)
+                ? default(T)
+                : array[index];
         }
 
         /// <summary>
@@ -88,8 +86,7 @@
                 }
             }
 
-            // Throw the same exception that LINQ would.
-            return Enumerable.Empty<T>().First();
+            return Enumerable.Empty<T>().First(); // LINQ exception.
         }
 
         /// <summary>
@@ -97,9 +94,9 @@
         /// </summary>
         public static T First<T>(this T[] array)
         {
-            // In the event of an empty array, generate the same 
-            // exception that the linq extension method would.
-            return (array.Length > 0) ? array[0] : Enumerable.First(array);
+            return (array.Length > 0)
+                ? array[0]
+                : Enumerable.First(array); // LINQ exception.
         }
 
         /// <summary>
@@ -107,7 +104,7 @@
         /// </summary>
         public static T FirstOrDefault<T>(this T[] array)
         {
-            return (array.Length > 0) ? array[0] : default(T);
+            return (array.Length == 0) ? default(T) : array[0];
         }
 
         /// <summary>
@@ -132,7 +129,9 @@
         /// </summary>
         public static T Single<T>(this T[] array)
         {
-            return (array.Length == 1) ? array[0] : Enumerable.Single(array);
+            return (array.Length == 1)
+                ? array[0]
+                : Enumerable.Single(array); // LINQ exception.
         }
 
         /// <summary>
@@ -150,7 +149,7 @@
                 if (predicate(v))
                 {
                     if (!first) {
-                        Enumerable.Single(array); // throw the same exception as LINQ would
+                        Enumerable.Single(array); // LINQ exception.
                     }
 
                     first = false;
@@ -159,7 +158,7 @@
             }
 
             if (first) {
-                Enumerable.Empty<T>().Single(); // throw the same exception as LINQ would
+                Enumerable.Empty<T>().Single(); // LINQ exception.
             }
 
             return result;
