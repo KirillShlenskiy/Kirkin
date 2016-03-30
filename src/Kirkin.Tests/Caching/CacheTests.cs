@@ -25,7 +25,7 @@ namespace Kirkin.Tests.Caching
         public void ClosureBenchmarkFull()
         {
             int value = 0;
-            ICache<int> cache = Cache.Create(() => value + 1, CacheThreadSafetyMode.Full);
+            ICache<int> cache = Cache.Create(() => value + 1);
 
             for (int i = 0; i < Iterations; i++)
             {
@@ -35,19 +35,19 @@ namespace Kirkin.Tests.Caching
             }
         }
 
-        [Fact]
-        public void ClosureBenchmarkPublicationOnly()
-        {
-            int value = 0;
-            ICache<int> cache = Cache.Create(() => value + 1, CacheThreadSafetyMode.PublicationOnly);
+        //[Fact]
+        //public void ClosureBenchmarkPublicationOnly()
+        //{
+        //    int value = 0;
+        //    ICache<int> cache = Cache.Create(() => value + 1, CacheThreadSafetyMode.PublicationOnly);
 
-            for (int i = 0; i < Iterations; i++)
-            {
-                Assert.False(cache.IsValid);
-                Assert.Equal(1, cache.Value);
-                cache.Invalidate();
-            }
-        }
+        //    for (int i = 0; i < Iterations; i++)
+        //    {
+        //        Assert.False(cache.IsValid);
+        //        Assert.Equal(1, cache.Value);
+        //        cache.Invalidate();
+        //    }
+        //}
 
         [Fact]
         public void ParametrisedBenchmark()
@@ -153,67 +153,67 @@ namespace Kirkin.Tests.Caching
             }
         }
 
-        [Fact]
-        public void InterlockedConcurrency()
-        {
-            for (var i = 0; i < 10; i++)
-            {
-                var valueFactoryCount = 0;
+        //[Fact]
+        //public void InterlockedConcurrency()
+        //{
+        //    for (var i = 0; i < 10; i++)
+        //    {
+        //        var valueFactoryCount = 0;
 
-                var cache = Cache.Create(
-                    () =>
-                    {
-                        var cnt = Interlocked.Increment(ref valueFactoryCount);
+        //        var cache = Cache.Create(
+        //            () =>
+        //            {
+        //                var cnt = Interlocked.Increment(ref valueFactoryCount);
 
-                        Thread.Sleep(250);
+        //                Thread.Sleep(250);
 
-                        return cnt.ToString();
-                    },
-                    CacheThreadSafetyMode.PublicationOnly
-                );
+        //                return cnt.ToString();
+        //            },
+        //            CacheThreadSafetyMode.PublicationOnly
+        //        );
 
-                string v = "0";
+        //        string v = "0";
 
-                Parallel.Invoke(
-                    () => v = cache.Value,
-                    () => v = cache.Value,
-                    () => v = cache.Value,
-                    () => v = cache.Value,
-                    () => v = cache.Value
-                );
+        //        Parallel.Invoke(
+        //            () => v = cache.Value,
+        //            () => v = cache.Value,
+        //            () => v = cache.Value,
+        //            () => v = cache.Value,
+        //            () => v = cache.Value
+        //        );
 
-                Assert.Equal(5, valueFactoryCount);
-                //Assert.AreEqual("5", v); - this number will be completely random.
+        //        Assert.Equal(5, valueFactoryCount);
+        //        //Assert.AreEqual("5", v); - this number will be completely random.
 
-                cache.Invalidate();
+        //        cache.Invalidate();
 
-                var values = new ConcurrentBag<string>();
+        //        var values = new ConcurrentBag<string>();
 
-                var invalidateThread = new Thread(() =>
-                {
-                    Thread.Sleep(100);
-                    cache.Invalidate();
-                });
+        //        var invalidateThread = new Thread(() =>
+        //        {
+        //            Thread.Sleep(100);
+        //            cache.Invalidate();
+        //        });
 
-                invalidateThread.Start();
+        //        invalidateThread.Start();
 
-                Parallel.Invoke(
-                    () => values.Add(cache.Value),
-                    () => values.Add(cache.Value),
-                    () => values.Add(cache.Value),
-                    () => values.Add(cache.Value)
-                );
+        //        Parallel.Invoke(
+        //            () => values.Add(cache.Value),
+        //            () => values.Add(cache.Value),
+        //            () => values.Add(cache.Value),
+        //            () => values.Add(cache.Value)
+        //        );
 
-                invalidateThread.Join();
+        //        invalidateThread.Join();
 
-                Assert.Equal(4, values.Count);
+        //        Assert.Equal(4, values.Count);
 
-                //foreach (var value in values)
-                //{
-                //    Assert.AreEqual("3", value);
-                //}
-            }
-        }
+        //        //foreach (var value in values)
+        //        //{
+        //        //    Assert.AreEqual("3", value);
+        //        //}
+        //    }
+        //}
 
         [Fact]
         public void AutoExpireCache()

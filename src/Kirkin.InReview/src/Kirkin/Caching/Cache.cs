@@ -35,20 +35,6 @@ namespace Kirkin.Caching
         }
 
         /// <summary>
-        /// Creates a delegate-based cache with the given thread safety mode.
-        /// </summary>
-        public static ICache<T> Create<T>(Func<T> valueFactory, CacheThreadSafetyMode threadSafetyMode)
-        {
-            switch (threadSafetyMode)
-            {
-                case CacheThreadSafetyMode.Full : return new LazyCache<T>(valueFactory);
-                case CacheThreadSafetyMode.PublicationOnly : return new InterlockedCache<T>(valueFactory);
-            }
-
-            throw new ArgumentException("Unknown LazyThreadSafetyMode.");
-        }
-
-        /// <summary>
         /// Creates a delegate-based cache which is thread-safe on execution and publication.
         /// </summary>
         public static ICache<T> Create<TArg, T>(TArg arg, Func<TArg, T> valueFactory)
@@ -540,88 +526,6 @@ namespace Kirkin.Caching
             protected internal override CloneableCache<T> Clone()
             {
                 return new LazyCache<T>(ValueFactory);
-            }
-        }
-
-        /// <summary>
-        /// Provides fast, lazy, thread-safe access to cached data.
-        /// </summary>
-        sealed class InterlockedCache<T> : CloneableCache<T>
-        {
-            /// <summary>
-            /// Factory method used to fully
-            /// regenerate the cache when required.
-            /// </summary>
-            private readonly Func<T> ValueFactory;
-
-            private ValueWrapper _wrapper;
-
-            /// <summary>
-            /// Returns the cached value initialising it
-            /// using the factory delegate if necessary.
-            /// Guaranteed to return the latest value
-            /// even if a call to Invalidate() is made
-            /// while the value is being generated.
-            /// </summary>
-            public override T Value
-            {
-                get
-                {
-                    ValueWrapper wrapper = Atomic.SpinTransform(
-                        ref _wrapper,
-                        ValueFactory,
-                        (w, f) => w ?? new ValueWrapper(f())
-                    );
-
-                    return wrapper.Value;
-                }
-            }
-
-            /// <summary>
-            /// Returns true if the cached value is current and ready to use.
-            /// </summary>
-            public override bool IsValid
-            {
-                get { return _wrapper != null; }
-            }
-
-            /// <summary>
-            /// Creates a new instance of the class.
-            /// </summary>
-            internal InterlockedCache(Func<T> valueFactory)
-            {
-                if (valueFactory == null) throw new ArgumentNullException("valueFactory");
-
-                ValueFactory = valueFactory;
-
-                Invalidate();
-            }
-
-            /// <summary>
-            /// Invalidates the cache causing it to
-            /// be rebuilt next time it is accessed.
-            /// </summary>
-            public override void Invalidate()
-            {
-                Interlocked.Exchange(ref _wrapper, null);
-            }
-
-            /// <summary>
-            /// Creates a clone of this cache.
-            /// </summary>
-            protected internal override CloneableCache<T> Clone()
-            {
-                return new InterlockedCache<T>(ValueFactory);
-            }
-
-            sealed class ValueWrapper
-            {
-                public readonly T Value;
-
-                internal ValueWrapper(T value)
-                {
-                    Value = value;
-                }
             }
         }
 

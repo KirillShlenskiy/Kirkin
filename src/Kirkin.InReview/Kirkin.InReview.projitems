@@ -10,7 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Caching\Cache.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Caching\CacheThreadSafetyMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Caching\ICache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Async\AsyncHandover.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Async\AsyncHandoverBase.cs" />
