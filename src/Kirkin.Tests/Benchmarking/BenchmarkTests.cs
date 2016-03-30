@@ -61,5 +61,45 @@ namespace Kirkin.Tests.Benchmarking
                 Integers.ToVector();
             }
         }
+
+        [Fact]
+        public void ForVsForEachOverArray()
+        {
+            string report = Benchmarks.Run<ForVsForEachOverArrayPerf>();
+
+            Output.WriteLine(report);
+        }
+
+        public class ForVsForEachOverArrayPerf
+        {
+            private int[] Integers;
+
+            [Setup]
+            public void SetUp()
+            {
+                Integers = new int[100000];
+            }
+
+            [Benchmark]
+            public void For()
+            {
+                int[] array = Integers;
+
+                for (int i = 0; i < array.Length; i++)
+                {
+                    int el = array[i];
+                }
+            }
+
+            [Benchmark]
+            public void ForEach()
+            {
+                int[] array = Integers;
+
+                foreach (int el in array)
+                {
+                }
+            }
+        }
     }
 }

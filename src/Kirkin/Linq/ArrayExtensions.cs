@@ -44,9 +44,9 @@
         {
             if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
-            foreach (T v in array)
+            for (int i = 0; i < array.Length; i++)
             {
-                if (!predicate(v)) {
+                if (!predicate(array[i])) {
                     return false;
                 }
             }
