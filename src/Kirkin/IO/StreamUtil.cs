@@ -38,9 +38,8 @@ namespace Kirkin.IO
                     await writeTask.ConfigureAwait(false);
                 }
 
-                // Any code after WriteAync will potentially execute
-                // in parallel with the write. We cannot mutate the
-                // buffer until this writeTask instance is awaited.
+                // Any code after WriteAync may execute in parallel with the write.
+                // We cannot mutate the buffer until writeTask is awaited.
                 writeTask = target.WriteAsync(buffer, 0, bytesRead, ct);
 
                 // Swap buffers.
