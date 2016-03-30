@@ -6,18 +6,18 @@ namespace Kirkin.Logging
     /// <summary>
     /// Logger entry formatter.
     /// </summary>
-    public abstract class EntryFormatter
+    public static class EntryFormatter
     {
         /// <summary>
         /// Builds a log entry pipeline where the entry passes through each
         /// of the formatters before hitting the final logEntry delegate.
         /// </summary>
-        internal static Action<string> DecorateLogEntryDelegateWithFormatters(Action<string> logEntry, EntryFormatter[] formatters)
+        internal static Action<string> DecorateLogEntryDelegateWithFormatters(Action<string> logEntry, IEntryFormatter[] formatters)
         {
             for (int i = formatters.Length - 1; i >= 0; i--)
             {
                 Action<string> tmp = logEntry;
-                EntryFormatter formatter = formatters[i];
+                IEntryFormatter formatter = formatters[i];
                 logEntry = e => formatter.LogEntry(e, tmp);
             }
 
@@ -25,22 +25,17 @@ namespace Kirkin.Logging
         }
 
         /// <summary>
-        /// Formats the given entry and logs it using the given delegate.
-        /// </summary>
-        internal protected abstract void LogEntry(string entry, Action<string> logEntry);
-
-        /// <summary>
         /// Formatter which uses the given delegate as its
         /// <see cref="LogEntry(string, Action{string})"/> implementation.
         /// </summary>
-        internal static EntryFormatter Create(Action<string, Action<string>> formatAction)
+        internal static IEntryFormatter Create(Action<string, Action<string>> formatAction)
         {
             if (formatAction == null) throw new ArgumentNullException(nameof(formatAction));
 
             return new CustomEntryFormatter(formatAction);
         }
 
-        sealed class CustomEntryFormatter : EntryFormatter
+        sealed class CustomEntryFormatter : IEntryFormatter
         {
             private readonly Action<string, Action<string>> FormatAction;
 
@@ -49,7 +44,7 @@ namespace Kirkin.Logging
                 FormatAction = formatAction;
             }
 
-            protected internal override void LogEntry(string entry, Action<string> logEntry)
+            public void LogEntry(string entry, Action<string> logEntry)
             {
                 FormatAction(entry, logEntry);
             }
@@ -60,14 +55,14 @@ namespace Kirkin.Logging
         /// specifying the number of seconds which passed since the
         /// last Log call, for the second and all subsequent Log calls.
         /// </summary>
-        public static EntryFormatter LogSecondsBetweenEntries(string format = "[Time elapsed: {0:0.000} s.]")
+        public static IEntryFormatter LogSecondsBetweenEntries(string format = "[Time elapsed: {0:0.000} s.]")
         {
             if (format == null) throw new ArgumentNullException(nameof(format));
 
             return new TimedEntryFormatter(format);
         }
 
-        sealed class TimedEntryFormatter : EntryFormatter
+        sealed class TimedEntryFormatter : IEntryFormatter
         {
             private readonly string TimeEntryFormat;
 
@@ -80,7 +75,7 @@ namespace Kirkin.Logging
                 TimeEntryFormat = format;
             }
 
-            protected internal override void LogEntry(string entry, Action<string> logEntry)
+            public void LogEntry(string entry, Action<string> logEntry)
             {
                 int newTickCount = Environment.TickCount;
 
@@ -102,14 +97,14 @@ namespace Kirkin.Logging
         /// <summary>
         /// Formatter which applies the given transformation to the entry.
         /// </summary>
-        public static EntryFormatter Transform(Func<string, string> transformation)
+        public static IEntryFormatter Transform(Func<string, string> transformation)
         {
             if (transformation == null) throw new ArgumentNullException(nameof(transformation));
 
             return new SelectEntryFormatter(transformation);
         }
 
-        sealed class SelectEntryFormatter : EntryFormatter
+        sealed class SelectEntryFormatter : IEntryFormatter
         {
             private readonly Func<string, string> Transformation;
 
@@ -118,7 +113,7 @@ namespace Kirkin.Logging
                 Transformation = transformation;
             }
 
-            protected internal override void LogEntry(string entry, Action<string> logEntry)
+            public void LogEntry(string entry, Action<string> logEntry)
             {
                 logEntry(Transformation(entry));
             }
@@ -127,14 +122,14 @@ namespace Kirkin.Logging
         /// <summary>
         /// Formatter which applies the given transformation to the entry.
         /// </summary>
-        public static EntryFormatter Transform(Func<string, IEnumerable<string>> transformation)
+        public static IEntryFormatter Transform(Func<string, IEnumerable<string>> transformation)
         {
             if (transformation == null) throw new ArgumentNullException(nameof(transformation));
 
             return new SelectManyEntryFormatter(transformation);
         }
 
-        sealed class SelectManyEntryFormatter : EntryFormatter
+        sealed class SelectManyEntryFormatter : IEntryFormatter
         {
             private readonly Func<string, IEnumerable<string>> Transformation;
 
@@ -143,7 +138,7 @@ namespace Kirkin.Logging
                 Transformation = transformation;
             }
 
-            protected internal override void LogEntry(string entry, Action<string> logEntry)
+            public void LogEntry(string entry, Action<string> logEntry)
             {
                 foreach (string transformedEntry in Transformation(entry)) {
                     logEntry(transformedEntry);
@@ -156,11 +151,11 @@ namespace Kirkin.Logging
         /// on line breaks and forwards each individual
         /// line to the inner logger.
         /// </summary>
-        public static EntryFormatter SplitMultilineEntries { get; } = new SplitLineEntryFormatter();
+        public static IEntryFormatter SplitMultilineEntries { get; } = new SplitLineEntryFormatter();
 
-        sealed class SplitLineEntryFormatter : EntryFormatter
+        sealed class SplitLineEntryFormatter : IEntryFormatter
         {
-            protected internal override void LogEntry(string entry, Action<string> logEntry)
+            public void LogEntry(string entry, Action<string> logEntry)
             {
                 if (string.IsNullOrEmpty(entry))
                 {
@@ -184,14 +179,14 @@ namespace Kirkin.Logging
         /// entry with a timestamp in the given format
         /// and forwards it to the inner logger.
         /// </summary>
-        public static EntryFormatter TimestampNonEmptyEntries(string format = "HH:mm:ss")
+        public static IEntryFormatter TimestampNonEmptyEntries(string format = "HH:mm:ss")
         {
             if (string.IsNullOrEmpty(format)) throw new ArgumentException("Timestamp format cannot be null or empty.");
 
             return new TimestampEntryFormatter(format);
         }
 
-        sealed class TimestampEntryFormatter : EntryFormatter
+        sealed class TimestampEntryFormatter : IEntryFormatter
         {
             /// <summary>
             /// Timestamp format specified
@@ -212,7 +207,7 @@ namespace Kirkin.Logging
             /// Prepends non-empty entries with a timestamp in
             /// the format specified when this instance was created.
             /// </summary>
-            protected internal override void LogEntry(string entry, Action<string> logEntry)
+            public void LogEntry(string entry, Action<string> logEntry)
             {
                 if (!string.IsNullOrEmpty(entry)) {
                     entry = DateTime.Now.ToString(TimestampFormat) + " " + entry;
