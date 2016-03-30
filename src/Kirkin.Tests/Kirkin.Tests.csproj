@@ -96,6 +96,7 @@
     <Compile Include="Caching\CacheTests.cs" />
     <Compile Include="Caching\KeyValueCacheTests.cs" />
     <Compile Include="ChangeTracking\ChangeTrackerTests.cs" />
+    <Compile Include="ChangeTracking\PropertyValueEqualityComparerTests.cs" />
     <Compile Include="Collections\Async\AsyncHandoverBenchmarks.cs" />
     <Compile Include="Collections\Async\AsyncHandoverTests.cs" />
     <Compile Include="Collections\Concurrent\ConcurrentKeyedCollectionTests.cs" />
@@ -145,7 +146,7 @@
     <Compile Include="Threading\Tasks\ParallelTasksTests.cs" />
     <Compile Include="Threading\Tasks\ThrottledTaskSourceTests.cs" />
     <Compile Include="Transactions\PropertyTrackingTransactionTests.cs" />
-    <Compile Include="TypeMappingTests.cs" />
+    <Compile Include="Reflection\PropertyListTests.cs" />
     <Compile Include="Validation\ValidatorTests.cs" />
   </ItemGroup>
   <ItemGroup>
