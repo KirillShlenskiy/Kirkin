@@ -5,9 +5,10 @@ using System.Text;
 
 using Kirkin.Collections.Generic;
 using Kirkin.Linq.Expressions;
+using Kirkin.Reflection;
 using Kirkin.Utilities;
 
-namespace Kirkin.Reflection
+namespace Kirkin.ChangeTracking
 {
     /// <summary>
     /// Immutable collection of property definitions.

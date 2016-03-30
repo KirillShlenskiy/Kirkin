@@ -9,7 +9,6 @@ using System.Threading;
 using Kirkin.Collections.Generic;
 using Kirkin.Linq.Expressions;
 using Kirkin.Mapping;
-using Kirkin.Reflection;
 
 using Xunit;
 
@@ -91,9 +90,8 @@ namespace Kirkin.Tests.Experimental
         }
 
         [Fact]
-        public void PropertyListTest()
+        public void MappingTest()
         {
-            var propertyList = PropertyList<Dummy>.Default;
             var d1 = new Dummy { ID = 1 };
             var d2 = new Dummy { ID = 2 };
 
