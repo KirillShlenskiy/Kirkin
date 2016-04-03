@@ -47,7 +47,7 @@ namespace Kirkin.Reflection
                 _compiledGetter = CompileGetter(Property);
             }
 
-            return _compiledGetter.Invoke(instance);
+            return _compiledGetter(instance);
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Kirkin.Reflection
                 _compiledSetter = CompileSetter(Property);
             }
 
-            _compiledSetter.Invoke(instance, value);
+            _compiledSetter(instance, value);
         }
 
         /// <summary>
