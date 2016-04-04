@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
-
+using System.Reflection;
 using Kirkin.Linq.Expressions;
 
 using Xunit;
@@ -112,10 +112,30 @@ namespace Kirkin.Tests.Linq.Expressions
             Assert.NotNull(ExpressionUtil.Property(valueExpr));
         }
 
+        [Fact]
+        public void MethodExpressions()
+        {
+            MethodInfo @void = typeof(Dummy).GetMethod("Void");
+            MethodInfo get42 = typeof(Dummy).GetMethod("Get", new Type[0]);
+            MethodInfo get = typeof(Dummy).GetMethod("Get", new[] { typeof(string) });
+
+            Assert.NotNull(@void);
+            Assert.NotNull(get42);
+            Assert.NotNull(get);
+
+            Assert.Equal(@void, ExpressionUtil.Method<Dummy>(d => d.Void()));
+            Assert.Equal(get42, ExpressionUtil.Method<Dummy>(d => d.Get()));
+            Assert.Equal(get, ExpressionUtil.Method<Dummy>(d => d.Get("zzz")));
+        }
+
         private class Dummy
         {
             public int ID { get; set; }
             public string Value { get; set; }
+
+            public void Void() { }
+            public int Get() => 42;
+            public string Get(string s) => s;
         }
     }
 }

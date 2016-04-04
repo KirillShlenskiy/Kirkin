@@ -126,6 +126,51 @@ namespace Kirkin.Linq.Expressions
 
         #endregion
 
+        #region Method
+
+        /// <summary>
+        /// Resolves the <see cref="MethodInfo"/> from the given method call expression.
+        /// </summary>
+        public static MethodInfo Method<T>(Expression<Action<T>> expr)
+        {
+            if (expr == null) throw new ArgumentNullException(nameof(expr));
+
+            return MethodFromExpression(expr.Body);
+        }
+
+        /// <summary>
+        /// Resolves the <see cref="MethodInfo"/> from the given method call expression.
+        /// </summary>
+        public static MethodInfo Method<T>(Expression<Func<T, object>> expr)
+        {
+            if (expr == null) throw new ArgumentNullException(nameof(expr));
+
+            UnaryExpression convertExpr = expr.Body as UnaryExpression;
+
+            return convertExpr == null
+                ? MethodFromExpression(expr.Body)
+                // Assuming struct return type. Method expression will be
+                // wrapped by Expression.Convert(<methodExpr>, typeof(object)).
+                : MethodFromExpression(convertExpr.Operand);
+        }
+
+        /// <summary>
+        /// Casts the given expression to <see cref="MethodCallExpression"/>
+        /// and returns its <see cref="MethodCallExpression.Method" />.
+        /// </summary>
+        private static MethodInfo MethodFromExpression(Expression expr)
+        {
+            MethodCallExpression methodCallExpression = expr as MethodCallExpression;
+
+            if (methodCallExpression == null) {
+                throw new InvalidOperationException("The expression is not a MethodCallExpression.");
+            }
+
+            return methodCallExpression.Method;
+        }
+
+        #endregion
+
         #region Property
 
         /// <summary>
