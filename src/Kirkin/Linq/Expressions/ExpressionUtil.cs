@@ -88,6 +88,7 @@ namespace Kirkin.Linq.Expressions
         /// <summary>
         /// Resolves the name of the member specified by the given member expression.
         /// </summary>
+        [Obsolete("Use Member instead.")]
         public static string MemberName<T, TMember>(Expression<Func<T, TMember>> expr)
         {
             return Member(expr).Name;
@@ -96,6 +97,7 @@ namespace Kirkin.Linq.Expressions
         /// <summary>
         /// Resolves the name of the member specified by the given member expression.
         /// </summary>
+        [Obsolete("Use Member instead.")]
         public static string MemberName<TMember>(Expression<Func<TMember>> expr)
         {
             return Member(expr).Name;
@@ -104,6 +106,7 @@ namespace Kirkin.Linq.Expressions
         /// <summary>
         /// Resolves the name of the member specified by the given member expression.
         /// </summary>
+        [Obsolete("Use Member instead.")]
         public static string MemberName<T>(Expression<Func<T, object>> expr)
         {
             return Member(expr).Name;
@@ -115,6 +118,7 @@ namespace Kirkin.Linq.Expressions
         /// <remarks>
         /// Needed for when the Func return type is unknown.
         /// </remarks>
+        [Obsolete("Use Member instead.")]
         public static string MemberName(Expression<Func<object>> expr)
         {
             return Member(expr).Name;

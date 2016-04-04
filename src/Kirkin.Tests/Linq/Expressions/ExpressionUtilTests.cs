@@ -1,8 +1,9 @@
-﻿using Xunit;
+﻿using System;
+using System.Linq.Expressions;
 
 using Kirkin.Linq.Expressions;
-using System.Linq.Expressions;
-using System;
+
+using Xunit;
 
 namespace Kirkin.Tests.Linq.Expressions
 {
@@ -43,13 +44,13 @@ namespace Kirkin.Tests.Linq.Expressions
         {
             var dummy = new Dummy();
 
-            Assert.Equal("Value", ExpressionUtil.MemberName<Dummy, string>(d => d.Value));
-            Assert.Equal("Value", ExpressionUtil.MemberName<string>(() => dummy.Value));
-            Assert.Equal("Value", ExpressionUtil.MemberName<Dummy>(d => d.Value));
+            Assert.Equal("Value", ExpressionUtil.Member<Dummy, string>(d => d.Value).Name);
+            Assert.Equal("Value", ExpressionUtil.Member<string>(() => dummy.Value).Name);
+            Assert.Equal("Value", ExpressionUtil.Member<Dummy>(d => d.Value).Name);
 
             Expression<Func<object>> expr = () => new Dummy().Value;
 
-            Assert.Equal("Value", ExpressionUtil.MemberName(expr));
+            Assert.Equal("Value", ExpressionUtil.Member(expr).Name);
         }
 
         [Fact]
@@ -57,13 +58,13 @@ namespace Kirkin.Tests.Linq.Expressions
         {
             var dummy = new Dummy();
 
-            Assert.Equal("ID", ExpressionUtil.MemberName<Dummy, int>(d => d.ID));
-            Assert.Equal("ID", ExpressionUtil.MemberName<int>(() => dummy.ID));
-            Assert.Equal("ID", ExpressionUtil.MemberName<Dummy>(d => d.ID));
+            Assert.Equal("ID", ExpressionUtil.Member<Dummy, int>(d => d.ID).Name);
+            Assert.Equal("ID", ExpressionUtil.Member<int>(() => dummy.ID).Name);
+            Assert.Equal("ID", ExpressionUtil.Member<Dummy>(d => d.ID).Name);
 
             Expression<Func<object>> expr = () => new Dummy().ID;
 
-            Assert.Equal("ID", ExpressionUtil.MemberName(expr));
+            Assert.Equal("ID", ExpressionUtil.Member(expr).Name);
         }
 
         [Fact]
