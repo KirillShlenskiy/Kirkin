@@ -1,7 +1,10 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 
-namespace Kirkin.Diff.Data
+using Kirkin.Diff;
+using Kirkin.Diff.Data;
+
+namespace KirkinDiff
 {
     public static class SqlCommandDiff
     {
