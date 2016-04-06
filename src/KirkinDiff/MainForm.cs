@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Windows.Forms;
 
 using Kirkin.Diff;
+using Kirkin.Diff.Data;
 
 namespace KirkinDiff
 {
@@ -15,34 +18,40 @@ namespace KirkinDiff
 
         private void ExecuteButton_Click(object sender, EventArgs e)
         {
-            DiffResult diff = ExecuteDiff();
+            ExecuteDiff();
+        }
 
-            if (diff.AreSame)
+        private void ExecuteDiff()
+        {
+            using (DataSet ds1 = ProduceDataSet(ConnectionStringTextBox1.Text, CommandTextTextBox1.Text))
+            using (DataSet ds2 = ProduceDataSet(ConnectionStringTextBox2.Text, CommandTextTextBox2.Text))
             {
-                MessageBox.Show("Result sets identical.");
-            }
-            else
-            {
-                MessageBox.Show(diff.ToString(DiffTextFormat.Indented));
+                DiffResult diff = DataSetDiff.Compare(ds1, ds2);
+
+                if (diff.AreSame)
+                {
+                    MessageBox.Show(
+                        $"Result sets identical. Tables: {ds1.Tables.Count}, Rows: {ds1.Tables.Cast<DataTable>().Sum(dt => dt.Rows.Count)}."
+                    );
+                }
+                else
+                {
+                    MessageBox.Show(diff.ToString(DiffTextFormat.Indented));
+                }
             }
         }
 
-        private DiffResult ExecuteDiff()
+        private DataSet ProduceDataSet(string connectionString, string commandText)
         {
-            using (SqlConnection connection1 = new SqlConnection(ConnectionStringTextBox1.Text))
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand(commandText, connection))
+            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
             {
-                connection1.Open();
+                DataSet ds = new DataSet();
 
-                using (SqlConnection connection2 = new SqlConnection(ConnectionStringTextBox2.Text))
-                {
-                    connection2.Open();
+                adapter.Fill(ds);
 
-                    using (SqlCommand command1 = new SqlCommand(CommandTextTextBox1.Text, connection1))
-                    using (SqlCommand command2 = new SqlCommand(CommandTextTextBox2.Text, connection2))
-                    {
-                        return SqlCommandDiff.CompareResultSets(command1, command2);
-                    }
-                }
+                return ds;
             }
         }
     }
