@@ -1,20 +1,20 @@
-﻿namespace Kirkin.src.Kirkin.Diff
+﻿namespace Kirkin.Diff
 {
     public abstract class DiffResult
     {
         public bool AreSame { get; }
-        public string DiffMessage { get; }
+        public string Message { get; }
 
-        internal DiffResult(bool areSame, string diffMessage)
+        internal DiffResult(bool areSame, string message)
         {
             AreSame = areSame;
-            DiffMessage = diffMessage;
+            Message = message;
         }
 
         public void AssertSame()
         {
             if (!AreSame) {
-                throw new DiffException(DiffMessage);
+                throw new DiffException(Message);
             }
         }
     }

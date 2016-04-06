@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Kirkin.src.Kirkin.Diff
+namespace Kirkin.Diff
 {
     [Serializable]
     public sealed class DiffException : Exception
