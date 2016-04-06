@@ -18,7 +18,7 @@ namespace Kirkin.Diff.Data
             results.Add(cellCount);
 
             if (cellCount.AreSame) {
-                results.Add(new MultiDiffResult("Cell values", EnumerateCellDiffs(x, y)));
+                results.Add(new MultiDiffResult("Cells", EnumerateCellDiffs(x, y)));
             }
 
             return new MultiDiffResult(name, results);

@@ -25,10 +25,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\Data\DataSetDiff.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\Data\DataTableDiff.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\Data\SqlCommandDiff.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\IDiffEngine.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\DiffException.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\DiffResults.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\DiffDescriptionBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\MultiDiffResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\IDiffResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\SimpleDiffResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Functional\Executable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Functional\ExecutableExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Functional\FunctionalExtensions.cs" />
