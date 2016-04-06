@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.Panel = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.CommandTextTextBox1 = new System.Windows.Forms.TextBox();
@@ -152,8 +153,8 @@
             this.ClientSize = new System.Drawing.Size(1070, 734);
             this.Controls.Add(this.ExecuteButton);
             this.Controls.Add(this.Panel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
-            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "KirkinDiff";
             this.Panel.ResumeLayout(false);
