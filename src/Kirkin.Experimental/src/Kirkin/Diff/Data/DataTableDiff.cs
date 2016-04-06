@@ -7,23 +7,39 @@ namespace Kirkin.Diff.Data
     {
         public IDiffResult Compare(DataTable x, DataTable y)
         {
-            if (x.Columns.Count != y.Columns.Count) {
-                return new SimpleDiffResult(false, $"Column count mismatch: {x.Columns.Count} vs {y.Columns.Count}.");
+            return Compare("DataTable", x, y);
+        }
+
+        public IDiffResult Compare(string name, DataTable x, DataTable y)
+        {
+            List<IDiffResult> entries = new List<IDiffResult>();
+
+            IDiffResult columnCount = new SimpleDiffResult(
+                "Column count", x.Columns.Count == y.Columns.Count, $"{x.Columns.Count} vs {y.Columns.Count}."
+            );
+
+            entries.Add(columnCount);
+
+            IDiffResult rowCount = new SimpleDiffResult(
+                "Row count", x.Rows.Count == y.Rows.Count, $"{x.Rows.Count} vs {y.Rows.Count}."
+            );
+
+            entries.Add(rowCount);
+
+            if (columnCount.AreSame && rowCount.AreSame)
+            {
+                DataRowDiff engine = new DataRowDiff();
+
+                entries.Add(new MultiDiffResult("Rows", EnumerateRowDiff(engine, x, y)));
             }
 
-            if (x.Rows.Count != y.Rows.Count) {
-                return new SimpleDiffResult(false, $"Row count mismatch: {x.Rows.Count} vs {y.Rows.Count}.");
-            }
-
-            DataRowDiff engine = new DataRowDiff();
-
-            return new MultiDiffResult(() => EnumerateRowDiff(engine, x, y));
+            return new MultiDiffResult(name, entries);
         }
 
         private IEnumerable<IDiffResult> EnumerateRowDiff(DataRowDiff engine, DataTable x, DataTable y)
         {
             for (int i = 0; i < x.Rows.Count; i++) {
-                yield return engine.Compare(x.Rows[i], y.Rows[i]);
+                yield return engine.Compare($"Row {i}", x.Rows[i], y.Rows[i]);
             }
         }
     }

@@ -1,36 +1,68 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Kirkin.Diff
 {
+    internal static class MessageBuilder
+    {
+        public static string BuildMessage(IDiffResult diffResult)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            BuildMessage(sb, 0, diffResult);
+
+            return sb.ToString();
+        }
+
+        private static void BuildMessage(StringBuilder sb, int indenting, IDiffResult diffResult)
+        {
+            if (!diffResult.AreSame)
+            {
+                if (indenting != 0) {
+                    sb.Append(new string(' ', indenting * 4));
+                }
+
+                sb.Append(diffResult.Name);
+                sb.Append(": ");
+                sb.Append(diffResult.Message);
+
+                foreach (IDiffResult childEntry in diffResult.Entries) {
+                    BuildMessage(sb, indenting + 1, childEntry);
+                }
+            }
+        }
+    }
+
     internal sealed class SimpleDiffResult : IDiffResult
     {
+        public IEnumerable<IDiffResult> Entries { get; } = Enumerable.Empty<IDiffResult>();
         public bool AreSame { get; }
+        public string Name { get; }
         public string Message { get; }
 
-        internal SimpleDiffResult(bool areSame, string message)
+        internal SimpleDiffResult(string name, bool areSame, string message)
         {
+            Name = name;
             AreSame = areSame;
             Message = message;
         }
 
         public override string ToString()
         {
-            return Message;
+            return MessageBuilder.BuildMessage(this);
         }
     }
 
     internal sealed class MultiDiffResult : IDiffResult
     {
-        private readonly Lazy<IDiffResult[]> _entries;
+        private readonly IDiffResult[] _entries;
 
-        public IDiffResult[] Entries
+        public IEnumerable<IDiffResult> Entries
         {
             get
             {
-                return _entries.Value;
+                return _entries;
             }
         }
 
@@ -38,19 +70,18 @@ namespace Kirkin.Diff
         {
             get
             {
-                if (Entries.Length != 0)
+                foreach (IDiffResult entry in Entries)
                 {
-                    foreach (IDiffResult entry in Entries)
-                    {
-                        if (!entry.AreSame) {
-                            return false;
-                        }
+                    if (!entry.AreSame) {
+                        return false;
                     }
                 }
 
                 return true;
             }
         }
+
+        public string Name { get; }
 
         public string Message
         {
@@ -69,14 +100,15 @@ namespace Kirkin.Diff
             }
         }
 
-        internal MultiDiffResult(Func<IEnumerable<IDiffResult>> diffFactory)
+        internal MultiDiffResult(string name, IEnumerable<IDiffResult> entries)
         {
-            _entries = new Lazy<IDiffResult[]>(() => diffFactory().ToArray());
+            Name = name;
+            _entries = entries.ToArray();
         }
 
         public override string ToString()
         {
-            return Message;
+            return MessageBuilder.BuildMessage(this);
         }
     }
 }

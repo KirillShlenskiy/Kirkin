@@ -2,6 +2,6 @@
 {
     public interface IDiffEngine<T>
     {
-        IDiffResult Compare(T x, T y);
+        IDiffResult Compare(string name, T x, T y);
     }
 }

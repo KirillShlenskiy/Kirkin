@@ -69,5 +69,39 @@ namespace Kirkin.Tests.Diff
             Assert.False(new DataTableDiff().Compare(dt1, dt2).AreSame);
         }
 
+        [Fact]
+        public void DataCompare()
+        {
+            DataTable dt1 = new DataTable();
+            DataTable dt2 = new DataTable();
+
+            dt1.Columns.Add("ID", typeof(int));
+            dt2.Columns.Add("ID", typeof(int));
+            dt1.Columns.Add("Value", typeof(string));
+            dt2.Columns.Add("Value", typeof(string));
+
+            dt1.Rows.Add(1, "Hello");
+            dt2.Rows.Add(1, "Hello");
+            dt1.Rows.Add(2, "Moshi Moshi");
+            dt2.Rows.Add(2, "Moshi Moshi");
+
+            Assert.True(new DataTableDiff().Compare(dt1, dt2).AreSame);
+
+            dt1.Rows.Add(3, "Aloha");
+
+            IDiffResult diff1 = new DataTableDiff().Compare(dt1, dt2);
+
+            Assert.False(diff1.AreSame);
+            //Assert.Equal("Row count mismatch: 3 vs 2.", diff1.Message);
+
+            dt2.Rows.Add(4, "Whaaaa");
+
+            IDiffResult diff2 = new DataTableDiff().Compare(dt1, dt2);
+
+            string message = MessageBuilder.BuildMessage(diff2);
+
+            Assert.False(diff2.AreSame);
+            //Assert.Equal("Row count mismatch: 3 vs 2.", diff.Message);
+        }
     }
 }
