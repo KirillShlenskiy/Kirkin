@@ -92,16 +92,16 @@ namespace Kirkin.Tests.Diff
             DiffResult diff1 = DataTableDiff.Compare(dt1, dt2);
 
             Assert.False(diff1.AreSame);
-            //Assert.Equal("Row count mismatch: 3 vs 2.", diff1.Message);
+            Assert.Equal("DataTable -> Row count: 3 vs 2.", diff1.ToString());
 
             dt2.Rows.Add(4, "Whaaaa");
 
             DiffResult diff2 = DataTableDiff.Compare(dt1, dt2);
 
-            string message = DiffDescriptionBuilder.BuildDiffMessage(diff2);
-
             Assert.False(diff2.AreSame);
             //Assert.Equal("Row count mismatch: 3 vs 2.", diff.Message);
+
+            Output.Log(diff2.Message);
         }
     }
 }

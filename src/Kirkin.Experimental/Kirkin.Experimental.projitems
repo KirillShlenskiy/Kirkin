@@ -25,7 +25,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\Data\DataSetDiff.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\Data\DataTableDiff.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\Data\SqlCommandDiff.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\DiffDescriptionBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\DiffResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Functional\Executable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Functional\ExecutableExtensions.cs" />
