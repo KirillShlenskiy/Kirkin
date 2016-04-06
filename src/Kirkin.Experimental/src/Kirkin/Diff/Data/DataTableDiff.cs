@@ -20,6 +20,12 @@ namespace Kirkin.Diff.Data
 
             entries.Add(columnCount);
 
+            if (columnCount.AreSame)
+            {
+                entries.Add(new DiffResult("Column names", EnumerateColumnNameDiffs(x, y)));
+                entries.Add(new DiffResult("Column types", EnumerateColumnDataTypeDiffs(x, y)));
+            }
+
             DiffResult rowCount = new DiffResult(
                 "Row count", x.Rows.Count == y.Rows.Count, $"{x.Rows.Count} vs {y.Rows.Count}."
             );
@@ -27,13 +33,33 @@ namespace Kirkin.Diff.Data
             entries.Add(rowCount);
 
             if (columnCount.AreSame && rowCount.AreSame) {
-                entries.Add(new DiffResult("Rows", EnumerateRowDiff(x, y)));
+                entries.Add(new DiffResult("Rows", EnumerateRowDiffs(x, y)));
             }
 
             return new DiffResult(name, entries);
         }
 
-        private static IEnumerable<DiffResult> EnumerateRowDiff(DataTable x, DataTable y)
+        private static IEnumerable<DiffResult> EnumerateColumnNameDiffs(DataTable x, DataTable y)
+        {
+            for (int i = 0; i < x.Columns.Count; i++)
+            {
+                yield return new DiffResult(
+                    $"Column {i}", x.Columns[i].ColumnName == y.Columns[i].ColumnName, $"{x.Columns[i].ColumnName} vs {y.Columns[i].ColumnName}"
+                );
+            }
+        }
+
+        private static IEnumerable<DiffResult> EnumerateColumnDataTypeDiffs(DataTable x, DataTable y)
+        {
+            for (int i = 0; i < x.Columns.Count; i++)
+            {
+                yield return new DiffResult(
+                    $"Column {i}", x.Columns[i].DataType == y.Columns[i].DataType, $"{x.Columns[i].DataType.Name} vs {y.Columns[i].DataType.Name}"
+                );
+            }
+        }
+
+        private static IEnumerable<DiffResult> EnumerateRowDiffs(DataTable x, DataTable y)
         {
             for (int i = 0; i < x.Rows.Count; i++) {
                 yield return DataRowDiff.Compare($"Row {i}", x.Rows[i], y.Rows[i]);
