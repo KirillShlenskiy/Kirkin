@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -21,22 +22,15 @@ namespace Kirkin.Diff
         }
     }
 
-    public abstract class CompositeDiffResult<T> : IDiffResult
+    internal sealed class MultiDiffResult : IDiffResult
     {
-        public T X { get; }
-        public T Y { get; }
-
-        private IDiffResult[] _entries;
+        private readonly Lazy<IDiffResult[]> _entries;
 
         public IDiffResult[] Entries
         {
             get
             {
-                if (_entries == null) {
-                    _entries = Compare(X, Y).ToArray();
-                }
-
-                return _entries;
+                return _entries.Value;
             }
         }
 
@@ -75,13 +69,10 @@ namespace Kirkin.Diff
             }
         }
 
-        protected CompositeDiffResult(T x, T y)
+        internal MultiDiffResult(Func<IEnumerable<IDiffResult>> diffFactory)
         {
-            X = x;
-            Y = y;
+            _entries = new Lazy<IDiffResult[]>(() => diffFactory().ToArray());
         }
-
-        protected abstract IEnumerable<IDiffResult> Compare(T x, T y);
 
         public override string ToString()
         {

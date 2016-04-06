@@ -5,16 +5,14 @@ namespace Kirkin.Diff.Data
 {
     public static class SqlCommandDiff
     {
-        public static DataSetDiff CompareResultSets(SqlCommand cmd1, SqlCommand cmd2)
+        public static IDiffResult CompareResultSets(SqlCommand cmd1, SqlCommand cmd2)
         {
             using (DataSet ds1 = ExecuteDataSet(cmd1))
             using (DataSet ds2 = ExecuteDataSet(cmd2))
             {
-                DataSetDiff diff = new DataSetDiff(ds1, ds2);
+                DataSetDiff engine = new DataSetDiff();
 
-                var ignored = diff.Entries;
-
-                return diff;
+                return engine.Compare(ds1, ds2);
             }
         }
 

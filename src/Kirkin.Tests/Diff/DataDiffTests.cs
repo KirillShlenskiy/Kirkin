@@ -31,7 +31,7 @@ namespace Kirkin.Tests.Diff
             DataTable dt1 = new DataTable();
             DataTable dt2 = new DataTable();
 
-            Assert.True(new DataTableDiff(dt1, dt2).AreSame);
+            Assert.True(new DataTableDiff().Compare(dt1, dt2).AreSame);
         }
 
         [Fact]
@@ -43,7 +43,7 @@ namespace Kirkin.Tests.Diff
             dt1.Columns.Add("ID", typeof(int));
             dt2.Columns.Add("ID", typeof(int));
 
-            Assert.True(new DataTableDiff(dt1, dt2).AreSame);
+            Assert.True(new DataTableDiff().Compare(dt1, dt2).AreSame);
         }
 
         [Fact]
@@ -54,7 +54,20 @@ namespace Kirkin.Tests.Diff
 
             dt1.Columns.Add("ID", typeof(int));
 
-            Assert.False(new DataTableDiff(dt1, dt2).AreSame);
+            Assert.False(new DataTableDiff().Compare(dt1, dt2).AreSame);
         }
+
+        [Fact(Skip = "Fix")]
+        public void ColumnNameMismatchDiff()
+        {
+            DataTable dt1 = new DataTable();
+            DataTable dt2 = new DataTable();
+
+            dt1.Columns.Add("ID", typeof(int));
+            dt2.Columns.Add("IDz", typeof(int));
+
+            Assert.False(new DataTableDiff().Compare(dt1, dt2).AreSame);
+        }
+
     }
 }
