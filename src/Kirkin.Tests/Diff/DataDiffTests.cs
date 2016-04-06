@@ -89,14 +89,14 @@ namespace Kirkin.Tests.Diff
 
             dt1.Rows.Add(3, "Aloha");
 
-            IDiffResult diff1 = DataTableDiff.Compare(dt1, dt2);
+            DiffResult diff1 = DataTableDiff.Compare(dt1, dt2);
 
             Assert.False(diff1.AreSame);
             //Assert.Equal("Row count mismatch: 3 vs 2.", diff1.Message);
 
             dt2.Rows.Add(4, "Whaaaa");
 
-            IDiffResult diff2 = DataTableDiff.Compare(dt1, dt2);
+            DiffResult diff2 = DataTableDiff.Compare(dt1, dt2);
 
             string message = DiffDescriptionBuilder.BuildDiffMessage(diff2);
 

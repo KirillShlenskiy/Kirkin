@@ -7,29 +7,29 @@ namespace Kirkin.Diff.Data
 {
     internal static class DataRowDiff
     {
-        internal static IDiffResult Compare(string name, DataRow x, DataRow y)
+        internal static DiffResult Compare(string name, DataRow x, DataRow y)
         {
-            List<IDiffResult> results = new List<IDiffResult>();
+            List<DiffResult> results = new List<DiffResult>();
 
-            IDiffResult cellCount = new SimpleDiffResult(
+            DiffResult cellCount = new DiffResult(
                 "ItemArray length", x.ItemArray.Length == y.ItemArray.Length, $"{x.ItemArray.Length} vs {y.ItemArray.Length}."
             );
 
             results.Add(cellCount);
 
             if (cellCount.AreSame) {
-                results.Add(new MultiDiffResult("Cells", EnumerateCellDiffs(x, y)));
+                results.Add(new DiffResult("Cells", EnumerateCellDiffs(x, y)));
             }
 
-            return new MultiDiffResult(name, results);
+            return new DiffResult(name, results);
         }
 
-        private static IEnumerable<IDiffResult> EnumerateCellDiffs(DataRow x, DataRow y)
+        private static IEnumerable<DiffResult> EnumerateCellDiffs(DataRow x, DataRow y)
         {
             for (int i = 0; i < x.ItemArray.Length; i++)
             {
                 if (!DataCellEqualityComparer.Instance.Equals(x.ItemArray[i], y.ItemArray[i])) {
-                    yield return new SimpleDiffResult(x.Table.Columns[i].ColumnName, false, $"{x.ItemArray[i]} vs {y.ItemArray[i]}.");
+                    yield return new DiffResult(x.Table.Columns[i].ColumnName, false, $"{x.ItemArray[i]} vs {y.ItemArray[i]}.");
                 }
             }
         }

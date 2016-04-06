@@ -5,7 +5,7 @@ namespace Kirkin.Diff
 {
     public static class DiffDescriptionBuilder
     {
-        public static string BuildDiffMessage(IDiffResult diffResult)
+        public static string BuildDiffMessage(DiffResult diffResult)
         {
             if (diffResult == null) throw new ArgumentNullException(nameof(diffResult));
 
@@ -16,7 +16,7 @@ namespace Kirkin.Diff
             return sb.ToString();
         }
 
-        private static void BuildMessage(StringBuilder sb, int indenting, IDiffResult diffResult)
+        private static void BuildMessage(StringBuilder sb, int indenting, DiffResult diffResult)
         {
             if (!diffResult.AreSame)
             {
@@ -29,7 +29,7 @@ namespace Kirkin.Diff
                 sb.Append(diffResult.Message);
                 sb.AppendLine();
 
-                foreach (IDiffResult childEntry in diffResult.Entries) {
+                foreach (DiffResult childEntry in diffResult.Entries) {
                     BuildMessage(sb, indenting + 1, childEntry);
                 }
             }

@@ -5,7 +5,7 @@ namespace Kirkin.Diff.Data
 {
     public static class SqlCommandDiff
     {
-        public static IDiffResult CompareResultSets(SqlCommand cmd1, SqlCommand cmd2)
+        public static DiffResult CompareResultSets(SqlCommand cmd1, SqlCommand cmd2)
         {
             using (DataSet ds1 = ExecuteDataSet(cmd1))
             using (DataSet ds2 = ExecuteDataSet(cmd2))
