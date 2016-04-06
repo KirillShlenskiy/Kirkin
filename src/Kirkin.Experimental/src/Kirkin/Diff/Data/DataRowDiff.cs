@@ -5,9 +5,9 @@ using System.Data;
 
 namespace Kirkin.Diff.Data
 {
-    internal sealed class DataRowDiff : IDiffEngine<DataRow>
+    internal static class DataRowDiff
     {
-        public IDiffResult Compare(string name, DataRow x, DataRow y)
+        internal static IDiffResult Compare(string name, DataRow x, DataRow y)
         {
             List<IDiffResult> results = new List<IDiffResult>();
 

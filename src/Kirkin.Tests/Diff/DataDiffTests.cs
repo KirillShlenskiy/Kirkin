@@ -31,7 +31,7 @@ namespace Kirkin.Tests.Diff
             DataTable dt1 = new DataTable();
             DataTable dt2 = new DataTable();
 
-            Assert.True(new DataTableDiff().Compare(dt1, dt2).AreSame);
+            Assert.True(DataTableDiff.Compare(dt1, dt2).AreSame);
         }
 
         [Fact]
@@ -43,7 +43,7 @@ namespace Kirkin.Tests.Diff
             dt1.Columns.Add("ID", typeof(int));
             dt2.Columns.Add("ID", typeof(int));
 
-            Assert.True(new DataTableDiff().Compare(dt1, dt2).AreSame);
+            Assert.True(DataTableDiff.Compare(dt1, dt2).AreSame);
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace Kirkin.Tests.Diff
 
             dt1.Columns.Add("ID", typeof(int));
 
-            Assert.False(new DataTableDiff().Compare(dt1, dt2).AreSame);
+            Assert.False(DataTableDiff.Compare(dt1, dt2).AreSame);
         }
 
         [Fact(Skip = "Fix")]
@@ -66,7 +66,7 @@ namespace Kirkin.Tests.Diff
             dt1.Columns.Add("ID", typeof(int));
             dt2.Columns.Add("IDz", typeof(int));
 
-            Assert.False(new DataTableDiff().Compare(dt1, dt2).AreSame);
+            Assert.False(DataTableDiff.Compare(dt1, dt2).AreSame);
         }
 
         [Fact]
@@ -85,18 +85,18 @@ namespace Kirkin.Tests.Diff
             dt1.Rows.Add(2, "Moshi Moshi");
             dt2.Rows.Add(2, "Moshi Moshi");
 
-            Assert.True(new DataTableDiff().Compare(dt1, dt2).AreSame);
+            Assert.True(DataTableDiff.Compare(dt1, dt2).AreSame);
 
             dt1.Rows.Add(3, "Aloha");
 
-            IDiffResult diff1 = new DataTableDiff().Compare(dt1, dt2);
+            IDiffResult diff1 = DataTableDiff.Compare(dt1, dt2);
 
             Assert.False(diff1.AreSame);
             //Assert.Equal("Row count mismatch: 3 vs 2.", diff1.Message);
 
             dt2.Rows.Add(4, "Whaaaa");
 
-            IDiffResult diff2 = new DataTableDiff().Compare(dt1, dt2);
+            IDiffResult diff2 = DataTableDiff.Compare(dt1, dt2);
 
             string message = MessageBuilder.BuildMessage(diff2);
 

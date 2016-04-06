@@ -3,14 +3,14 @@ using System.Data;
 
 namespace Kirkin.Diff.Data
 {
-    public sealed class DataTableDiff : IDiffEngine<DataTable>
+    public static class DataTableDiff
     {
-        public IDiffResult Compare(DataTable x, DataTable y)
+        public static IDiffResult Compare(DataTable x, DataTable y)
         {
             return Compare("DataTable", x, y);
         }
 
-        public IDiffResult Compare(string name, DataTable x, DataTable y)
+        internal static IDiffResult Compare(string name, DataTable x, DataTable y)
         {
             List<IDiffResult> entries = new List<IDiffResult>();
 
@@ -26,20 +26,17 @@ namespace Kirkin.Diff.Data
 
             entries.Add(rowCount);
 
-            if (columnCount.AreSame && rowCount.AreSame)
-            {
-                DataRowDiff engine = new DataRowDiff();
-
-                entries.Add(new MultiDiffResult("Rows", EnumerateRowDiff(engine, x, y)));
+            if (columnCount.AreSame && rowCount.AreSame) {
+                entries.Add(new MultiDiffResult("Rows", EnumerateRowDiff(x, y)));
             }
 
             return new MultiDiffResult(name, entries);
         }
 
-        private IEnumerable<IDiffResult> EnumerateRowDiff(DataRowDiff engine, DataTable x, DataTable y)
+        private static IEnumerable<IDiffResult> EnumerateRowDiff(DataTable x, DataTable y)
         {
             for (int i = 0; i < x.Rows.Count; i++) {
-                yield return engine.Compare($"Row {i}", x.Rows[i], y.Rows[i]);
+                yield return DataRowDiff.Compare($"Row {i}", x.Rows[i], y.Rows[i]);
             }
         }
     }

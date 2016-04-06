@@ -3,14 +3,14 @@ using System.Data;
 
 namespace Kirkin.Diff.Data
 {
-    public class DataSetDiff : IDiffEngine<DataSet>
+    public static class DataSetDiff
     {
-        public IDiffResult Compare(DataSet x, DataSet y)
+        public static IDiffResult Compare(DataSet x, DataSet y)
         {
             return Compare("DataSet", x, y);
         }
 
-        public IDiffResult Compare(string name, DataSet x, DataSet y)
+        internal static IDiffResult Compare(string name, DataSet x, DataSet y)
         {
             List<IDiffResult> entries = new List<IDiffResult>();
 
@@ -20,20 +20,17 @@ namespace Kirkin.Diff.Data
 
             entries.Add(tableCount);
 
-            if (tableCount.AreSame)
-            {
-                DataTableDiff engine = new DataTableDiff();
-
-                entries.Add(new MultiDiffResult("Tables", EnumerateTableDiffs(engine, x, y)));
+            if (tableCount.AreSame) {
+                entries.Add(new MultiDiffResult("Tables", EnumerateTableDiffs(x, y)));
             }
 
             return new MultiDiffResult(name, entries);
         }
 
-        private IEnumerable<IDiffResult> EnumerateTableDiffs(DataTableDiff engine, DataSet x, DataSet y)
+        private static IEnumerable<IDiffResult> EnumerateTableDiffs(DataSet x, DataSet y)
         {
             for (int i = 0; i < x.Tables.Count; i++) {
-                yield return engine.Compare($"Table {i}", x.Tables[i], y.Tables[i]);
+                yield return DataTableDiff.Compare($"Table {i}", x.Tables[i], y.Tables[i]);
             }
         }
     }

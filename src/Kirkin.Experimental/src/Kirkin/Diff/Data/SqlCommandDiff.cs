@@ -10,9 +10,7 @@ namespace Kirkin.Diff.Data
             using (DataSet ds1 = ExecuteDataSet(cmd1))
             using (DataSet ds2 = ExecuteDataSet(cmd2))
             {
-                DataSetDiff engine = new DataSetDiff();
-
-                return engine.Compare(ds1, ds2);
+                return DataSetDiff.Compare(ds1, ds2);
             }
         }
 
