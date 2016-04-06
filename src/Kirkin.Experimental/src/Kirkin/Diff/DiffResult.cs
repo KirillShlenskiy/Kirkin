@@ -12,7 +12,6 @@ namespace Kirkin.Diff
     {
         private static readonly DiffResult[] s_emptyEntries = new DiffResult[0];
         private readonly DiffResult[] _entries;
-        internal readonly string _message;
 
         /// <summary>
         /// Child diff entries.
@@ -35,20 +34,14 @@ namespace Kirkin.Diff
         /// <summary>
         /// Diff message or null if the comparands are identical.
         /// </summary>
-        public string Message
-        {
-            get
-            {
-                return DiffDescriptionBuilder.BuildIndentedDiffMessage(this);
-            }
-        }
+        internal readonly string Message;
 
         public DiffResult(string name, bool areSame, string message)
         {
             Name = name;
             _entries = s_emptyEntries;
             AreSame = areSame;
-            _message = areSame ? null : message;
+            Message = areSame ? null : message;
         }
 
         public DiffResult(string name, IEnumerable<DiffResult> entries)
@@ -60,7 +53,15 @@ namespace Kirkin.Diff
 
         public override string ToString()
         {
-            return DiffDescriptionBuilder.BuildFlatDiffMessage(this);
+            return ToString(DiffTextFormat.Flat);
+        }
+
+        public string ToString(DiffTextFormat format)
+        {
+            if (format == DiffTextFormat.Flat) return DiffDescriptionBuilder.BuildFlatDiffMessage(this);
+            if (format == DiffTextFormat.Indented) return DiffDescriptionBuilder.BuildIndentedDiffMessage(this);
+
+            throw new NotImplementedException($"Unknown {nameof(DiffTextFormat)} value.");
         }
 
         static class DiffDescriptionBuilder
@@ -71,29 +72,40 @@ namespace Kirkin.Diff
 
                 StringBuilder sb = new StringBuilder();
 
-                BuildFlatMessage(sb, diffResult);
+                BuildFlatMessage(sb, string.Empty, diffResult);
 
                 return sb.ToString();
             }
 
-            private static void BuildFlatMessage(StringBuilder sb, DiffResult diffResult)
+            private static void BuildFlatMessage(StringBuilder sb, string line, DiffResult diffResult)
             {
                 if (!diffResult.AreSame)
                 {
-                    if (sb.Length != 0) {
-                        sb.Append(" -> ");
+                    if (line.Length != 0) {
+                        line += " -> ";
                     }
 
-                    sb.Append(diffResult.Name);
+                    line += diffResult.Name;
 
-                    if (!string.IsNullOrEmpty(diffResult._message))
+                    if (!string.IsNullOrEmpty(diffResult.Message))
                     {
-                        sb.Append(": ");
-                        sb.Append(diffResult._message);
+                        line += ": ";
+                        line += diffResult.Message;
                     }
 
-                    foreach (DiffResult childEntry in diffResult.Entries) {
-                        BuildFlatMessage(sb, childEntry);
+                    if (diffResult.Entries.Count == 0)
+                    {
+                        if (sb.Length != 0) {
+                            sb.AppendLine();
+                        }
+
+                        sb.Append(line);
+                    }
+                    else
+                    {
+                        foreach (DiffResult childEntry in diffResult.Entries) {
+                            BuildFlatMessage(sb, line, childEntry);
+                        }
                     }
                 }
             }
@@ -119,7 +131,7 @@ namespace Kirkin.Diff
 
                     sb.Append(diffResult.Name);
                     sb.Append(": ");
-                    sb.Append(diffResult._message);
+                    sb.Append(diffResult.Message);
                     sb.AppendLine();
 
                     foreach (DiffResult childEntry in diffResult.Entries) {

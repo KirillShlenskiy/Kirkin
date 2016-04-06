@@ -97,11 +97,12 @@ namespace Kirkin.Tests.Diff
             dt2.Rows.Add(4, "Whaaaa");
 
             DiffResult diff2 = DataTableDiff.Compare(dt1, dt2);
+            string message = diff2.ToString();
 
             Assert.False(diff2.AreSame);
             //Assert.Equal("Row count mismatch: 3 vs 2.", diff.Message);
 
-            Output.Log(diff2.Message);
+            Output.Log(diff2.ToString(DiffTextFormat.Indented));
         }
     }
 }
