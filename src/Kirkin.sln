@@ -11,11 +11,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirkin", "Kirkin\Kirkin.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirkin.Tests", "Kirkin.Tests\Kirkin.Tests.csproj", "{79EDDF89-8B87-43FB-9B9B-A27E7EAD74EA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KirkinDiff", "KirkinDiff\KirkinDiff.csproj", "{BC4FCC6F-259B-4D0A-BE96-00810C8D8F82}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Kirkin.Experimental\Kirkin.Experimental.projitems*{d3c20c73-657e-4317-b694-6f233d093496}*SharedItemsImports = 13
-		Kirkin.Experimental\Kirkin.Experimental.projitems*{6422229e-69f4-4fc5-a79c-eeaaad04da5c}*SharedItemsImports = 4
 		Kirkin.InReview\Kirkin.InReview.projitems*{6422229e-69f4-4fc5-a79c-eeaaad04da5c}*SharedItemsImports = 4
+		Kirkin.Experimental\Kirkin.Experimental.projitems*{6422229e-69f4-4fc5-a79c-eeaaad04da5c}*SharedItemsImports = 4
 		Kirkin.InReview\Kirkin.InReview.projitems*{df3ee3f0-2396-442c-925a-ef3d161e1087}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,10 @@ Global
 		{79EDDF89-8B87-43FB-9B9B-A27E7EAD74EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79EDDF89-8B87-43FB-9B9B-A27E7EAD74EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79EDDF89-8B87-43FB-9B9B-A27E7EAD74EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC4FCC6F-259B-4D0A-BE96-00810C8D8F82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC4FCC6F-259B-4D0A-BE96-00810C8D8F82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC4FCC6F-259B-4D0A-BE96-00810C8D8F82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC4FCC6F-259B-4D0A-BE96-00810C8D8F82}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
