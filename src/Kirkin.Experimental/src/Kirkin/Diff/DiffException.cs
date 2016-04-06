@@ -3,11 +3,14 @@
 namespace Kirkin.Diff
 {
     [Serializable]
-    public sealed class DiffException : Exception
+    internal sealed class DiffException : Exception
     {
-        internal DiffException(string message)
-            : base(message)
+        public IDiffResult Result { get; }
+
+        internal DiffException(IDiffResult result)
+            : base(result.Message)
         {
+            Result = result;
         }
     }
 }
