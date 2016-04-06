@@ -7,6 +7,8 @@ using System.Windows.Forms;
 using Kirkin.Diff;
 using Kirkin.Diff.Data;
 
+using KirkinDiff.Properties;
+
 namespace KirkinDiff
 {
     public partial class MainForm : Form
@@ -14,6 +16,20 @@ namespace KirkinDiff
         public MainForm()
         {
             InitializeComponent();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            ConnectionStringTextBox1.Text = Settings.Default.ConnectionString1;
+            ConnectionStringTextBox2.Text = Settings.Default.ConnectionString2;
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Settings.Default.ConnectionString1 = ConnectionStringTextBox1.Text;
+            Settings.Default.ConnectionString2 = ConnectionStringTextBox2.Text;
+
+            Settings.Default.Save();
         }
 
         private void ExecuteButton_Click(object sender, EventArgs e)
@@ -53,6 +69,6 @@ namespace KirkinDiff
 
                 return ds;
             }
-        }
+        }      
     }
 }
