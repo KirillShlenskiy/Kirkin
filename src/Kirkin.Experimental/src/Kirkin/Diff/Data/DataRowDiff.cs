@@ -9,32 +9,24 @@ namespace Kirkin.Diff.Data
     {
         internal static DiffResult Compare(string name, DataRow x, DataRow y)
         {
-            List<DiffResult> results = new List<DiffResult>();
-
-            DiffResult cellCount = new DiffResult(
-                "ItemArray length", x.ItemArray.Length == y.ItemArray.Length, $"{x.ItemArray.Length} vs {y.ItemArray.Length}."
-            );
-
-            results.Add(cellCount);
-
-            if (cellCount.AreSame) {
-                results.Add(new DiffResult("Cells", GetCellDiffs(x, y)));
-            }
-
-            return new DiffResult(name, results.ToArray());
+            return new DiffResult("Cells", GetCellDiffs(x, y));
         }
 
         private static DiffResult[] GetCellDiffs(DataRow x, DataRow y)
         {
             List<DiffResult> entries = null;
 
-            for (int i = 0; i < x.ItemArray.Length; i++)
+            // Perf: prevent new array allocation on every ItemArray getter call.
+            object[] xItemArray = x.ItemArray;
+            object[] yItemArray = y.ItemArray;
+
+            for (int i = 0; i < xItemArray.Length; i++)
             {
-                if (!DataCellEqualityComparer.Instance.Equals(x.ItemArray[i], y.ItemArray[i]))
+                if (!DataCellEqualityComparer.Instance.Equals(xItemArray[i], yItemArray[i]))
                 {
                     if (entries == null) entries = new List<DiffResult>();
 
-                    entries.Add(new DiffResult(x.Table.Columns[i].ColumnName, false, $"{x.ItemArray[i]} vs {y.ItemArray[i]}."));
+                    entries.Add(new DiffResult(x.Table.Columns[i].ColumnName, false, $"{xItemArray[i]} vs {yItemArray[i]}."));
                 }
             }
 
