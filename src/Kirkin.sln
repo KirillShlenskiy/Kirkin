@@ -16,8 +16,8 @@ EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Kirkin.Experimental\Kirkin.Experimental.projitems*{d3c20c73-657e-4317-b694-6f233d093496}*SharedItemsImports = 13
-		Kirkin.InReview\Kirkin.InReview.projitems*{6422229e-69f4-4fc5-a79c-eeaaad04da5c}*SharedItemsImports = 4
 		Kirkin.Experimental\Kirkin.Experimental.projitems*{6422229e-69f4-4fc5-a79c-eeaaad04da5c}*SharedItemsImports = 4
+		Kirkin.InReview\Kirkin.InReview.projitems*{6422229e-69f4-4fc5-a79c-eeaaad04da5c}*SharedItemsImports = 4
 		Kirkin.InReview\Kirkin.InReview.projitems*{df3ee3f0-2396-442c-925a-ef3d161e1087}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

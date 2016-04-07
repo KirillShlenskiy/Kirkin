@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
@@ -82,15 +81,18 @@ namespace KirkinDiff
             try
             {
                 Text = DefaultText + ": executing left ...";
-                KeyValuePair<LightDataSet, TimeSpan> result1 = await ProduceDataSetAsync(ConnectionStringTextBox1.Text, CommandTextTextBox1.Text, cts.Token);
-                Text = DefaultText + ": executing right ...";
-                KeyValuePair<LightDataSet, TimeSpan> result2 = await ProduceDataSetAsync(ConnectionStringTextBox2.Text, CommandTextTextBox2.Text, cts.Token);
+                Stopwatch ds1Stopwatch = Stopwatch.StartNew();
+                LightDataSet ds1 = await ProduceDataSetAsync(ConnectionStringTextBox1.Text, CommandTextTextBox1.Text, cts.Token);
+
+                ds1Stopwatch.Stop();
                 cts.Token.ThrowIfCancellationRequested();
 
-                LightDataSet ds1 = result1.Key;
-                LightDataSet ds2 = result2.Key;
-                TimeSpan timeTaken1 = result1.Value;
-                TimeSpan timeTaken2 = result2.Value;
+                Text = DefaultText + ": executing right ...";
+                Stopwatch ds2Stopwatch = Stopwatch.StartNew();
+                LightDataSet ds2 = await ProduceDataSetAsync(ConnectionStringTextBox2.Text, CommandTextTextBox2.Text, cts.Token);
+
+                ds2Stopwatch.Stop();
+                cts.Token.ThrowIfCancellationRequested();
 
                 Text = DefaultText + ": comparing ...";
                 Stopwatch diffStopwatch = Stopwatch.StartNew();
@@ -101,8 +103,8 @@ namespace KirkinDiff
 
                 StringBuilder resultText = new StringBuilder();
 
-                resultText.Append($"Time taken (left): {timeTaken1.TotalMilliseconds / 1000:0.###}s, ");
-                resultText.Append($"right: {timeTaken2.TotalMilliseconds / 1000:0.###}s, ");
+                resultText.Append($"Time taken (left): {(double)ds1Stopwatch.ElapsedMilliseconds / 1000:0.###}s, ");
+                resultText.Append($"right: {(double)ds2Stopwatch.ElapsedMilliseconds / 1000:0.###}s, ");
                 resultText.AppendLine($"compare: {(double)diffStopwatch.ElapsedMilliseconds / 1000:0.###}s");
                 resultText.AppendLine();
 
@@ -144,10 +146,8 @@ namespace KirkinDiff
             }
         }
 
-        private static async Task<KeyValuePair<LightDataSet, TimeSpan>> ProduceDataSetAsync(string connectionString, string commandText, CancellationToken ct)
+        private static async Task<LightDataSet> ProduceDataSetAsync(string connectionString, string commandText, CancellationToken ct)
         {
-            Stopwatch sw = Stopwatch.StartNew();
-
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 await connection.OpenAsync(ct).ConfigureAwait(false);
@@ -169,7 +169,7 @@ namespace KirkinDiff
                             }
                         }
 
-                        return new KeyValuePair<LightDataSet, TimeSpan>(ds, sw.Elapsed);
+                        return ds;
                     }
                 }
             }
