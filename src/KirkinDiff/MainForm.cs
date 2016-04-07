@@ -168,7 +168,7 @@ namespace KirkinDiff
                 object[] itemArray = new object[reader.FieldCount];
 
                 for (int i = 0; i < itemArray.Length; i++) {
-                    itemArray[i] = reader.GetValue(i);
+                    itemArray[i] = reader[i];
                 }
 
                 table.Rows.Add(itemArray);
