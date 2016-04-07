@@ -73,6 +73,18 @@ namespace KirkinDiff
 
         private async void ExecuteDiff()
         {
+            if (string.IsNullOrEmpty(ConnectionStringTextBox1.Text) || string.IsNullOrEmpty(ConnectionStringTextBox2.Text))
+            {
+                MessageBox.Show("Please enter both connection strings.", "Validation error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+
+            if (string.IsNullOrEmpty(CommandTextTextBox1.Text) || string.IsNullOrEmpty(CommandTextTextBox2.Text))
+            {
+                MessageBox.Show("Please enter both SQL commands.", "Validation error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+
             CancellationTokenSource cts = new CancellationTokenSource();
 
             ExecuteButton.Tag = cts;
