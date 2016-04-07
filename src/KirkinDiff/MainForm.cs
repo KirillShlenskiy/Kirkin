@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -51,7 +53,16 @@ namespace KirkinDiff
 
         private void ExecuteButton_Click(object sender, EventArgs e)
         {
-            ExecuteDiff();
+            if (ExecuteButton.Tag != null)
+            {
+                ((CancellationTokenSource)ExecuteButton.Tag).Cancel();
+
+                ExecuteButton.Enabled = false;
+            }
+            else
+            {
+                ExecuteDiff();
+            }
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)
@@ -63,24 +74,29 @@ namespace KirkinDiff
 
         private async void ExecuteDiff()
         {
-            ExecuteButton.Enabled = false;
+            CancellationTokenSource cts = new CancellationTokenSource();
+
+            ExecuteButton.Tag = cts;
+            ExecuteButton.Text = "Cancel";
 
             try
             {
-                TimeSpan timeTaken1 = TimeSpan.Zero;
-                TimeSpan timeTaken2 = TimeSpan.Zero;
-
                 Text = DefaultText + ": executing left ...";
-
-                LightDataSet ds1 = await Task.Run(() => ProduceDataSet(ConnectionStringTextBox1.Text, CommandTextTextBox1.Text, out timeTaken1));
+                KeyValuePair<LightDataSet, TimeSpan> result1 = await ProduceDataSetAsync(ConnectionStringTextBox1.Text, CommandTextTextBox1.Text, cts.Token);
                 Text = DefaultText + ": executing right ...";
+                KeyValuePair<LightDataSet, TimeSpan> result2 = await ProduceDataSetAsync(ConnectionStringTextBox2.Text, CommandTextTextBox2.Text, cts.Token);
+                cts.Token.ThrowIfCancellationRequested();
 
-                LightDataSet ds2 = await Task.Run(() => ProduceDataSet(ConnectionStringTextBox2.Text, CommandTextTextBox2.Text, out timeTaken2));
+                LightDataSet ds1 = result1.Key;
+                LightDataSet ds2 = result2.Key;
+                TimeSpan timeTaken1 = result1.Value;
+                TimeSpan timeTaken2 = result2.Value;
+
                 Text = DefaultText + ": comparing ...";
-
                 Stopwatch diffStopwatch = Stopwatch.StartNew();
                 DiffResult diff = await Task.Run(() => DataSetDiff.Compare(ds1, ds2));
 
+                cts.Token.ThrowIfCancellationRequested();
                 diffStopwatch.Stop();
 
                 StringBuilder resultText = new StringBuilder();
@@ -115,47 +131,51 @@ namespace KirkinDiff
                     diff.AreSame ? MessageBoxIcon.Information : MessageBoxIcon.Exclamation
                 );
             }
+            catch (OperationCanceledException)
+            {
+                // Expected.
+            }
             finally
             {
+                ExecuteButton.Tag = null;
+                ExecuteButton.Text = "Execute";
                 ExecuteButton.Enabled = true;
                 Text = DefaultText;
             }
         }
 
-        private static LightDataSet ProduceDataSet(string connectionString, string commandText, out TimeSpan timeTaken)
+        private static async Task<KeyValuePair<LightDataSet, TimeSpan>> ProduceDataSetAsync(string connectionString, string commandText, CancellationToken ct)
         {
             Stopwatch sw = Stopwatch.StartNew();
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync(ct).ConfigureAwait(false);
 
                 using (SqlCommand command = new SqlCommand(commandText, connection))
                 {
                     command.CommandTimeout = 0;
 
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync(ct).ConfigureAwait(false))
                     {
                         LightDataSet ds = new LightDataSet();
 
                         while (true)
                         {
-                            ds.Tables.Add(TableFromReader(reader));
+                            ds.Tables.Add(await TableFromReaderAsync(reader, ct).ConfigureAwait(false));
 
-                            if (!reader.NextResult()) {
+                            if (!await reader.NextResultAsync(ct).ConfigureAwait(false)) {
                                 break;
                             }
                         }
 
-                        timeTaken = sw.Elapsed;
-
-                        return ds;
+                        return new KeyValuePair<LightDataSet, TimeSpan>(ds, sw.Elapsed);
                     }
                 }
             }
         }
 
-        private static LightDataTable TableFromReader(SqlDataReader reader)
+        private static async Task<LightDataTable> TableFromReaderAsync(SqlDataReader reader, CancellationToken ct)
         {
             LightDataTable table = new LightDataTable();
 
@@ -163,7 +183,7 @@ namespace KirkinDiff
                 table.Columns.Add(reader.GetName(i), reader.GetFieldType(i));
             }
 
-            while (reader.Read())
+            while (await reader.ReadAsync(ct).ConfigureAwait(false))
             {
                 object[] itemArray = new object[reader.FieldCount];
 
