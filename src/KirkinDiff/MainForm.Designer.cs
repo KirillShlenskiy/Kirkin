@@ -31,10 +31,10 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.Panel = new System.Windows.Forms.Panel();
             this.SplitContainer = new System.Windows.Forms.SplitContainer();
-            this.CommandTextTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.CommandTextTextBox1 = new FastColoredTextBoxNS.FastColoredTextBox();
             this.ConnectionStringTextBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.CommandTextTextBox2 = new System.Windows.Forms.RichTextBox();
+            this.CommandTextTextBox2 = new FastColoredTextBoxNS.FastColoredTextBox();
             this.ConnectionStringTextBox2 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.ExecuteButton = new System.Windows.Forms.Button();
@@ -178,8 +178,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox ConnectionStringTextBox2;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.RichTextBox CommandTextTextBox1;
-        private System.Windows.Forms.RichTextBox CommandTextTextBox2;
+        private FastColoredTextBoxNS.FastColoredTextBox CommandTextTextBox1;
+        private FastColoredTextBoxNS.FastColoredTextBox CommandTextTextBox2;
     }
 }
 
