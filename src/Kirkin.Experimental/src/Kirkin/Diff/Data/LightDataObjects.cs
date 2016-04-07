@@ -51,7 +51,7 @@ namespace Kirkin.Diff.Data
 
         public void Add(params object[] itemArray)
         {
-            Add(new LightDataRow(Table, itemArray));
+            base.Add(new LightDataRow(Table, itemArray));
         }
     }
 
