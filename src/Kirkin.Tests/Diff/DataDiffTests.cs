@@ -112,7 +112,7 @@ namespace Kirkin.Tests.Diff
             DiffResult diff1 = DataTableDiff.Compare(dt1, dt2);
 
             Assert.False(diff1.AreSame);
-            Assert.Equal("DataTable -> Row count: 3 vs 2.", diff1.ToString());
+            Assert.Equal("DataTable -> Row count: 3 | 2", diff1.ToString());
 
             dt2.Rows.Add(4, "Whaaaa");
 

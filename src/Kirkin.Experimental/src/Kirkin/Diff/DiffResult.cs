@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using System.Text;
 
@@ -7,16 +8,14 @@ namespace Kirkin.Diff
     /// <summary>
     /// Represents the result of a diff operation.
     /// </summary>
-    public sealed class DiffResult
+    public class DiffResult
     {
         /// <summary>
         /// Simle <see cref="DiffResult"/> factory.
         /// </summary>
-        public static DiffResult Create(string name, object x, object y)
+        public static DiffResult Create(string name, object x, object y, IEqualityComparer comparer = null)
         {
-            return PrimitiveEqualityComparer.Instance.Equals(x, y)
-                ? new DiffResult(name, true, string.Empty)
-                : new DiffResult(name, false, $"{ToString(x)} | {ToString(y)}");
+            return new SimpleDiffResult(name, x, y, comparer ?? PrimitiveEqualityComparer.Instance);
         }
 
         private static string ToString(object obj)
@@ -39,6 +38,8 @@ namespace Kirkin.Diff
                 }
 
                 sb.Append(']');
+
+                return sb.ToString();
             }
 
             return obj.ToString();
@@ -61,14 +62,36 @@ namespace Kirkin.Diff
         /// <summary>
         /// Diff message or null if the comparands are identical.
         /// </summary>
-        internal readonly string Message;
+        internal virtual string Message { get; }
 
-        public DiffResult(string name, bool areSame, string message)
+        sealed class SimpleDiffResult : DiffResult
+        {
+            private readonly object X;
+            private readonly object Y;
+
+            internal override string Message
+            {
+                get
+                {
+                    return AreSame
+                        ? string.Empty
+                        : $"{ToString(X)} | {ToString(Y)}";
+                }
+            }
+
+            internal SimpleDiffResult(string name, object x, object y, IEqualityComparer comparer)
+                : base(name, comparer.Equals(x, y))
+            {
+                X = x;
+                Y = y;
+            }
+        }
+
+        public DiffResult(string name, bool areSame)
         {
             Name = name;
             Entries = EmptyDiffResultArray;
             AreSame = areSame;
-            Message = areSame ? null : message;
         }
 
         public DiffResult(string name, DiffResult[] entries)
