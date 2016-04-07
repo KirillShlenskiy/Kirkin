@@ -60,7 +60,7 @@ namespace Kirkin.Diff.Data
         {
             DiffResult[] results = new DiffResult[x.Rows.Count];
 
-            Parallel.For(0, x.Rows.Count, i => results[i] = DataRowDiff.Compare($"Row {i}", x.Rows[i], y.Rows[i]));
+            Parallel.For(0, x.Rows.Count, i => results[i] = DataRowDiff.Compare($"Row {i}", x, x.Rows[i], y.Rows[i]));
 
             return results;
         }

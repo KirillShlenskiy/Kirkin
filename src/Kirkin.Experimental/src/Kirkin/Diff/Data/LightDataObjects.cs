@@ -16,7 +16,7 @@ namespace Kirkin.Diff.Data
         public LightDataTable()
         {
             Columns = new LightDataColumnCollection();
-            Rows = new LightDataRowCollection(this);
+            Rows = new LightDataRowCollection();
         }
     }
 
@@ -42,27 +42,18 @@ namespace Kirkin.Diff.Data
 
     public sealed class LightDataRowCollection : List<LightDataRow>
     {
-        private readonly LightDataTable Table;
-
-        public LightDataRowCollection(LightDataTable table)
-        {
-            Table = table;
-        }
-
         public void Add(params object[] itemArray)
         {
-            base.Add(new LightDataRow(Table, itemArray));
+            base.Add(new LightDataRow(itemArray));
         }
     }
 
     public struct LightDataRow
     {
-        public LightDataTable Table { get; }
         public object[] ItemArray { get; }
 
-        public LightDataRow(LightDataTable table, object[] itemArray)
+        public LightDataRow(object[] itemArray)
         {
-            Table = table;
             ItemArray = itemArray;
         }
     }

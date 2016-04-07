@@ -194,6 +194,8 @@ namespace KirkinDiff
                 table.Rows.Add(itemArray);
             }
 
+            table.Rows.TrimExcess(); // Manage GC pressure.
+
             return table;
         }
     }
