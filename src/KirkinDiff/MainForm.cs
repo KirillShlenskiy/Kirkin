@@ -47,10 +47,16 @@ namespace KirkinDiff
             using (DataSet ds1 = ProduceDataSet(ConnectionStringTextBox1.Text, CommandTextTextBox1.Text, out timeTaken1))
             using (DataSet ds2 = ProduceDataSet(ConnectionStringTextBox2.Text, CommandTextTextBox2.Text, out timeTaken2))
             {
+                Stopwatch diffStopwatch = Stopwatch.StartNew();
                 DiffResult diff = DataSetDiff.Compare(ds1, ds2);
+
+                diffStopwatch.Stop();
+
                 StringBuilder resultText = new StringBuilder();
 
-                resultText.AppendLine($"Time taken (left): {(double)timeTaken1.Milliseconds / 1000:0.###}s, right: {(double)timeTaken2.Milliseconds / 1000:0.###}s");
+                resultText.Append($"Time taken (left): {(double)timeTaken1.Milliseconds / 1000:0.###}s, ");
+                resultText.Append($"right: {(double)timeTaken2.Milliseconds / 1000:0.###}s, ");
+                resultText.AppendLine($"compare: {(double)diffStopwatch.ElapsedMilliseconds / 1000:0.###}s");
                 resultText.AppendLine();
 
                 if (diff.AreSame)
@@ -76,16 +82,20 @@ namespace KirkinDiff
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand(commandText, connection))
-            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
             {
-                DataSet ds = new DataSet();
-                Stopwatch sw = Stopwatch.StartNew();
+                command.CommandTimeout = 0;
 
-                adapter.Fill(ds);
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    DataSet ds = new DataSet();
+                    Stopwatch sw = Stopwatch.StartNew();
 
-                timeTaken = sw.Elapsed;
+                    adapter.Fill(ds);
 
-                return ds;
+                    timeTaken = sw.Elapsed;
+
+                    return ds;
+                }
             }
         }      
     }

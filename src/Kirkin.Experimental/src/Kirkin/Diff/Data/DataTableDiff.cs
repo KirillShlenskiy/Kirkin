@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace Kirkin.Diff.Data
 {
@@ -59,11 +60,13 @@ namespace Kirkin.Diff.Data
             }
         }
 
-        private static IEnumerable<DiffResult> EnumerateRowDiffs(DataTable x, DataTable y)
+        private static DiffResult[] EnumerateRowDiffs(DataTable x, DataTable y)
         {
-            for (int i = 0; i < x.Rows.Count; i++) {
-                yield return DataRowDiff.Compare($"Row {i}", x.Rows[i], y.Rows[i]);
-            }
+            DiffResult[] results = new DiffResult[x.Rows.Count];
+
+            Parallel.For(0, x.Rows.Count, i => results[i] = DataRowDiff.Compare($"Row {i}", x.Rows[i], y.Rows[i]));
+
+            return results;
         }
     }
 }
