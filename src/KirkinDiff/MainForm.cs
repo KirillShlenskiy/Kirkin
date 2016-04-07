@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 using Kirkin.Diff;
@@ -47,22 +48,27 @@ namespace KirkinDiff
             using (DataSet ds2 = ProduceDataSet(ConnectionStringTextBox2.Text, CommandTextTextBox2.Text, out timeTaken2))
             {
                 DiffResult diff = DataSetDiff.Compare(ds1, ds2);
-                string timeTakenString = $"Time taken (left): {(double)timeTaken1.Milliseconds / 1000:0.###}s, right: {(double)timeTaken2.Milliseconds / 1000:0.###}s";
+                StringBuilder resultText = new StringBuilder();
+
+                resultText.AppendLine($"Time taken (left): {(double)timeTaken1.Milliseconds / 1000:0.###}s, right: {(double)timeTaken2.Milliseconds / 1000:0.###}s");
+                resultText.AppendLine();
 
                 if (diff.AreSame)
                 {
-                    MessageBox.Show(
-                        timeTakenString +
-                        Environment.NewLine +
-                        $"Result sets identical. Tables: {ds1.Tables.Count}, Rows: {ds1.Tables.Cast<DataTable>().Sum(dt => dt.Rows.Count)}."
-                    );
+                    resultText.AppendLine($"Result sets identical. Tables: {ds1.Tables.Count}, Rows: {ds1.Tables.Cast<DataTable>().Sum(dt => dt.Rows.Count)}.");
                 }
                 else
                 {
-                    MessageBox.Show(
-                        timeTakenString + Environment.NewLine + diff.ToString(DiffTextFormat.Indented)
-                    );
+                    resultText.AppendLine(diff.ToString(DiffTextFormat.Indented));
                 }
+
+                if (resultText.Length > 1500)
+                {
+                    resultText.Length = 1500;
+                    resultText.Append(" ...");
+                }
+
+                MessageBox.Show(resultText.ToString(), diff.AreSame ? "No diff" : "Changes detected");
             }
         }
 
