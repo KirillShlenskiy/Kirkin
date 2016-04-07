@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -10,7 +9,7 @@ namespace Kirkin.Diff
     /// </summary>
     public sealed class DiffResult
     {
-        private static readonly DiffResult[] s_emptyEntries = new DiffResult[0];
+        internal static readonly DiffResult[] EmptyDiffResultArray = new DiffResult[0];
 
         /// <summary>
         /// Child diff entries.
@@ -32,15 +31,15 @@ namespace Kirkin.Diff
         public DiffResult(string name, bool areSame, string message)
         {
             Name = name;
-            Entries = s_emptyEntries;
+            Entries = EmptyDiffResultArray;
             AreSame = areSame;
             Message = areSame ? null : message;
         }
 
-        public DiffResult(string name, IEnumerable<DiffResult> entries)
+        public DiffResult(string name, DiffResult[] entries)
         {
             Name = name;
-            Entries = entries.ToArray();
+            Entries = entries;
             AreSame = Entries.Length == 0 || Entries.All(e => e.AreSame);
         }
 

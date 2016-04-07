@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Kirkin.Diff.Data
@@ -23,8 +24,8 @@ namespace Kirkin.Diff.Data
 
             if (columnCount.AreSame)
             {
-                entries.Add(new DiffResult("Column names", EnumerateColumnNameDiffs(x, y)));
-                entries.Add(new DiffResult("Column types", EnumerateColumnDataTypeDiffs(x, y)));
+                entries.Add(new DiffResult("Column names", EnumerateColumnNameDiffs(x, y).ToArray()));
+                entries.Add(new DiffResult("Column types", EnumerateColumnDataTypeDiffs(x, y).ToArray()));
             }
 
             DiffResult rowCount = new DiffResult(
@@ -37,7 +38,7 @@ namespace Kirkin.Diff.Data
                 entries.Add(new DiffResult("Rows", EnumerateRowDiffs(x, y)));
             }
 
-            return new DiffResult(name, entries);
+            return new DiffResult(name, entries.ToArray());
         }
 
         private static IEnumerable<DiffResult> EnumerateColumnNameDiffs(DataTable x, DataTable y)

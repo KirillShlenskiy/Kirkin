@@ -18,20 +18,29 @@ namespace Kirkin.Diff.Data
             results.Add(cellCount);
 
             if (cellCount.AreSame) {
-                results.Add(new DiffResult("Cells", EnumerateCellDiffs(x, y)));
+                results.Add(new DiffResult("Cells", GetCellDiffs(x, y)));
             }
 
-            return new DiffResult(name, results);
+            return new DiffResult(name, results.ToArray());
         }
 
-        private static IEnumerable<DiffResult> EnumerateCellDiffs(DataRow x, DataRow y)
+        private static DiffResult[] GetCellDiffs(DataRow x, DataRow y)
         {
+            List<DiffResult> entries = null;
+
             for (int i = 0; i < x.ItemArray.Length; i++)
             {
-                if (!DataCellEqualityComparer.Instance.Equals(x.ItemArray[i], y.ItemArray[i])) {
-                    yield return new DiffResult(x.Table.Columns[i].ColumnName, false, $"{x.ItemArray[i]} vs {y.ItemArray[i]}.");
+                if (!DataCellEqualityComparer.Instance.Equals(x.ItemArray[i], y.ItemArray[i]))
+                {
+                    if (entries == null) entries = new List<DiffResult>();
+
+                    entries.Add(new DiffResult(x.Table.Columns[i].ColumnName, false, $"{x.ItemArray[i]} vs {y.ItemArray[i]}."));
                 }
             }
+
+            return entries == null
+                ? DiffResult.EmptyDiffResultArray
+                : entries.ToArray();
         }
 
         sealed class DataCellEqualityComparer

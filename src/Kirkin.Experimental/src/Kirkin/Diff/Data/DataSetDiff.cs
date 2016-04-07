@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 
 namespace Kirkin.Diff.Data
 {
@@ -21,10 +22,10 @@ namespace Kirkin.Diff.Data
             entries.Add(tableCount);
 
             if (tableCount.AreSame) {
-                entries.Add(new DiffResult("Tables", EnumerateTableDiffs(x, y)));
+                entries.Add(new DiffResult("Tables", EnumerateTableDiffs(x, y).ToArray()));
             }
 
-            return new DiffResult(name, entries);
+            return new DiffResult(name, entries.ToArray());
         }
 
         private static IEnumerable<DiffResult> EnumerateTableDiffs(DataSet x, DataSet y)

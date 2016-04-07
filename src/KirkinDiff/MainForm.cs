@@ -23,15 +23,21 @@ namespace KirkinDiff
             InitializeComponent();
         }
 
-        private void MainForm_Load(object sender, EventArgs _)
+        private async void MainForm_Load(object sender, EventArgs _)
         {
             DefaultText = Text;
 
             ConnectionStringTextBox1.Text = Settings.Default.ConnectionString1;
             ConnectionStringTextBox2.Text = Settings.Default.ConnectionString2;
 
+            CommandTextTextBox1.AcceptsTab = false;
+            CommandTextTextBox2.AcceptsTab = false;
             CommandTextTextBox1.KeyDown += OnKeyDown;
             CommandTextTextBox2.KeyDown += OnKeyDown;
+
+            await Task.Yield();
+
+            CommandTextTextBox1.Focus();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
