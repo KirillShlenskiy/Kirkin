@@ -111,7 +111,12 @@ namespace KirkinDiff
                         ExecuteButton.Enabled = true;
                         Text = DefaultText + ": done";
 
-                        MessageBox.Show(resultText.ToString(), diff.AreSame ? "No diff" : "Changes detected");
+                        MessageBox.Show(
+                            resultText.ToString(),
+                            diff.AreSame ? "No diff" : "Changes detected",
+                            MessageBoxButtons.OK,
+                            diff.AreSame ? MessageBoxIcon.Information : MessageBoxIcon.Exclamation
+                        );
                     }
                 }
             }
