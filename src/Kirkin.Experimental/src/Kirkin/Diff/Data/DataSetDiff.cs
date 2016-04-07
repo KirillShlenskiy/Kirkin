@@ -5,12 +5,12 @@ namespace Kirkin.Diff.Data
 {
     public static class DataSetDiff
     {
-        public static DiffResult Compare(DataSet x, DataSet y)
+        public static DiffResult Compare(LightDataSet x, LightDataSet y)
         {
             return Compare("DataSet", x, y);
         }
 
-        internal static DiffResult Compare(string name, DataSet x, DataSet y)
+        internal static DiffResult Compare(string name, LightDataSet x, LightDataSet y)
         {
             List<DiffResult> entries = new List<DiffResult>();
             DiffResult tableCount = DiffResult.Create("Table count", x.Tables.Count, y.Tables.Count);
@@ -24,7 +24,7 @@ namespace Kirkin.Diff.Data
             return new DiffResult(name, entries.ToArray());
         }
 
-        private static DiffResult[] GetTableDiffs(DataSet x, DataSet y)
+        private static DiffResult[] GetTableDiffs(LightDataSet x, LightDataSet y)
         {
             DiffResult[] entries = new DiffResult[x.Tables.Count];
 

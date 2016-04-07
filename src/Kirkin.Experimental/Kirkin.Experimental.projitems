@@ -22,6 +22,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diagnostics\Diag.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diagnostics\NoDebuggerAttachedException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\Data\DataRowDiff.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\Data\LightDataObjects.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\Data\DataSetDiff.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\Data\DataTableDiff.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\DiffResult.cs" />

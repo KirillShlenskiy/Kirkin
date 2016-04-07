@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,8 +27,8 @@ namespace Kirkin.Tests.Diff
         [Fact]
         public void EmptyTableDiff()
         {
-            DataTable dt1 = new DataTable();
-            DataTable dt2 = new DataTable();
+            LightDataTable dt1 = new LightDataTable();
+            LightDataTable dt2 = new LightDataTable();
 
             Assert.True(DataTableDiff.Compare(dt1, dt2).AreSame);
         }
@@ -37,8 +36,8 @@ namespace Kirkin.Tests.Diff
         [Fact]
         public void SimpleTableDiff()
         {
-            DataTable dt1 = new DataTable();
-            DataTable dt2 = new DataTable();
+            LightDataTable dt1 = new LightDataTable();
+            LightDataTable dt2 = new LightDataTable();
 
             dt1.Columns.Add("ID", typeof(int));
             dt2.Columns.Add("ID", typeof(int));
@@ -49,8 +48,8 @@ namespace Kirkin.Tests.Diff
         [Fact]
         public void ColumnCountMismatchDiff()
         {
-            DataTable dt1 = new DataTable();
-            DataTable dt2 = new DataTable();
+            LightDataTable dt1 = new LightDataTable();
+            LightDataTable dt2 = new LightDataTable();
 
             dt1.Columns.Add("ID", typeof(int));
 
@@ -60,8 +59,8 @@ namespace Kirkin.Tests.Diff
         [Fact]
         public void ColumnNameMismatchDiff()
         {
-            DataTable dt1 = new DataTable();
-            DataTable dt2 = new DataTable();
+            LightDataTable dt1 = new LightDataTable();
+            LightDataTable dt2 = new LightDataTable();
 
             dt1.Columns.Add("ID", typeof(int));
             dt2.Columns.Add("IDz", typeof(int));
@@ -76,8 +75,8 @@ namespace Kirkin.Tests.Diff
         [Fact]
         public void ColumnDataTypeMismatchDiff()
         {
-            DataTable dt1 = new DataTable();
-            DataTable dt2 = new DataTable();
+            LightDataTable dt1 = new LightDataTable();
+            LightDataTable dt2 = new LightDataTable();
 
             dt1.Columns.Add("ID", typeof(int));
             dt2.Columns.Add("ID", typeof(string));
@@ -92,8 +91,8 @@ namespace Kirkin.Tests.Diff
         [Fact]
         public void DataCompare()
         {
-            DataTable dt1 = new DataTable();
-            DataTable dt2 = new DataTable();
+            LightDataTable dt1 = new LightDataTable();
+            LightDataTable dt2 = new LightDataTable();
 
             dt1.Columns.Add("ID", typeof(int));
             dt2.Columns.Add("ID", typeof(int));

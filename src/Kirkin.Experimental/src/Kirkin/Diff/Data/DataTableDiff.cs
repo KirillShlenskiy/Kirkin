@@ -1,17 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.Data;
 using System.Threading.Tasks;
 
 namespace Kirkin.Diff.Data
 {
     public static class DataTableDiff
     {
-        public static DiffResult Compare(DataTable x, DataTable y)
+        public static DiffResult Compare(LightDataTable x, LightDataTable y)
         {
             return Compare("DataTable", x, y);
         }
 
-        internal static DiffResult Compare(string name, DataTable x, DataTable y)
+        internal static DiffResult Compare(string name, LightDataTable x, LightDataTable y)
         {
             List<DiffResult> entries = new List<DiffResult>();
             DiffResult columnCount = DiffResult.Create("Column count", x.Columns.Count, y.Columns.Count);
@@ -35,7 +34,7 @@ namespace Kirkin.Diff.Data
             return new DiffResult(name, entries.ToArray());
         }
 
-        private static DiffResult[] GetColumnNameDiffs(DataTable x, DataTable y)
+        private static DiffResult[] GetColumnNameDiffs(LightDataTable x, LightDataTable y)
         {
             DiffResult[] entries = new DiffResult[x.Columns.Count];
 
@@ -46,7 +45,7 @@ namespace Kirkin.Diff.Data
             return entries;
         }
 
-        private static DiffResult[] GetColumnDataTypeDiffs(DataTable x, DataTable y)
+        private static DiffResult[] GetColumnDataTypeDiffs(LightDataTable x, LightDataTable y)
         {
             DiffResult[] entries = new DiffResult[x.Columns.Count];
 
@@ -57,7 +56,7 @@ namespace Kirkin.Diff.Data
             return entries;
         }
 
-        private static DiffResult[] GetRowDiffs(DataTable x, DataTable y)
+        private static DiffResult[] GetRowDiffs(LightDataTable x, LightDataTable y)
         {
             DiffResult[] results = new DiffResult[x.Rows.Count];
 

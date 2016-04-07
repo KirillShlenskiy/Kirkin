@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
-using System.Data;
 
 namespace Kirkin.Diff.Data
 {
     internal static class DataRowDiff
     {
-        internal static DiffResult Compare(string name, DataRow x, DataRow y)
+        internal static DiffResult Compare(string name, LightDataRow x, LightDataRow y)
         {
             return new DiffResult("Cells", GetCellDiffs(x, y));
         }
 
-        private static DiffResult[] GetCellDiffs(DataRow x, DataRow y)
+        private static DiffResult[] GetCellDiffs(LightDataRow x, LightDataRow y)
         {
             List<DiffResult> entries = null;
 
