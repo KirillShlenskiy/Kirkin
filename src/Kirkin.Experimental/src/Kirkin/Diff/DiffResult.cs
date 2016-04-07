@@ -11,18 +11,11 @@ namespace Kirkin.Diff
     public sealed class DiffResult
     {
         private static readonly DiffResult[] s_emptyEntries = new DiffResult[0];
-        private readonly DiffResult[] _entries;
 
         /// <summary>
         /// Child diff entries.
         /// </summary>
-        public IReadOnlyList<DiffResult> Entries
-        {
-            get
-            {
-                return _entries;
-            }
-        }
+        public DiffResult[] Entries { get; }
 
         public bool AreSame { get; }
 
@@ -39,7 +32,7 @@ namespace Kirkin.Diff
         public DiffResult(string name, bool areSame, string message)
         {
             Name = name;
-            _entries = s_emptyEntries;
+            Entries = s_emptyEntries;
             AreSame = areSame;
             Message = areSame ? null : message;
         }
@@ -47,8 +40,8 @@ namespace Kirkin.Diff
         public DiffResult(string name, IEnumerable<DiffResult> entries)
         {
             Name = name;
-            _entries = entries.ToArray();
-            AreSame = _entries.Length == 0 || _entries.All(e => e.AreSame);
+            Entries = entries.ToArray();
+            AreSame = Entries.Length == 0 || Entries.All(e => e.AreSame);
         }
 
         public override string ToString()
@@ -93,7 +86,7 @@ namespace Kirkin.Diff
                         line += diffResult.Message;
                     }
 
-                    if (diffResult.Entries.Count == 0)
+                    if (diffResult.Entries.Length == 0)
                     {
                         if (sb.Length != 0) {
                             sb.AppendLine();

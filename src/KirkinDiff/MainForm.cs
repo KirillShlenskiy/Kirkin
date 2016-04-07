@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Kirkin.Diff;
@@ -15,15 +16,22 @@ namespace KirkinDiff
 {
     public partial class MainForm : Form
     {
+        private string DefaultText;
+
         public MainForm()
         {
             InitializeComponent();
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        private void MainForm_Load(object sender, EventArgs _)
         {
+            DefaultText = Text;
+
             ConnectionStringTextBox1.Text = Settings.Default.ConnectionString1;
             ConnectionStringTextBox2.Text = Settings.Default.ConnectionString2;
+
+            CommandTextTextBox1.KeyDown += OnKeyDown;
+            CommandTextTextBox2.KeyDown += OnKeyDown;
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -39,42 +47,70 @@ namespace KirkinDiff
             ExecuteDiff();
         }
 
-        private void ExecuteDiff()
+        private void OnKeyDown(object sender, KeyEventArgs e)
         {
-            TimeSpan timeTaken1;
-            TimeSpan timeTaken2;
+            if (e.KeyCode == Keys.F5) {
+                ExecuteDiff();
+            }
+        }
 
-            using (DataSet ds1 = ProduceDataSet(ConnectionStringTextBox1.Text, CommandTextTextBox1.Text, out timeTaken1))
-            using (DataSet ds2 = ProduceDataSet(ConnectionStringTextBox2.Text, CommandTextTextBox2.Text, out timeTaken2))
+        private async void ExecuteDiff()
+        {
+            ExecuteButton.Enabled = false;
+
+            try
             {
-                Stopwatch diffStopwatch = Stopwatch.StartNew();
-                DiffResult diff = DataSetDiff.Compare(ds1, ds2);
+                TimeSpan timeTaken1 = TimeSpan.Zero;
+                TimeSpan timeTaken2 = TimeSpan.Zero;
 
-                diffStopwatch.Stop();
+                Text = DefaultText + ": executing left ...";
 
-                StringBuilder resultText = new StringBuilder();
-
-                resultText.Append($"Time taken (left): {(double)timeTaken1.Milliseconds / 1000:0.###}s, ");
-                resultText.Append($"right: {(double)timeTaken2.Milliseconds / 1000:0.###}s, ");
-                resultText.AppendLine($"compare: {(double)diffStopwatch.ElapsedMilliseconds / 1000:0.###}s");
-                resultText.AppendLine();
-
-                if (diff.AreSame)
+                using (DataSet ds1 = await Task.Run(() => ProduceDataSet(ConnectionStringTextBox1.Text, CommandTextTextBox1.Text, out timeTaken1)))
                 {
-                    resultText.AppendLine($"Result sets identical. Tables: {ds1.Tables.Count}, Rows: {ds1.Tables.Cast<DataTable>().Sum(dt => dt.Rows.Count)}.");
-                }
-                else
-                {
-                    resultText.AppendLine(diff.ToString(DiffTextFormat.Indented));
-                }
+                    Text = DefaultText + ": executing right ...";
 
-                if (resultText.Length > 1500)
-                {
-                    resultText.Length = 1500;
-                    resultText.Append(" ...");
-                }
+                    using (DataSet ds2 = await Task.Run(() => ProduceDataSet(ConnectionStringTextBox2.Text, CommandTextTextBox2.Text, out timeTaken2)))
+                    {
+                        Text = DefaultText + ": comparing ...";
 
-                MessageBox.Show(resultText.ToString(), diff.AreSame ? "No diff" : "Changes detected");
+                        Stopwatch diffStopwatch = Stopwatch.StartNew();
+                        DiffResult diff = await Task.Run(() => DataSetDiff.Compare(ds1, ds2));
+
+                        diffStopwatch.Stop();
+
+                        StringBuilder resultText = new StringBuilder();
+
+                        resultText.Append($"Time taken (left): {(double)timeTaken1.Milliseconds / 1000:0.###}s, ");
+                        resultText.Append($"right: {(double)timeTaken2.Milliseconds / 1000:0.###}s, ");
+                        resultText.AppendLine($"compare: {(double)diffStopwatch.ElapsedMilliseconds / 1000:0.###}s");
+                        resultText.AppendLine();
+
+                        if (diff.AreSame)
+                        {
+                            resultText.AppendLine($"Result sets identical. Tables: {ds1.Tables.Count}, Rows: {ds1.Tables.Cast<DataTable>().Sum(dt => dt.Rows.Count)}.");
+                        }
+                        else
+                        {
+                            resultText.AppendLine(diff.ToString(DiffTextFormat.Indented));
+                        }
+
+                        if (resultText.Length > 1500)
+                        {
+                            resultText.Length = 1500;
+                            resultText.Append(" ...");
+                        }
+
+                        ExecuteButton.Enabled = true;
+                        Text = DefaultText + ": done";
+
+                        MessageBox.Show(resultText.ToString(), diff.AreSame ? "No diff" : "Changes detected");
+                    }
+                }
+            }
+            finally
+            {
+                ExecuteButton.Enabled = true;
+                Text = DefaultText;
             }
         }
 
@@ -97,6 +133,6 @@ namespace KirkinDiff
                     return ds;
                 }
             }
-        }      
+        }
     }
 }
