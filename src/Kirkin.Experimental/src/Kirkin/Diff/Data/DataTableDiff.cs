@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Kirkin.Diff.Data
@@ -24,8 +23,8 @@ namespace Kirkin.Diff.Data
 
             if (columnCount.AreSame)
             {
-                entries.Add(new DiffResult("Column names", EnumerateColumnNameDiffs(x, y).ToArray()));
-                entries.Add(new DiffResult("Column types", EnumerateColumnDataTypeDiffs(x, y).ToArray()));
+                entries.Add(new DiffResult("Column names", GetColumnNameDiffs(x, y)));
+                entries.Add(new DiffResult("Column types", GetColumnDataTypeDiffs(x, y)));
             }
 
             DiffResult rowCount = new DiffResult(
@@ -35,33 +34,41 @@ namespace Kirkin.Diff.Data
             entries.Add(rowCount);
 
             if (columnCount.AreSame && rowCount.AreSame) {
-                entries.Add(new DiffResult("Rows", EnumerateRowDiffs(x, y)));
+                entries.Add(new DiffResult("Rows", GetRowDiffs(x, y)));
             }
 
             return new DiffResult(name, entries.ToArray());
         }
 
-        private static IEnumerable<DiffResult> EnumerateColumnNameDiffs(DataTable x, DataTable y)
+        private static DiffResult[] GetColumnNameDiffs(DataTable x, DataTable y)
         {
+            DiffResult[] entries = new DiffResult[x.Columns.Count];
+
             for (int i = 0; i < x.Columns.Count; i++)
             {
-                yield return new DiffResult(
+                entries[i] = new DiffResult(
                     $"Column {i}", x.Columns[i].ColumnName == y.Columns[i].ColumnName, $"{x.Columns[i].ColumnName} vs {y.Columns[i].ColumnName}"
                 );
             }
+
+            return entries;
         }
 
-        private static IEnumerable<DiffResult> EnumerateColumnDataTypeDiffs(DataTable x, DataTable y)
+        private static DiffResult[] GetColumnDataTypeDiffs(DataTable x, DataTable y)
         {
+            DiffResult[] entries = new DiffResult[x.Columns.Count];
+
             for (int i = 0; i < x.Columns.Count; i++)
             {
-                yield return new DiffResult(
+                entries[i] = new DiffResult(
                     $"Column {i}", x.Columns[i].DataType == y.Columns[i].DataType, $"{x.Columns[i].DataType.Name} vs {y.Columns[i].DataType.Name}"
                 );
             }
+
+            return entries;
         }
 
-        private static DiffResult[] EnumerateRowDiffs(DataTable x, DataTable y)
+        private static DiffResult[] GetRowDiffs(DataTable x, DataTable y)
         {
             DiffResult[] results = new DiffResult[x.Rows.Count];
 
