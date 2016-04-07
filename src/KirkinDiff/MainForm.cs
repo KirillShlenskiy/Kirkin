@@ -86,8 +86,8 @@ namespace KirkinDiff
 
                         StringBuilder resultText = new StringBuilder();
 
-                        resultText.Append($"Time taken (left): {(double)timeTaken1.Milliseconds / 1000:0.###}s, ");
-                        resultText.Append($"right: {(double)timeTaken2.Milliseconds / 1000:0.###}s, ");
+                        resultText.Append($"Time taken (left): {(double)timeTaken1.TotalMilliseconds / 1000:0.###}s, ");
+                        resultText.Append($"right: {(double)timeTaken2.TotalMilliseconds / 1000:0.###}s, ");
                         resultText.AppendLine($"compare: {(double)diffStopwatch.ElapsedMilliseconds / 1000:0.###}s");
                         resultText.AppendLine();
 
