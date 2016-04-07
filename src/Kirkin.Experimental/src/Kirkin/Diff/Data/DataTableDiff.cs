@@ -14,10 +14,7 @@ namespace Kirkin.Diff.Data
         internal static DiffResult Compare(string name, DataTable x, DataTable y)
         {
             List<DiffResult> entries = new List<DiffResult>();
-
-            DiffResult columnCount = new DiffResult(
-                "Column count", x.Columns.Count == y.Columns.Count, $"{x.Columns.Count} vs {y.Columns.Count}."
-            );
+            DiffResult columnCount = DiffResult.Create("Column count", x.Columns.Count, y.Columns.Count);
 
             entries.Add(columnCount);
 
@@ -27,9 +24,7 @@ namespace Kirkin.Diff.Data
                 entries.Add(new DiffResult("Column types", GetColumnDataTypeDiffs(x, y)));
             }
 
-            DiffResult rowCount = new DiffResult(
-                "Row count", x.Rows.Count == y.Rows.Count, $"{x.Rows.Count} vs {y.Rows.Count}."
-            );
+            DiffResult rowCount = DiffResult.Create("Row count", x.Rows.Count, y.Rows.Count);
 
             entries.Add(rowCount);
 
@@ -44,11 +39,8 @@ namespace Kirkin.Diff.Data
         {
             DiffResult[] entries = new DiffResult[x.Columns.Count];
 
-            for (int i = 0; i < x.Columns.Count; i++)
-            {
-                entries[i] = new DiffResult(
-                    $"Column {i}", x.Columns[i].ColumnName == y.Columns[i].ColumnName, $"{x.Columns[i].ColumnName} vs {y.Columns[i].ColumnName}"
-                );
+            for (int i = 0; i < x.Columns.Count; i++) {
+                entries[i] = DiffResult.Create($"Column {i}", x.Columns[i].ColumnName, y.Columns[i].ColumnName);
             }
 
             return entries;
@@ -58,11 +50,8 @@ namespace Kirkin.Diff.Data
         {
             DiffResult[] entries = new DiffResult[x.Columns.Count];
 
-            for (int i = 0; i < x.Columns.Count; i++)
-            {
-                entries[i] = new DiffResult(
-                    $"Column {i}", x.Columns[i].DataType == y.Columns[i].DataType, $"{x.Columns[i].DataType.Name} vs {y.Columns[i].DataType.Name}"
-                );
+            for (int i = 0; i < x.Columns.Count; i++) {
+                entries[i] = DiffResult.Create($"Column {i}", x.Columns[i].DataType, y.Columns[i].DataType);
             }
 
             return entries;

@@ -9,6 +9,41 @@ namespace Kirkin.Diff
     /// </summary>
     public sealed class DiffResult
     {
+        /// <summary>
+        /// Simle <see cref="DiffResult"/> factory.
+        /// </summary>
+        public static DiffResult Create(string name, object x, object y)
+        {
+            return PrimitiveEqualityComparer.Instance.Equals(x, y)
+                ? new DiffResult(name, true, string.Empty)
+                : new DiffResult(name, false, $"{ToString(x)} | {ToString(y)}");
+        }
+
+        private static string ToString(object obj)
+        {
+            if (obj == null) return "NULL";
+
+            if (obj is Array)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                sb.Append('[');
+
+                foreach (object item in (Array)obj)
+                {
+                    if (sb.Length > 1) {
+                        sb.Append(", ");
+                    }
+
+                    sb.Append(ToString(item));
+                }
+
+                sb.Append(']');
+            }
+
+            return obj.ToString();
+        }
+
         internal static readonly DiffResult[] EmptyDiffResultArray = new DiffResult[0];
 
         /// <summary>

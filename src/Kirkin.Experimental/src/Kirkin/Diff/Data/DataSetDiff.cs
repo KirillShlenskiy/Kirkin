@@ -13,10 +13,7 @@ namespace Kirkin.Diff.Data
         internal static DiffResult Compare(string name, DataSet x, DataSet y)
         {
             List<DiffResult> entries = new List<DiffResult>();
-
-            DiffResult tableCount = new DiffResult(
-                "Table count", x.Tables.Count == y.Tables.Count, $"{x.Tables.Count} vs {y.Tables.Count}."
-            );
+            DiffResult tableCount = DiffResult.Create("Table count", x.Tables.Count, y.Tables.Count);
 
             entries.Add(tableCount);
 
