@@ -34,13 +34,13 @@
             this.SplitContainer = new System.Windows.Forms.SplitContainer();
             this.CommandTextTextBox1 = new FastColoredTextBoxNS.FastColoredTextBox();
             this.ConnectionStringTextBox1 = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.CommandTextTextBox2 = new FastColoredTextBoxNS.FastColoredTextBox();
             this.ConnectionStringTextBox2 = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.ExecuteButton = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.Panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SplitContainer)).BeginInit();
             this.SplitContainer.Panel1.SuspendLayout();
@@ -84,6 +84,7 @@
             this.SplitContainer.Size = new System.Drawing.Size(1046, 681);
             this.SplitContainer.SplitterDistance = 523;
             this.SplitContainer.TabIndex = 0;
+            this.SplitContainer.TabStop = false;
             // 
             // CommandTextTextBox1
             // 
@@ -121,7 +122,7 @@
             this.CommandTextTextBox1.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.CommandTextTextBox1.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("CommandTextTextBox1.ServiceColors")));
             this.CommandTextTextBox1.Size = new System.Drawing.Size(514, 622);
-            this.CommandTextTextBox1.TabIndex = 2;
+            this.CommandTextTextBox1.TabIndex = 6;
             this.CommandTextTextBox1.Zoom = 100;
             // 
             // ConnectionStringTextBox1
@@ -131,7 +132,16 @@
             this.ConnectionStringTextBox1.Location = new System.Drawing.Point(2, 17);
             this.ConnectionStringTextBox1.Name = "ConnectionStringTextBox1";
             this.ConnectionStringTextBox1.Size = new System.Drawing.Size(514, 20);
-            this.ConnectionStringTextBox1.TabIndex = 1;
+            this.ConnectionStringTextBox1.TabIndex = 2;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(3, 40);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(63, 13);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Command 1";
             // 
             // label1
             // 
@@ -139,7 +149,7 @@
             this.label1.Location = new System.Drawing.Point(3, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(100, 13);
-            this.label1.TabIndex = 0;
+            this.label1.TabIndex = 1;
             this.label1.Text = "Connection String 1";
             // 
             // CommandTextTextBox2
@@ -178,7 +188,7 @@
             this.CommandTextTextBox2.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.CommandTextTextBox2.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("CommandTextTextBox2.ServiceColors")));
             this.CommandTextTextBox2.Size = new System.Drawing.Size(514, 622);
-            this.CommandTextTextBox2.TabIndex = 2;
+            this.CommandTextTextBox2.TabIndex = 8;
             this.CommandTextTextBox2.Zoom = 100;
             // 
             // ConnectionStringTextBox2
@@ -188,7 +198,16 @@
             this.ConnectionStringTextBox2.Location = new System.Drawing.Point(2, 17);
             this.ConnectionStringTextBox2.Name = "ConnectionStringTextBox2";
             this.ConnectionStringTextBox2.Size = new System.Drawing.Size(514, 20);
-            this.ConnectionStringTextBox2.TabIndex = 1;
+            this.ConnectionStringTextBox2.TabIndex = 4;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(-1, 40);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(63, 13);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "Command 2";
             // 
             // label2
             // 
@@ -196,7 +215,7 @@
             this.label2.Location = new System.Drawing.Point(-1, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(100, 13);
-            this.label2.TabIndex = 0;
+            this.label2.TabIndex = 3;
             this.label2.Text = "Connection String 2";
             // 
             // ExecuteButton
@@ -205,28 +224,10 @@
             this.ExecuteButton.Location = new System.Drawing.Point(12, 699);
             this.ExecuteButton.Name = "ExecuteButton";
             this.ExecuteButton.Size = new System.Drawing.Size(75, 23);
-            this.ExecuteButton.TabIndex = 1;
+            this.ExecuteButton.TabIndex = 9;
             this.ExecuteButton.Text = "Execute";
             this.ExecuteButton.UseVisualStyleBackColor = true;
             this.ExecuteButton.Click += new System.EventHandler(this.ExecuteButton_Click);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 40);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(63, 13);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Command 1";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(-1, 40);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(63, 13);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "Command 2";
             // 
             // MainForm
             // 

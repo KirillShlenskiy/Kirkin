@@ -32,8 +32,10 @@ namespace KirkinDiff
 
             CommandTextTextBox1.AcceptsTab = false;
             CommandTextTextBox2.AcceptsTab = false;
-            CommandTextTextBox1.KeyDown += OnKeyDown;
-            CommandTextTextBox2.KeyDown += OnKeyDown;
+
+            KeyPreview = true;
+
+            KeyDown += OnKeyDown;
 
             await Task.Yield();
 
@@ -86,8 +88,8 @@ namespace KirkinDiff
 
                         StringBuilder resultText = new StringBuilder();
 
-                        resultText.Append($"Time taken (left): {(double)timeTaken1.TotalMilliseconds / 1000:0.###}s, ");
-                        resultText.Append($"right: {(double)timeTaken2.TotalMilliseconds / 1000:0.###}s, ");
+                        resultText.Append($"Time taken (left): {timeTaken1.TotalMilliseconds / 1000:0.###}s, ");
+                        resultText.Append($"right: {timeTaken2.TotalMilliseconds / 1000:0.###}s, ");
                         resultText.AppendLine($"compare: {(double)diffStopwatch.ElapsedMilliseconds / 1000:0.###}s");
                         resultText.AppendLine();
 
