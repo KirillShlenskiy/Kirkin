@@ -31,10 +31,10 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.Panel = new System.Windows.Forms.Panel();
             this.SplitContainer = new System.Windows.Forms.SplitContainer();
-            this.CommandTextTextBox1 = new System.Windows.Forms.TextBox();
+            this.CommandTextTextBox1 = new System.Windows.Forms.RichTextBox();
             this.ConnectionStringTextBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.CommandTextTextBox2 = new System.Windows.Forms.TextBox();
+            this.CommandTextTextBox2 = new System.Windows.Forms.RichTextBox();
             this.ConnectionStringTextBox2 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.ExecuteButton = new System.Windows.Forms.Button();
@@ -80,22 +80,19 @@
             // 
             // CommandTextTextBox1
             // 
-            this.CommandTextTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.CommandTextTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.CommandTextTextBox1.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CommandTextTextBox1.Location = new System.Drawing.Point(6, 44);
-            this.CommandTextTextBox1.Multiline = true;
+            this.CommandTextTextBox1.Location = new System.Drawing.Point(2, 44);
             this.CommandTextTextBox1.Name = "CommandTextTextBox1";
-            this.CommandTextTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.CommandTextTextBox1.Size = new System.Drawing.Size(514, 634);
             this.CommandTextTextBox1.TabIndex = 2;
+            this.CommandTextTextBox1.Text = "";
             // 
             // ConnectionStringTextBox1
             // 
             this.ConnectionStringTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ConnectionStringTextBox1.Location = new System.Drawing.Point(6, 17);
+            this.ConnectionStringTextBox1.Location = new System.Drawing.Point(2, 17);
             this.ConnectionStringTextBox1.Name = "ConnectionStringTextBox1";
             this.ConnectionStringTextBox1.Size = new System.Drawing.Size(514, 20);
             this.ConnectionStringTextBox1.TabIndex = 1;
@@ -111,16 +108,13 @@
             // 
             // CommandTextTextBox2
             // 
-            this.CommandTextTextBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.CommandTextTextBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.CommandTextTextBox2.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CommandTextTextBox2.Location = new System.Drawing.Point(2, 44);
-            this.CommandTextTextBox2.Multiline = true;
             this.CommandTextTextBox2.Name = "CommandTextTextBox2";
-            this.CommandTextTextBox2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.CommandTextTextBox2.Size = new System.Drawing.Size(514, 634);
             this.CommandTextTextBox2.TabIndex = 2;
+            this.CommandTextTextBox2.Text = "";
             // 
             // ConnectionStringTextBox2
             // 
@@ -182,10 +176,10 @@
         private System.Windows.Forms.SplitContainer SplitContainer;
         private System.Windows.Forms.TextBox ConnectionStringTextBox1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox CommandTextTextBox1;
-        private System.Windows.Forms.TextBox CommandTextTextBox2;
         private System.Windows.Forms.TextBox ConnectionStringTextBox2;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.RichTextBox CommandTextTextBox1;
+        private System.Windows.Forms.RichTextBox CommandTextTextBox2;
     }
 }
 
