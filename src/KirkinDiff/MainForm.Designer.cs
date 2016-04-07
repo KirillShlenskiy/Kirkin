@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.Panel = new System.Windows.Forms.Panel();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.SplitContainer = new System.Windows.Forms.SplitContainer();
             this.CommandTextTextBox1 = new System.Windows.Forms.TextBox();
             this.ConnectionStringTextBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -39,10 +39,10 @@
             this.label2 = new System.Windows.Forms.Label();
             this.ExecuteButton = new System.Windows.Forms.Button();
             this.Panel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SplitContainer)).BeginInit();
+            this.SplitContainer.Panel1.SuspendLayout();
+            this.SplitContainer.Panel2.SuspendLayout();
+            this.SplitContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // Panel
@@ -50,41 +50,44 @@
             this.Panel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.Panel.Controls.Add(this.splitContainer1);
+            this.Panel.Controls.Add(this.SplitContainer);
             this.Panel.Location = new System.Drawing.Point(12, 12);
             this.Panel.Name = "Panel";
             this.Panel.Size = new System.Drawing.Size(1046, 681);
             this.Panel.TabIndex = 0;
             // 
-            // splitContainer1
+            // SplitContainer
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
+            this.SplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SplitContainer.IsSplitterFixed = true;
+            this.SplitContainer.Location = new System.Drawing.Point(0, 0);
+            this.SplitContainer.Name = "SplitContainer";
             // 
-            // splitContainer1.Panel1
+            // SplitContainer.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.CommandTextTextBox1);
-            this.splitContainer1.Panel1.Controls.Add(this.ConnectionStringTextBox1);
-            this.splitContainer1.Panel1.Controls.Add(this.label1);
+            this.SplitContainer.Panel1.Controls.Add(this.CommandTextTextBox1);
+            this.SplitContainer.Panel1.Controls.Add(this.ConnectionStringTextBox1);
+            this.SplitContainer.Panel1.Controls.Add(this.label1);
             // 
-            // splitContainer1.Panel2
+            // SplitContainer.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.CommandTextTextBox2);
-            this.splitContainer1.Panel2.Controls.Add(this.ConnectionStringTextBox2);
-            this.splitContainer1.Panel2.Controls.Add(this.label2);
-            this.splitContainer1.Size = new System.Drawing.Size(1046, 681);
-            this.splitContainer1.SplitterDistance = 523;
-            this.splitContainer1.TabIndex = 0;
+            this.SplitContainer.Panel2.Controls.Add(this.CommandTextTextBox2);
+            this.SplitContainer.Panel2.Controls.Add(this.ConnectionStringTextBox2);
+            this.SplitContainer.Panel2.Controls.Add(this.label2);
+            this.SplitContainer.Size = new System.Drawing.Size(1046, 681);
+            this.SplitContainer.SplitterDistance = 523;
+            this.SplitContainer.TabIndex = 0;
             // 
             // CommandTextTextBox1
             // 
             this.CommandTextTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.CommandTextTextBox1.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CommandTextTextBox1.Location = new System.Drawing.Point(6, 44);
             this.CommandTextTextBox1.Multiline = true;
             this.CommandTextTextBox1.Name = "CommandTextTextBox1";
+            this.CommandTextTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.CommandTextTextBox1.Size = new System.Drawing.Size(514, 634);
             this.CommandTextTextBox1.TabIndex = 2;
             // 
@@ -111,9 +114,11 @@
             this.CommandTextTextBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.CommandTextTextBox2.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CommandTextTextBox2.Location = new System.Drawing.Point(2, 44);
             this.CommandTextTextBox2.Multiline = true;
             this.CommandTextTextBox2.Name = "CommandTextTextBox2";
+            this.CommandTextTextBox2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.CommandTextTextBox2.Size = new System.Drawing.Size(514, 634);
             this.CommandTextTextBox2.TabIndex = 2;
             // 
@@ -160,12 +165,12 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.Panel.ResumeLayout(false);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel1.PerformLayout();
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
+            this.SplitContainer.Panel1.ResumeLayout(false);
+            this.SplitContainer.Panel1.PerformLayout();
+            this.SplitContainer.Panel2.ResumeLayout(false);
+            this.SplitContainer.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SplitContainer)).EndInit();
+            this.SplitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -174,7 +179,7 @@
 
         private System.Windows.Forms.Panel Panel;
         private System.Windows.Forms.Button ExecuteButton;
-        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer SplitContainer;
         private System.Windows.Forms.TextBox ConnectionStringTextBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox CommandTextTextBox1;
