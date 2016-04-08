@@ -21,13 +21,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Generic\TinyBuffer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diagnostics\Diag.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diagnostics\NoDebuggerAttachedException.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\Data\DataRowDiff.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\Data\LightDataObjects.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\Data\DataSetDiff.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\Data\DataTableDiff.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\DiffResult.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\DiffTextFormat.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Diff\PrimitiveEqualityComparer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Functional\Executable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Functional\ExecutableExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Functional\FunctionalExtensions.cs" />
