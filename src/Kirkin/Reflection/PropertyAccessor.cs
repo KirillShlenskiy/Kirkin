@@ -33,8 +33,8 @@ namespace Kirkin.Reflection
         /// <summary>
         /// Returns an accessor for the property with the given name.
         /// </summary>
-        internal static IPropertyAccessor Resolve<T>(string propertyName,
-                                                     BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+        public static IPropertyAccessor Resolve<T>(string propertyName,
+                                                   BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
         {
             return Resolve(typeof(T), propertyName, bindingFlags);
         }
