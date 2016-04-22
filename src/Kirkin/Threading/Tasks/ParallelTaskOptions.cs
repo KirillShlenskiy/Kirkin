@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !NET_40
+
+using System;
 using System.Threading;
 
 namespace Kirkin.Threading.Tasks
@@ -43,3 +45,5 @@ namespace Kirkin.Threading.Tasks
         }
     }
 }
+
+#endif
