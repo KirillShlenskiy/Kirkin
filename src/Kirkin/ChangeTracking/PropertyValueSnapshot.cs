@@ -58,7 +58,9 @@ namespace Kirkin.ChangeTracking
             {
                 IPropertyAccessor accessor = propertyList.PropertyAccessors[i];
 
-                propertyValues[i] = new PropertyValue(accessor.Property, accessor.GetValue(target));
+                if (accessor.Property.CanRead) {
+                    propertyValues[i] = new PropertyValue(accessor.Property, accessor.GetValue(target));
+                }
             }
 
             return propertyValues;
