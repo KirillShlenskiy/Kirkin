@@ -51,7 +51,7 @@ namespace Kirkin.Mapping
         /// Creates a new <see cref="IMapper{TSource, TTarget}"/> instance with the
         /// same source and target type, mapping all the properties in the given list.
         /// </summary>
-        internal static IMapper<T, T> CreateMapper<T>(PropertyList<T> propertyList)
+        public static IMapper<T, T> CreateMapper<T>(PropertyList<T> propertyList)
         {
             if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
 

@@ -49,7 +49,7 @@ namespace Kirkin.Tests.Reflection
 
         public void NonGenericPropertyAccessorBenchmark()
         {
-            var fastValue = PropertyAccessor.Resolve(typeof(Dummy).GetProperty("Value"));
+            var fastValue = PropertyAccessorFactory.Resolve(typeof(Dummy).GetProperty("Value"));
 
             for (var i = 0; i < BENCHMARK_ITERATIONS; i++)
             {
@@ -134,7 +134,7 @@ namespace Kirkin.Tests.Reflection
 
         public void NonGenericTest()
         {
-            var prop = PropertyAccessor.Resolve(typeof(Dummy).GetProperty("ID"));
+            var prop = PropertyAccessorFactory.Resolve(typeof(Dummy).GetProperty("ID"));
             var dummy = new Dummy();
 
             prop.SetValue(dummy, 42);

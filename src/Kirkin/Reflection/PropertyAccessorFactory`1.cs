@@ -10,7 +10,7 @@ namespace Kirkin.Reflection
     /// <summary>
     /// <see cref="PropertyAccessor{TTarget, TProperty}"/> factory methods.
     /// </summary>
-    public static class PropertyAccessor<T>
+    public static class PropertyAccessorFactory<T>
     {
         #region PropertyAccessor<T,> Cache
 

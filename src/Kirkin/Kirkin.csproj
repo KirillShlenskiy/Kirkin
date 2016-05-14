@@ -91,10 +91,10 @@
     <Compile Include="Percentage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\IPropertyAccessor.cs" />
-    <Compile Include="Reflection\PropertyAccessor`2.cs" />
-    <Compile Include="Reflection\MemberInfoEqualityComparer.cs" />
     <Compile Include="Reflection\PropertyAccessor.cs" />
-    <Compile Include="Reflection\PropertyAccessor`1.cs" />
+    <Compile Include="Reflection\MemberInfoEqualityComparer.cs" />
+    <Compile Include="Reflection\PropertyAccessorFactory.cs" />
+    <Compile Include="Reflection\PropertyAccessorFactory`1.cs" />
     <Compile Include="Text\UrlUtil.cs" />
     <Compile Include="Threading\Cancellation.cs" />
     <Compile Include="Threading\Tasks\ParallelTaskOptions.cs" />

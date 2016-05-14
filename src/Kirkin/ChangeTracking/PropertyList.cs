@@ -18,7 +18,7 @@ namespace Kirkin.ChangeTracking
         /// <summary>
         /// Default property list fot type T. Contains all public instance properties.
         /// </summary>
-        public static PropertyList<T> Default { get; } = new PropertyList<T>(PropertyAccessor.ResolveAll<T>());
+        public static PropertyList<T> Default { get; } = new PropertyList<T>(PropertyAccessorFactory.ResolveAll<T>());
 
         /// <summary>
         /// Empty list of properties of type T.
@@ -89,7 +89,7 @@ namespace Kirkin.ChangeTracking
                 Array.Copy(_propertyAccessors, 0, accessors, 0, _propertyAccessors.Length);
             }
 
-            accessors[accessors.Length - 1] = PropertyAccessor.Resolve(includedProperty);
+            accessors[accessors.Length - 1] = PropertyAccessorFactory.Resolve(includedProperty);
 
             return new PropertyList<T>(accessors);
         }
