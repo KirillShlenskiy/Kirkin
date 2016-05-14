@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Kirkin.Sources</id>
+    <version>0.1</version>
+    <title>Kirkin</title>
+    <authors>Kirill Shlenskiy</authors>
+    <owners>Kirill Shlenskiy</owners>
+    <projectUrl>https://bitbucket.org/kirillshlenskiy/kirkin</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Kirkin lib source package</description>
+    <copyright>Copyright Kirill Shlenskiy 2016</copyright>
+  </metadata>
+  <files>
+    <file src="src\Kirkin\**.cs" target="content" exclude="**\bin\**;**\obj\**;**\Properties\**" />
+  </files>
+  </package>
