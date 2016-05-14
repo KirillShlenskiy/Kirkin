@@ -17,7 +17,7 @@ namespace Kirkin.Collections.Concurrent
         /// <summary>
         /// Backing field for Values.
         /// </summary>
-        private readonly Cache.LazyCache<TItem[]> _values;
+        private readonly LazyCache<TItem[]> _values;
 
         /// <summary>
         /// Cache of values held in the Items dictionary.
@@ -36,7 +36,7 @@ namespace Kirkin.Collections.Concurrent
         public ConcurrentKeyedCollection(Func<TItem, TKey> keySelector)
             : base(new ConcurrentDictionary<TKey, TItem>(), keySelector)
         {
-            _values = new Cache.LazyCache<TItem[]>(() => Items.Values.ToArray());
+            _values = new LazyCache<TItem[]>(() => Items.Values.ToArray());
         }
 
         /// <summary>

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Kirkin.Caching
+﻿namespace Kirkin.Caching
 {
     /// <summary>
     /// Common cache interface.

@@ -45,6 +45,9 @@
     <Compile Include="Caching\Cache.cs" />
     <Compile Include="Caching\CacheBase.cs" />
     <Compile Include="Caching\ICache.cs" />
+    <Compile Include="Caching\IKeyValueCache.cs" />
+    <Compile Include="Caching\LazyCache.cs" />
+    <Compile Include="Caching\SingleKeyValueCache.cs" />
     <Compile Include="ChangeTracking\ChangeTracker.cs" />
     <Compile Include="ChangeTracking\PropertyValue.cs" />
     <Compile Include="ChangeTracking\PropertyValueChange.cs" />
