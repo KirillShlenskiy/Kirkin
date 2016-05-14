@@ -18,7 +18,25 @@ namespace Kirkin.ChangeTracking
         /// <summary>
         /// Default property list fot type T. Contains all public instance properties.
         /// </summary>
-        public static PropertyList<T> Default { get; } = new PropertyList<T>(PropertyAccessorFactory.ResolveAll<T>());
+        public static PropertyList<T> Default { get; } = CreateDefault();
+
+        /// <summary>
+        /// Creates an instance of <see cref="PropertyList{T}"/> with default parameters.
+        /// </summary>
+        private static PropertyList<T> CreateDefault()
+        {
+            PropertyInfo[] properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            Array<IPropertyAccessor>.Builder accessors = new Array<IPropertyAccessor>.Builder(properties.Length);
+
+            foreach (PropertyInfo prop in properties)
+            {
+                if (prop.CanRead) {
+                    accessors.UnsafeAdd(PropertyAccessorFactory.Resolve(prop));
+                }
+            }
+
+            return new PropertyList<T>(accessors.ToArray());
+        }
 
         /// <summary>
         /// Empty list of properties of type T.

@@ -97,7 +97,14 @@ namespace Kirkin.Reflection
         /// Returns accessor for all properties matching the
         /// given binding flags (public, instance by default).
         /// </summary>
-        public static IPropertyAccessor[] ResolveAll<T>(BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public)
+        /// <remarks>
+        /// !!!!!!!!!!!!!!!!!!!!!!!! NOTE !!!!!!!!!!!!!!!!!!!!!!!!
+        /// Don't make public unless you're certain that resolving
+        /// all properties (including write-only ones) is the
+        /// right thing to do. This can break Mapping.
+        /// !!!!!!!!!!!!!!!!!!!!!!!! NOTE !!!!!!!!!!!!!!!!!!!!!!!!
+        /// </remarks>
+        internal static IPropertyAccessor[] ResolveAll<T>(BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public)
         {
             return ResolveAll(typeof(T), bindingFlags);
         }
