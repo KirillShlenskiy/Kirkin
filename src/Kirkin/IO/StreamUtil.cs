@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !NET_40
+
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -56,3 +58,5 @@ namespace Kirkin.IO
         }
     }
 }
+
+#endif
