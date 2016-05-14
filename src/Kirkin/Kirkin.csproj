@@ -105,6 +105,7 @@
     <Compile Include="Threading\Tasks\TaskEx.cs" />
     <Compile Include="Reflection\PropertyList.cs" />
     <Compile Include="ChangeTracking\PropertyValueEqualityComparer.cs" />
+    <Compile Include="Threading\Volatile.cs" />
     <Compile Include="Utilities\Hash.cs" />
     <Compile Include="Utilities\TypeName.cs" />
   </ItemGroup>
