@@ -41,7 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caching\AutoExpireCache.cs" />
     <Compile Include="Caching\Cache.cs" />
+    <Compile Include="Caching\CacheBase.cs" />
     <Compile Include="Caching\ICache.cs" />
     <Compile Include="ChangeTracking\ChangeTracker.cs" />
     <Compile Include="ChangeTracking\PropertyValue.cs" />

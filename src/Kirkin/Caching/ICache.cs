@@ -21,11 +21,5 @@ namespace Kirkin.Caching
         /// Invalidates the cache causing it to be rebuilt.
         /// </summary>
         void Invalidate();
-
-        /// <summary>
-        /// Returns a clone of this cache which automatically
-        /// invalidates its value after the given amount of time.
-        /// </summary>
-        ICache<T> WithExpiry(TimeSpan expireAfter);
     }
 }

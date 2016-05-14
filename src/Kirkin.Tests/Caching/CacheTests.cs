@@ -75,7 +75,7 @@ namespace Kirkin.Tests.Caching
             cache = Cache.Constant(42);
             cache = Cache.Create(() => 1);
             cache = Cache.Create(1, i => i);
-            cache = cache.WithExpiry(TimeSpan.FromSeconds(10));
+            cache = new AutoExpireCache<int>(() => 42, TimeSpan.FromSeconds(10));
 
             cache.Invalidate();
         }
@@ -83,9 +83,7 @@ namespace Kirkin.Tests.Caching
         [Fact]
         public void AutoExpireCacheBenchmarks()
         {
-            var cache = Cache
-                .Create(() => 42)
-                .WithExpiry(Timeout.InfiniteTimeSpan);
+            var cache = new AutoExpireCache<int>(() => 42, Timeout.InfiniteTimeSpan);
 
             for (int i = 0; i < 100000; i++)
             {
@@ -220,16 +218,17 @@ namespace Kirkin.Tests.Caching
         {
             int obj = 0;
 
-            ICache<string> cache = Cache
-                .Create(() =>
+            ICache<string> cache = new AutoExpireCache<string>(
+                () =>
                 {
                     var val = Interlocked.Increment(ref obj);
 
                     Thread.Sleep(20);
 
                     return val.ToString();
-                })
-                .WithExpiry(TimeSpan.FromMilliseconds(50));
+                },
+                TimeSpan.FromMilliseconds(50)
+            );
 
             Assert.False(cache.IsValid);
             Assert.Equal("1", cache.Value);
@@ -252,15 +251,13 @@ namespace Kirkin.Tests.Caching
             Thread.Sleep(10);
             cache.Invalidate();
 
-            Assert.Equal("5", skipOneTask.Result); // This needs to be investigated. I would expect 4 as the result.
+            Assert.Equal("4", skipOneTask.Result);
         }
 
         [Fact]
         public void AutoExpiryCacheNoExpiry()
         {
-            ICache<int> cache = Cache
-                .Create(() => 0)
-                .WithExpiry(Timeout.InfiniteTimeSpan);
+            ICache<int> cache = new AutoExpireCache<int>(() => 0, Timeout.InfiniteTimeSpan);
 
             //Assert.Equal(Timeout.InfiniteTimeSpan, cache.ExpireAfter);
 

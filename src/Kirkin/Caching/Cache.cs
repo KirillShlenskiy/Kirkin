@@ -88,306 +88,19 @@ namespace Kirkin.Caching
         #region Implementation
 
         /// <summary>
-        /// Common base class for types which cache values.
-        /// </summary>
-        internal abstract class CloneableCache<T> : ICache<T>
-        {
-            /// <summary>
-            /// Returns the cached value initialising it if necessary.
-            /// </summary>
-            public abstract T Value { get; }
-
-            /// <summary>
-            /// Returns true if the cached value is current and ready to use.
-            /// </summary>
-            public abstract bool IsValid { get; }
-
-            /// <summary>
-            /// Invalidates the cache causing it to be rebuilt.
-            /// </summary>
-            public abstract void Invalidate();
-
-            /// <summary>
-            /// Creates a clone of this <see cref="CloneableCache{T}" />.
-            /// </summary>
-            protected internal abstract CloneableCache<T> Clone();
-
-            /// <summary>
-            /// Returns a clone of the given cache which automatically
-            /// invalidates its value after the given amount of time.
-            /// </summary>
-            public ICache<T> WithExpiry(TimeSpan expireAfter)
-            {
-                return new AutoExpireCacheWrapper<T>(this, expireAfter);
-            }
-        }
-
-        /// <summary>
-        /// Base class for thread-safe ICache implementations.
-        /// </summary>
-        abstract class CacheBase<T> : CloneableCache<T>
-        {
-            private readonly object StateLock = new object(); // Fast.
-            private readonly object ValueGenerationLock = new object(); // Slow.
-            private int Version; // Incremented, never reset.
-
-            /// <summary>
-            /// Provides direct access to the current value stored by this instance (valid or otherwise).
-            /// </summary>
-            protected T CurrentValue { get; private set; }
-
-            /// <summary>
-            /// Returns the cached value initialising it using the factory delegate if necessary.
-            /// Guaranteed to return the latest value even if a call to Invalidate is made
-            /// while the value is being generated.
-            /// </summary>
-            public override T Value
-            {
-                get
-                {
-                    T value;
-                    return TryGetValue(out value) ? value : GetValueSlow();
-                }
-            }
-
-            /// <summary>
-            /// Returns true if the cached value is current and ready to use.
-            /// </summary>
-            public override bool IsValid // Explicit to discourage use where thread safety is required.
-            {
-                get
-                {
-                    CheckReentrancy();
-
-                    lock (StateLock) {
-                        return IsCurrentValueValid();
-                    }
-                }
-            }
-
-            /// <summary>
-            /// Takes out the slow lock and returns the value. Generates and stores
-            /// the new value in the process if a valid value is not already available.
-            /// </summary>
-            private T GetValueSlow()
-            {
-                while (true)
-                {
-                    // This lock gives us LazyCache semantics.
-                    // If multiple calls to Value arrive at the same time,
-                    // only one gets to create and store the value.
-                    bool lockTaken = false;
-
-                    if (ValueGenerationLock != null) {
-                        Monitor.Enter(ValueGenerationLock, ref lockTaken);
-                    }
-
-                    try
-                    {
-                        T value;
-
-                        if (TryGetValue(out value)) {
-                            return value;
-                        }
-
-                        int version;
-                        lock (StateLock) version = Version;
-                        value = CreateValue();
-
-                        lock (StateLock)
-                        {
-                            if (version == Version)
-                            {
-                                // No Invalidate call occurred while the
-                                // value was being generated. Safe to store.
-                                StoreValue(value);
-
-                                return value;
-                            }
-                        }
-
-                        // An Invalidate call happened while we were generating the value.
-                        // We will release and re-obtain the lock and try again.
-                    }
-                    finally
-                    {
-                        if (lockTaken) {
-                            Monitor.Exit(ValueGenerationLock);
-                        }
-                    }
-                }
-            }
-
-            /// <summary>
-            /// Invalidates the cache causing it to be rebuilt next time it is accessed.
-            /// </summary>
-            public override void Invalidate()
-            {
-                CheckReentrancy();
-
-                lock (StateLock)
-                {
-                    unchecked { Version++; }
-                    OnInvalidate();
-                }
-            }
-
-            /// <summary>
-            /// Reads, validates and immediately returns the current value in a thread-safe
-            /// manner. Returns false if the current value is not yet available, or is invalid.
-            /// </summary>
-            public bool TryGetValue(out T value)
-            {
-                CheckReentrancy();
-
-                lock (StateLock)
-                {
-                    if (IsCurrentValueValid())
-                    {
-                        value = CurrentValue;
-                        return true;
-                    }
-
-                    OnInvalidate();
-                }
-
-                value = default(T);
-                return false;
-            }
-
-            /// <summary>
-            /// Ensures that StateLock is not already taken.
-            /// </summary>
-            private void CheckReentrancy()
-            {
-#if !NET_40 && !__MOBILE__
-                if (Monitor.IsEntered(StateLock)) {
-                    throw new InvalidOperationException("StateLock already taken out. Re-entrancy prohibited.");
-                }
-#endif
-            }
-
-            /// <summary>
-            /// When overridden in a derived class, creates and returns the cached value.
-            /// Do *NOT* access shared (instance) state from within this method.
-            /// </summary>
-            protected abstract T CreateValue();
-
-            /// <summary>
-            /// When overridden in a derived class, performs a check to see if the value is still current.
-            /// It is safe to access shared (instance) state from within this method.
-            /// </summary>
-            protected abstract bool IsCurrentValueValid();
-
-            /// <summary>
-            /// When overridden in a derived class, performs additional invalidation actions.
-            /// It is safe to access shared (instance) state from within this method.
-            /// </summary>
-            protected abstract void OnInvalidate();
-
-            /// <summary>
-            /// Stores the newly created value.
-            /// It is safe to access shared (instance) state from within this method.
-            /// </summary>
-            protected virtual void StoreValue(T newValue)
-            {
-                CurrentValue = newValue;
-            }
-        }
-
-        /// <summary>
-        /// Provides fast, lazy, thread-safe access
-        /// to cached data with optional auto-expiry.
-        /// </summary>
-        sealed class AutoExpireCacheWrapper<T> : CacheBase<T>
-        {
-            private static readonly TimeSpan InfiniteTimeSpan = new TimeSpan(0, 0, 0, 0, Timeout.Infinite);
-            private readonly CloneableCache<T> Inner;
-            private int EnvironmentTicksAtLastStoreValue = -1; // Reset when invalidated.
-
-            /// <summary>
-            /// Gets the duration of the time interval after
-            /// which the newly generated value becomes invalid
-            /// (specified when this instance was created).
-            /// </summary>
-            public TimeSpan ExpireAfter { get; }
-
-            /// <summary>
-            /// Creates a new instance of the class with the given expiry parameter.
-            /// </summary>
-            internal AutoExpireCacheWrapper(CloneableCache<T> inner, TimeSpan expireAfter)
-            {
-                if (inner == null) throw new ArgumentNullException("inner");
-
-                if (expireAfter <= TimeSpan.Zero && expireAfter != InfiniteTimeSpan) {
-                    throw new ArgumentException("expireAfter");
-                }
-
-                Inner = inner.Clone();
-                ExpireAfter = expireAfter;
-            }
-
-            /// <summary>
-            /// Creates a clone of this cache.
-            /// </summary>
-            protected internal override CloneableCache<T> Clone()
-            {
-                return new AutoExpireCacheWrapper<T>(Inner, ExpireAfter);
-            }
-
-            /// <summary>
-            /// Creates and returns the cached value.
-            /// </summary>
-            protected override T CreateValue()
-            {
-                return Inner.Value;
-            }
-
-            /// <summary>
-            /// Performs a check to see if the value is still current.
-            /// </summary>
-            protected override bool IsCurrentValueValid()
-            {
-                return EnvironmentTicksAtLastStoreValue != -1 &&
-                    (ExpireAfter == InfiniteTimeSpan ||
-                     ExpireAfter.TotalMilliseconds > (Environment.TickCount - EnvironmentTicksAtLastStoreValue));
-            }
-
-            /// <summary>
-            /// Performs additional invalidation actions.
-            /// </summary>
-            protected override void OnInvalidate()
-            {
-                Inner.Invalidate();
-                EnvironmentTicksAtLastStoreValue = -1;
-            }
-
-            /// <summary>
-            /// Stores the value after it's been created, along
-            /// with the additional state required for IsValid.
-            /// </summary>
-            protected override void StoreValue(T newValue)
-            {
-                base.StoreValue(newValue);
-
-                EnvironmentTicksAtLastStoreValue = Environment.TickCount;
-            }
-        }
-
-        /// <summary>
         /// Simple, immutable, thread-safe cache which is always valid.
         /// </summary>
-        sealed class ConstantCache<T> : CloneableCache<T>
+        sealed class ConstantCache<T> : ICache<T>
         {
             /// <summary>
             /// Value specified when this instance was created.
             /// </summary>
-            public override T Value { get; }
+            public T Value { get; }
 
             /// <summary>
             /// Always returns true.
             /// </summary>
-            public override bool IsValid
+            public bool IsValid
             {
                 get
                 {
@@ -406,26 +119,18 @@ namespace Kirkin.Caching
             /// <summary>
             /// Does nothing.
             /// </summary>
-            public override void Invalidate()
+            public void Invalidate()
             {
                 // Not throwing just in case we feed this instance to WithExpiry(TimeSpan), for example -
                 // which will cause auto-invalidation. We should still work in those scenarios.
-            }
-
-            /// <summary>
-            /// Creates a clone of this cache.
-            /// </summary>
-            protected internal override CloneableCache<T> Clone()
-            {
-                // This instance does not hold any mutable state. No point in creating a clone.
-                return this;
             }
         }
 
         /// <summary>
         /// Provides fast, lazy, thread-safe access to cached data.
         /// </summary>
-        internal sealed class LazyCache<T> : CloneableCache<T>
+        internal sealed class LazyCache<T>
+            : ICache<T>
         {
             /// <summary>
             /// Factory method used to fully
@@ -447,7 +152,7 @@ namespace Kirkin.Caching
             /// even if a call to Invalidate() is made
             /// while the value is being generated.
             /// </summary>
-            public override T Value
+            public T Value
             {
                 get
                 {
@@ -459,7 +164,7 @@ namespace Kirkin.Caching
             /// <summary>
             /// Returns true if the cached value is current and ready to use.
             /// </summary>
-            public override bool IsValid
+            public bool IsValid
             {
                 get { return _lazy.IsValueCreated; }
             }
@@ -509,25 +214,18 @@ namespace Kirkin.Caching
             /// Invalidates the cache causing it to
             /// be rebuilt next time it is accessed.
             /// </summary>
-            public override void Invalidate()
+            public void Invalidate()
             {
                 Interlocked.Exchange(ref _lazy, new Lazy<T>(ValueFactory));
             }
-
-            /// <summary>
-            /// Creates a clone of this cache.
-            /// </summary>
-            protected internal override CloneableCache<T> Clone()
-            {
-                return new LazyCache<T>(ValueFactory);
-            }
         }
 
-        sealed class UncachedImpl<T> : CloneableCache<T>
+        sealed class UncachedImpl<T>
+            : ICache<T>
         {
             private readonly Func<T> ValueFactory;
 
-            public override bool IsValid
+            public bool IsValid
             {
                 get
                 {
@@ -535,7 +233,7 @@ namespace Kirkin.Caching
                 }
             }
 
-            public override T Value
+            public T Value
             {
                 get
                 {
@@ -548,25 +246,21 @@ namespace Kirkin.Caching
                 ValueFactory = valueFactory;
             }
 
-            public override void Invalidate()
+            public void Invalidate()
             {
                 // Not throwing just in case we feed this instance to WithExpiry(TimeSpan), for example -
                 // which will cause auto-invalidation. We should still work in those scenarios.
             }
-
-            protected internal override CloneableCache<T> Clone()
-            {
-                return new UncachedImpl<T>(ValueFactory);
-            }
         }
 
-        sealed class VolatileCache<TKey, TValue> : CloneableCache<TValue>
+        sealed class VolatileCache<TKey, TValue>
+            : ICache<TValue>
         {
             readonly Func<TKey> VolatileKeySelector;
             readonly Func<TKey, TValue> ValueFactory;
             readonly SingleKeyValueCache<TKey, TValue> Cache;
 
-            public override bool IsValid
+            public bool IsValid
             {
                 get
                 {
@@ -574,7 +268,7 @@ namespace Kirkin.Caching
                 }
             }
 
-            public override TValue Value
+            public TValue Value
             {
                 get
                 {
@@ -603,14 +297,9 @@ namespace Kirkin.Caching
                 Cache = new SingleKeyValueCache<TKey, TValue>(valueFactory);
             }
 
-            public override void Invalidate()
+            public void Invalidate()
             {
                 Cache.Invalidate(VolatileKeySelector());
-            }
-
-            protected internal override CloneableCache<TValue> Clone()
-            {
-                return new VolatileCache<TKey, TValue>(VolatileKeySelector, ValueFactory);
             }
         }
 
