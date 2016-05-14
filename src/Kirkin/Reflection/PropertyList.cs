@@ -5,10 +5,9 @@ using System.Text;
 
 using Kirkin.Collections.Generic;
 using Kirkin.Linq.Expressions;
-using Kirkin.Reflection;
 using Kirkin.Utilities;
 
-namespace Kirkin.ChangeTracking
+namespace Kirkin.Reflection
 {
     /// <summary>
     /// Immutable collection of property definitions.
@@ -16,7 +15,7 @@ namespace Kirkin.ChangeTracking
     public sealed class PropertyList<T>
     {
         /// <summary>
-        /// Default property list fot type T. Contains all public instance properties.
+        /// Default property list fot type T. Encapsulates all readable public instance properties.
         /// </summary>
         public static PropertyList<T> Default { get; } = CreateDefault();
 

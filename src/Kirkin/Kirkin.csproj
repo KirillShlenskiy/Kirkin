@@ -69,7 +69,7 @@
     <Compile Include="Logging\FileLogger.cs" />
     <Compile Include="Logging\IEntryFormatter.cs" />
     <Compile Include="Logging\LogEntryBlock.cs" />
-    <Compile Include="Logging\LogFileMonitor.cs" />
+    <Compile Include="IO\ReactiveFileMonitor.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Mapping\Data\DataMember.cs" />
     <Compile Include="Mapping\Data\DataRecordToObjectMapperConfig.cs" />
@@ -103,7 +103,7 @@
     <Compile Include="Threading\Tasks\ParallelTaskOptions.cs" />
     <Compile Include="Threading\Tasks\ParallelTasks.cs" />
     <Compile Include="Threading\Tasks\TaskEx.cs" />
-    <Compile Include="ChangeTracking\PropertyList.cs" />
+    <Compile Include="Reflection\PropertyList.cs" />
     <Compile Include="ChangeTracking\PropertyValueEqualityComparer.cs" />
     <Compile Include="Utilities\Hash.cs" />
     <Compile Include="Utilities\TypeName.cs" />

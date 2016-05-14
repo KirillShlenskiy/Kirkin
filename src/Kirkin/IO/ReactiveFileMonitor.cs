@@ -6,12 +6,12 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Kirkin.Logging
+namespace Kirkin.IO
 {
     /// <summary>
     /// Simple monitor for log files which always grow.
     /// </summary>
-    public sealed class LogFileMonitor
+    public sealed class ReactiveFileMonitor
     {
         /// <summary>
         /// Full path to the log file monitored by this instance.
@@ -34,7 +34,7 @@ namespace Kirkin.Logging
         /// Creates a new instance of the monitor which reports
         /// any new lines written to the log file immediately.
         /// </summary>
-        public LogFileMonitor(string filePath)
+        public ReactiveFileMonitor(string filePath)
             : this(filePath, TimeSpan.Zero)
         {
         }
@@ -43,7 +43,7 @@ namespace Kirkin.Logging
         /// Creates a new instance of the monitor which waits for the given interval
         /// with no new entries before flushing all buffered entries to event subscribers.
         /// </summary>
-        public LogFileMonitor(string filePath, TimeSpan throttling)
+        public ReactiveFileMonitor(string filePath, TimeSpan throttling)
         {
             if (string.IsNullOrEmpty(filePath)) throw new ArgumentException("filePath");
 
