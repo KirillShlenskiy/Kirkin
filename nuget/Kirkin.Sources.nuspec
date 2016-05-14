@@ -12,6 +12,6 @@
     <copyright>Copyright Kirill Shlenskiy 2016</copyright>
   </metadata>
   <files>
-    <file src="src\Kirkin\**.cs" target="content" exclude="**\bin\**;**\obj\**;**\Properties\**" />
+    <file src="..\src\Kirkin\**.cs" target="content" exclude="**\bin\**;**\obj\**;**\Properties\**" />
   </files>
   </package>
