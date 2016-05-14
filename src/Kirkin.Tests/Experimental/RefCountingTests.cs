@@ -1,5 +1,6 @@
 ﻿using System;
 
+using Kirkin.Functional;
 using Kirkin.ReferenceCounting;
 
 using Xunit;

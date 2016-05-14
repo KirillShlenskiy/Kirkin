@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 
+using Kirkin.Functional;
+
 using Xunit;
 
 namespace Kirkin.Tests

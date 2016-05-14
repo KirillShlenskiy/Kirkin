@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Kirkin.Dependencies;
+using Kirkin.Functional;
 
 using Xunit;
 

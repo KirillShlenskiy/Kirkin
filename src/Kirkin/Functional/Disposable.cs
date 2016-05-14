@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Kirkin
+namespace Kirkin.Functional
 {
     /// <summary>
     /// Commonly used IDisposable factory methods.
