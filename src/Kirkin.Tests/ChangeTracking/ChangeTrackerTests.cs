@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 
 using Kirkin.ChangeTracking;
-using Kirkin.Reflection;
 
 using Xunit;
 
