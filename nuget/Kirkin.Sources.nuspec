@@ -2,12 +2,13 @@
 <package >
   <metadata>
     <id>Kirkin.Sources</id>
-    <version>0.1</version>
+    <version>0.2</version>
     <title>Kirkin</title>
     <authors>Kirill Shlenskiy</authors>
     <owners>Kirill Shlenskiy</owners>
     <projectUrl>https://github.com/KirillShlenskiy/Kirkin</projectUrl>
 	<iconUrl>https://raw.githubusercontent.com/KirillShlenskiy/Kirkin/master/icons/logo-128.png</iconUrl>
+	<licenseUrl>https://raw.githubusercontent.com/KirillShlenskiy/Kirkin/master/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Kirkin lib source package</description>
     <copyright>Copyright Kirill Shlenskiy 2016</copyright>
