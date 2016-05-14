@@ -70,16 +70,7 @@ namespace Kirkin.Mapping
 
         #endregion
 
-        #region Convenience proxies
-
-        /// <summary>
-        /// Creates a shallow clone of the given object.
-        /// </summary>
-        public static T Clone<T>(T source)
-            where T : new()
-        {
-            return Mapper<T, T>.Default.Map(source, new T());
-        }
+        #region Dynamic mapping proxies
 
         /// <summary>
         /// Creates a new target instance, executes mapping from
@@ -101,6 +92,19 @@ namespace Kirkin.Mapping
             return Mapper<TSource, TTarget>.Default.Map(source, target);
         }
 
+        #endregion
+
+        #region Same/derived type mapping
+
+        /// <summary>
+        /// Creates a shallow clone of the given object.
+        /// </summary>
+        public static T Clone<T>(T source)
+            where T : new()
+        {
+            return Mapper<T>.Default.Map(source, new T());
+        }
+
         /// <summary>
         /// Executes mapping from source to target and returns the target instance.
         /// Target instance must have the same type as source, or be derived from source.
@@ -110,7 +114,7 @@ namespace Kirkin.Mapping
         {
             // Treat target as TSource so as to prevent the default
             // mapping from failing due to unmapped target members.
-            return (TTarget)DynamicMap<TSource, TSource>(source, target);
+            return (TTarget)Mapper<TSource>.Default.Map(source, target);
         }
 
         #endregion
@@ -230,5 +234,34 @@ namespace Kirkin.Mapping
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// Specialised type used for mapping between objects the same type.
+    /// </summary>
+    internal static class Mapper<T>
+    {
+        private static Mapper<T, T> _default;
+
+        /// <summary>
+        /// Default <see cref="Mapper{TSource, TTarget}"/> instance.
+        /// *DO NOT* mutate this instance.
+        /// </summary>
+        internal static Mapper<T, T> Default
+        {
+            get
+            {
+                if (_default == null)
+                {
+                    MapperConfig<T, T> config = new MapperConfig<T, T> {
+                        MappingMode = MappingMode.Relaxed
+                    };
+
+                    _default = new Mapper<T, T>(config.ProduceValidMemberMappings());
+                }
+
+                return _default;
+            }
+        }
     }
 }
