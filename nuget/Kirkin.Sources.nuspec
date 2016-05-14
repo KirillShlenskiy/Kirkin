@@ -7,6 +7,7 @@
     <authors>Kirill Shlenskiy</authors>
     <owners>Kirill Shlenskiy</owners>
     <projectUrl>https://github.com/KirillShlenskiy/Kirkin</projectUrl>
+	<iconUrl>https://raw.githubusercontent.com/KirillShlenskiy/Kirkin/master/icons/logo-128.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Kirkin lib source package</description>
     <copyright>Copyright Kirill Shlenskiy 2016</copyright>
