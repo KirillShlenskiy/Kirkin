@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Specialised\UndoRedoCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\CustomEqualityComparer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Functional\FuncUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Linq\ArrayExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Linq\CollectionFilter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Linq\ICollectionFilter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\ReferenceCounting\Borrowed.cs" />

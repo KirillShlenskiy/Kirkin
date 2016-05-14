@@ -63,7 +63,6 @@
     <Compile Include="Disposable.cs" />
     <Compile Include="Functional\Retryable.cs" />
     <Compile Include="IO\StreamUtil.cs" />
-    <Compile Include="Linq\ArrayExtensions.cs" />
     <Compile Include="Linq\EnumerableExtensions.cs" />
     <Compile Include="Linq\Expressions\ExpressionUtil.cs" />
     <Compile Include="Logging\EntryFormatter.cs" />
