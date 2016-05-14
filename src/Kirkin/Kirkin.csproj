@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caching\Cache.cs" />
+    <Compile Include="Caching\ICache.cs" />
     <Compile Include="ChangeTracking\ChangeTracker.cs" />
     <Compile Include="ChangeTracking\PropertyValue.cs" />
     <Compile Include="ChangeTracking\PropertyValueChange.cs" />
@@ -60,6 +62,12 @@
     <Compile Include="Linq\ArrayExtensions.cs" />
     <Compile Include="Linq\EnumerableExtensions.cs" />
     <Compile Include="Linq\Expressions\ExpressionUtil.cs" />
+    <Compile Include="Logging\EntryFormatter.cs" />
+    <Compile Include="Logging\FileLogger.cs" />
+    <Compile Include="Logging\IEntryFormatter.cs" />
+    <Compile Include="Logging\LogEntryBlock.cs" />
+    <Compile Include="Logging\LogFileMonitor.cs" />
+    <Compile Include="Logging\Logger.cs" />
     <Compile Include="Mapping\Data\DataMember.cs" />
     <Compile Include="Mapping\Data\DataRecordToObjectMapperConfig.cs" />
     <Compile Include="Mapping\Data\DataRowToObjectMapperConfig.cs" />

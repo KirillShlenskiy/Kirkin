@@ -9,8 +9,6 @@
     <Import_RootNamespace>Kirkin</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Caching\Cache.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Caching\ICache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Async\AsyncHandover.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Async\AsyncHandoverBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Async\BoundedCapacityAsyncHandover.cs" />
@@ -22,12 +20,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Functional\FuncUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Linq\CollectionFilter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Linq\ICollectionFilter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Logging\EntryFormatter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Logging\FileLogger.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Logging\IEntryFormatter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Logging\LogEntryBlock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Logging\LogFileMonitor.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Logging\Logger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\ReferenceCounting\Borrowed.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\ReferenceCounting\SharedResourceManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Text\TextUtil.cs" />
