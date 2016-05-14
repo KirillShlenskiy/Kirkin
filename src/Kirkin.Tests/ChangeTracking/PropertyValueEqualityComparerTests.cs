@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using Kirkin.ChangeTracking;
@@ -7,6 +8,18 @@ using Xunit;
 
 namespace Kirkin.Tests.ChangeTracking
 {
+    internal static class PropertyValueComparerExtensions
+    {
+        public static PropertyValueEqualityComparer<T> WithStringComparer<T>(
+            this PropertyValueEqualityComparer<T> propertyValueComparer,
+            StringComparer stringComparer)
+        {
+            return new PropertyValueEqualityComparer<T>(propertyValueComparer.PropertyList, new Dictionary<Type, IEqualityComparer> {
+                { typeof(string), stringComparer }
+            });
+        }
+    }
+
     public class PropertyValueEqualityComparerTests
     {
         [Fact]

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -9,7 +10,7 @@ namespace Kirkin.ChangeTracking
     /// <summary>
     /// Arbitrary type equality comparer based on PropertyList.
     /// </summary>
-    public class PropertyValueEqualityComparer<T>
+    public sealed class PropertyValueEqualityComparer<T>
         : IEqualityComparer<T>
     {
         private static PropertyValueEqualityComparer<T> _default;
@@ -36,6 +37,11 @@ namespace Kirkin.ChangeTracking
         public PropertyList<T> PropertyList { get; }
 
         /// <summary>
+        /// Equality comparer used to compare property values for equality.
+        /// </summary>
+        public IReadOnlyDictionary<Type, IEqualityComparer> EqualityComparers { get; }
+
+        /// <summary>
         /// Creates a new comparer instance based on the given <see cref="PropertyList{T}"/>.
         /// </summary>
         public PropertyValueEqualityComparer(PropertyList<T> propertyList)
@@ -46,10 +52,22 @@ namespace Kirkin.ChangeTracking
         }
 
         /// <summary>
+        /// Creates a new comparer instance based on the given <see cref="PropertyList{T}"/>.
+        /// </summary>
+        public PropertyValueEqualityComparer(PropertyList<T> propertyList, IReadOnlyDictionary<Type, IEqualityComparer> equalityComparers)
+        {
+            if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
+            if (equalityComparers == null) throw new ArgumentNullException(nameof(equalityComparers));
+
+            PropertyList = propertyList;
+            EqualityComparers = equalityComparers;
+        }
+
+        /// <summary>
         /// Checks the given entities for equality
         /// based on their mapped property values.
         /// </summary>
-        public virtual bool Equals(T x, T y)
+        public bool Equals(T x, T y)
         {
             // Let's do a null check first.
             if (ReferenceEquals(x, null)) return ReferenceEquals(y, null);
@@ -57,10 +75,11 @@ namespace Kirkin.ChangeTracking
 
             foreach (IPropertyAccessor prop in PropertyList.PropertyAccessors)
             {
+                IEqualityComparer comparer = ResolveComparer(prop.Property.PropertyType);
                 object xValue = prop.GetValue(x);
                 object yValue = prop.GetValue(y);
 
-                if (!Equals(xValue, yValue))
+                if (!comparer.Equals(xValue, yValue))
                 {
 #if !PCL
                     Debug.Print("Inequality detected in {0}: {1} -> {2}.", prop.Property.Name, xValue, yValue);
@@ -76,7 +95,7 @@ namespace Kirkin.ChangeTracking
         /// Returns the product of hashcodes of
         /// the values of all mapped properties.
         /// </summary>
-        public virtual int GetHashCode(T obj)
+        public int GetHashCode(T obj)
         {
             unchecked // Overflow is fine, just wrap.
             {
@@ -86,106 +105,23 @@ namespace Kirkin.ChangeTracking
                 {
                     object value = prop.GetValue(obj);
 
-                    hashCode = hashCode * 23 + (value == null ? 0 : value.GetHashCode());
+                    hashCode = hashCode * 23 + ResolveComparer(prop.Property.PropertyType).GetHashCode(value);
                 }
 
                 return hashCode;
             }
         }
 
-        /// <summary>
-        /// Returns a new instance of PropertyListComparer
-        /// with the given StringComparer option.
-        /// </summary>
-        public PropertyValueEqualityComparer<T> WithStringComparer(StringComparer stringComparer)
+        // PERF: this needs to be substituted for 2 methods which
+        // would fall through to object.Equals(object, object)
+        // and object.GetHashCode respectively.
+        private IEqualityComparer ResolveComparer(Type type)
         {
-            if (stringComparer == null) throw new ArgumentNullException(nameof(stringComparer));
+            IEqualityComparer comparer;
 
-            return new PropertyListEqualityComparerWithStringComparer(PropertyList, stringComparer);
-        }
-
-        /// <summary>
-        /// PropertyListComparer with StringComparer support for common scenarios.
-        /// </summary>
-        sealed class PropertyListEqualityComparerWithStringComparer
-            : PropertyValueEqualityComparer<T>
-        {
-            /// <summary>
-            /// Comparer used to check string instances for equality.
-            /// </summary>
-            public StringComparer StringComparer { get; }
-
-            public PropertyListEqualityComparerWithStringComparer(PropertyList<T> propertyList, StringComparer stringComparer)
-                : base(propertyList)
-            {
-                if (stringComparer == null) throw new ArgumentNullException(nameof(stringComparer));
-
-                StringComparer = stringComparer;
-            }
-
-            /// <summary>
-            /// Checks the given entities for equality
-            /// based on their mapped property values.
-            /// </summary>
-            public override bool Equals(T x, T y)
-            {
-                // Let's do a null check first.
-                if (ReferenceEquals(x, null)) return ReferenceEquals(y, null);
-                if (ReferenceEquals(y, null)) return false;
-
-                foreach (IPropertyAccessor prop in PropertyList.PropertyAccessors)
-                {
-                    object xValue = prop.GetValue(x);
-                    object yValue = prop.GetValue(y);
-
-                    if (prop.Property.PropertyType == typeof(string))
-                    {
-                        string xString = (string)xValue;
-                        string yString = (string)yValue;
-
-                        if (xString == null) return yString == null;
-                        if (yString == null) return false;
-
-                        if (!StringComparer.Equals(xString, yString)) {
-                            return false;
-                        }
-                    }
-                    else if (!Equals(xValue, yValue))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-
-            /// <summary>
-            /// Returns the sum of hashcodes of
-            /// the values of all mapped properties.
-            /// </summary>
-            public override int GetHashCode(T obj)
-            {
-                unchecked // Overflow is fine, just wrap.
-                {
-                    int hashCode = 17;
-
-                    foreach (IPropertyAccessor prop in PropertyList.PropertyAccessors)
-                    {
-                        object value = prop.GetValue(obj);
-
-                        if (prop.Property.PropertyType == typeof(string))
-                        {
-                            hashCode = hashCode * 23 + (value == null ? 0 : StringComparer.GetHashCode((string)value));
-                        }
-                        else
-                        {
-                            hashCode = hashCode * 23 + (value == null ? 0 : value.GetHashCode());
-                        }
-                    }
-
-                    return hashCode;
-                }
-            }
+            return EqualityComparers != null && EqualityComparers.TryGetValue(type, out comparer)
+                ? comparer
+                : EqualityComparer<object>.Default;
         }
     }
 }
