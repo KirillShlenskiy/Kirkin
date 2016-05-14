@@ -62,7 +62,7 @@ namespace Kirkin.Functional
         /// <summary>
         /// Returns a retryable version of the given delegate.
         /// </summary>
-        public static Retryable<Action> Retry(this Action action)
+        public static Retryable<Action> AsRetryable(this Action action)
         {
             if (action == null) throw new ArgumentNullException("action");
 
@@ -72,7 +72,7 @@ namespace Kirkin.Functional
         /// <summary>
         /// Returns a retryable version of the given delegate.
         /// </summary>
-        public static Retryable<Func<T>> Retry<T>(this Func<T> func)
+        public static Retryable<Func<T>> AsRetryable<T>(this Func<T> func)
         {
             if (func == null) throw new ArgumentNullException("func");
 
@@ -87,7 +87,7 @@ namespace Kirkin.Functional
         /// <summary>
         /// Returns a retryable version of the given async delegate.
         /// </summary>
-        public static Retryable<Func<Task>> Retry(this Func<Task> action)
+        public static Retryable<Func<Task>> AsRetryable(this Func<Task> action)
         {
             if (action == null) throw new ArgumentNullException("action");
 
@@ -97,7 +97,7 @@ namespace Kirkin.Functional
         /// <summary>
         /// Returns a retryable version of the given async delegate.
         /// </summary>
-        public static Retryable<Func<Task<T>>> Retry<T>(this Func<Task<T>> func)
+        public static Retryable<Func<Task<T>>> AsRetryable<T>(this Func<Task<T>> func)
         {
             if (func == null) throw new ArgumentNullException("func");
 

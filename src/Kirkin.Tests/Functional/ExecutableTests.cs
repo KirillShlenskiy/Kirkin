@@ -25,7 +25,7 @@ namespace Kirkin.Tests.Functional
             var i = 0;
             Func<int> func = () => ++i;
 
-            Assert.Equal(1, func.Retry().OnException(3).Invoke());
+            Assert.Equal(1, func.AsRetryable().OnException(3).Invoke());
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace Kirkin.Tests.Functional
             var i = 0;
 
             await Retryable
-                .Retry(async () =>
+                .AsRetryable(async () =>
                 {
                     await Task.Yield();
                     i++;

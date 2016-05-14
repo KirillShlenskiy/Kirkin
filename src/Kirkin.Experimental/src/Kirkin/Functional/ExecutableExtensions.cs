@@ -31,7 +31,7 @@ namespace Kirkin.Functional
             if (maxRetries <= 0) throw new ArgumentOutOfRangeException("maxRetries");
 
             return Executable.Create(
-                new Action(executable.Execute).Retry().OnException<TException>(maxRetries)
+                new Action(executable.Execute).AsRetryable().OnException<TException>(maxRetries)
             );
         }
 
@@ -56,7 +56,7 @@ namespace Kirkin.Functional
             if (maxRetries <= 0) throw new ArgumentOutOfRangeException("maxRetries");
 
             return Executable.CreateAsync(
-                new Func<Task>(executable.ExecuteAsync).Retry().OnException<TException>(maxRetries)
+                new Func<Task>(executable.ExecuteAsync).AsRetryable().OnException<TException>(maxRetries)
             );
         }
 #endif
