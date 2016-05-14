@@ -47,6 +47,10 @@
     <Compile Include="ChangeTracking\PropertyValue.cs" />
     <Compile Include="ChangeTracking\PropertyValueChange.cs" />
     <Compile Include="ChangeTracking\PropertyValueSnapshot.cs" />
+    <Compile Include="Collections\Async\AsyncHandover.cs" />
+    <Compile Include="Collections\Async\AsyncHandoverBase.cs" />
+    <Compile Include="Collections\Async\BoundedCapacityAsyncHandover.cs" />
+    <Compile Include="Collections\Async\TakeResult.cs" />
     <Compile Include="Collections\Concurrent\ConcurrentKeyedCollection.cs" />
     <Compile Include="Collections\Generic\Array.cs" />
     <Compile Include="Collections\Generic\Enumerators\ArrayEnumerator.cs" />
