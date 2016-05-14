@@ -42,10 +42,12 @@ namespace Kirkin.Reflection
         /// <summary>
         /// Returns an accessor for the property with the given name.
         /// </summary>
-        internal static IPropertyAccessor Resolve(Type type,
-                                                  string propertyName,
-                                                  BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+        public static IPropertyAccessor Resolve(Type type,
+                                                string propertyName,
+                                                BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
         {
+            if (type == null) throw new ArgumentNullException(nameof(type));
+
             PropertyInfo propertyInfo = type.GetProperty(propertyName, bindingFlags);
 
             return propertyInfo == null ? null : Resolve(propertyInfo);
