@@ -43,12 +43,8 @@
       <HintPath>..\packages\AutoMapper.4.2.1\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="BenchmarkDotNet, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BenchmarkDotNet.0.9.4\lib\net45\BenchmarkDotNet.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ExpressMapper, Version=1.8.0.0, Culture=neutral, PublicKeyToken=ac363faa09311ba0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Expressmapper.1.8.0\lib\net45\ExpressMapper.dll</HintPath>
+    <Reference Include="BenchmarkDotNet, Version=0.9.6.0, Culture=neutral, PublicKeyToken=aa0ca2f9092cefc4, processorArchitecture=MSIL">
+      <HintPath>..\packages\BenchmarkDotNet.0.9.6\lib\net45\BenchmarkDotNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Build" />
@@ -132,6 +128,7 @@
     <Compile Include="Logging\LoggerTests.cs" />
     <Compile Include="Mapping\DataRecordMapperTests.cs" />
     <Compile Include="Mapping\ExpressMapperTests.cs" />
+    <Compile Include="Mapping\MapperBenchmarks.cs" />
     <Compile Include="Mapping\MapperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\MemberInfoEqualityComparerTests.cs" />
