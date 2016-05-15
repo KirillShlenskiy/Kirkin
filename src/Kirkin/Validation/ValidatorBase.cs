@@ -8,12 +8,6 @@ namespace Kirkin.Validation
     public abstract class ValidatorBase : IValidator
     {
         /// <summary>
-        /// Raised as soon as the component has finished performing initial
-        /// validation. Allows subscribers to change the validation result.
-        /// </summary>
-        internal event EventHandler<ValidatingEventArgs> Validating;
-
-        /// <summary>
         /// Raised when the component has finished performing all validation.
         /// The IsValid value of the event args is final and cannot change.
         /// </summary>
@@ -27,20 +21,7 @@ namespace Kirkin.Validation
             // Resolve initial value.
             bool isValid = ValidateImpl();
 
-            if (Validating != null)
-            {
-                // Allow subscribers to perform additional validation.
-                var validatingArgs = new ValidatingEventArgs(this, isValid);
-
-                Validating(this, validatingArgs);
-
-                // Could have been changed by event subscribers.
-                isValid = validatingArgs.IsValid;
-            }
-
-            if (Validated != null) {
-                Validated(this, new ValidatedEventArgs(this, isValid));
-            }
+            Validated?.Invoke(this, new ValidatedEventArgs(this, isValid));
 
             return isValid;
         }

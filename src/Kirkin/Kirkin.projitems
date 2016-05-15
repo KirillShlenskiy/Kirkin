@@ -95,7 +95,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Validation\MultiValidatorProxy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\SideEffectDelegate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\ValidatedEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Validation\ValidatingEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\Validator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\ValidatorBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\ValidatorExtensions.cs" />

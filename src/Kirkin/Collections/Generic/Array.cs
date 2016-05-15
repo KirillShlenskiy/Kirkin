@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Kirkin.Collections.Generic
+﻿namespace Kirkin.Collections.Generic
 {
     /// <summary>
     /// Common utility methods for working with generic arrays.

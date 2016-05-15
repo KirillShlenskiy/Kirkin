@@ -16,7 +16,6 @@ namespace Kirkin.Tests.Validation
             Assert.Throws<ArgumentNullException>(() => Validator.Combine(null));
 
             // EventArgs.
-            Assert.Throws<ArgumentNullException>(() => new ValidatingEventArgs(null, false));
             Assert.Throws<ArgumentNullException>(() => new ValidatedEventArgs(null, false));
 
             // Extensions.
@@ -85,13 +84,11 @@ namespace Kirkin.Tests.Validation
             // In the end all counts are expected to be the same.
             int validator1ValidatedCount = 0;
             int validator2ValidatedCount = 0;
-            int multiValidatingCount = 0;
             int multiValidatedCount = 0;
             bool multiResult = false;
 
             validator1.Validated += (s, e) => validator1ValidatedCount++;
             validator2.Validated += (s, e) => validator2ValidatedCount++;
-            multi.Validating += (s, e) => multiValidatingCount++;
 
             multi.Validated += (s, e) =>
             {
@@ -103,7 +100,6 @@ namespace Kirkin.Tests.Validation
             Assert.True(multi.Validate());
             Assert.True(multiResult);
             Assert.Equal(1, multiValidatedCount);
-            Assert.Equal(multiValidatedCount, multiValidatingCount);
             Assert.Equal(multiValidatedCount, validator1ValidatedCount);
             Assert.Equal(multiValidatedCount, validator2ValidatedCount);
 
@@ -111,29 +107,26 @@ namespace Kirkin.Tests.Validation
             Assert.True(validator1.Validate());
             Assert.True(multiResult);
             Assert.Equal(2, multiValidatedCount);
-            Assert.Equal(multiValidatedCount, multiValidatingCount);
             Assert.Equal(multiValidatedCount, validator1ValidatedCount);
             Assert.Equal(multiValidatedCount, validator2ValidatedCount);
 
-            // Third Validate (via validator1, validator2 result overridden).
-            validator2.Validating += (s, e) => e.IsValid = false; // Override.
+            //// Third Validate (via validator1, validator2 result overridden).
+            //validator2.Validating += (s, e) => e.IsValid = false; // Override.
 
-            Assert.True(validator1.Validate());
-            Assert.False(multiResult); // Due to validator2 isValid = false.
-            Assert.Equal(3, multiValidatedCount);
-            Assert.Equal(multiValidatedCount, multiValidatingCount);
-            Assert.Equal(multiValidatedCount, validator1ValidatedCount);
-            Assert.Equal(multiValidatedCount, validator2ValidatedCount);
+            //Assert.True(validator1.Validate());
+            //Assert.False(multiResult); // Due to validator2 isValid = false.
+            //Assert.Equal(3, multiValidatedCount);
+            //Assert.Equal(multiValidatedCount, validator1ValidatedCount);
+            //Assert.Equal(multiValidatedCount, validator2ValidatedCount);
 
-            // Multi overriding.
-            multi.Validating += (s, e) => e.IsValid = true;
+            //// Multi overriding.
+            //multi.Validating += (s, e) => e.IsValid = true;
 
-            Assert.True(multi.Validate());
-            Assert.True(multiResult);
-            Assert.Equal(4, multiValidatedCount);
-            Assert.Equal(multiValidatedCount, multiValidatingCount);
-            Assert.Equal(multiValidatedCount, validator1ValidatedCount);
-            Assert.Equal(multiValidatedCount, validator2ValidatedCount);
+            //Assert.True(multi.Validate());
+            //Assert.True(multiResult);
+            //Assert.Equal(4, multiValidatedCount);
+            //Assert.Equal(multiValidatedCount, validator1ValidatedCount);
+            //Assert.Equal(multiValidatedCount, validator2ValidatedCount);
         }
 
         [Fact]
