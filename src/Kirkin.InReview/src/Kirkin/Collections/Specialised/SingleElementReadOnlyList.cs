@@ -7,7 +7,7 @@ namespace Kirkin.Collections.Specialised
     /// <summary>
     /// High-performance collection which contains a single element.
     /// </summary>
-    internal struct OneElementReadOnlyList<T> : IReadOnlyList<T>
+    internal struct SingleElementReadOnlyList<T> : IReadOnlyList<T>
     {
         private readonly T LoneItem;
 
@@ -32,9 +32,9 @@ namespace Kirkin.Collections.Specialised
         }
 
         /// <summary>
-        /// Creates a new instance of <see cref="OneElementReadOnlyList{T}"/> which wraps the given item.
+        /// Creates a new instance of <see cref="SingleElementReadOnlyList{T}"/> which wraps the given item.
         /// </summary>
-        public OneElementReadOnlyList(T item)
+        public SingleElementReadOnlyList(T item)
         {
             LoneItem = item;
         }
@@ -68,7 +68,7 @@ namespace Kirkin.Collections.Specialised
         /// </summary>
         public struct Enumerator
         {
-            private readonly OneElementReadOnlyList<T> Collection;
+            private readonly SingleElementReadOnlyList<T> Collection;
             private bool MovedNext;
 
             public T Current
@@ -83,7 +83,7 @@ namespace Kirkin.Collections.Specialised
                 }
             }
 
-            internal Enumerator(OneElementReadOnlyList<T> collection)
+            internal Enumerator(SingleElementReadOnlyList<T> collection)
             {
                 Collection = collection;
                 MovedNext = false;
@@ -106,7 +106,7 @@ namespace Kirkin.Collections.Specialised
         /// </summary>
         sealed class EnumeratorObject : IEnumerator<T>
         {
-            private readonly OneElementReadOnlyList<T> Collection;
+            private readonly SingleElementReadOnlyList<T> Collection;
             private bool MovedNext;
 
             public T Current
@@ -123,7 +123,7 @@ namespace Kirkin.Collections.Specialised
 
             object IEnumerator.Current => Current;
 
-            internal EnumeratorObject(OneElementReadOnlyList<T> collection)
+            internal EnumeratorObject(SingleElementReadOnlyList<T> collection)
             {
                 Collection = collection;
                 MovedNext = false;

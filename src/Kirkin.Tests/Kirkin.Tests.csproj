@@ -109,7 +109,7 @@
     <Compile Include="Collections\Generic\TinyBufferTests.cs" />
     <Compile Include="Collections\Generic\UndoRedoCollectionTests.cs" />
     <Compile Include="Collections\Generic\VectorTests.cs" />
-    <Compile Include="Collections\Specialised\OneElementReadOnlyListTests.cs" />
+    <Compile Include="Collections\Specialised\SingleElementReadOnlyListTests.cs" />
     <Compile Include="CustomEqualityComparerTests.cs" />
     <Compile Include="Dependencies\ContainerTests.cs" />
     <Compile Include="DisposableTests.cs" />

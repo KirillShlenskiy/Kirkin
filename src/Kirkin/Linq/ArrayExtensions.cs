@@ -25,6 +25,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#if FAST_ARRAY_LINQ
+
 namespace System.Linq
 {
     /// <summary>
@@ -242,3 +244,5 @@ namespace System.Linq
         }
     }
 }
+
+#endif

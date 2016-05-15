@@ -6,12 +6,12 @@ using Xunit;
 
 namespace Kirkin.Tests.Collections.Specialised
 {
-    public class OneElementReadOnlyListTests
+    public class SingleElementReadOnlyListTests
     {
         [Fact]
         public void EnumerationDirect()
         {
-            OneElementReadOnlyList<int> collection = new OneElementReadOnlyList<int>(123);
+            SingleElementReadOnlyList<int> collection = new SingleElementReadOnlyList<int>(123);
             int i = 0;
 
             foreach (int item in collection)
@@ -27,7 +27,7 @@ namespace Kirkin.Tests.Collections.Specialised
         [Fact]
         public void EnumerationViaInterface()
         {
-            IEnumerable<int> collection = new OneElementReadOnlyList<int>(123);
+            IEnumerable<int> collection = new SingleElementReadOnlyList<int>(123);
             int i = 0;
 
             foreach (int item in collection)
@@ -43,7 +43,7 @@ namespace Kirkin.Tests.Collections.Specialised
         [Fact]
         public void PerfDirect()
         {
-            OneElementReadOnlyList<int> collection = new OneElementReadOnlyList<int>(123);
+            SingleElementReadOnlyList<int> collection = new SingleElementReadOnlyList<int>(123);
 
             for (int i = 0; i < 1000000; i++)
             {
@@ -56,7 +56,7 @@ namespace Kirkin.Tests.Collections.Specialised
         [Fact]
         public void PerfInterface()
         {
-            IEnumerable<int> collection = new OneElementReadOnlyList<int>(123);
+            IEnumerable<int> collection = new SingleElementReadOnlyList<int>(123);
 
             for (int i = 0; i < 1000000; i++)
             {
