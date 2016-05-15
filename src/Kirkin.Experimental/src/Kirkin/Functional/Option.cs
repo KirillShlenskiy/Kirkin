@@ -1,4 +1,10 @@
-﻿using System;
+﻿// This is *not* original work by Kirill Shlenskiy.
+// It is largely derived from Sandro Magi's Sasa.Option<T>,
+// available at https://sourceforge.net/projects/sasa/
+// Original license is available here: https://sourceforge.net/p/sasa/code/ci/default/tree/LICENSE.txt
+// This code has been significantly modified as of 25/03/2016.
+
+using System;
 using System.Collections.Generic;
 
 namespace Kirkin.Functional
