@@ -23,7 +23,7 @@ namespace Kirkin.Caching
         /// <summary>
         /// Creates a new instance of the class with the given expiry parameter.
         /// </summary>
-        internal AutoExpireCache(Func<T> valueFactory, TimeSpan expireAfter)
+        public AutoExpireCache(Func<T> valueFactory, TimeSpan expireAfter)
         {
             if (valueFactory == null) throw new ArgumentNullException(nameof(valueFactory));
 
