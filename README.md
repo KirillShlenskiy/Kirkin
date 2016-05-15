@@ -21,7 +21,7 @@ The current component status by namespace is as follows:
 - `Kirkin.Text` - semi-stable
 - `Kirkin.Threading` - semi-stable
 - `Kirkin.Threading.Tasks` - stable
-- `Kirkin.Utilities` - stable
+- `Kirkin.Utilities` - semi-stable
 
 Status definitions:
 
