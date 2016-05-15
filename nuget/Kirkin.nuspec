@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Kirkin</id>
+    <version>0.4</version>
+    <title>Kirkin</title>
+    <authors>Kirill Shlenskiy</authors>
+    <owners>Kirill Shlenskiy</owners>
+    <projectUrl>https://github.com/KirillShlenskiy/Kirkin</projectUrl>
+	<iconUrl>https://raw.githubusercontent.com/KirillShlenskiy/Kirkin/master/icons/logo-128.png</iconUrl>
+	<licenseUrl>https://raw.githubusercontent.com/KirillShlenskiy/Kirkin/master/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Kirkin lib package</description>
+  </metadata>
+  <files>
+    <file src="..\src\Platforms\Kirkin-NET_40\bin\Release\Kirkin.dll" target="lib\net40" />
+	<file src="..\src\Platforms\Kirkin-NET_40\bin\Release\Kirkin.xml" target="lib\net40" />
+    <file src="..\src\Platforms\Kirkin-NET_45\bin\Release\Kirkin.dll" target="lib\net45" />
+	<file src="..\src\Platforms\Kirkin-NET_45\bin\Release\Kirkin.xml" target="lib\net45" />
+  </files>
+  </package>

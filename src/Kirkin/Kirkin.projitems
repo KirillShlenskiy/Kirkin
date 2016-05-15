@@ -6,7 +6,7 @@
     <SharedGUID>6801a431-743e-4a3c-ab29-3ca896808196</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>Kirkin.Core</Import_RootNamespace>
+    <Import_RootNamespace>Kirkin</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Caching\AutoExpireCache.cs" />
