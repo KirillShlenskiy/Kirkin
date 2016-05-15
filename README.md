@@ -8,8 +8,10 @@ The current component status by namespace is as follows:
 - `Kirkin.Caching` - unstable
 - `Kirkin.ChangeTracking` - semi-stable
 - `Kirkin.Collections.Async` - experimental
+- `Kirkin.Collections.Filters` - unstable
 - `Kirkin.Collections.Generic` - semi-stable
 - `Kirkin.Collections.Concurrent` - semi-stable
+- `Kirkin.Collections.Specialised` - unstable
 - `Kirkin.Dependencies` - experimental
 - `Kirkin.Functional` - semi-stable
 - `Kirkin.IO` - semi-stable
@@ -18,10 +20,11 @@ The current component status by namespace is as follows:
 - `Kirkin.Logging` - unstable
 - `Kirkin.Mapping` - unstable
 - `Kirkin.Reflection` - unstable
-- `Kirkin.Text` - semi-stable
+- `Kirkin.Text` - unstable
 - `Kirkin.Threading` - semi-stable
 - `Kirkin.Threading.Tasks` - stable
 - `Kirkin.Utilities` - semi-stable
+- `Kirkin.Validation` - semi-stable
 
 Status definitions:
 
