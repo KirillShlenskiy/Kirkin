@@ -9,10 +9,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirkin", "Kirkin\Kirkin.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirkin.Tests", "Kirkin.Tests\Kirkin.Tests.csproj", "{79EDDF89-8B87-43FB-9B9B-A27E7EAD74EA}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Kirkin.Core", "Kirkin.Core\Kirkin.Core.shproj", "{6801A431-743E-4A3C-AB29-3CA896808196}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Kirkin.Experimental\Kirkin.Experimental.projitems*{d3c20c73-657e-4317-b694-6f233d093496}*SharedItemsImports = 13
 		Kirkin.Experimental\Kirkin.Experimental.projitems*{6422229e-69f4-4fc5-a79c-eeaaad04da5c}*SharedItemsImports = 4
+		Kirkin.Core\Kirkin.Core.projitems*{6422229e-69f4-4fc5-a79c-eeaaad04da5c}*SharedItemsImports = 4
+		Kirkin.Core\Kirkin.Core.projitems*{6801a431-743e-4a3c-ab29-3ca896808196}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

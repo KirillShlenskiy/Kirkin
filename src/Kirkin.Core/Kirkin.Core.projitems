@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>6801a431-743e-4a3c-ab29-3ca896808196</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Kirkin.Core</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Caching\AutoExpireCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Caching\Cache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Caching\CacheBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Caching\ICache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Caching\IKeyValueCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Caching\LazyCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Caching\SingleKeyValueCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ChangeTracking\ChangeTracker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ChangeTracking\PropertyValue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ChangeTracking\PropertyValueChange.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ChangeTracking\PropertyValueEqualityComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ChangeTracking\PropertyValueSnapshot.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Async\AsyncHandover.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Async\AsyncHandoverBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Async\BoundedCapacityAsyncHandover.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Async\TakeResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Concurrent\ConcurrentKeyedCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Filters\CollectionFilter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Filters\ICollectionFilter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\Array.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\Enumerators\ArrayEnumerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\Enumerators\ListEnumerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\KeyedCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\Vector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Specialised\UndoRedoCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Dependencies\Container.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Dependencies\DisposableRegistrationException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Dependencies\ResolutionFailedException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Functional\Disposable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Functional\Retryable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\ReactiveFileMonitor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\StreamUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Linq\ArrayExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Linq\EnumerableExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Linq\Expressions\ExpressionUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logging\EntryFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logging\FileLogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logging\IEntryFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logging\LogEntryBlock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logging\Logger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DataMember.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DataRecordToObjectMapperConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DataRowToObjectMapperConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\Compilers\CachedMappingCompiler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\Compilers\MappingCompiler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\Compilers\MemberMappingCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\Member.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\MemberMapping.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\MemberMappings\DefaultMemberMapping.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\MemberMappings\DelegateMemberMapping.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\MemberMappings\ExpressionMemberMapping.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\PropertyMember.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\IMapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Mapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperConfig+SourceMemberConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperConfig+TargetMemberConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\MappingException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\MappingMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\NullableBehaviour.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Percentage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Reflection\IPropertyAccessor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Reflection\MemberInfoEqualityComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Reflection\PropertyAccessor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Reflection\PropertyAccessorFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Reflection\PropertyAccessorFactory`1.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Reflection\PropertyList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\TextUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\UrlUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\Cancellation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\Tasks\ParallelTaskOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\Tasks\ParallelTasks.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\Tasks\TaskEx.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\Volatile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\Hash.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\TypeName.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\CustomValidator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\ISideEffect.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\IValidator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\IValidatorProxy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\ManualValidator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\MultiValidatorProxy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\SideEffectDelegate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\ValidatedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\ValidatingEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\Validator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\ValidatorBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\ValidatorExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\ValidatorProxy.cs" />
+  </ItemGroup>
+</Project>

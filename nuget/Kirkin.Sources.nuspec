@@ -13,6 +13,6 @@
     <description>Kirkin lib source package</description>
   </metadata>
   <files>
-    <file src="..\src\Kirkin\**.cs" target="content" exclude="**\bin\**;**\obj\**;**\Properties\**" />
+    <file src="..\src\Kirkin.Core\**.cs" target="content" exclude="**\bin\**;**\obj\**;**\Properties\**" />
   </files>
   </package>
