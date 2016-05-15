@@ -35,7 +35,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Optional.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Text\Url.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\AsyncAutoResetEvent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\AsyncLock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\AsyncManualResetEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\Atomic`.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\Tasks\AwaitableCompletionSource.cs" />

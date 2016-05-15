@@ -1,4 +1,8 @@
-﻿#if !NET_40
+﻿// This is *not* original work by Kirill Shlenskiy.
+// It is derived from PFX team's blog post available at
+// http://blogs.msdn.com/b/pfxteam/archive/2012/02/11/10266923.aspx
+
+#if !NET_40
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
