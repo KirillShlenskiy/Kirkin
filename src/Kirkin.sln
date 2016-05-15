@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platforms", "Platforms", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirkin-NET_45", "Platforms\Kirkin-NET_45\Kirkin-NET_45.csproj", "{71FF1BE9-C99F-416F-A030-0AA846687E75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirkin-NET_40", "Kirkin-NET_40\Kirkin-NET_40.csproj", "{95DC82D1-B7C8-4F10-A4A0-747A63382EB6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirkin-NET_40", "Platforms\Kirkin-NET_40\Kirkin-NET_40.csproj", "{95DC82D1-B7C8-4F10-A4A0-747A63382EB6}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
