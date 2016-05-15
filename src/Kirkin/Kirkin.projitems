@@ -70,6 +70,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MappingMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\NullableBehaviour.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Percentage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Properties\AssemblyInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reflection\IPropertyAccessor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reflection\MemberInfoEqualityComparer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reflection\PropertyAccessor.cs" />
