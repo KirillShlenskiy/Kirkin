@@ -40,7 +40,7 @@ namespace Kirkin.Tests.Experimental
         [Fact]
         public void StructByValTest()
         {
-            var builder = new Array<int>.Builder(1);
+            var builder = new ArrayBuilder<int>(1);
 
             builder.Add(1);
 
@@ -53,7 +53,7 @@ namespace Kirkin.Tests.Experimental
         [Fact]
         public void StructByRefTest()
         {
-            var builder = new Array<int>.Builder(1);
+            var builder = new ArrayBuilder<int>(1);
 
             builder.Add(1);
 
@@ -64,13 +64,13 @@ namespace Kirkin.Tests.Experimental
         }
 
         //[MethodImpl(MethodImplOptions.NoInlining)]
-        private static T[] MaterialiseVal<T>(Array<T>.Builder builder)
+        private static T[] MaterialiseVal<T>(ArrayBuilder<T> builder)
         {
             return builder.ToArray();
         }
 
         //[MethodImpl(MethodImplOptions.NoInlining)]
-        private static T[] MaterialiseRef<T>(ref Array<T>.Builder builder)
+        private static T[] MaterialiseRef<T>(ref ArrayBuilder<T> builder)
         {
             return builder.ToArray();
         }

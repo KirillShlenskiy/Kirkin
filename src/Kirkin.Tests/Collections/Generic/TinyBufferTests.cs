@@ -156,7 +156,7 @@ namespace Kirkin.Tests.Collections.Generic
         {
             for (int i = 0; i < ITERATIONS8; i++)
             {
-                var builder = new Array<int>.Builder();
+                var builder = new ArrayBuilder<int>();
 
                 for (int j = 0; j < count; j++) {
                     builder.Add(j);

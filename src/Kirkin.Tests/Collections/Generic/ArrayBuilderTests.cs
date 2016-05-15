@@ -17,8 +17,8 @@ namespace Kirkin.Tests.Collections.Generic
 
         static ArrayBuilderTests()
         {
-            new Array<int>.Builder().Add(1);
-            new Array<int>.Builder(1).UnsafeAdd(1);
+            new ArrayBuilder<int>().Add(1);
+            new ArrayBuilder<int>(1).UnsafeAdd(1);
             new List<int>().Add(1);
             ImmutableArray.Create(1);
         }
@@ -41,7 +41,7 @@ namespace Kirkin.Tests.Collections.Generic
         [Fact]
         public void AddManyBenchmarkArrayBuilder()
         {
-            var builder = new Array<int>.Builder();
+            var builder = new ArrayBuilder<int>();
 
             for (int i = 0; i < NumIterations; i++)
             {
@@ -54,7 +54,7 @@ namespace Kirkin.Tests.Collections.Generic
         [Fact]
         public void AddManyBenchmarkArrayBuilderWithCapacity()
         {
-            var builder = new Array<int>.Builder(NumIterations);
+            var builder = new ArrayBuilder<int>(NumIterations);
 
             for (int i = 0; i < NumIterations; i++)
             {
@@ -120,7 +120,7 @@ namespace Kirkin.Tests.Collections.Generic
         [Fact]
         public void AddManyBenchmarkLinqViaBuilderAdd()
         {
-            var builder = new Array<int>.Builder();
+            var builder = new ArrayBuilder<int>();
 
             foreach (var i in PreallocatedItems)
             {
@@ -133,7 +133,7 @@ namespace Kirkin.Tests.Collections.Generic
         [Fact]
         public void AddManyBenchmarkLinqViaBuilderAddWithCapacity()
         {
-            var builder = new Array<int>.Builder(NumIterations);
+            var builder = new ArrayBuilder<int>(NumIterations);
 
             foreach (var i in PreallocatedItems)
             {
@@ -185,7 +185,7 @@ namespace Kirkin.Tests.Collections.Generic
         {
             for (int i = 0; i < NumIterations; i++)
             {
-                var builder = new Array<int>.Builder();
+                var builder = new ArrayBuilder<int>();
 
                 builder.Add(i);
             }
@@ -196,7 +196,7 @@ namespace Kirkin.Tests.Collections.Generic
         {
             for (int i = 0; i < NumIterations; i++)
             {
-                var builder = new Array<int>.Builder(1);
+                var builder = new ArrayBuilder<int>(1);
 
                 builder.UnsafeAdd(i);
             }

@@ -25,7 +25,7 @@ namespace Kirkin.Reflection
         private static PropertyList<T> CreateDefault()
         {
             PropertyInfo[] properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            Array<IPropertyAccessor>.Builder accessors = new Array<IPropertyAccessor>.Builder(properties.Length);
+            ArrayBuilder<IPropertyAccessor> accessors = new ArrayBuilder<IPropertyAccessor>(properties.Length);
 
             foreach (PropertyInfo prop in properties)
             {
@@ -121,7 +121,7 @@ namespace Kirkin.Reflection
             if (propertyExpr == null) throw new ArgumentNullException(nameof(propertyExpr));
 
             PropertyInfo excludedProperty = ExpressionUtil.Property(propertyExpr);
-            Array<IPropertyAccessor>.Builder accessors = new Array<IPropertyAccessor>.Builder(_propertyAccessors.Length - 1);
+            ArrayBuilder<IPropertyAccessor> accessors = new ArrayBuilder<IPropertyAccessor>(_propertyAccessors.Length - 1);
 
             foreach (IPropertyAccessor accessor in _propertyAccessors)
             {
