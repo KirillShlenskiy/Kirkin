@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Kirkin.Sources</id>
-    <version>0.2</version>
+    <version>0.3</version>
     <title>Kirkin</title>
     <authors>Kirill Shlenskiy</authors>
     <owners>Kirill Shlenskiy</owners>
@@ -11,7 +11,6 @@
 	<licenseUrl>https://raw.githubusercontent.com/KirillShlenskiy/Kirkin/master/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Kirkin lib source package</description>
-    <copyright>Copyright Kirill Shlenskiy 2016</copyright>
   </metadata>
   <files>
     <file src="..\src\Kirkin\**.cs" target="content" exclude="**\bin\**;**\obj\**;**\Properties\**" />
