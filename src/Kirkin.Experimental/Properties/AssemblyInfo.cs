@@ -5,11 +5,14 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Kirkin")]
-[assembly: AssemblyDescription("Core Kirkin component library")]
-[assembly: AssemblyCompany("Kirill Shlenskiy")]
-[assembly: AssemblyProduct("Kirkin")]
-[assembly: AssemblyCopyright("Copyright © Kirill Shlenskiy 2016")]
+[assembly: AssemblyTitle("Kirkin.Experimenta")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("Kirkin.Experimenta")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -17,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("6422229e-69f4-4fc5-a79c-eeaaad04da5c")]
+[assembly: Guid("3f7562a4-86cb-4172-a7d1-fb0c6e2545ef")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -29,9 +32,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.3.1")]
+[assembly: AssemblyVersion("1.0.0")]
 
 // Allow unit testing internal members.
 [assembly: InternalsVisibleTo("Kirkin.Tests")]
-[assembly: InternalsVisibleTo("Kirkin.Experimental")]
-[assembly: InternalsVisibleTo("Kirkin.ReviewNeeded")]

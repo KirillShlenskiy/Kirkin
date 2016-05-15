@@ -152,9 +152,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Kirkin\Kirkin.csproj">
-      <Project>{6422229e-69f4-4fc5-a79c-eeaaad04da5c}</Project>
-      <Name>Kirkin</Name>
+    <ProjectReference Include="..\Kirkin.Experimental\Kirkin.Experimental.csproj">
+      <Project>{3f7562a4-86cb-4172-a7d1-fb0c6e2545ef}</Project>
+      <Name>Kirkin.Experimental</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\Kirkin-NET_45\Kirkin-NET_45.csproj">
+      <Project>{71ff1be9-c99f-416f-a030-0aa846687e75}</Project>
+      <Name>Kirkin-NET_45</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
