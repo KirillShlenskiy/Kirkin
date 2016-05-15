@@ -57,6 +57,8 @@
     <Compile Include="Collections\Async\BoundedCapacityAsyncHandover.cs" />
     <Compile Include="Collections\Async\TakeResult.cs" />
     <Compile Include="Collections\Concurrent\ConcurrentKeyedCollection.cs" />
+    <Compile Include="Collections\Filters\CollectionFilter.cs" />
+    <Compile Include="Collections\Filters\ICollectionFilter.cs" />
     <Compile Include="Collections\Generic\Array.cs" />
     <Compile Include="Collections\Generic\Enumerators\ArrayEnumerator.cs" />
     <Compile Include="Collections\Generic\Enumerators\ListEnumerator.cs" />
@@ -105,6 +107,7 @@
     <Compile Include="Reflection\MemberInfoEqualityComparer.cs" />
     <Compile Include="Reflection\PropertyAccessorFactory.cs" />
     <Compile Include="Reflection\PropertyAccessorFactory`1.cs" />
+    <Compile Include="Text\TextUtil.cs" />
     <Compile Include="Text\UrlUtil.cs" />
     <Compile Include="Threading\Cancellation.cs" />
     <Compile Include="Threading\Tasks\ParallelTaskOptions.cs" />
@@ -115,6 +118,19 @@
     <Compile Include="Threading\Volatile.cs" />
     <Compile Include="Utilities\Hash.cs" />
     <Compile Include="Utilities\TypeName.cs" />
+    <Compile Include="Validation\CustomValidator.cs" />
+    <Compile Include="Validation\ISideEffect.cs" />
+    <Compile Include="Validation\IValidator.cs" />
+    <Compile Include="Validation\IValidatorProxy.cs" />
+    <Compile Include="Validation\ManualValidator.cs" />
+    <Compile Include="Validation\MultiValidatorProxy.cs" />
+    <Compile Include="Validation\SideEffectDelegate.cs" />
+    <Compile Include="Validation\ValidatedEventArgs.cs" />
+    <Compile Include="Validation\ValidatingEventArgs.cs" />
+    <Compile Include="Validation\Validator.cs" />
+    <Compile Include="Validation\ValidatorBase.cs" />
+    <Compile Include="Validation\ValidatorExtensions.cs" />
+    <Compile Include="Validation\ValidatorProxy.cs" />
   </ItemGroup>
   <Import Project="..\Kirkin.InReview\Kirkin.InReview.projitems" Label="Shared" />
   <Import Project="..\Kirkin.Experimental\Kirkin.Experimental.projitems" Label="Shared" />

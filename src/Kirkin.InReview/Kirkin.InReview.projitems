@@ -13,27 +13,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Collections\Specialised\SingleElementReadOnlyList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\CustomEqualityComparer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Functional\FuncUtil.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Linq\CollectionFilter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Linq\ICollectionFilter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\ReferenceCounting\Borrowed.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\ReferenceCounting\SharedResourceManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Text\TextUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\Atomic.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Threading\Tasks\TaskEx2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Transactions\PropertyTrackingTransaction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Transactions\PropertyTrackingTransaction`.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\CustomValidator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\ISideEffect.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\IValidator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\IValidatorProxy.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\ManualValidator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\MultiValidatorProxy.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\SideEffectDelegate.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\ValidatedEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\ValidatingEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\Validator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\ValidatorBase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\ValidatorExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Kirkin\Validation\ValidatorProxy.cs" />
   </ItemGroup>
 </Project>

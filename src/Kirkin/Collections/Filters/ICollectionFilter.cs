@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Kirkin.Linq
+namespace Kirkin.Collections.Filters
 {
     /// <summary>
     /// Common collection filter contract.

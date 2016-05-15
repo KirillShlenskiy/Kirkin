@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 
-using Kirkin.Linq;
+using Kirkin.Collections.Filters;
 
 using Xunit;
 
-namespace Kirkin.Tests.Linq
+namespace Kirkin.Tests.Collections.Filters
 {
     public class CollectionFilterTests
     {

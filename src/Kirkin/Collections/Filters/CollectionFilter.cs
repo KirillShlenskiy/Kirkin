@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Kirkin.Linq
+namespace Kirkin.Collections.Filters
 {
     /// <summary>
     /// Collection filter factory and extension methods.

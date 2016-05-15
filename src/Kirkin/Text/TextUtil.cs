@@ -113,40 +113,5 @@ namespace Kirkin.Text
 
             return sb.ToString();
         }
-
-        /// <summary>
-        /// Joins the non empty strings with the given separator between them.
-        /// </summary>
-        public static string JoinNonEmpty(string separator, params string[] values)
-        {
-            var sb = new StringBuilder();
-
-            foreach (var v in values)
-            {
-                if (!string.IsNullOrEmpty(v))
-                {
-                    if (sb.Length != 0) {
-                        sb.Append(separator);
-                    }
-
-                    sb.Append(v);
-                }
-            }
-
-            return sb.ToString();
-        }
-
-        /// <summary>
-        /// Returns the suffix appropriate for the given number.
-        /// </summary>
-        public static string NumericSuffix(int position)
-        {
-            if (position > 10 && position < 20) return "th";
-            if (position % 10 == 1) return "st";
-            if (position % 10 == 2) return "nd";
-            if (position % 10 == 3) return "rd";
-
-            return "th";
-        }
     }
 }

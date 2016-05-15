@@ -124,7 +124,7 @@
     <Compile Include="Functional\HFuncTests.cs" />
     <Compile Include="Functional\OptionTests.cs" />
     <Compile Include="IO\StreamUtilTests.cs" />
-    <Compile Include="Linq\CollectionFilterTests.cs" />
+    <Compile Include="Collections\Filters\CollectionFilterTests.cs" />
     <Compile Include="Linq\EnumerableExtensionsTests.cs" />
     <Compile Include="Linq\Expressions\ExpressionEngineTests.cs" />
     <Compile Include="Linq\Expressions\ExpressionUtilTests.cs" />
