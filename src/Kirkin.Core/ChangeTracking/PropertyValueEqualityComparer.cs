@@ -36,11 +36,12 @@ namespace Kirkin.ChangeTracking
         /// </summary>
         public PropertyList<T> PropertyList { get; }
 
+#if !NET_40
         /// <summary>
         /// Equality comparer used to compare property values for equality.
         /// </summary>
         public IReadOnlyDictionary<Type, IEqualityComparer> EqualityComparers { get; }
-
+#endif
         /// <summary>
         /// Creates a new comparer instance based on the given <see cref="PropertyList{T}"/>.
         /// </summary>
@@ -51,6 +52,7 @@ namespace Kirkin.ChangeTracking
             PropertyList = propertyList;
         }
 
+#if !NET_40
         /// <summary>
         /// Creates a new comparer instance based on the given <see cref="PropertyList{T}"/>.
         /// </summary>
@@ -62,7 +64,7 @@ namespace Kirkin.ChangeTracking
             PropertyList = propertyList;
             EqualityComparers = equalityComparers;
         }
-
+#endif
         /// <summary>
         /// Checks the given entities for equality
         /// based on their mapped property values.
@@ -117,11 +119,15 @@ namespace Kirkin.ChangeTracking
         // and object.GetHashCode respectively.
         private IEqualityComparer ResolveComparer(Type type)
         {
+#if NET_40
+            return EqualityComparer<object>.Default;
+#else
             IEqualityComparer comparer;
 
             return EqualityComparers != null && EqualityComparers.TryGetValue(type, out comparer)
                 ? comparer
                 : EqualityComparer<object>.Default;
+#endif
         }
     }
 }

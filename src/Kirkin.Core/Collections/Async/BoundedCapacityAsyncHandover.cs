@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !NET_40
+
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
@@ -143,3 +145,5 @@ namespace Kirkin.Collections.Async
         }
     }
 }
+
+#endif
