@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Linq;
 
-using Kirkin.Caching;
+using Kirkin.Caching.Internal;
 using Kirkin.Collections.Generic;
 
 namespace Kirkin.Collections.Concurrent

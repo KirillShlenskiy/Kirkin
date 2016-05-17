@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Kirkin.Caching
+namespace Kirkin.Caching.Internal
 {
     /// <summary>
     /// Thread-safe cache capable of holding a single key/value combination at any given time.

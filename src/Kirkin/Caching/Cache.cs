@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
 
+using Kirkin.Caching.Internal;
+
 namespace Kirkin.Caching
 {
     /// <summary>

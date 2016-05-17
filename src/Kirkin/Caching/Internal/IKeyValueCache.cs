@@ -1,4 +1,4 @@
-﻿namespace Kirkin.Caching
+﻿namespace Kirkin.Caching.Internal
 {
     /// <summary>
     /// Contract for caches with key/value support.

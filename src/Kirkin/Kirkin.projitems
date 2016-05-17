@@ -13,9 +13,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Caching\Cache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Caching\CacheBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Caching\ICache.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Caching\IKeyValueCache.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Caching\LazyCache.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Caching\SingleKeyValueCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Caching\Internal\IKeyValueCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Caching\Internal\LazyCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Caching\Internal\SingleKeyValueCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ChangeTracking\ChangeTracker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ChangeTracking\PropertyValue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ChangeTracking\PropertyValueChange.cs" />

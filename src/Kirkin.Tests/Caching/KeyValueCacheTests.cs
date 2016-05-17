@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 
 using Kirkin.Caching;
+using Kirkin.Caching.Internal;
 
 using Xunit;
 

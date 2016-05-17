@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Kirkin.Caching
+namespace Kirkin.Caching.Internal
 {
     /// <summary>
     /// Provides fast, lazy, thread-safe access to cached data.
