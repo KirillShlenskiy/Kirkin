@@ -13,6 +13,13 @@ namespace Kirkin.Caching.Persisted
         public string FilePath { get; }
         public Serializer Serializer { get; }
 
+        public FileCache(ICache<T> innerCache, string filePath, Serializer serializer)
+        {
+            InnerCache = innerCache;
+            FilePath = filePath;
+            Serializer = serializer;
+        }
+
         protected override T CreateValue()
         {
             if (File.Exists(FilePath))

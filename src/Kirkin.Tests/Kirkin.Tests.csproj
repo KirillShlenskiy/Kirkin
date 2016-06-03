@@ -91,6 +91,7 @@
     <Compile Include="Benchmarking\Benchmarks.cs" />
     <Compile Include="Benchmarking\BenchmarkTests.cs" />
     <Compile Include="Caching\CacheTests.cs" />
+    <Compile Include="Caching\FileCacheTests.cs" />
     <Compile Include="Caching\KeyValueCacheTests.cs" />
     <Compile Include="ChangeTracking\ChangeTrackerTests.cs" />
     <Compile Include="ChangeTracking\PropertyValueEqualityComparerTests.cs" />
