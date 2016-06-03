@@ -46,6 +46,7 @@
     <Compile Include="Buffers\Utilities.cs" />
     <Compile Include="Caching\InFlightKeyValueCache.cs" />
     <Compile Include="Caching\IValueFactoryContainer.cs" />
+    <Compile Include="Caching\Persisted\FileCache.cs" />
     <Compile Include="Collections\Generic\ArraySlice.cs" />
     <Compile Include="Collections\Generic\EnumerableUtil.cs" />
     <Compile Include="Collections\Generic\PooledArrayBuilder.cs" />
@@ -65,11 +66,14 @@
     <Compile Include="Linq\ArrayExtensions.Untested.cs" />
     <Compile Include="Linq\ExperimentalEnumerableExtensions.cs" />
     <Compile Include="Linq\Expressions\ExpressionEngine.cs" />
+    <Compile Include="Logging\FormattedLogger.cs" />
     <Compile Include="NonNullableString.cs" />
     <Compile Include="Optional.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferenceCounting\Borrowed.cs" />
     <Compile Include="ReferenceCounting\SharedResourceManager.cs" />
+    <Compile Include="Serialization\Serializer.cs" />
+    <Compile Include="Serialization\XmlSerializer.cs" />
     <Compile Include="Text\Url.cs" />
     <Compile Include="Threading\AsyncAutoResetEvent.cs" />
     <Compile Include="Threading\AsyncManualResetEvent.cs" />
