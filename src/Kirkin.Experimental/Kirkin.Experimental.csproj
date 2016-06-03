@@ -46,7 +46,7 @@
     <Compile Include="Buffers\Utilities.cs" />
     <Compile Include="Caching\InFlightKeyValueCache.cs" />
     <Compile Include="Caching\IValueFactoryContainer.cs" />
-    <Compile Include="Caching\Persisted\FileCache.cs" />
+    <Compile Include="Caching\FileCache.cs" />
     <Compile Include="Collections\Generic\ArraySlice.cs" />
     <Compile Include="Collections\Generic\EnumerableUtil.cs" />
     <Compile Include="Collections\Generic\PooledArrayBuilder.cs" />

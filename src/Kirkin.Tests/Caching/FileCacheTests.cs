@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 using Kirkin.Caching;
-using Kirkin.Caching.Persisted;
 using Kirkin.Serialization;
 
 using Xunit;
@@ -29,14 +25,16 @@ namespace Kirkin.Tests.Caching
 
             int creationCount = 0;
 
-            ICache<Dummy> rawCache = Cache.Uncached(() =>
-            {
-                Interlocked.Increment(ref creationCount);
+            ICache<Dummy> fileCache = new FileCache<Dummy>(
+                () =>
+                {
+                    Interlocked.Increment(ref creationCount);
 
-                return new Dummy { ID = 123, Value = "Blah" };
-            });
-
-            ICache<Dummy> fileCache = new FileCache<Dummy>(rawCache, filePath, new XmlSerializer());
+                    return new Dummy { ID = 123, Value = "Blah" };
+                },
+                filePath,
+                new XmlSerializer()
+            );
 
             Assert.False(fileCache.IsValid);
 
@@ -58,10 +56,58 @@ namespace Kirkin.Tests.Caching
             Assert.Equal(2, creationCount);
         }
 
+        [Fact]
+        public void CacheCollection()
+        {
+            string filePath = @"C:\Temp\FileCacheTests\DummyArray.xml";
+
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+            if (File.Exists(filePath)) {
+                File.Delete(filePath);
+            }
+
+            int creationCount = 0;
+
+            ICache<Dummy[]> fileCache = new FileCache<Dummy[]>(
+                () =>
+                {
+                    Interlocked.Increment(ref creationCount);
+
+                    return new[] {
+                        new Dummy { ID = 123, Value = "Blah" }
+                    };
+                },
+                filePath,
+                new XmlSerializer()
+            );
+
+            Assert.Equal(1, fileCache.Value.Length);
+        }
+
+        [Fact]
+        public void NonRoundtrippableCacheFails()
+        {
+            ICache<ImmutableDummy> cache = new FileCache<ImmutableDummy>(
+                () => new ImmutableDummy(), "zzz", new XmlSerializer()
+            );
+
+            // ImmutableDummy cannot be cached because it has
+            // properties with non-public setters, so deserialization
+            // is guaranteed to fail. We're catching that early.
+            Assert.Throws<InvalidOperationException>(() => cache.Value);
+        }
+
         public class Dummy
         {
             public int ID { get; set; }
             public string Value { get; set; }
+        }
+
+        public class ImmutableDummy
+        {
+            public int ID { get; private set; }
+            public string Value { get; private set; }
         }
     }
 }

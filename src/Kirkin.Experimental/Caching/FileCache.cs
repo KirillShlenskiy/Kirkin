@@ -1,21 +1,21 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
-using Kirkin.ChangeTracking;
 using Kirkin.Serialization;
 
-namespace Kirkin.Caching.Persisted
+namespace Kirkin.Caching
 {
     internal sealed class FileCache<T>
         : CacheBase<T>
     {
-        public ICache<T> InnerCache { get; }
+        private readonly Func<T> ValueFactory;
         public string FilePath { get; }
         public Serializer Serializer { get; }
 
-        public FileCache(ICache<T> innerCache, string filePath, Serializer serializer)
+        public FileCache(Func<T> valueFactory, string filePath, Serializer serializer)
         {
-            InnerCache = innerCache;
+            ValueFactory = valueFactory;
             FilePath = filePath;
             Serializer = serializer;
         }
@@ -24,19 +24,14 @@ namespace Kirkin.Caching.Persisted
         {
             if (File.Exists(FilePath))
             {
-                try
-                {
-                    using (FileStream stream = File.OpenRead(FilePath)) {
-                        return Serializer.Deserialize<T>(stream);
-                    }
-                }
-                catch (FileNotFoundException)
-                {
-                    // Race.
+                // Deliberatly not handling races (i.e. catching FileNotFoundException).
+                // Two FileCache instances should never be using the same file path.
+                using (FileStream stream = File.OpenRead(FilePath)) {
+                    return Serializer.Deserialize<T>(stream);
                 }
             }
 
-            return InnerCache.Value;
+            return ValueFactory();
         }
 
         protected override bool IsCurrentValueValid()
@@ -62,8 +57,13 @@ namespace Kirkin.Caching.Persisted
 
                 T clone = Serializer.Deserialize<T>(ms);
 
-                if (!PropertyValueEqualityComparer<T>.Default.Equals(newValue, clone)) {
-                    throw new InvalidOperationException("Unable to persist object: roundtrip serialization validation failed.");
+                using (MemoryStream cloneStream = new MemoryStream())
+                {
+                    Serializer.Serialize(clone, cloneStream);
+
+                    if (!ms.GetBuffer().SequenceEqual(cloneStream.GetBuffer())) {
+                        throw new InvalidOperationException("Unable to persist object: roundtrip serialization validation failed.");
+                    }
                 }
 
                 // Finally, write to file.
