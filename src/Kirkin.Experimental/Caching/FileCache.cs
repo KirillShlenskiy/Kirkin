@@ -6,13 +6,31 @@ using Kirkin.Serialization;
 
 namespace Kirkin.Caching
 {
+    /// <summary>
+    /// <see cref="ICache{T}"/> implementation which uses
+    /// roundtrip serialization to store cache data in files.
+    /// </summary>
     internal sealed class FileCache<T>
         : CacheBase<T>
     {
         private readonly Func<T> ValueFactory;
+
+        /// <summary>
+        /// Cache file path specified when this instance was created.
+        /// </summary>
         public string FilePath { get; }
+
+        /// <summary>
+        /// Serializer implementation specified when this instance was created.
+        /// </summary>
         public Serializer Serializer { get; }
 
+        /// <summary>
+        /// Creates a new <see cref="FileCache{T}"/> instance.
+        /// </summary>
+        /// <param name="valueFactory">Delegate invoked when a fresh value is required.</param>
+        /// <param name="filePath">Cache file path.</param>
+        /// <param name="serializer">Serializer implementation used by this instance.</param>
         public FileCache(Func<T> valueFactory, string filePath, Serializer serializer)
         {
             ValueFactory = valueFactory;
@@ -24,7 +42,7 @@ namespace Kirkin.Caching
         {
             if (File.Exists(FilePath))
             {
-                // Deliberatly not handling races (i.e. catching FileNotFoundException).
+                // Deliberately not handling races (i.e. catching FileNotFoundException).
                 // Two FileCache instances should never be using the same file path.
                 using (FileStream stream = File.OpenRead(FilePath)) {
                     return Serializer.Deserialize<T>(stream);
