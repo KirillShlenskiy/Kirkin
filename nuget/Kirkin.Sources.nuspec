@@ -7,12 +7,12 @@
     <authors>Kirill Shlenskiy</authors>
     <owners>Kirill Shlenskiy</owners>
     <projectUrl>https://github.com/KirillShlenskiy/Kirkin</projectUrl>
-	<iconUrl>https://raw.githubusercontent.com/KirillShlenskiy/Kirkin/master/icons/logo-128.png</iconUrl>
-	<licenseUrl>https://raw.githubusercontent.com/KirillShlenskiy/Kirkin/master/LICENSE</licenseUrl>
+    <iconUrl>https://raw.githubusercontent.com/KirillShlenskiy/Kirkin/master/icons/logo-128.png</iconUrl>
+    <licenseUrl>https://raw.githubusercontent.com/KirillShlenskiy/Kirkin/master/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Kirkin lib source package</description>
   </metadata>
   <files>
     <file src="..\src\Kirkin\**.cs" target="content" exclude="**\bin\**;**\obj\**;**\Properties\**" />
   </files>
-  </package>
+</package>
