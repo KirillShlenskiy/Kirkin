@@ -26,6 +26,8 @@ namespace Kirkin.Serialization
 
         private static XSerializer CreateSerializer<T>()
         {
+            // "Root" choice is justified by additional backwards compatibility. If the
+            // root type is renamed, deserialization of existing content will still work.
             return Factory.CreateSerializer(typeof(T), new XmlRootAttribute("Root"));
         }
 

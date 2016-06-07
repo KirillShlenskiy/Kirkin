@@ -26,7 +26,7 @@ namespace Kirkin.Logging
 
         /// <summary>
         /// Formatter which uses the given delegate as its
-        /// <see cref="LogEntry(string, Action{string})"/> implementation.
+        /// <see cref="IEntryFormatter.LogEntry(string, Action{string})"/> implementation.
         /// </summary>
         internal static IEntryFormatter Create(Action<string, Action<string>> formatAction)
         {
