@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+
+#if !NET_40
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
+#endif
 
 namespace Kirkin.Mapping.Data
 {
