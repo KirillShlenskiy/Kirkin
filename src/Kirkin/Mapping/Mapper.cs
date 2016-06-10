@@ -73,6 +73,7 @@ namespace Kirkin.Mapping
         /// source to target and returns the newly created target instance.
         /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
         /// </summary>
+        [Obsolete("Use MapStrict.")]
         public static TTarget DynamicMap<TSource, TTarget>(TSource source)
             where TTarget : new()
         {
@@ -83,6 +84,7 @@ namespace Kirkin.Mapping
         /// Executes mapping from source to target and returns the target instance.
         /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
         /// </summary>
+        [Obsolete("Use MapStrict.")]
         public static TTarget DynamicMap<TSource, TTarget>(TSource source, TTarget target)
         {
             return StrictMapper<TSource, TTarget>.Default.Map(source, target);
@@ -122,7 +124,7 @@ namespace Kirkin.Mapping
         /// source to target and returns the newly created target instance.
         /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
         /// </summary>
-        internal static TTarget MapAllSourceMembers<TSource, TTarget>(TSource source)
+        public static TTarget MapAllSourceMembers<TSource, TTarget>(TSource source)
             where TTarget : new()
         {
             return MapAllSourceMembers(source, new TTarget());
@@ -132,7 +134,7 @@ namespace Kirkin.Mapping
         /// Executes mapping from source to target and returns the target instance.
         /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
         /// </summary>
-        internal static TTarget MapAllSourceMembers<TSource, TTarget>(TSource source, TTarget target)
+        public static TTarget MapAllSourceMembers<TSource, TTarget>(TSource source, TTarget target)
         {
             return AllSourceMembersMapper<TSource, TTarget>.Default.Map(source, target);
         }
@@ -142,7 +144,7 @@ namespace Kirkin.Mapping
         /// source to target and returns the newly created target instance.
         /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
         /// </summary>
-        internal static TTarget MapAllTargetMembers<TSource, TTarget>(TSource source)
+        public static TTarget MapAllTargetMembers<TSource, TTarget>(TSource source)
             where TTarget : new()
         {
             return MapAllTargetMembers(source, new TTarget());
@@ -152,7 +154,7 @@ namespace Kirkin.Mapping
         /// Executes mapping from source to target and returns the target instance.
         /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
         /// </summary>
-        internal static TTarget MapAllTargetMembers<TSource, TTarget>(TSource source, TTarget target)
+        public static TTarget MapAllTargetMembers<TSource, TTarget>(TSource source, TTarget target)
         {
             return AllTargetMembersMapper<TSource, TTarget>.Default.Map(source, target);
         }
@@ -162,7 +164,7 @@ namespace Kirkin.Mapping
         /// source to target and returns the newly created target instance.
         /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
         /// </summary>
-        internal static TTarget MapRelaxed<TSource, TTarget>(TSource source)
+        public static TTarget MapRelaxed<TSource, TTarget>(TSource source)
             where TTarget : new()
         {
             return MapRelaxed(source, new TTarget());
@@ -172,7 +174,7 @@ namespace Kirkin.Mapping
         /// Executes mapping from source to target and returns the target instance.
         /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
         /// </summary>
-        internal static TTarget MapRelaxed<TSource, TTarget>(TSource source, TTarget target)
+        public static TTarget MapRelaxed<TSource, TTarget>(TSource source, TTarget target)
         {
             return RelaxedMapper<TSource, TTarget>.Default.Map(source, target);
         }
@@ -182,7 +184,7 @@ namespace Kirkin.Mapping
         /// source to target and returns the newly created target instance.
         /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
         /// </summary>
-        internal static TTarget MapStrict<TSource, TTarget>(TSource source)
+        public static TTarget MapStrict<TSource, TTarget>(TSource source)
             where TTarget : new()
         {
             return MapStrict(source, new TTarget());
@@ -192,7 +194,7 @@ namespace Kirkin.Mapping
         /// Executes mapping from source to target and returns the target instance.
         /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
         /// </summary>
-        internal static TTarget MapStrict<TSource, TTarget>(TSource source, TTarget target)
+        public static TTarget MapStrict<TSource, TTarget>(TSource source, TTarget target)
         {
             return StrictMapper<TSource, TTarget>.Default.Map(source, target);
         }
