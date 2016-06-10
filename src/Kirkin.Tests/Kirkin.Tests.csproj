@@ -43,8 +43,8 @@
       <HintPath>..\packages\AutoMapper.4.2.1\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="BenchmarkDotNet, Version=0.9.6.0, Culture=neutral, PublicKeyToken=aa0ca2f9092cefc4, processorArchitecture=MSIL">
-      <HintPath>..\packages\BenchmarkDotNet.0.9.6\lib\net45\BenchmarkDotNet.dll</HintPath>
+    <Reference Include="BenchmarkDotNet, Version=0.9.7.0, Culture=neutral, PublicKeyToken=aa0ca2f9092cefc4, processorArchitecture=MSIL">
+      <HintPath>..\packages\BenchmarkDotNet.0.9.7\lib\net40\BenchmarkDotNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Build" />
@@ -127,6 +127,7 @@
     <Compile Include="Linq\Expressions\ExpressionUtilTests.cs" />
     <Compile Include="Logging\LogEntryBlockTests.cs" />
     <Compile Include="Logging\LoggerTests.cs" />
+    <Compile Include="Mapping\ConcreteVsInterfaceMapperBenchmarks.cs" />
     <Compile Include="Mapping\DataRecordMapperTests.cs" />
     <Compile Include="Mapping\ExpressMapperTests.cs" />
     <Compile Include="Mapping\MapperBenchmarks.cs" />

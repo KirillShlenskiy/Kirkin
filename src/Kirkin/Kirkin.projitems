@@ -68,6 +68,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperConfig+SourceMemberConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperConfig+TargetMemberConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Mapper`2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MappingException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MappingMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\NullableBehaviour.cs" />

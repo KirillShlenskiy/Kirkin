@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 
-using Kirkin.Mapping.Engine;
-using Kirkin.Mapping.Engine.Compilers;
 using Kirkin.Reflection;
 
 namespace Kirkin.Mapping
@@ -101,7 +98,7 @@ namespace Kirkin.Mapping
         public static T Clone<T>(T source)
             where T : new()
         {
-            return Mapper<T>.Default.Map(source, new T());
+            return SameTypeMapper<T>.Default.Map(source, new T());
         }
 
         /// <summary>
@@ -113,7 +110,40 @@ namespace Kirkin.Mapping
         {
             // Treat target as TSource so as to prevent the default
             // mapping from failing due to unmapped target members.
-            return (TTarget)Mapper<TSource>.Default.Map(source, target);
+            return (TTarget)SameTypeMapper<TSource>.Default.Map(source, target);
+        }
+
+        #endregion
+
+        #region Specialized mappers
+
+        /// <summary>
+        /// Specialised type used for mapping between objects the same type.
+        /// </summary>
+        static class SameTypeMapper<T>
+        {
+            private static Mapper<T, T> _default;
+
+            /// <summary>
+            /// Default <see cref="Mapper{TSource, TTarget}"/> instance.
+            /// *DO NOT* mutate this instance.
+            /// </summary>
+            internal static Mapper<T, T> Default
+            {
+                get
+                {
+                    if (_default == null)
+                    {
+                        MapperConfig<T, T> config = new MapperConfig<T, T> {
+                            MappingMode = MappingMode.Relaxed
+                        };
+
+                        _default = new Mapper<T, T>(config.ProduceValidMemberMappings());
+                    }
+
+                    return _default;
+                }
+            }
         }
 
         #endregion
@@ -132,135 +162,6 @@ namespace Kirkin.Mapping
             where TTarget : new()
         {
             return mapper.Map(source, new TTarget());
-        }
-    }
-
-    /// <summary>
-    /// Type which performs mapping between objects of source and target types.
-    /// </summary>
-    internal sealed class Mapper<TSource, TTarget>
-        : IMapper<TSource, TTarget>
-    {
-        #region Static members
-
-        private static Mapper<TSource, TTarget> _default;
-
-        /// <summary>
-        /// Default <see cref="Mapper{TSource, TTarget}"/> instance.
-        /// *DO NOT* mutate this instance.
-        /// </summary>
-        /// <remarks>
-        /// Internal to encourage consumers to use the safer static <see cref="Mapper"/> methods.
-        /// </remarks>
-        internal static Mapper<TSource, TTarget> Default
-        {
-            get
-            {
-                if (_default == null)
-                {
-                    _default = new Mapper<TSource, TTarget>(
-                        new MapperConfig<TSource, TTarget>().ProduceValidMemberMappings()
-                    );
-                }
-
-                return _default;
-            }
-        }
-
-        /// <summary>
-        /// <see cref="MappingCompiler{TSource, TTarget}"/> used
-        /// by this and all other instances of the same type.
-        /// </summary>
-        private static readonly CachedMappingCompiler<TSource, TTarget> MappingCompiler
-            = new CachedMappingCompiler<TSource, TTarget>();
-
-        #endregion
-
-        #region Fields and properties
-
-        /// <summary>
-        /// Cached compiled mapping delegate.
-        /// </summary>
-        /// <remarks>
-        /// Non-thread-safe by design.
-        /// Defined as <see cref="Func{TSource, TTarget, TTarget}"/> (as opposed to action)
-        /// in order to support mapping scenarios where the target is a struct.
-        /// </remarks>
-        private Func<TSource, TTarget, TTarget> CompiledMapping;
-
-        private readonly MemberMapping<TSource, TTarget>[] _memberMappings;
-
-        /// <summary>
-        /// Member mappings.
-        /// </summary>
-        public IEnumerable<MemberMapping<TSource, TTarget>> MemberMappings
-        {
-            get
-            {
-                return _memberMappings;
-            }
-        }
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new <see cref="Mapper{TSource, TTarget}"/> instance with the given configuration.
-        /// </summary>
-        internal Mapper(MemberMapping<TSource, TTarget>[] memberMappings)
-        {
-            _memberMappings = memberMappings;
-        }
-
-        #endregion
-
-        #region Public methods
-
-        /// <summary>
-        /// Executes mapping from source to target and returns the target instance.
-        /// </summary>
-        public TTarget Map(TSource source, TTarget target)
-        {
-            if (source == null) throw new ArgumentNullException(nameof(source));
-            if (target == null) throw new ArgumentNullException(nameof(target));
-
-            if (CompiledMapping == null) {
-                CompiledMapping = MappingCompiler.CompileMapping(_memberMappings);
-            }
-
-            return CompiledMapping(source, target);
-        }
-
-        #endregion
-    }
-
-    /// <summary>
-    /// Specialised type used for mapping between objects the same type.
-    /// </summary>
-    internal static class Mapper<T>
-    {
-        private static Mapper<T, T> _default;
-
-        /// <summary>
-        /// Default <see cref="Mapper{TSource, TTarget}"/> instance.
-        /// *DO NOT* mutate this instance.
-        /// </summary>
-        internal static Mapper<T, T> Default
-        {
-            get
-            {
-                if (_default == null)
-                {
-                    MapperConfig<T, T> config = new MapperConfig<T, T> {
-                        MappingMode = MappingMode.Relaxed
-                    };
-
-                    _default = new Mapper<T, T>(config.ProduceValidMemberMappings());
-                }
-
-                return _default;
-            }
         }
     }
 }
