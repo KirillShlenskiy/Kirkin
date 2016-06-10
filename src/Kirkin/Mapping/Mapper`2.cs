@@ -15,30 +15,6 @@ namespace Kirkin.Mapping
     {
         #region Static members
 
-        private static Mapper<TSource, TTarget> _default;
-
-        /// <summary>
-        /// Default <see cref="Mapper{TSource, TTarget}"/> instance.
-        /// *DO NOT* mutate this instance.
-        /// </summary>
-        /// <remarks>
-        /// Internal to encourage consumers to use the safer static <see cref="Mapper"/> methods.
-        /// </remarks>
-        internal static Mapper<TSource, TTarget> Default
-        {
-            get
-            {
-                if (_default == null)
-                {
-                    _default = new Mapper<TSource, TTarget>(
-                        new MapperConfig<TSource, TTarget>().ProduceValidMemberMappings()
-                    );
-                }
-
-                return _default;
-            }
-        }
-
         /// <summary>
         /// <see cref="MappingCompiler{TSource, TTarget}"/> used
         /// by this and all other instances of the same type.

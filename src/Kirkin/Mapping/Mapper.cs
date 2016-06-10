@@ -16,7 +16,7 @@ namespace Kirkin.Mapping
         /// </summary>
         public static IMapper<TSource, TTarget> CreateMapper<TSource, TTarget>()
         {
-            return Mapper<TSource, TTarget>.Default;
+            return StrictMapper<TSource, TTarget>.Default;
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Kirkin.Mapping
         /// </summary>
         public static TTarget DynamicMap<TSource, TTarget>(TSource source, TTarget target)
         {
-            return Mapper<TSource, TTarget>.Default.Map(source, target);
+            return StrictMapper<TSource, TTarget>.Default.Map(source, target);
         }
 
         #endregion
@@ -98,7 +98,7 @@ namespace Kirkin.Mapping
         public static T Clone<T>(T source)
             where T : new()
         {
-            return SameTypeMapper<T>.Default.Map(source, new T());
+            return RelaxedMapper<T, T>.Default.Map(source, new T());
         }
 
         /// <summary>
@@ -110,40 +110,91 @@ namespace Kirkin.Mapping
         {
             // Treat target as TSource so as to prevent the default
             // mapping from failing due to unmapped target members.
-            return (TTarget)SameTypeMapper<TSource>.Default.Map(source, target);
+            return (TTarget)RelaxedMapper<TSource, TSource>.Default.Map(source, target);
         }
 
         #endregion
 
-        #region Specialized mappers
+        #region MappingMode shorthands
 
         /// <summary>
-        /// Specialised type used for mapping between objects the same type.
+        /// Creates a new target instance, executes mapping from
+        /// source to target and returns the newly created target instance.
+        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
         /// </summary>
-        static class SameTypeMapper<T>
+        internal static TTarget MapAllSourceMembers<TSource, TTarget>(TSource source)
+            where TTarget : new()
         {
-            private static Mapper<T, T> _default;
+            return MapAllSourceMembers(source, new TTarget());
+        }
 
-            /// <summary>
-            /// Default <see cref="Mapper{TSource, TTarget}"/> instance.
-            /// *DO NOT* mutate this instance.
-            /// </summary>
-            internal static Mapper<T, T> Default
-            {
-                get
-                {
-                    if (_default == null)
-                    {
-                        MapperConfig<T, T> config = new MapperConfig<T, T> {
-                            MappingMode = MappingMode.Relaxed
-                        };
+        /// <summary>
+        /// Executes mapping from source to target and returns the target instance.
+        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
+        /// </summary>
+        internal static TTarget MapAllSourceMembers<TSource, TTarget>(TSource source, TTarget target)
+        {
+            return AllSourceMembersMapper<TSource, TTarget>.Default.Map(source, target);
+        }
 
-                        _default = new Mapper<T, T>(config.ProduceValidMemberMappings());
-                    }
+        /// <summary>
+        /// Creates a new target instance, executes mapping from
+        /// source to target and returns the newly created target instance.
+        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
+        /// </summary>
+        internal static TTarget MapAllTargetMembers<TSource, TTarget>(TSource source)
+            where TTarget : new()
+        {
+            return MapAllTargetMembers(source, new TTarget());
+        }
 
-                    return _default;
-                }
-            }
+        /// <summary>
+        /// Executes mapping from source to target and returns the target instance.
+        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
+        /// </summary>
+        internal static TTarget MapAllTargetMembers<TSource, TTarget>(TSource source, TTarget target)
+        {
+            return AllTargetMembersMapper<TSource, TTarget>.Default.Map(source, target);
+        }
+
+        /// <summary>
+        /// Creates a new target instance, executes mapping from
+        /// source to target and returns the newly created target instance.
+        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
+        /// </summary>
+        internal static TTarget MapRelaxed<TSource, TTarget>(TSource source)
+            where TTarget : new()
+        {
+            return MapRelaxed(source, new TTarget());
+        }
+
+        /// <summary>
+        /// Executes mapping from source to target and returns the target instance.
+        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
+        /// </summary>
+        internal static TTarget MapRelaxed<TSource, TTarget>(TSource source, TTarget target)
+        {
+            return RelaxedMapper<TSource, TTarget>.Default.Map(source, target);
+        }
+
+        /// <summary>
+        /// Creates a new target instance, executes mapping from
+        /// source to target and returns the newly created target instance.
+        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
+        /// </summary>
+        internal static TTarget MapStrict<TSource, TTarget>(TSource source)
+            where TTarget : new()
+        {
+            return MapStrict(source, new TTarget());
+        }
+
+        /// <summary>
+        /// Executes mapping from source to target and returns the target instance.
+        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
+        /// </summary>
+        internal static TTarget MapStrict<TSource, TTarget>(TSource source, TTarget target)
+        {
+            return StrictMapper<TSource, TTarget>.Default.Map(source, target);
         }
 
         #endregion

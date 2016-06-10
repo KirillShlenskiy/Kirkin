@@ -300,8 +300,15 @@ namespace Kirkin.Tests.Mapping
             Assert.Equal(dummy.ID, extendedDummy.ID);
             Assert.Equal(dummy.Value, extendedDummy.Value);
 
+            extendedDummy = Mapper.MapRelaxed<Dummy, ExtendedDummy>(dummy);
+
+            Assert.Equal(dummy.ID, extendedDummy.ID);
+            Assert.Equal(dummy.Value, extendedDummy.Value);
+
             Mapper.CreateMapper<Dummy, ExtendedDummy>(c => c.MappingMode = MappingMode.AllSourceMembers).Map(dummy, extendedDummy);
+            Mapper.MapAllSourceMembers(dummy, extendedDummy);
             Mapper.CreateMapper<ExtendedDummy, Dummy>(c => c.MappingMode = MappingMode.AllTargetMembers).Map(extendedDummy, dummy);
+            Mapper.MapAllTargetMembers(extendedDummy, dummy);
         }
 
         [Fact]
@@ -314,13 +321,19 @@ namespace Kirkin.Tests.Mapping
                 new MapperConfig<Dummy, ExtendedDummy> { MappingMode = MappingMode.Strict }.Validate()
             );
 
+            Assert.Throws<MappingException>(() => Mapper.MapStrict(new Dummy(), new ExtendedDummy()));
+
             Assert.Throws<MappingException>(() =>
                 new MapperConfig<Dummy, ExtendedDummy> { MappingMode = MappingMode.AllTargetMembers }.Validate()
             );
 
+            Assert.Throws<MappingException>(() => Mapper.MapAllTargetMembers(new Dummy(), new ExtendedDummy()));
+
             Assert.Throws<MappingException>(() =>
                 new MapperConfig<ExtendedDummy, Dummy> { MappingMode = MappingMode.AllSourceMembers }.Validate()
             );
+
+            Assert.Throws<MappingException>(() => Mapper.MapAllSourceMembers(new ExtendedDummy(), new Dummy()));
         }
 
         [Fact]

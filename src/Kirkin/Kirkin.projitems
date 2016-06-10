@@ -54,6 +54,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DataRecordToObjectMapperConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DataRowToObjectMapperConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DbCommandExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\DefaultMappers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\Compilers\CachedMappingCompiler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\Compilers\MappingCompiler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\Compilers\MemberMappingCollection.cs" />
