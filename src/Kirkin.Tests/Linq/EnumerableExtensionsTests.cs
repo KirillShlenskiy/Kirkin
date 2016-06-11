@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
-using Kirkin.Collections.Generic;
 using Kirkin.Linq;
 
 using Xunit;
@@ -37,7 +36,7 @@ namespace Kirkin.Tests.Linq
             this.ValidateChunks(chunks);
         }
 
-        private void ValidateChunks(Vector<int>[] chunks)
+        private void ValidateChunks(int[][] chunks)
         {
             Assert.Equal(4, chunks.Length);
 

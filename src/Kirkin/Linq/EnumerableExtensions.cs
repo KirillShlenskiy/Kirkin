@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 
-using Kirkin.Collections.Generic;
-
 #if !NET_40
 using System.Collections.Concurrent;
 using System.Threading;
@@ -78,7 +76,7 @@ namespace Kirkin.Linq
         /// Breaks up the given sequence into smaller
         /// materialised sequences of the given size.
         /// </summary>
-        public static IEnumerable<Vector<T>> Chunkify<T>(this IEnumerable<T> collection, int chunkSize)
+        public static IEnumerable<T[]> Chunkify<T>(this IEnumerable<T> collection, int chunkSize)
         {
             if (collection == null) throw new ArgumentNullException("collection");
             if (chunkSize < 1) throw new ArgumentException("chunkSize");
@@ -96,7 +94,7 @@ namespace Kirkin.Linq
 
                 if (count == chunkSize)
                 {
-                    yield return new Vector<T>(chunk);
+                    yield return chunk;
 
                     count = 0;
                 }
@@ -105,7 +103,7 @@ namespace Kirkin.Linq
             if (count != 0)
             {
                 if (chunk.Length == count) {
-                    yield return new Vector<T>(chunk);
+                    yield return chunk;
                 }
 
                 // Resize required.
@@ -113,7 +111,7 @@ namespace Kirkin.Linq
 
                 Array.Copy(chunk, 0, tmp, 0, count);
 
-                yield return new Vector<T>(tmp);
+                yield return tmp;
             }
         }
 
