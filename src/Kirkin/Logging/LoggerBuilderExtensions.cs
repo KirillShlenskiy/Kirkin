@@ -16,6 +16,8 @@ namespace Kirkin.Logging
         /// </summary>
         public static LoggerBuilder AddFilter(this LoggerBuilder builder, Func<IEnumerable<string>, IEnumerable<string>> entryFilter)
         {
+            if (entryFilter == null) throw new ArgumentNullException(nameof(entryFilter));
+
             builder.Formatters.Add(new EntryFilter(entryFilter));
 
             return builder;
@@ -28,6 +30,8 @@ namespace Kirkin.Logging
         /// </summary>
         public static LoggerBuilder AddFormatter(this LoggerBuilder builder, IEntryFormatter entryFormatter)
         {
+            if (entryFormatter == null) throw new ArgumentNullException(nameof(entryFormatter));
+
             builder.Formatters.Add(entryFormatter);
 
             return builder;
@@ -39,6 +43,8 @@ namespace Kirkin.Logging
         /// </summary>
         public static LoggerBuilder AddLogger(this LoggerBuilder builder, Logger logger)
         {
+            if (logger == null) throw new ArgumentNullException(nameof(logger));
+
             IEntryFormatter formatter = EntryFormatter.Transform(entry =>
             {
                 logger.Log(entry);
@@ -57,6 +63,8 @@ namespace Kirkin.Logging
         /// </summary>
         public static LoggerBuilder AddLogAction(this LoggerBuilder builder, Action<string> logAction)
         {
+            if (logAction == null) throw new ArgumentNullException(nameof(logAction));
+
             IEntryFormatter formatter = EntryFormatter.Transform(entry =>
             {
                 logAction(entry);
