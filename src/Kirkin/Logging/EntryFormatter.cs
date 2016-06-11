@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Kirkin.Logging
 {
@@ -22,32 +21,6 @@ namespace Kirkin.Logging
             }
 
             return logEntry;
-        }
-
-        /// <summary>
-        /// Formatter which uses the given delegate as its
-        /// <see cref="IEntryFormatter.LogEntry(string, Action{string})"/> implementation.
-        /// </summary>
-        internal static IEntryFormatter Create(Action<string, Action<string>> formatAction)
-        {
-            if (formatAction == null) throw new ArgumentNullException(nameof(formatAction));
-
-            return new CustomEntryFormatter(formatAction);
-        }
-
-        sealed class CustomEntryFormatter : IEntryFormatter
-        {
-            private readonly Action<string, Action<string>> FormatAction;
-
-            internal CustomEntryFormatter(Action<string, Action<string>> formatAction)
-            {
-                FormatAction = formatAction;
-            }
-
-            public void LogEntry(string entry, Action<string> logEntry)
-            {
-                FormatAction(entry, logEntry);
-            }
         }
 
         /// <summary>
@@ -116,33 +89,6 @@ namespace Kirkin.Logging
             public void LogEntry(string entry, Action<string> logEntry)
             {
                 logEntry(Transformation(entry));
-            }
-        }
-
-        /// <summary>
-        /// Formatter which applies the given transformation to the entry.
-        /// </summary>
-        public static IEntryFormatter Transform(Func<string, IEnumerable<string>> transformation)
-        {
-            if (transformation == null) throw new ArgumentNullException(nameof(transformation));
-
-            return new SelectManyEntryFormatter(transformation);
-        }
-
-        sealed class SelectManyEntryFormatter : IEntryFormatter
-        {
-            private readonly Func<string, IEnumerable<string>> Transformation;
-
-            internal SelectManyEntryFormatter(Func<string, IEnumerable<string>> transformation)
-            {
-                Transformation = transformation;
-            }
-
-            public void LogEntry(string entry, Action<string> logEntry)
-            {
-                foreach (string transformedEntry in Transformation(entry)) {
-                    logEntry(transformedEntry);
-                }
             }
         }
 

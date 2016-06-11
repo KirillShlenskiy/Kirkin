@@ -203,15 +203,20 @@ namespace Kirkin.Tests.Logging
         public void WithTransformationTest2()
         {
             // Reimplement split line logger.
-            var entries = new List<string>();
-            var logger = Logger.Create(entries.Add).WithFormatters(EntryFormatter.Transform(s => s.Split('\n').Select(l => l.Replace("\r", string.Empty))));
+            var buffer = new List<string>();
+
+            var logger = new LoggerBuilder(buffer.Add) {
+                Formatters = {
+                    new EntryFilter(entries => entries.SelectMany(s => s.Split('\n').Select(l => l.Replace("\r", string.Empty))))
+                }
+            }.BuildLogger();
 
             logger.Log("Line 1" + Environment.NewLine + "Line 2" + Environment.NewLine + "Line 3");
 
-            Assert.Equal(3, entries.Count);
-            Assert.Equal("Line 1", entries[0]);
-            Assert.Equal("Line 2", entries[1]);
-            Assert.Equal("Line 3", entries[2]);
+            Assert.Equal(3, buffer.Count);
+            Assert.Equal("Line 1", buffer[0]);
+            Assert.Equal("Line 2", buffer[1]);
+            Assert.Equal("Line 3", buffer[2]);
         }
 
         [Fact]

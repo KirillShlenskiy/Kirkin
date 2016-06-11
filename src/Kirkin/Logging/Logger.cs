@@ -150,28 +150,28 @@ namespace Kirkin.Logging
         /// <summary>
         /// Returns a logger instance which protects its Log calls with a lock.
         /// </summary>
-        public static Logger Synchronised(Logger logger)
+        public static Logger Synchronized(Logger logger)
         {
-            return Synchronised(logger, new object());
+            return Synchronized(logger, new object());
         }
 
         /// <summary>
         /// Returns a logger instance which protects its Log calls with a lock on the given object.
         /// </summary>
-        public static Logger Synchronised(Logger logger, object lockObj)
+        public static Logger Synchronized(Logger logger, object lockObj)
         {
-            return new SynchronisedLogger(logger, lockObj);
+            return new SynchronizedLogger(logger, lockObj);
         }
 
         /// <summary>
         /// Logger implementation which protects its Log calls with a lock.
         /// </summary>
-        sealed class SynchronisedLogger : Logger
+        sealed class SynchronizedLogger : Logger
         {
             private readonly Logger Inner;
             private readonly object LockObj;
 
-            public SynchronisedLogger(Logger inner, object lockObj)
+            public SynchronizedLogger(Logger inner, object lockObj)
             {
                 Inner = inner;
                 LockObj = lockObj;
