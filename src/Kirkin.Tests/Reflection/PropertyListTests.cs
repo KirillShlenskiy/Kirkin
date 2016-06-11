@@ -131,7 +131,7 @@ namespace Kirkin.Tests.Reflection
                 dummy1.Value = "Text " + i;
 
                 Assert.False(comparer.Equals(dummy1, dummy2));
-                Mapper.DynamicMap(dummy1, dummy2);
+                Mapper.MapStrict(dummy1, dummy2);
                 Assert.True(comparer.Equals(dummy1, dummy2));
             }
         }

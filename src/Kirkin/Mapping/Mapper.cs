@@ -77,7 +77,7 @@ namespace Kirkin.Mapping
         public static TTarget DynamicMap<TSource, TTarget>(TSource source)
             where TTarget : new()
         {
-            return DynamicMap(source, new TTarget());
+            return MapStrict<TSource, TTarget>(source);
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Kirkin.Mapping
         [Obsolete("Use MapStrict.")]
         public static TTarget DynamicMap<TSource, TTarget>(TSource source, TTarget target)
         {
-            return StrictMapper<TSource, TTarget>.Default.Map(source, target);
+            return MapStrict(source, target);
         }
 
         #endregion

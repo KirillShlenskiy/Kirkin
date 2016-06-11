@@ -179,7 +179,7 @@ namespace Kirkin.Tests.Mapping
         public void MapSameType()
         {
             var dummy1 = new Dummy { ID = 1, Value = "Test" };
-            var dummy2 = Mapper.DynamicMap<Dummy, Dummy>(dummy1);
+            var dummy2 = Mapper.MapStrict<Dummy, Dummy>(dummy1);
 
             Assert.Equal(dummy1.ID, dummy2.ID);
             Assert.Equal(dummy1.Value, dummy2.Value);
@@ -203,7 +203,7 @@ namespace Kirkin.Tests.Mapping
             var dummy1 = new Dummy { ID = 1, Value = "Test" };
             var dummy2 = new ExtendedDummy();
 
-            Mapper.DynamicMap<Dummy, Dummy>(dummy1, dummy2);
+            Mapper.MapStrict<Dummy, Dummy>(dummy1, dummy2);
 
             Assert.Equal(dummy1.ID, dummy2.ID);
             Assert.Equal(dummy1.Value, dummy2.Value);
@@ -215,7 +215,7 @@ namespace Kirkin.Tests.Mapping
             var dummy1 = new Dummy { ID = 1, Value = "Test" };
             var dummy2 = new ExtendedDummy();
 
-            Assert.Throws<MappingException>(() => Mapper.DynamicMap(dummy1, dummy2));
+            Assert.Throws<MappingException>(() => Mapper.MapStrict(dummy1, dummy2));
         }
 
         [Fact]
@@ -224,7 +224,7 @@ namespace Kirkin.Tests.Mapping
             var dummy1 = new Dummy { ID = 1, Value = "Test" };
             var dummy2 = new LowercaseDummy();
 
-            Assert.Throws<MappingException>(() => Mapper.DynamicMap(dummy1, dummy2));
+            Assert.Throws<MappingException>(() => Mapper.MapStrict(dummy1, dummy2));
         }
 
         [Fact]
@@ -243,7 +243,7 @@ namespace Kirkin.Tests.Mapping
         [Fact]
         public void ArgumentValidation()
         {
-            Assert.Throws<ArgumentNullException>(() => Mapper.DynamicMap<object, object>(null, null));
+            Assert.Throws<ArgumentNullException>(() => Mapper.MapStrict<object, object>(null, null));
         }
 
         [Fact]
@@ -252,7 +252,7 @@ namespace Kirkin.Tests.Mapping
             var dummy1 = new NullableDummy();
             var dummy2 = new Dummy { ID = 1 };
 
-            Mapper.DynamicMap(dummy1, dummy2);
+            Mapper.MapStrict(dummy1, dummy2);
             Assert.Equal(0, dummy2.ID);
         }
 
@@ -262,7 +262,7 @@ namespace Kirkin.Tests.Mapping
             var dummy1 = new Dummy();
             var dummy2 = new NullableDummy { ID = 1 };
 
-            Mapper.DynamicMap(dummy1, dummy2);
+            Mapper.MapStrict(dummy1, dummy2);
             Assert.Null(dummy2.ID);
         }
 
@@ -340,7 +340,7 @@ namespace Kirkin.Tests.Mapping
         public void ConvertibleSupport()
         {
             var dummy = new Dummy { ID = 5 };
-            var target = Mapper.DynamicMap(dummy, new ConvertibleDummy());
+            var target = Mapper.MapStrict(dummy, new ConvertibleDummy());
 
             Assert.Equal(5m, target.ID);
         }
@@ -349,13 +349,13 @@ namespace Kirkin.Tests.Mapping
         public void NullableConvertibleSupport()
         {
             var dummy = new Dummy { ID = 5 };
-            var target = Mapper.DynamicMap(dummy, new NullableConvertibleDummy());
+            var target = Mapper.MapStrict(dummy, new NullableConvertibleDummy());
 
             Assert.Equal(5m, target.ID);
 
             dummy.ID = 0;
 
-            Mapper.DynamicMap(dummy, target);
+            Mapper.MapStrict(dummy, target);
 
             Assert.False(target.ID.HasValue);
 
@@ -372,14 +372,14 @@ namespace Kirkin.Tests.Mapping
             var dummy = new Dummy { ID = 5, Value = "TEST" };
             var target = new EnumDummy();
 
-            Mapper.DynamicMap(dummy, target);
+            Mapper.MapStrict(dummy, target);
 
             Assert.Equal(ValueEnum.Test, target.Value);
 
             // Null string to Enum.
             dummy.Value = null;
 
-            Assert.Throws<MappingException>(() => Mapper.DynamicMap(dummy, target));
+            Assert.Throws<MappingException>(() => Mapper.MapStrict(dummy, target));
         }
 
         [Fact]
@@ -388,14 +388,14 @@ namespace Kirkin.Tests.Mapping
             var dummy = new Dummy { ID = 5, Value = "TEST" };
             var target = new NullableEnumDummy();
 
-            Mapper.DynamicMap(dummy, target);
+            Mapper.MapStrict(dummy, target);
 
             Assert.Equal(ValueEnum.Test, target.Value);
 
             // Null string to Enum.
             dummy.Value = null;
 
-            Mapper.DynamicMap(dummy, target);
+            Mapper.MapStrict(dummy, target);
 
             Assert.False(target.Value.HasValue); // This is questionable behaviour.
         }
@@ -406,7 +406,7 @@ namespace Kirkin.Tests.Mapping
             var source = new EnumDummy { Value = ValueEnum.Test };
             var target = new Dummy();
 
-            Mapper.DynamicMap(source, target);
+            Mapper.MapStrict(source, target);
 
             Assert.Equal("Test", target.Value);
         }
@@ -415,7 +415,7 @@ namespace Kirkin.Tests.Mapping
         public void StructMapping()
         {
             var source = new Size { Width = 2, Height = 4 };
-            var target = Mapper.DynamicMap(source, new Size());
+            var target = Mapper.MapStrict(source, new Size());
 
             Assert.Equal(2, target.Width);
             Assert.Equal(4, target.Height);
