@@ -62,34 +62,6 @@ namespace Kirkin.Logging
             );
         }
 
-        ///// <summary>
-        ///// Returns a logger wrapper which applies the given formatters
-        ///// to each logged entry and logs the result to this logger.
-        ///// </summary>
-        //public Logger WithFormatters(EntryFormatter formatter)
-        //{
-        //    if (formatter == null) throw new ArgumentNullException(nameof(formatter));
-
-        //    return new SingleFormatterLogger(this, formatter);
-        //}
-
-        //sealed class SingleFormatterLogger : Logger
-        //{
-        //    private readonly Action<string> LogAction;
-        //    private readonly EntryFormatter Formatter;
-
-        //    internal SingleFormatterLogger(Logger inner, EntryFormatter formatter)
-        //    {
-        //        LogAction = inner.LogEntry;
-        //        Formatter = formatter;
-        //    }
-
-        //    protected override void LogEntry(string entry)
-        //    {
-        //        Formatter.LogEntry(entry, LogAction);
-        //    }
-        //}
-
         #endregion
 
         /// <summary>

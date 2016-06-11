@@ -28,10 +28,13 @@ namespace Kirkin.Tests.Logging
             Logger outputWriter = Logger.Create(e => output = output + e + Environment.NewLine);
 
             // Test unordered transform.
-            Logger logger = outputWriter.WithFormatters(
-                EntryFormatter.Transform(s => "123" + s),
-                EntryFormatter.Transform(s => s + "321")
-            );
+            Logger logger = new LoggerBuilder(outputWriter) {
+                Formatters = {
+                    EntryFormatter.Transform(s => "123" + s),
+                    EntryFormatter.Transform(s => s + "321")
+                }
+            }
+            .BuildLogger();
 
             logger.Log("Blah");
 
