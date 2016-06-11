@@ -38,7 +38,7 @@ namespace Kirkin.Mapping.Data
                     MappingMode = mappingMode
                 };
 
-                IMapper<IDataRecord, TEntity> mapper = Mapper.CreateMapper(config);
+                Mapper<IDataRecord, TEntity> mapper = new Mapper<IDataRecord, TEntity>(config.ProduceValidMemberMappings());
 
                 while (reader.Read()) {
                     yield return mapper.Map(reader);
@@ -74,7 +74,7 @@ namespace Kirkin.Mapping.Data
                     MappingMode = mappingMode
                 };
 
-                IMapper<IDataRecord, TEntity> mapper = Mapper.CreateMapper(config);
+                Mapper<IDataRecord, TEntity> mapper = new Mapper<IDataRecord, TEntity>(config.ProduceValidMemberMappings());
                 List<TEntity> entities = new List<TEntity>();
 
                 while (await reader.ReadAsync().ConfigureAwait(false)) {
