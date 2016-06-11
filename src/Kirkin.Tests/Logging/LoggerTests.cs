@@ -24,7 +24,7 @@ namespace Kirkin.Tests.Logging
         [Fact]
         public void BuilderApi()
         {
-            Logger logger = new LoggerBuilder(Logger.Null)
+            Logger logger = new LoggerBuilder()
                 .AddFormatter(EntryFormatter.SplitMultilineEntries)
                 .AddFilter(entries => entries.Select(e => "zzz" + e))
                 .AddFormatter(EntryFormatter.LogTimeBetweenEntries())
@@ -53,10 +53,11 @@ namespace Kirkin.Tests.Logging
             // Test ordered transform.
             output = "";
 
-            logger = outputWriter.WithFormatters(
-                EntryFormatter.SplitMultilineEntries,
-                EntryFormatter.Transform(s => "zzz " + s)
-            );
+            logger = new LoggerBuilder()
+                .AddFormatter(EntryFormatter.SplitMultilineEntries)
+                .AddFormatter(EntryFormatter.Transform(s => "zzz " + s))
+                .AddLogger(outputWriter)
+                .BuildLogger();
 
             logger.Log("This" + Environment.NewLine + "is" + Environment.NewLine + "awesome");
 

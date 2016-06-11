@@ -24,6 +24,15 @@ namespace Kirkin.Logging
         }
 
         /// <summary>
+        /// Creates a new <see cref="LoggerBuilder"/> instance with
+        /// the intent of adding a logging target at a later point.
+        /// </summary>
+        public LoggerBuilder()
+            : this(Logger.Null)
+        {
+        }
+
+        /// <summary>
         /// Creates a new <see cref="LoggerBuilder"/> instance which
         /// will produce loggers that perform the given logging action.
         /// </summary>
