@@ -94,7 +94,7 @@ namespace Kirkin.Tests.Logging
         public void LogTimeBetweenEntriesCustomFormat()
         {
             var lines = new List<string>();
-            var logger = Logger.Create(lines.Add).WithFormatters(EntryFormatter.LogSecondsBetweenEntries("{0:0}"));
+            var logger = Logger.Create(lines.Add).WithFormatters(EntryFormatter.LogTimeBetweenEntries("{0:0}"));
 
             logger.Log("1"); // Produces 1 line.
             Thread.Sleep(200);
@@ -109,7 +109,7 @@ namespace Kirkin.Tests.Logging
         public void LogTimeBetweenEntriesDefaultFormat()
         {
             var lines = new List<string>();
-            var logger = Logger.Create(lines.Add).WithFormatters(EntryFormatter.LogSecondsBetweenEntries());
+            var logger = Logger.Create(lines.Add).WithFormatters(EntryFormatter.LogTimeBetweenEntries());
 
             logger.Log("1"); // Produces 1 line.
             Thread.Sleep(200);
@@ -153,7 +153,7 @@ namespace Kirkin.Tests.Logging
             var lines = new List<string>();
 
             var logger = Logger.Create(lines.Add).WithFormatters(
-                EntryFormatter.LogSecondsBetweenEntries(),
+                EntryFormatter.LogTimeBetweenEntries(),
                 EntryFormatter.SplitMultilineEntries, 
                 EntryFormatter.TimestampNonEmptyEntries()
             );

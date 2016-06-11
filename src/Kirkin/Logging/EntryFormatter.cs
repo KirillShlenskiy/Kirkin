@@ -25,10 +25,10 @@ namespace Kirkin.Logging
 
         /// <summary>
         /// Formatter which logs an additional entry
-        /// specifying the number of seconds which passed since the
+        /// specifying the time interval which passed since the
         /// last Log call, for the second and all subsequent Log calls.
         /// </summary>
-        public static IEntryFormatter LogSecondsBetweenEntries(string format = "[Time elapsed: {0:0.000} s.]")
+        public static IEntryFormatter LogTimeBetweenEntries(string format = "[Time elapsed: {0:0.000} s.]")
         {
             if (format == null) throw new ArgumentNullException(nameof(format));
 
