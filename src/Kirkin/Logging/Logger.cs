@@ -51,7 +51,7 @@ namespace Kirkin.Logging
         /// Returns a logger wrapper which applies the given formatters
         /// to each logged entry and logs the result to this logger.
         /// </summary>
-        public Logger WithFormatters(params IEntryFormatter[] formatters)
+        internal Logger WithFormatters(params IEntryFormatter[] formatters)
         {
             if (formatters == null) throw new ArgumentNullException(nameof(formatters));
             if (formatters.Length == 0) return this;

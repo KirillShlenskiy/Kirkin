@@ -7,7 +7,7 @@ namespace Kirkin.Logging
     /// Special type of <see cref="IEntryFormatter"/> which treats logger input as <see cref="IEnumerable{String}"/>.
     /// Allows the consumers to use LINQ to process the stream of log entries.
     /// </summary>
-    public sealed class EntryFilter : IEntryFormatter
+    internal sealed class EntryFilter : IEntryFormatter
     {
         private readonly Func<IEnumerable<string>, IEnumerable<string>> Selector;
 

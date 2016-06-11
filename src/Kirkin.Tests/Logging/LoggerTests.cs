@@ -22,6 +22,16 @@ namespace Kirkin.Tests.Logging
         }
 
         [Fact]
+        public void BuilderApi()
+        {
+            Logger logger = new LoggerBuilder(Logger.Null)
+                .AddFormatter(EntryFormatter.SplitMultilineEntries)
+                .AddFilter(entries => entries.Select(e => "zzz" + e))
+                .AddFormatter(EntryFormatter.LogTimeBetweenEntries())
+                .BuildLogger();
+        }
+
+        [Fact]
         public void Formatters()
         {
             string output = "";
@@ -152,11 +162,11 @@ namespace Kirkin.Tests.Logging
         {
             var lines = new List<string>();
 
-            var logger = Logger.Create(lines.Add).WithFormatters(
-                EntryFormatter.LogTimeBetweenEntries(),
-                EntryFormatter.SplitMultilineEntries, 
-                EntryFormatter.TimestampNonEmptyEntries()
-            );
+            var logger = new LoggerBuilder(lines.Add)
+                .AddFormatter(EntryFormatter.LogTimeBetweenEntries())
+                .AddFormatter(EntryFormatter.SplitMultilineEntries)
+                .AddFormatter(EntryFormatter.TimestampNonEmptyEntries())
+                .BuildLogger();
 
             logger.Log("Zzz" + Environment.NewLine + "Aaa"); // Produces 2 lines because of multiline split.
             logger.Log("This should be timed"); // Produces 2 lines because of time logging.
@@ -205,11 +215,9 @@ namespace Kirkin.Tests.Logging
             // Reimplement split line logger.
             var buffer = new List<string>();
 
-            var logger = new LoggerBuilder(buffer.Add) {
-                Formatters = {
-                    new EntryFilter(entries => entries.SelectMany(s => s.Split('\n').Select(l => l.Replace("\r", string.Empty))))
-                }
-            }.BuildLogger();
+            var logger = new LoggerBuilder(buffer.Add)
+                .AddFilter(entries => entries.SelectMany(s => s.Split('\n').Select(l => l.Replace("\r", string.Empty))))
+                .BuildLogger();
 
             logger.Log("Line 1" + Environment.NewLine + "Line 2" + Environment.NewLine + "Line 3");
 
