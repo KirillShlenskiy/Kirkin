@@ -26,8 +26,13 @@
 // SOFTWARE.
 
 #if FAST_ARRAY_LINQ
-
 namespace System.Linq
+#else
+using System;
+using System.Linq;
+
+namespace Kirkin.Linq
+#endif
 {
     /// <summary>
     /// LINQ extension method overrides that offer greater
@@ -244,5 +249,3 @@ namespace System.Linq
         }
     }
 }
-
-#endif
