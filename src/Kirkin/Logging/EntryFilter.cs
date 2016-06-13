@@ -26,7 +26,9 @@ namespace Kirkin.Logging
         /// </summary>
         public void LogEntry(string entry, Action<string> logEntry)
         {
-            foreach (string filteredEntry in Selector(new[] { entry })) {
+            string[] entries = { entry };
+
+            foreach (string filteredEntry in Selector(entries)) {
                 logEntry(filteredEntry);
             }
         }
