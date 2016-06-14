@@ -55,6 +55,7 @@
     <Compile Include="CustomEqualityComparer.cs" />
     <Compile Include="Diagnostics\Diag.cs" />
     <Compile Include="Diagnostics\NoDebuggerAttachedException.cs" />
+    <Compile Include="Functional\Decorate.cs" />
     <Compile Include="Functional\Executable.cs" />
     <Compile Include="Functional\ExecutableExtensions.cs" />
     <Compile Include="Functional\FunctionalExtensions.cs" />

@@ -116,6 +116,7 @@
     <Compile Include="Experimental\ExpressionTests.cs" />
     <Compile Include="Experimental\NonNullableStringTests.cs" />
     <Compile Include="Experimental\RefCountingTests.cs" />
+    <Compile Include="Functional\DecorateTests.cs" />
     <Compile Include="Functional\ExecutableTests.cs" />
     <Compile Include="Functional\FuncUtilTests.cs" />
     <Compile Include="Functional\HFuncTests.cs" />
