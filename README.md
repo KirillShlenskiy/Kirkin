@@ -1,5 +1,7 @@
-[logo]: https://raw.githubusercontent.com/KirillShlenskiy/Kirkin/master/icons/logo-128.png "Kirkin"
-![logo]
+![logo](https://raw.githubusercontent.com/KirillShlenskiy/Kirkin/master/icons/logo-128.png "Kirkin")
+
+- Kirkin (.NET 4.0, .NET 4.5): ![Kirkin](https://img.shields.io/nuget/v/kirkin.png)
+- Kirkin.Sources: ![Kirkin](https://img.shields.io/nuget/v/kirkin.sources.png)
 
 Kirkin is an experimental .NET component library. It contains simple but (hopefully) useful low-level .NET types.
 
