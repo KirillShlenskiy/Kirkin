@@ -5,7 +5,7 @@ using Kirkin.Functional;
 
 using Xunit;
 
-namespace Kirkin.Tests
+namespace Kirkin.Tests.Functional
 {
     public class DisposableTests
     {

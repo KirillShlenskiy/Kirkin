@@ -109,7 +109,7 @@
     <Compile Include="Collections\Specialised\SingleElementReadOnlyListTests.cs" />
     <Compile Include="CustomEqualityComparerTests.cs" />
     <Compile Include="Dependencies\ContainerTests.cs" />
-    <Compile Include="DisposableTests.cs" />
+    <Compile Include="Functional\DisposableTests.cs" />
     <Compile Include="Experimental\BoxingPerfTests.cs" />
     <Compile Include="Experimental\ExperimentalTests.cs" />
     <Compile Include="Experimental\ExpressionCacheTests.cs" />
