@@ -6,6 +6,7 @@
     /// </summary>
     internal static class StrictMapper<TSource, TTarget>
     {
+        // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
         private static Mapper<TSource, TTarget> _default;
 
         /// <summary>
@@ -16,7 +17,6 @@
         {
             get
             {
-                // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
                 if (_default == null) {
                     _default = CreateMapper();
                 }
@@ -44,6 +44,7 @@
     /// </summary>
     internal static class RelaxedMapper<TSource, TTarget>
     {
+        // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
         private static Mapper<TSource, TTarget> _default;
 
         /// <summary>
@@ -54,7 +55,6 @@
         {
             get
             {
-                // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
                 if (_default == null) {
                     _default = CreateMapper();
                 }
@@ -82,6 +82,7 @@
     /// </summary>
     internal static class AllSourceMembersMapper<TSource, TTarget>
     {
+        // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
         private static Mapper<TSource, TTarget> _default;
 
         /// <summary>
@@ -92,7 +93,6 @@
         {
             get
             {
-                // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
                 if (_default == null) {
                     _default = CreateMapper();
                 }
@@ -120,6 +120,7 @@
     /// </summary>
     internal static class AllTargetMembersMapper<TSource, TTarget>
     {
+        // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
         private static Mapper<TSource, TTarget> _default;
 
         /// <summary>
@@ -130,7 +131,6 @@
         {
             get
             {
-                // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
                 if (_default == null) {
                     _default = CreateMapper();
                 }
