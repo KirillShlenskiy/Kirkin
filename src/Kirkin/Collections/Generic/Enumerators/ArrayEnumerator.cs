@@ -55,7 +55,7 @@ namespace Kirkin.Collections.Generic.Enumerators
         /// Initializes a new instance of the <see cref="ArrayEnumerator{T}"/> struct.
         /// </summary>
         /// <param name="array">The array to enumerate.</param>
-        internal ArrayEnumerator(T[] array)
+        public ArrayEnumerator(T[] array)
         {
             _array = array;
             _index = -1;

@@ -57,7 +57,7 @@ namespace Kirkin.Collections.Generic.Enumerators
         /// Initializes a new instance of the <see cref="ListEnumerator{T}"/> struct.
         /// </summary>
         /// <param name="list">The list to enumerate.</param>
-        internal ListEnumerator(List<T> list)
+        public ListEnumerator(List<T> list)
         {
             _list = list;
             _index = -1;
