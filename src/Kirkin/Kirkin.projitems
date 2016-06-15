@@ -105,5 +105,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Validation\ValidatorBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\ValidatorExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\ValidatorProxy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WeakEvents.cs" />
   </ItemGroup>
 </Project>

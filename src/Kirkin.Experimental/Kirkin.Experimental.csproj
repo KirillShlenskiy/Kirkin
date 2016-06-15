@@ -90,7 +90,6 @@
     <Compile Include="Threading\Tasks\TaskEx2.cs" />
     <Compile Include="Transactions\PropertyTrackingTransaction.cs" />
     <Compile Include="Transactions\PropertyTrackingTransaction`.cs" />
-    <Compile Include="WeakEvents.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Platforms\Kirkin-NET_45\Kirkin-NET_45.csproj">
