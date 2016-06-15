@@ -26,7 +26,7 @@ namespace Kirkin.Tests.Mapping
         {
             Dummy source = new Dummy { ID = 1, Value = "Blah" };
 
-            for (int i = 0; i < 100000; i++)
+            for (int i = 0; i < 1000000; i++)
             {
                 Dummy target = Kirkin.Mapping.Mapper.Clone(source);
             }

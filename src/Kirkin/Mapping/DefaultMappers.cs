@@ -16,17 +16,25 @@
         {
             get
             {
-                if (_default == null)
-                {
-                    MapperConfig<TSource, TTarget> config = new MapperConfig<TSource, TTarget> {
-                        MappingMode = MappingMode.Strict
-                    };
-
-                    _default = new Mapper<TSource, TTarget>(config.ProduceValidMemberMappings());
+                // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
+                if (_default == null) {
+                    _default = CreateMapper();
                 }
 
                 return _default;
             }
+        }
+
+        /// <summary>
+        /// Creates a new mapper instance using appropriate member mapping rules.
+        /// </summary>
+        private static Mapper<TSource, TTarget> CreateMapper()
+        {
+            MapperConfig<TSource, TTarget> config = new MapperConfig<TSource, TTarget> {
+                MappingMode = MappingMode.Strict
+            };
+
+            return new Mapper<TSource, TTarget>(config.ProduceValidMemberMappings());
         }
     }
 
@@ -46,17 +54,25 @@
         {
             get
             {
-                if (_default == null)
-                {
-                    MapperConfig<TSource, TTarget> config = new MapperConfig<TSource, TTarget> {
-                        MappingMode = MappingMode.Relaxed
-                    };
-
-                    _default = new Mapper<TSource, TTarget>(config.ProduceValidMemberMappings());
+                // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
+                if (_default == null) {
+                    _default = CreateMapper();
                 }
 
                 return _default;
             }
+        }
+
+        /// <summary>
+        /// Creates a new mapper instance using appropriate member mapping rules.
+        /// </summary>
+        private static Mapper<TSource, TTarget> CreateMapper()
+        {
+            MapperConfig<TSource, TTarget> config = new MapperConfig<TSource, TTarget> {
+                MappingMode = MappingMode.Relaxed
+            };
+
+            return new Mapper<TSource, TTarget>(config.ProduceValidMemberMappings());
         }
     }
 
@@ -76,17 +92,25 @@
         {
             get
             {
-                if (_default == null)
-                {
-                    MapperConfig<TSource, TTarget> config = new MapperConfig<TSource, TTarget> {
-                        MappingMode = MappingMode.AllSourceMembers
-                    };
-
-                    _default = new Mapper<TSource, TTarget>(config.ProduceValidMemberMappings());
+                // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
+                if (_default == null) {
+                    _default = CreateMapper();
                 }
 
                 return _default;
             }
+        }
+
+        /// <summary>
+        /// Creates a new mapper instance using appropriate member mapping rules.
+        /// </summary>
+        private static Mapper<TSource, TTarget> CreateMapper()
+        {
+            MapperConfig<TSource, TTarget> config = new MapperConfig<TSource, TTarget> {
+                MappingMode = MappingMode.AllSourceMembers
+            };
+
+            return new Mapper<TSource, TTarget>(config.ProduceValidMemberMappings());
         }
     }
 
@@ -106,17 +130,25 @@
         {
             get
             {
-                if (_default == null)
-                {
-                    MapperConfig<TSource, TTarget> config = new MapperConfig<TSource, TTarget> {
-                        MappingMode = MappingMode.AllTargetMembers
-                    };
-
-                    _default = new Mapper<TSource, TTarget>(config.ProduceValidMemberMappings());
+                // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
+                if (_default == null) {
+                    _default = CreateMapper();
                 }
 
                 return _default;
             }
+        }
+
+        /// <summary>
+        /// Creates a new mapper instance using appropriate member mapping rules.
+        /// </summary>
+        private static Mapper<TSource, TTarget> CreateMapper()
+        {
+            MapperConfig<TSource, TTarget> config = new MapperConfig<TSource, TTarget> {
+                MappingMode = MappingMode.AllTargetMembers
+            };
+
+            return new Mapper<TSource, TTarget>(config.ProduceValidMemberMappings());
         }
     }
 }
