@@ -5,7 +5,9 @@ namespace Kirkin.Dependencies
     /// <summary>
     /// Exception thrown when service resolution fails.
     /// </summary>
+#if !__MOBILE__
     [Serializable]
+#endif
     public class ResolutionFailedException : InvalidOperationException
     {
         /// <summary>

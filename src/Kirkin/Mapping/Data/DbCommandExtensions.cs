@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿#if !__MOBILE__
+
+using System.Collections.Generic;
 using System.Data;
 
 #if !NET_40
@@ -87,3 +89,5 @@ namespace Kirkin.Mapping.Data
 #endif
     }
 }
+
+#endif

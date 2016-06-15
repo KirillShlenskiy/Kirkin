@@ -5,7 +5,9 @@ namespace Kirkin.Dependencies
     /// <summary>
     /// Thrown when a transient IDisposable is registered.
     /// </summary>
+#if !__MOBILE__
     [Serializable]
+#endif
     public class DisposableRegistrationException : InvalidOperationException
     {
         /// <summary>
