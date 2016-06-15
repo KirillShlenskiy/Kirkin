@@ -201,20 +201,4 @@ namespace Kirkin.Mapping
 
         #endregion
     }
-
-    /// <summary>
-    /// Constrained <see cref="IMapper{TSource, TTarget}" /> extensions.
-    /// </summary>
-    public static class MapperExtensions
-    {
-        /// <summary>
-        /// Creates a new target instance, executes mapping from source
-        /// to target and returns the newly created target instance.
-        /// </summary>
-        public static TTarget Map<TSource, TTarget>(this IMapper<TSource, TTarget> mapper, TSource source)
-            where TTarget : new()
-        {
-            return mapper.Map(source, new TTarget());
-        }
-    }
 }
