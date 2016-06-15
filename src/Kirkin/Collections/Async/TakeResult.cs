@@ -40,7 +40,7 @@ namespace Kirkin.Collections.Async
         /// Creates a new <see cref="TakeResult{T}"/>
         /// with the given Value and Success = true.
         /// </summary>
-        internal TakeResult(T value)
+        public TakeResult(T value) // Needs to be public for Asynq.
         {
             _value = value;
             _success = true;
