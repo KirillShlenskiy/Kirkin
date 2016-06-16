@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 using Kirkin.Reflection;
 using Kirkin.Transactions;
@@ -155,7 +156,8 @@ namespace Kirkin.Tests.Transactions
             long memEnd = GC.GetTotalMemory(true);
             long diff = memEnd - memStart;
             long intanceSize = diff / arr.Length;
-            int z = 0;
+
+            Debug.Print("Done.");
         }
 
         [Fact]

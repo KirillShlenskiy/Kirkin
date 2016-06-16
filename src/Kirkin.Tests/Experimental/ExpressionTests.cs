@@ -31,17 +31,17 @@ namespace Kirkin.Tests.Experimental
             Assert.Equal(1, size.Height);
         }
 
-        private void Mutate<TObj, TProperty>(TObj obj, Expression<Func<TObj, TProperty>> propertyExpr, Expression<Action<TProperty>> mutation)
-        {
-            PropertyInfo property = ExpressionUtil.Property(propertyExpr);
-            ParameterExpression objParam = Expression.Parameter(typeof(TObj), "obj");
-            Expression paramSubstitutedMutation = new MutationParameterSubstitution(objParam).Visit(mutation);
+        //private void Mutate<TObj, TProperty>(TObj obj, Expression<Func<TObj, TProperty>> propertyExpr, Expression<Action<TProperty>> mutation)
+        //{
+        //    PropertyInfo property = ExpressionUtil.Property(propertyExpr);
+        //    ParameterExpression objParam = Expression.Parameter(typeof(TObj), "obj");
+        //    Expression paramSubstitutedMutation = new MutationParameterSubstitution(objParam).Visit(mutation);
 
-            // Rewrite mutation.
-            var e = Expression.Assign(Expression.MakeMemberAccess(objParam, property), paramSubstitutedMutation);
+        //    // Rewrite mutation.
+        //    var e = Expression.Assign(Expression.MakeMemberAccess(objParam, property), paramSubstitutedMutation);
 
-            Action<TObj> del;
-        }
+        //    Action<TObj> del;
+        //}
 
         sealed class MutationParameterSubstitution : ExpressionVisitor
         {
