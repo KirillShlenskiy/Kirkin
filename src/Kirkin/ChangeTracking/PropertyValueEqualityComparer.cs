@@ -16,8 +16,8 @@ namespace Kirkin.ChangeTracking
         private static PropertyValueEqualityComparer<T> _default;
 
         /// <summary>
-        /// <see cref="PropertyValueEqualityComparer{T}"/> which compares
-        /// all readable public instance properties of <see cref="T"/>.
+        /// <see cref="PropertyValueEqualityComparer{T}"/> which compares all
+        /// readable public instance properties defined for the target type.
         /// </summary>
         public static PropertyValueEqualityComparer<T> Default
         {
