@@ -7,7 +7,7 @@ namespace Kirkin.ChangeTracking
     /// Encapsulates a PropertyInfo reference and the
     /// original and current values of the associated property.
     /// </summary>
-    public struct PropertyValueChange
+    public sealed class PropertyValueChange
     {
         /// <summary>
         /// Property whose value this instance encapsulates.
@@ -27,7 +27,7 @@ namespace Kirkin.ChangeTracking
         /// <summary>
         /// Initialises a new instance with the given PropertyInfo, original and current values.
         /// </summary>
-        public PropertyValueChange(PropertyInfo property, object originalValue, object currentValue)
+        internal PropertyValueChange(PropertyInfo property, object originalValue, object currentValue)
         {
             if (property == null) throw new ArgumentNullException("property");
 
