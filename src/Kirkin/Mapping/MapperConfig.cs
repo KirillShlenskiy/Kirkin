@@ -10,6 +10,20 @@ using Kirkin.Mapping.Engine.MemberMappings;
 namespace Kirkin.Mapping
 {
     /// <summary>
+    /// <see cref="MapperConfig{TSource, TTarget}"/> factory methods.
+    /// </summary>
+    internal static class MapperConfig
+    {
+        /// <summary>
+        /// Expression-based <see cref="MapperConfig{TSource, TTarget}"/> factory placeholder.
+        /// </summary>
+        public static MapperConfig<TSource, TTarget> FromExpression<TSource, TTarget>(Expression<Func<TSource, TTarget>> expression)
+        {
+            throw new NotImplementedException(); // TODO.
+        }
+    }
+
+    /// <summary>
     /// Type which configures mapping between objects of source and target types.
     /// </summary>
     public partial class MapperConfig<TSource, TTarget>
