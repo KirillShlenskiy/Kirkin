@@ -137,9 +137,11 @@ namespace Kirkin.Linq.Expressions
         #region Method
 
         /// <summary>
-        /// Resolves the <see cref="MethodInfo"/> from the given method call expression.
+        /// Resolves the <see cref="MethodInfo"/> for the instance
+        /// method extracted from the given method call expression.
+        /// Works for both void and value-returning methods.
         /// </summary>
-        public static MethodInfo Method<T>(Expression<Action<T>> expr)
+        public static MethodInfo InstanceMethod<T>(Expression<Action<T>> expr)
         {
             if (expr == null) throw new ArgumentNullException(nameof(expr));
 
@@ -147,19 +149,15 @@ namespace Kirkin.Linq.Expressions
         }
 
         /// <summary>
-        /// Resolves the <see cref="MethodInfo"/> from the given method call expression.
+        /// Resolves the <see cref="MethodInfo"/> for the static
+        /// method extracted from the given method call expression.
+        /// Works for both void and value-returning methods.
         /// </summary>
-        public static MethodInfo Method<T>(Expression<Func<T, object>> expr)
+        public static MethodInfo StaticMethod(Expression<Action> expr)
         {
             if (expr == null) throw new ArgumentNullException(nameof(expr));
 
-            UnaryExpression convertExpr = expr.Body as UnaryExpression;
-
-            return convertExpr == null
-                ? MethodFromExpression(expr.Body)
-                // Assuming struct return type. Method expression will be
-                // wrapped by Expression.Convert(<methodExpr>, typeof(object)).
-                : MethodFromExpression(convertExpr.Operand);
+            return MethodFromExpression(expr.Body);
         }
 
         /// <summary>

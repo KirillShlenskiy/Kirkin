@@ -123,9 +123,13 @@ namespace Kirkin.Tests.Linq.Expressions
             Assert.NotNull(get42);
             Assert.NotNull(get);
 
-            Assert.Equal(@void, ExpressionUtil.Method<Dummy>(d => d.Void()));
-            Assert.Equal(get42, ExpressionUtil.Method<Dummy>(d => d.Get()));
-            Assert.Equal(get, ExpressionUtil.Method<Dummy>(d => d.Get("zzz")));
+            Assert.Equal(@void, ExpressionUtil.InstanceMethod<Dummy>(d => d.Void()));
+            Assert.Equal(get42, ExpressionUtil.InstanceMethod<Dummy>(d => d.Get()));
+            Assert.Equal(get, ExpressionUtil.InstanceMethod<Dummy>(d => d.Get("zzz")));
+
+            MethodInfo consoleWriteLine = typeof(Console).GetMethod("WriteLine", new[] { typeof(string) });
+
+            Assert.Equal(consoleWriteLine, ExpressionUtil.StaticMethod(() => Console.WriteLine((string)null)));
         }
 
         private class Dummy
