@@ -147,6 +147,7 @@
     <Compile Include="Transactions\PropertyTrackingTransactionTests.cs" />
     <Compile Include="Reflection\PropertyListTests.cs" />
     <Compile Include="Validation\ValidatorTests.cs" />
+    <Compile Include="ValueConversion\ValueConverterTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

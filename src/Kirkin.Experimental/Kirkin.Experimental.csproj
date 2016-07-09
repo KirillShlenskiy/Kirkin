@@ -91,6 +91,8 @@
     <Compile Include="Threading\Tasks\TaskEx2.cs" />
     <Compile Include="Transactions\PropertyTrackingTransaction.cs" />
     <Compile Include="Transactions\PropertyTrackingTransaction`.cs" />
+    <Compile Include="ValueConversion\ValueConverter.cs" />
+    <Compile Include="ValueConversion\ValueConverterBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Platforms\Kirkin-NET_45\Kirkin-NET_45.csproj">
