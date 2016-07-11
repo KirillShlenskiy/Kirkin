@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirkin.Tests", "Kirkin.Tests\Kirkin.Tests.csproj", "{79EDDF89-8B87-43FB-9B9B-A27E7EAD74EA}"
 EndProject
@@ -22,10 +22,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirkin.NuGetPack", "Kirkin.
 		{71FF1BE9-C99F-416F-A030-0AA846687E75} = {71FF1BE9-C99F-416F-A030-0AA846687E75}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{8F172D15-82B0-466F-8621-7957A712C4A5}"
+	ProjectSection(SolutionItems) = preProject
+		..\nuget\Kirkin.nuspec = ..\nuget\Kirkin.nuspec
+		..\nuget\Kirkin.Sources.nuspec = ..\nuget\Kirkin.Sources.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Kirkin\Kirkin.projitems*{71ff1be9-c99f-416f-a030-0aa846687e75}*SharedItemsImports = 4
 		Kirkin\Kirkin.projitems*{6801a431-743e-4a3c-ab29-3ca896808196}*SharedItemsImports = 13
+		Kirkin\Kirkin.projitems*{71ff1be9-c99f-416f-a030-0aa846687e75}*SharedItemsImports = 4
 		Kirkin\Kirkin.projitems*{95dc82d1-b7c8-4f10-a4a0-747a63382eb6}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
