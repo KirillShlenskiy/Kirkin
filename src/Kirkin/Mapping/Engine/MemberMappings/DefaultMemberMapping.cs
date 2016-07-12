@@ -57,7 +57,7 @@ namespace Kirkin.Mapping.Engine.MemberMappings
 
             // String -> Enum mapping (taken from ExpressMapper and improved).
             // Must come before "normal" nullable/non-nullable conversions.
-            if ((nullableTargetType ?? targetType).IsEnum && sourceType == typeof(string)) {
+            if (sourceType == typeof(string) && (nullableTargetType ?? targetType).IsEnum) {
                 return StringToEnumConversion(value, targetType, nullableTargetType, NullableBehaviour);
             }
 
@@ -66,7 +66,7 @@ namespace Kirkin.Mapping.Engine.MemberMappings
                 return ToStringCall(value);
             }
 
-            // Nullable -> non-nullable or non-nullable to nullable.
+            // Nullable -> non-nullable or non-nullable -> nullable.
             if (nullableSourceType != null ^ nullableTargetType != null) {
                 return NullableConversion(value, sourceType, nullableSourceType, targetType, nullableTargetType, NullableBehaviour);
             }
