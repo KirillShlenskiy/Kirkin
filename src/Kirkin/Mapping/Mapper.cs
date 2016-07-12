@@ -66,32 +66,6 @@ namespace Kirkin.Mapping
 
         #endregion
 
-        #region Dynamic mapping proxies
-
-        /// <summary>
-        /// Creates a new target instance, executes mapping from
-        /// source to target and returns the newly created target instance.
-        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
-        /// </summary>
-        [Obsolete("Use MapStrict.")]
-        public static TTarget DynamicMap<TSource, TTarget>(TSource source)
-            where TTarget : new()
-        {
-            return MapStrict<TSource, TTarget>(source);
-        }
-
-        /// <summary>
-        /// Executes mapping from source to target and returns the target instance.
-        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
-        /// </summary>
-        [Obsolete("Use MapStrict.")]
-        public static TTarget DynamicMap<TSource, TTarget>(TSource source, TTarget target)
-        {
-            return MapStrict(source, target);
-        }
-
-        #endregion
-
         #region Same/derived type mapping
 
         /// <summary>
