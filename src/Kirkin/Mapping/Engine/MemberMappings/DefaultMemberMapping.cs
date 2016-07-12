@@ -108,10 +108,6 @@ namespace Kirkin.Mapping.Engine.MemberMappings
             }
             else if (nullableTargetType != null)
             {
-                if (behaviour == NullableBehaviour.Error) {
-                    throw new MappingException("Non-nullable to nullable conversions not allowed.");
-                }
-
                 ParameterExpression result = Expression.Parameter(targetType, "result");
 
                 return Expression.Block(
@@ -130,7 +126,7 @@ namespace Kirkin.Mapping.Engine.MemberMappings
                 );
             }
 
-            throw new InvalidOperationException();
+            throw new MappingException($"The required type conversion (from {sourceType} to {targetType}) is not implemented.");
         }
 
         private static Expression StringToEnumConversion(Expression value, Type targetType, Type nullableTargetType, NullableBehaviour behaviour)
