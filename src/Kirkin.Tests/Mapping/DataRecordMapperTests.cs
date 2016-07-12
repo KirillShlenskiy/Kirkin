@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+
 using Kirkin.Mapping;
 using Kirkin.Mapping.Data;
 
@@ -60,7 +61,8 @@ namespace Kirkin.Tests.Mapping
                 return;
             }
 
-            var stubs = new List<PersonStub>();
+            var nonNullableStubs = new List<PersonStub>();
+            var nullableStubs = new List<NullablePersonStub>();
 
             using (var cn = new SqlConnection(ConnectionString))
             using (var cmd = new SqlCommand("SELECT TOP 10 NULL AS PersonID, DisplayName FROM Person ORDER BY PersonID", cn))
@@ -69,19 +71,26 @@ namespace Kirkin.Tests.Mapping
 
                 using (var reader = cmd.ExecuteReader())
                 {
-                    var mapper = Mapper.CreateMapper(new DataRecordToObjectMapperConfig<PersonStub>(reader));
+                    var nonNullableMapper = Mapper.CreateMapper(new DataRecordToObjectMapperConfig<PersonStub>(reader));
+                    var nullableMapper = Mapper.CreateMapper(new DataRecordToObjectMapperConfig<NullablePersonStub>(reader));
 
                     while (reader.Read())
                     {
-                        var person = mapper.Map(reader, new PersonStub { personID = 1 });
+                        var nonNullablePerson = nonNullableMapper.Map(reader, new PersonStub { personID = 1 });
 
-                        stubs.Add(person);
+                        nonNullableStubs.Add(nonNullablePerson);
+
+                        var nullablePerson = nullableMapper.Map(reader, new NullablePersonStub { PersonID = 1 });
+
+                        nullableStubs.Add(nullablePerson);
                     }
                 }
             }
 
-            Assert.NotEmpty(stubs);
-            Assert.True(stubs.All(s => s.personID == 0), "All personIDs expected to be zero.");
+            Assert.NotEmpty(nonNullableStubs);
+            Assert.NotEmpty(nullableStubs);
+            Assert.True(nonNullableStubs.All(s => s.personID == 0), "All personIDs expected to be zero.");
+            Assert.True(nullableStubs.All(s => !s.PersonID.HasValue), "All PersonIDs expected to be NULL.");
 
             Debug.Print("Done.");
         }
@@ -89,6 +98,12 @@ namespace Kirkin.Tests.Mapping
         sealed class PersonStub
         {
             public int personID { get; set; } // Wrong case on purpose to test defaults.
+            public string DisplayName { get; set; }
+        }
+
+        sealed class NullablePersonStub
+        {
+            public int? PersonID { get; set; }
             public string DisplayName { get; set; }
         }
     }
