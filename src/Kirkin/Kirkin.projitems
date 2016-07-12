@@ -30,6 +30,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Filters\ICollectionFilter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\Array.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\ArrayBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\ArrayUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\Enumerators\ArrayEnumerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\Enumerators\ListEnumerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\KeyedCollection.cs" />
