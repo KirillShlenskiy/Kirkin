@@ -408,6 +408,13 @@ namespace Kirkin.Tests.Mapping
         }
 
         [Fact]
+        public void IntToNullableEnum()
+        {
+            Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new IntValueDummy { Value = 1 }, new NullableEnumDummy()).Value);
+            Assert.Null(Mapper.MapStrict(new IntValueDummy { Value = 0 }, new NullableEnumDummy()).Value);
+        }
+
+        [Fact]
         public void NullableIntToEnum()
         {
             Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new NullableIntValueDummy { Value = 1 }, new EnumDummy()).Value);
@@ -416,18 +423,41 @@ namespace Kirkin.Tests.Mapping
         }
 
         [Fact]
-        public void IntToNullableEnum()
-        {
-            Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new IntValueDummy { Value = 1 }, new NullableEnumDummy()).Value);
-            Assert.Null(Mapper.MapStrict(new IntValueDummy { Value = 0 }, new NullableEnumDummy()).Value);
-        }
-
-        [Fact]
         public void NullableIntToNullableEnum()
         {
             Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new NullableIntValueDummy { Value = 1 }, new NullableEnumDummy()).Value);
             Assert.Equal(ValueEnum.None, Mapper.MapStrict(new NullableIntValueDummy { Value = 0 }, new NullableEnumDummy()).Value);
             Assert.Null(Mapper.MapStrict(new NullableIntValueDummy { Value = null }, new NullableEnumDummy()).Value);
+        }
+
+        [Fact]
+        public void EnumToInt()
+        {
+            Assert.Equal(1, Mapper.MapStrict(new EnumDummy { Value = ValueEnum.Test }, new IntValueDummy()).Value);
+            Assert.Equal(0, Mapper.MapStrict(new EnumDummy { Value = ValueEnum.None }, new IntValueDummy()).Value);
+        }
+
+        [Fact]
+        public void EnumToNullableInt()
+        {
+            Assert.Equal(1, Mapper.MapStrict(new EnumDummy { Value = ValueEnum.Test }, new NullableIntValueDummy()).Value);
+            Assert.Null(Mapper.MapStrict(new EnumDummy { Value = ValueEnum.None }, new NullableIntValueDummy()).Value);
+        }
+
+        [Fact]
+        public void NullableEnumToInt()
+        {
+            Assert.Equal(1, Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.Test }, new IntValueDummy()).Value);
+            Assert.Equal(0, Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.None }, new IntValueDummy()).Value);
+            Assert.Equal(0, Mapper.MapStrict(new NullableEnumDummy { Value = null }, new IntValueDummy()).Value);
+        }
+
+        [Fact]
+        public void NullableEnumToNullableInt()
+        {
+            Assert.Equal(1, Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.Test }, new NullableIntValueDummy()).Value);
+            Assert.Equal(0, Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.None }, new NullableIntValueDummy()).Value);
+            Assert.Null(Mapper.MapStrict(new NullableEnumDummy { Value = null }, new NullableIntValueDummy()).Value);
         }
 
         [Fact]
