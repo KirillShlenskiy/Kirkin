@@ -58,7 +58,7 @@ namespace Kirkin.Mapping.Engine.MemberMappings
             // String -> Enum mapping (taken from ExpressMapper and improved).
             // Must come before "normal" nullable/non-nullable conversions.
             if ((nullableTargetType ?? targetType).IsEnum && sourceType == typeof(string)) {
-                return StringToEnumConversion(value, targetType, nullableTargetType);
+                return StringToEnumConversion(value, targetType, nullableTargetType, NullableBehaviour);
             }
 
             // Nullable -> non-nullable or non-nullable to nullable.
@@ -97,6 +97,15 @@ namespace Kirkin.Mapping.Engine.MemberMappings
 
             if (nullableSourceType != null)
             {
+                //if (targetType == typeof(string))
+                //{
+                //    return Expression.IfThenElse(
+                //        Expression.Equal(value, Expression.Default(sourceType)),
+                //        Expression.Constant(null),
+                //        ToStringCall(value)
+                //    );
+                //}
+
                 if (nullableTargetType == null)
                 {
                     Expression coalesce = Expression.Coalesce(value, Expression.Default(nullableSourceType));
@@ -133,7 +142,7 @@ namespace Kirkin.Mapping.Engine.MemberMappings
             throw new InvalidOperationException();
         }
 
-        private static Expression StringToEnumConversion(Expression value, Type targetType, Type nullableTargetType)
+        private static Expression StringToEnumConversion(Expression value, Type targetType, Type nullableTargetType, NullableBehaviour behaviour)
         {
             ParameterExpression result = Expression.Parameter(targetType, "result"); // Enum or Nullable<Enum>.
 
@@ -141,7 +150,7 @@ namespace Kirkin.Mapping.Engine.MemberMappings
                 new[] { result },
                 Expression.IfThenElse(
                     Expression.Equal(value, ExpressionConstants.NullConstant),
-                    nullableTargetType == null
+                    (nullableTargetType == null && behaviour == NullableBehaviour.Error)
                         ? (Expression)Expression.Throw(Expression.Constant(new MappingException("Null string to nun-nullable Enum not supported.")))
                         : Expression.Assign(result, Expression.Default(targetType)),
                     Expression.Assign(

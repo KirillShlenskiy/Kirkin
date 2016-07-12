@@ -369,35 +369,32 @@ namespace Kirkin.Tests.Mapping
         [Fact]
         public void StringToEnum()
         {
-            var dummy = new Dummy { ID = 5, Value = "TEST" };
-            var target = new EnumDummy();
-
-            Mapper.MapStrict(dummy, target);
-
-            Assert.Equal(ValueEnum.Test, target.Value);
-
-            // Null string to Enum.
-            dummy.Value = null;
-
-            Assert.Throws<MappingException>(() => Mapper.MapStrict(dummy, target));
+            Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new Dummy { Value = "TEST" }, new EnumDummy()).Value);
+            Assert.Equal(ValueEnum.None, Mapper.MapStrict(new Dummy { Value = null }, new EnumDummy()).Value);
+            Assert.Throws<ArgumentException>(() => Mapper.MapStrict(new Dummy { Value = "" }, new EnumDummy()));
         }
-
+            
         [Fact]
         public void StringToNullableEnum()
         {
-            var dummy = new Dummy { ID = 5, Value = "TEST" };
-            var target = new NullableEnumDummy();
+            Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new Dummy { Value = "TEST" }, new NullableEnumDummy()).Value);
+            Assert.Null(Mapper.MapStrict(new Dummy { Value = null }, new NullableEnumDummy()).Value);
+            Assert.Throws<ArgumentException>(() => Mapper.MapStrict(new Dummy { Value = "" }, new NullableEnumDummy()));
+        }
 
-            Mapper.MapStrict(dummy, target);
+        [Fact]
+        public void EnumToString()
+        {
+            Assert.Equal("Test", Mapper.MapStrict(new EnumDummy { Value = ValueEnum.Test }, new Dummy()).Value);
+            Assert.Equal("None", Mapper.MapStrict(new EnumDummy(), new Dummy()).Value);
+        }
 
-            Assert.Equal(ValueEnum.Test, target.Value);
-
-            // Null string to Enum.
-            dummy.Value = null;
-
-            Mapper.MapStrict(dummy, target);
-
-            Assert.False(target.Value.HasValue); // This is questionable behaviour.
+        [Fact]
+        public void NullableEnumToString()
+        {
+            Assert.Equal("Test", Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.Test }, new Dummy()).Value);
+            Assert.Equal("None", Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.None }, new Dummy()).Value);
+            Assert.Null(Mapper.MapStrict(new NullableEnumDummy { Value = null }, new Dummy()).Value);
         }
 
         [Fact]
@@ -458,17 +455,6 @@ namespace Kirkin.Tests.Mapping
             Assert.Equal(1, Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.Test }, new NullableIntValueDummy()).Value);
             Assert.Equal(0, Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.None }, new NullableIntValueDummy()).Value);
             Assert.Null(Mapper.MapStrict(new NullableEnumDummy { Value = null }, new NullableIntValueDummy()).Value);
-        }
-
-        [Fact]
-        public void EnumToString()
-        {
-            var source = new EnumDummy { Value = ValueEnum.Test };
-            var target = new Dummy();
-
-            Mapper.MapStrict(source, target);
-
-            Assert.Equal("Test", target.Value);
         }
 
         [Fact]
