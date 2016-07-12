@@ -97,8 +97,13 @@ namespace Kirkin.Mapping.Engine.MemberMappings
 
             if (nullableSourceType != null)
             {
-                if (nullableTargetType == null) {
-                    return Expression.Coalesce(value, Expression.Default(nullableSourceType));
+                if (nullableTargetType == null)
+                {
+                    Expression coalesce = Expression.Coalesce(value, Expression.Default(nullableSourceType));
+
+                    return (nullableSourceType == targetType)
+                        ? coalesce
+                        : Expression.Convert(coalesce, targetType);
                 }
             }
             else if (nullableTargetType != null)
