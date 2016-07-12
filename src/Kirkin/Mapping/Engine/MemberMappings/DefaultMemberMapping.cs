@@ -61,14 +61,14 @@ namespace Kirkin.Mapping.Engine.MemberMappings
                 return StringToEnumConversion(value, targetType, nullableTargetType, NullableBehaviour);
             }
 
-            // Nullable -> non-nullable or non-nullable to nullable.
-            if (nullableSourceType != null ^ nullableTargetType != null) {
-                return NullableConversion(value, sourceType, nullableSourceType, targetType, nullableTargetType, NullableBehaviour);
-            }
-
             // Non-string -> string (simply calls value.ToString()).
             if (targetType == typeof(string)) {
                 return ToStringCall(value);
+            }
+
+            // Nullable -> non-nullable or non-nullable to nullable.
+            if (nullableSourceType != null ^ nullableTargetType != null) {
+                return NullableConversion(value, sourceType, nullableSourceType, targetType, nullableTargetType, NullableBehaviour);
             }
 
             // Attempt cast (will likely work for most IConvertible
@@ -97,21 +97,6 @@ namespace Kirkin.Mapping.Engine.MemberMappings
 
             if (nullableSourceType != null)
             {
-                if (targetType == typeof(string))
-                {
-                    ParameterExpression result = Expression.Parameter(targetType, "result");
-
-                    return Expression.Block(
-                        new[] { result },
-                        Expression.IfThenElse(
-                            Expression.Equal(value, Expression.Default(sourceType)),
-                            Expression.Assign(result, Expression.Default(targetType)),
-                            Expression.Assign(result, ToStringCall(value))
-                        ),
-                        result
-                    );
-                }
-
                 if (nullableTargetType == null)
                 {
                     Expression coalesce = Expression.Coalesce(value, Expression.Default(nullableSourceType));
@@ -179,7 +164,24 @@ namespace Kirkin.Mapping.Engine.MemberMappings
 
         private static Expression ToStringCall(Expression value)
         {
-            return Expression.Call(value, typeof(object).GetMethod(nameof(ToString)));
+            Expression toStringExpr = Expression.Call(value, typeof(object).GetMethod(nameof(ToString)));
+
+            // Call ToString directly on structs - except for
+            // Nullable<T> which is treated as a reference type.
+            if (value.Type.IsValueType && !(value.Type.IsGenericType && value.Type.GetGenericTypeDefinition() == typeof(Nullable<>))) {
+                return toStringExpr;
+            }
+
+            ParameterExpression str = Expression.Parameter(typeof(string), nameof(str));
+
+            return Expression.Block(
+                new[] { str },
+                Expression.IfThen(
+                    Expression.NotEqual(value, ExpressionConstants.NullConstant),
+                    Expression.Assign(str, toStringExpr)
+                ),
+                str
+            );
         }
 
         #endregion
