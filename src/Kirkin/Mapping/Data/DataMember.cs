@@ -24,8 +24,11 @@ namespace Kirkin.Mapping.Data
 
             Member[] members = new Member[dataRecord.FieldCount];
 
-            for (int i = 0; i < dataRecord.FieldCount; i++) {
-                members[i] = new GenericDataMember<IDataRecord>(dataRecord.GetName(i), dataRecord.GetFieldType(i));
+            for (int i = 0; i < dataRecord.FieldCount; i++)
+            {
+                Type fieldType = TypeForMapping(dataRecord.GetFieldType(i), isNullable: true);
+
+                members[i] = new GenericDataMember<IDataRecord>(dataRecord.GetName(i), fieldType);
             }
 
             return members;
@@ -43,11 +46,25 @@ namespace Kirkin.Mapping.Data
             for (int i = 0; i < dataTable.Columns.Count; i++)
             {
                 DataColumn column = dataTable.Columns[i];
+                Type columnType = TypeForMapping(column.DataType, column.AllowDBNull);
 
-                members[i] = new GenericDataMember<DataRow>(column.ColumnName, column.DataType);
+                members[i] = new GenericDataMember<DataRow>(column.ColumnName, columnType);
             }
 
             return members;
+        }
+
+        /// <summary>
+        /// Resolves the appropriate CLR type to ensure that
+        /// nullable value type data columns are treated as such.
+        /// </summary>
+        private static Type TypeForMapping(Type concreteType, bool isNullable)
+        {
+            if (isNullable && concreteType.IsValueType) {
+                return typeof(Nullable<>).MakeGenericType(concreteType);
+            }
+
+            return concreteType;
         }
 
         #endregion
