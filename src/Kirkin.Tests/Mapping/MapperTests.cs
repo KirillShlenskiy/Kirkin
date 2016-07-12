@@ -405,26 +405,29 @@ namespace Kirkin.Tests.Mapping
         {
             Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new IntValueDummy { Value = 1 }, new EnumDummy()).Value);
             Assert.Equal(ValueEnum.None, Mapper.MapStrict(new IntValueDummy { Value = 0 }, new EnumDummy()).Value);
-            Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new NullableIntValueDummy { Value = 1 }, new EnumDummy()).Value);
-            Assert.Equal(ValueEnum.None, Mapper.MapStrict(new NullableIntValueDummy { Value = 0 }, new EnumDummy()).Value);
         }
 
-        [Fact(Skip = "TODO")]
+        [Fact]
+        public void NullableIntToEnum()
+        {
+            Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new NullableIntValueDummy { Value = 1 }, new EnumDummy()).Value);
+            Assert.Equal(ValueEnum.None, Mapper.MapStrict(new NullableIntValueDummy { Value = 0 }, new EnumDummy()).Value);
+            Assert.Equal(ValueEnum.None, Mapper.MapStrict(new NullableIntValueDummy { Value = null }, new EnumDummy()).Value);
+        }
+
+        [Fact]
         public void IntToNullableEnum()
         {
-            //var dummy = new Dummy { ID = 5, Value = "TEST" };
-            //var target = new NullableEnumDummy();
+            Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new IntValueDummy { Value = 1 }, new NullableEnumDummy()).Value);
+            Assert.Null(Mapper.MapStrict(new IntValueDummy { Value = 0 }, new NullableEnumDummy()).Value);
+        }
 
-            //Mapper.MapStrict(dummy, target);
-
-            //Assert.Equal(ValueEnum.Test, target.Value);
-
-            //// Null string to Enum.
-            //dummy.Value = null;
-
-            //Mapper.MapStrict(dummy, target);
-
-            //Assert.False(target.Value.HasValue); // This is questionable behaviour.
+        [Fact]
+        public void NullableIntToNullableEnum()
+        {
+            Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new NullableIntValueDummy { Value = 1 }, new NullableEnumDummy()).Value);
+            Assert.Equal(ValueEnum.None, Mapper.MapStrict(new NullableIntValueDummy { Value = 0 }, new NullableEnumDummy()).Value);
+            Assert.Null(Mapper.MapStrict(new NullableIntValueDummy { Value = null }, new NullableEnumDummy()).Value);
         }
 
         [Fact]
