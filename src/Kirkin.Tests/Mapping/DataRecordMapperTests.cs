@@ -95,6 +95,39 @@ namespace Kirkin.Tests.Mapping
             Debug.Print("Done.");
         }
 
+        [Fact]
+        public void MapDefaultOfTToNullableT()
+        {
+            if (!Environment.MachineName.Equals("BABUSHKA", StringComparison.OrdinalIgnoreCase)) {
+                return;
+            }
+
+            var stubs = new List<NullablePersonStub>();
+
+            using (var cn = new SqlConnection(ConnectionString))
+            using (var cmd = new SqlCommand("SELECT TOP 10 0 AS PersonID, DisplayName FROM Person ORDER BY PersonID", cn))
+            {
+                cn.Open();
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    var mapper = Mapper.CreateMapper(new DataRecordToObjectMapperConfig<NullablePersonStub>(reader));
+
+                    while (reader.Read())
+                    {
+                        var nullablePerson = mapper.Map(reader, new NullablePersonStub { PersonID = 1 });
+
+                        stubs.Add(nullablePerson);
+                    }
+                }
+            }
+
+            Assert.NotEmpty(stubs);
+            Assert.True(stubs.All(s => s.PersonID.HasValue && s.PersonID.Value == 0), "All PersonIDs expected to be NULL.");
+
+            Debug.Print("Done.");
+        }
+
         sealed class PersonStub
         {
             public int personID { get; set; } // Wrong case on purpose to test defaults.
