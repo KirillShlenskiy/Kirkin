@@ -401,6 +401,33 @@ namespace Kirkin.Tests.Mapping
         }
 
         [Fact]
+        public void IntToEnum()
+        {
+            Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new IntValueDummy { Value = 1 }, new EnumDummy()).Value);
+            Assert.Equal(ValueEnum.None, Mapper.MapStrict(new IntValueDummy { Value = 0 }, new EnumDummy()).Value);
+            Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new NullableIntValueDummy { Value = 1 }, new EnumDummy()).Value);
+            Assert.Equal(ValueEnum.None, Mapper.MapStrict(new NullableIntValueDummy { Value = 0 }, new EnumDummy()).Value);
+        }
+
+        [Fact(Skip = "TODO")]
+        public void IntToNullableEnum()
+        {
+            //var dummy = new Dummy { ID = 5, Value = "TEST" };
+            //var target = new NullableEnumDummy();
+
+            //Mapper.MapStrict(dummy, target);
+
+            //Assert.Equal(ValueEnum.Test, target.Value);
+
+            //// Null string to Enum.
+            //dummy.Value = null;
+
+            //Mapper.MapStrict(dummy, target);
+
+            //Assert.False(target.Value.HasValue); // This is questionable behaviour.
+        }
+
+        [Fact]
         public void EnumToString()
         {
             var source = new EnumDummy { Value = ValueEnum.Test };
@@ -602,6 +629,18 @@ namespace Kirkin.Tests.Mapping
         {
             public int ID { get; set; }
             public ValueEnum? Value { get; set; }
+        }
+
+        sealed class IntValueDummy
+        {
+            public int ID { get; set; }
+            public int Value { get; set; }
+        }
+
+        sealed class NullableIntValueDummy
+        {
+            public int ID { get; set; }
+            public int? Value { get; set; }
         }
 
         enum ValueEnum
