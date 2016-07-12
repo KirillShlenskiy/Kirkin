@@ -97,14 +97,20 @@ namespace Kirkin.Mapping.Engine.MemberMappings
 
             if (nullableSourceType != null)
             {
-                //if (targetType == typeof(string))
-                //{
-                //    return Expression.IfThenElse(
-                //        Expression.Equal(value, Expression.Default(sourceType)),
-                //        Expression.Constant(null),
-                //        ToStringCall(value)
-                //    );
-                //}
+                if (targetType == typeof(string))
+                {
+                    ParameterExpression result = Expression.Parameter(targetType, "result");
+
+                    return Expression.Block(
+                        new[] { result },
+                        Expression.IfThenElse(
+                            Expression.Equal(value, Expression.Default(sourceType)),
+                            Expression.Assign(result, Expression.Default(targetType)),
+                            Expression.Assign(result, ToStringCall(value))
+                        ),
+                        result
+                    );
+                }
 
                 if (nullableTargetType == null)
                 {

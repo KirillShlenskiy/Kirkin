@@ -458,6 +458,23 @@ namespace Kirkin.Tests.Mapping
         }
 
         [Fact]
+        public void IntToString()
+        {
+            Assert.Equal("0", Mapper.MapStrict(new IntValueDummy { Value = 0 }, new Dummy()).Value);
+            Assert.Equal("0", Mapper.MapStrict(new NullableIntValueDummy { Value = 0 }, new Dummy()).Value);
+            Assert.Null(Mapper.MapStrict(new NullableIntValueDummy { Value = null }, new Dummy()).Value);
+        }
+
+        [Fact]
+        public void NullStringToNullableInt()
+        {
+            // Strict mapping: even though we could technically execute it
+            // for the case where Value = null, all other cases would fail,
+            // so going from string -> Nullable<T> is prohibited.
+            Assert.Throws<InvalidOperationException>(() => Mapper.MapStrict(new Dummy { Value = null }, new NullableIntValueDummy()));
+        }
+
+        [Fact]
         public void StructMapping()
         {
             var source = new Size { Width = 2, Height = 4 };
