@@ -119,6 +119,15 @@ namespace Kirkin.Mapping
         #region Public methods
 
         /// <summary>
+        /// Creates a <see cref="Mapper{TSource, TTarget}"/> instance
+        /// configured accoring to the rules of this builder.
+        /// </summary>
+        internal Mapper<TSource, TTarget> BuildMapper()
+        {
+            return new Mapper<TSource, TTarget>(ProduceValidMemberMappings());
+        }
+
+        /// <summary>
         /// Validates member mapping according to this instance's <see cref="MappingMode"/>.
         /// </summary>
         public void Validate()
