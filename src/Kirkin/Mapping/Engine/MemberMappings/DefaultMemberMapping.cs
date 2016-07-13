@@ -57,18 +57,18 @@ namespace Kirkin.Mapping.Engine.MemberMappings
 
             // String -> Enum mapping (taken from ExpressMapper and improved).
             // Must come before "normal" nullable/non-nullable conversions.
-            if ((nullableTargetType ?? targetType).IsEnum && sourceType == typeof(string)) {
+            if (sourceType == typeof(string) && (nullableTargetType ?? targetType).IsEnum) {
                 return StringToEnumConversion(value, targetType, nullableTargetType, NullableBehaviour);
-            }
-
-            // Nullable -> non-nullable or non-nullable to nullable.
-            if (nullableSourceType != null ^ nullableTargetType != null) {
-                return NullableConversion(value, sourceType, nullableSourceType, targetType, nullableTargetType, NullableBehaviour);
             }
 
             // Non-string -> string (simply calls value.ToString()).
             if (targetType == typeof(string)) {
                 return ToStringCall(value);
+            }
+
+            // Nullable -> non-nullable or non-nullable -> nullable.
+            if (nullableSourceType != null ^ nullableTargetType != null) {
+                return NullableConversion(value, sourceType, nullableSourceType, targetType, nullableTargetType, NullableBehaviour);
             }
 
             // Attempt cast (will likely work for most IConvertible
@@ -97,21 +97,6 @@ namespace Kirkin.Mapping.Engine.MemberMappings
 
             if (nullableSourceType != null)
             {
-                if (targetType == typeof(string))
-                {
-                    ParameterExpression result = Expression.Parameter(targetType, "result");
-
-                    return Expression.Block(
-                        new[] { result },
-                        Expression.IfThenElse(
-                            Expression.Equal(value, Expression.Default(sourceType)),
-                            Expression.Assign(result, Expression.Default(targetType)),
-                            Expression.Assign(result, ToStringCall(value))
-                        ),
-                        result
-                    );
-                }
-
                 if (nullableTargetType == null)
                 {
                     Expression coalesce = Expression.Coalesce(value, Expression.Default(nullableSourceType));
@@ -123,10 +108,6 @@ namespace Kirkin.Mapping.Engine.MemberMappings
             }
             else if (nullableTargetType != null)
             {
-                if (behaviour == NullableBehaviour.Error) {
-                    throw new MappingException("Non-nullable to nullable conversions not allowed.");
-                }
-
                 ParameterExpression result = Expression.Parameter(targetType, "result");
 
                 return Expression.Block(
@@ -145,7 +126,7 @@ namespace Kirkin.Mapping.Engine.MemberMappings
                 );
             }
 
-            throw new InvalidOperationException();
+            throw new MappingException($"The required type conversion (from {sourceType} to {targetType}) is not implemented.");
         }
 
         private static Expression StringToEnumConversion(Expression value, Type targetType, Type nullableTargetType, NullableBehaviour behaviour)
@@ -179,7 +160,24 @@ namespace Kirkin.Mapping.Engine.MemberMappings
 
         private static Expression ToStringCall(Expression value)
         {
-            return Expression.Call(value, typeof(object).GetMethod(nameof(ToString)));
+            Expression toStringExpr = Expression.Call(value, typeof(object).GetMethod(nameof(ToString)));
+
+            // Call ToString directly on structs - except for
+            // Nullable<T> which is treated as a reference type.
+            if (value.Type.IsValueType && !(value.Type.IsGenericType && value.Type.GetGenericTypeDefinition() == typeof(Nullable<>))) {
+                return toStringExpr;
+            }
+
+            ParameterExpression str = Expression.Parameter(typeof(string), nameof(str));
+
+            return Expression.Block(
+                new[] { str },
+                Expression.IfThen(
+                    Expression.NotEqual(value, ExpressionConstants.NullConstant),
+                    Expression.Assign(str, toStringExpr)
+                ),
+                str
+            );
         }
 
         #endregion

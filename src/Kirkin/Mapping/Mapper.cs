@@ -30,7 +30,7 @@ namespace Kirkin.Mapping
 
             configAction(config);
 
-            return new Mapper<TSource, TTarget>(config.ProduceValidMemberMappings());
+            return config.BuildMapper();
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Kirkin.Mapping
         {
             if (config == null) throw new ArgumentNullException(nameof(config));
 
-            return new Mapper<TSource, TTarget>(config.ProduceValidMemberMappings());
+            return config.BuildMapper();
         }
 
         /// <summary>
