@@ -124,8 +124,8 @@ namespace Kirkin.Mapping.Data
                 //     return result;
                 // };
 
-                ParameterExpression result = Expression.Parameter(Type, "result");
-                ParameterExpression value = Expression.Parameter(typeof(object), "value");
+                ParameterExpression result = Expression.Parameter(Type, nameof(result));
+                ParameterExpression value = Expression.Parameter(typeof(object), nameof(value));
 
                 return Expression.Block(
                     new[] { result, value },
