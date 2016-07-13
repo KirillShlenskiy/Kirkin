@@ -108,7 +108,7 @@ namespace Kirkin.Mapping.Engine.MemberMappings
             }
             else if (nullableTargetType != null)
             {
-                ParameterExpression result = Expression.Parameter(targetType, "result");
+                ParameterExpression result = Expression.Parameter(targetType, nameof(result));
 
                 return Expression.Block(
                     new[] { result },
@@ -131,7 +131,7 @@ namespace Kirkin.Mapping.Engine.MemberMappings
 
         private static Expression StringToEnumConversion(Expression value, Type targetType, Type nullableTargetType, NullableBehaviour behaviour)
         {
-            ParameterExpression result = Expression.Parameter(targetType, "result"); // Enum or Nullable<Enum>.
+            ParameterExpression result = Expression.Parameter(targetType, nameof(result)); // Enum or Nullable<Enum>.
 
             return Expression.Block(
                 new[] { result },
