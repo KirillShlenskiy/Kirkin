@@ -62,6 +62,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\Compilers\CachedMappingCompiler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\Compilers\MappingCompiler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\Compilers\MemberMappingCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\ExpressionTypeConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\Member.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\MemberMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\MemberMappings\DefaultMemberMapping.cs" />
