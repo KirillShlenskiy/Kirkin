@@ -8,7 +8,8 @@ namespace Kirkin.Mapping.Engine.MemberMappings
     /// <summary>
     /// Direct mapping between source and target members with support for conversions.
     /// </summary>
-    internal sealed class DefaultMemberMapping<TSource, TTarget> : MemberMapping<TSource, TTarget>
+    internal sealed class DefaultMemberMapping<TSource, TTarget>
+        : MemberMapping<TSource, TTarget>
         , IEquatable<DefaultMemberMapping<TSource, TTarget>>
     {
         /// <summary>

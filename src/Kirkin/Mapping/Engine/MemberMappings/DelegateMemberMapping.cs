@@ -7,7 +7,8 @@ namespace Kirkin.Mapping.Engine.MemberMappings
     /// <summary>
     /// Custom mapping between source and target.
     /// </summary>
-    internal sealed class DelegateMemberMapping<TSource, TTarget, TValue> : MemberMapping<TSource, TTarget>
+    internal sealed class DelegateMemberMapping<TSource, TTarget, TValue>
+        : MemberMapping<TSource, TTarget>
     {
         /// <summary>
         /// Custom source value resolution delegate.

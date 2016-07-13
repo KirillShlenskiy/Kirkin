@@ -6,7 +6,8 @@ namespace Kirkin.Mapping.Engine.MemberMappings
     /// <summary>
     /// Custom mapping between source and target.
     /// </summary>
-    internal sealed class ExpressionMemberMapping<TSource, TTarget, TValue> : MemberMapping<TSource, TTarget>
+    internal sealed class ExpressionMemberMapping<TSource, TTarget, TValue>
+        : MemberMapping<TSource, TTarget>
     {
         /// <summary>
         /// Custom source value resolution delegate.
