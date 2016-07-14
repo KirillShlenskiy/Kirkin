@@ -61,7 +61,7 @@ namespace Kirkin.Mapping
                 config.TargetMember(propertyAccessor.Property.Name).Reset();
             }
 
-            return new Mapper<T, T>(config.ProduceValidMemberMappings());
+            return config.BuildMapper();
         }
 
         #endregion

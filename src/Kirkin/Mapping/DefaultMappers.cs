@@ -34,7 +34,7 @@
                 MappingMode = MappingMode.Strict
             };
 
-            return new Mapper<TSource, TTarget>(config.ProduceValidMemberMappings());
+            return config.BuildMapper();
         }
     }
 
@@ -72,7 +72,7 @@
                 MappingMode = MappingMode.Relaxed
             };
 
-            return new Mapper<TSource, TTarget>(config.ProduceValidMemberMappings());
+            return config.BuildMapper();
         }
     }
 
@@ -110,7 +110,7 @@
                 MappingMode = MappingMode.AllSourceMembers
             };
 
-            return new Mapper<TSource, TTarget>(config.ProduceValidMemberMappings());
+            return config.BuildMapper();
         }
     }
 
@@ -148,7 +148,7 @@
                 MappingMode = MappingMode.AllTargetMembers
             };
 
-            return new Mapper<TSource, TTarget>(config.ProduceValidMemberMappings());
+            return config.BuildMapper();
         }
     }
 }
