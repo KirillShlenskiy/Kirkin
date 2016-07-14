@@ -141,8 +141,8 @@ namespace Kirkin.Mapping
         #region Public methods
 
         /// <summary>
-        /// Creates a <see cref="Mapper{TSource, TTarget}"/> instance
-        /// configured accoring to the rules of this builder.
+        /// Creates an immutable <see cref="Mapper{TSource, TTarget}"/>
+        /// instance configured accoring to the rules defined by this builder.
         /// </summary>
         public Mapper<TSource, TTarget> BuildMapper()
         {
