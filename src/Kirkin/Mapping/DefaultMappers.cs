@@ -1,7 +1,7 @@
 ﻿namespace Kirkin.Mapping
 {
     /// <summary>
-    /// Wraps the default <see cref="IMapper{TSource, TTarget}"/>
+    /// Wraps the default <see cref="Mapper{TSource, TTarget}"/>
     /// instance which uses <see cref="MappingMode.Strict"/>.
     /// </summary>
     internal static class StrictMapper<TSource, TTarget>
@@ -39,7 +39,7 @@
     }
 
     /// <summary>
-    /// Wraps the default <see cref="IMapper{TSource, TTarget}"/>
+    /// Wraps the default <see cref="Mapper{TSource, TTarget}"/>
     /// instance which uses <see cref="MappingMode.Relaxed"/>.
     /// </summary>
     internal static class RelaxedMapper<TSource, TTarget>
@@ -77,7 +77,7 @@
     }
 
     /// <summary>
-    /// Wraps the default <see cref="IMapper{TSource, TTarget}"/>
+    /// Wraps the default <see cref="Mapper{TSource, TTarget}"/>
     /// instance which uses <see cref="MappingMode.AllSourceMembers"/>.
     /// </summary>
     internal static class AllSourceMembersMapper<TSource, TTarget>
@@ -115,7 +115,7 @@
     }
 
     /// <summary>
-    /// Wraps the default <see cref="IMapper{TSource, TTarget}"/>
+    /// Wraps the default <see cref="Mapper{TSource, TTarget}"/>
     /// instance which uses <see cref="MappingMode.AllTargetMembers"/>.
     /// </summary>
     internal static class AllTargetMembersMapper<TSource, TTarget>

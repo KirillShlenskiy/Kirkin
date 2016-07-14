@@ -13,18 +13,18 @@ namespace Kirkin.Mapping
     /// <summary>
     /// <see cref="MapperBuilder{TSource, TTarget}"/> factory methods.
     /// </summary>
-    internal static class MapperBuilder
+    public static class MapperBuilder
     {
         /// <summary>
         /// Expression-based <see cref="MapperBuilder{TSource, TTarget}"/> factory placeholder.
         /// </summary>
-        public static MapperBuilder<TSource, TTarget> FromExpression<TSource, TTarget>(Expression<Func<TSource, TTarget>> expression)
+        internal static MapperBuilder<TSource, TTarget> FromExpression<TSource, TTarget>(Expression<Func<TSource, TTarget>> expression)
         {
             throw new NotImplementedException(); // TODO.
         }
 
         /// <summary>
-        /// Creates a new <see cref="IMapper{TSource, TTarget}"/> instance with the
+        /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/> instance with the
         /// same source and target type, mapping all the properties in the given list.
         /// </summary>
         public static MapperBuilder<T, T> FromPropertyList<T>(PropertyList<T> propertyList)

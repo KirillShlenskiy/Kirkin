@@ -3,24 +3,24 @@
 namespace Kirkin.Mapping
 {
     /// <summary>
-    /// Static <see cref="IMapper{TSource, TTarget}" /> proxy and factory methods.
+    /// Static <see cref="Mapper{TSource, TTarget}" /> proxy and factory methods.
     /// </summary>
     public static class Mapper
     {
         #region Factory
 
         /// <summary>
-        /// Creates and configures a new <see cref="IMapper{TSource, TTarget}"/> instance.
+        /// Creates and configures a new <see cref="Mapper{TSource, TTarget}"/> instance.
         /// </summary>
-        public static IMapper<TSource, TTarget> CreateMapper<TSource, TTarget>()
+        public static Mapper<TSource, TTarget> CreateMapper<TSource, TTarget>()
         {
             return StrictMapper<TSource, TTarget>.Default;
         }
 
         /// <summary>
-        /// Creates and configures a new <see cref="IMapper{TSource, TTarget}"/> instance.
+        /// Creates and configures a new <see cref="Mapper{TSource, TTarget}"/> instance.
         /// </summary>
-        public static IMapper<TSource, TTarget> CreateMapper<TSource, TTarget>(Action<MapperBuilder<TSource, TTarget>> configAction)
+        public static Mapper<TSource, TTarget> CreateMapper<TSource, TTarget>(Action<MapperBuilder<TSource, TTarget>> configAction)
         {
             if (configAction == null) throw new ArgumentNullException(nameof(configAction));
 
@@ -63,7 +63,7 @@ namespace Kirkin.Mapping
         /// <summary>
         /// Creates a new target instance, executes mapping from
         /// source to target and returns the newly created target instance.
-        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
+        /// Uses the default cached <see cref="Mapper{TSource, TTarget}"/> instance.
         /// </summary>
         public static TTarget MapAllSourceMembers<TSource, TTarget>(TSource source)
             where TTarget : new()
@@ -73,7 +73,7 @@ namespace Kirkin.Mapping
 
         /// <summary>
         /// Executes mapping from source to target and returns the target instance.
-        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
+        /// Uses the default cached <see cref="Mapper{TSource, TTarget}"/> instance.
         /// </summary>
         public static TTarget MapAllSourceMembers<TSource, TTarget>(TSource source, TTarget target)
         {
@@ -83,7 +83,7 @@ namespace Kirkin.Mapping
         /// <summary>
         /// Creates a new target instance, executes mapping from
         /// source to target and returns the newly created target instance.
-        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
+        /// Uses the default cached <see cref="Mapper{TSource, TTarget}"/> instance.
         /// </summary>
         public static TTarget MapAllTargetMembers<TSource, TTarget>(TSource source)
             where TTarget : new()
@@ -93,7 +93,7 @@ namespace Kirkin.Mapping
 
         /// <summary>
         /// Executes mapping from source to target and returns the target instance.
-        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
+        /// Uses the default cached <see cref="Mapper{TSource, TTarget}"/> instance.
         /// </summary>
         public static TTarget MapAllTargetMembers<TSource, TTarget>(TSource source, TTarget target)
         {
@@ -103,7 +103,7 @@ namespace Kirkin.Mapping
         /// <summary>
         /// Creates a new target instance, executes mapping from
         /// source to target and returns the newly created target instance.
-        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
+        /// Uses the default cached <see cref="Mapper{TSource, TTarget}"/> instance.
         /// </summary>
         public static TTarget MapRelaxed<TSource, TTarget>(TSource source)
             where TTarget : new()
@@ -113,7 +113,7 @@ namespace Kirkin.Mapping
 
         /// <summary>
         /// Executes mapping from source to target and returns the target instance.
-        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
+        /// Uses the default cached <see cref="Mapper{TSource, TTarget}"/> instance.
         /// </summary>
         public static TTarget MapRelaxed<TSource, TTarget>(TSource source, TTarget target)
         {
@@ -123,7 +123,7 @@ namespace Kirkin.Mapping
         /// <summary>
         /// Creates a new target instance, executes mapping from
         /// source to target and returns the newly created target instance.
-        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
+        /// Uses the default cached <see cref="Mapper{TSource, TTarget}"/> instance.
         /// </summary>
         public static TTarget MapStrict<TSource, TTarget>(TSource source)
             where TTarget : new()
@@ -133,7 +133,7 @@ namespace Kirkin.Mapping
 
         /// <summary>
         /// Executes mapping from source to target and returns the target instance.
-        /// Uses the default cached <see cref="IMapper{TSource, TTarget}"/> instance.
+        /// Uses the default cached <see cref="Mapper{TSource, TTarget}"/> instance.
         /// </summary>
         public static TTarget MapStrict<TSource, TTarget>(TSource source, TTarget target)
         {
