@@ -30,7 +30,7 @@
         /// </summary>
         private static Mapper<TSource, TTarget> CreateMapper()
         {
-            MapperConfig<TSource, TTarget> config = new MapperConfig<TSource, TTarget> {
+            MapperBuilder<TSource, TTarget> config = new MapperBuilder<TSource, TTarget> {
                 MappingMode = MappingMode.Strict
             };
 
@@ -68,7 +68,7 @@
         /// </summary>
         private static Mapper<TSource, TTarget> CreateMapper()
         {
-            MapperConfig<TSource, TTarget> config = new MapperConfig<TSource, TTarget> {
+            MapperBuilder<TSource, TTarget> config = new MapperBuilder<TSource, TTarget> {
                 MappingMode = MappingMode.Relaxed
             };
 
@@ -106,7 +106,7 @@
         /// </summary>
         private static Mapper<TSource, TTarget> CreateMapper()
         {
-            MapperConfig<TSource, TTarget> config = new MapperConfig<TSource, TTarget> {
+            MapperBuilder<TSource, TTarget> config = new MapperBuilder<TSource, TTarget> {
                 MappingMode = MappingMode.AllSourceMembers
             };
 
@@ -144,7 +144,7 @@
         /// </summary>
         private static Mapper<TSource, TTarget> CreateMapper()
         {
-            MapperConfig<TSource, TTarget> config = new MapperConfig<TSource, TTarget> {
+            MapperBuilder<TSource, TTarget> config = new MapperBuilder<TSource, TTarget> {
                 MappingMode = MappingMode.AllTargetMembers
             };
 

@@ -1,7 +1,5 @@
 ﻿using System;
 
-using Kirkin.Reflection;
-
 namespace Kirkin.Mapping
 {
     /// <summary>
@@ -22,46 +20,15 @@ namespace Kirkin.Mapping
         /// <summary>
         /// Creates and configures a new <see cref="IMapper{TSource, TTarget}"/> instance.
         /// </summary>
-        public static IMapper<TSource, TTarget> CreateMapper<TSource, TTarget>(Action<MapperConfig<TSource, TTarget>> configAction)
+        public static IMapper<TSource, TTarget> CreateMapper<TSource, TTarget>(Action<MapperBuilder<TSource, TTarget>> configAction)
         {
             if (configAction == null) throw new ArgumentNullException(nameof(configAction));
 
-            MapperConfig<TSource, TTarget> config = new MapperConfig<TSource, TTarget>();
+            MapperBuilder<TSource, TTarget> builder = new MapperBuilder<TSource, TTarget>();
 
-            configAction(config);
+            configAction(builder);
 
-            return config.BuildMapper();
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="IMapper{TSource, TTarget}"/> instance with the given configuration.
-        /// </summary>
-        public static IMapper<TSource, TTarget> CreateMapper<TSource, TTarget>(MapperConfig<TSource, TTarget> config)
-        {
-            if (config == null) throw new ArgumentNullException(nameof(config));
-
-            return config.BuildMapper();
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="IMapper{TSource, TTarget}"/> instance with the
-        /// same source and target type, mapping all the properties in the given list.
-        /// </summary>
-        public static IMapper<T, T> CreateMapper<T>(PropertyList<T> propertyList)
-        {
-            if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
-
-            MapperConfig<T, T> config = new MapperConfig<T, T> {
-                MappingMode = MappingMode.Relaxed // No need to validate mapping.
-            };
-
-            config.IgnoreAllTargetMembers();
-
-            foreach (IPropertyAccessor propertyAccessor in propertyList.PropertyAccessors) {
-                config.TargetMember(propertyAccessor.Property.Name).Reset();
-            }
-
-            return config.BuildMapper();
+            return builder.BuildMapper();
         }
 
         #endregion

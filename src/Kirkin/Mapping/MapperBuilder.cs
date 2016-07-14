@@ -6,27 +6,49 @@ using System.Reflection;
 using Kirkin.Linq.Expressions;
 using Kirkin.Mapping.Engine;
 using Kirkin.Mapping.Engine.MemberMappings;
+using Kirkin.Reflection;
 
 namespace Kirkin.Mapping
 {
     /// <summary>
-    /// <see cref="MapperConfig{TSource, TTarget}"/> factory methods.
+    /// <see cref="MapperBuilder{TSource, TTarget}"/> factory methods.
     /// </summary>
-    internal static class MapperConfig
+    internal static class MapperBuilder
     {
         /// <summary>
-        /// Expression-based <see cref="MapperConfig{TSource, TTarget}"/> factory placeholder.
+        /// Expression-based <see cref="MapperBuilder{TSource, TTarget}"/> factory placeholder.
         /// </summary>
-        public static MapperConfig<TSource, TTarget> FromExpression<TSource, TTarget>(Expression<Func<TSource, TTarget>> expression)
+        public static MapperBuilder<TSource, TTarget> FromExpression<TSource, TTarget>(Expression<Func<TSource, TTarget>> expression)
         {
             throw new NotImplementedException(); // TODO.
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="IMapper{TSource, TTarget}"/> instance with the
+        /// same source and target type, mapping all the properties in the given list.
+        /// </summary>
+        public static MapperBuilder<T, T> FromPropertyList<T>(PropertyList<T> propertyList)
+        {
+            if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
+
+            MapperBuilder<T, T> builder = new MapperBuilder<T, T> {
+                MappingMode = MappingMode.Relaxed // No need to validate mapping.
+            };
+
+            builder.IgnoreAllTargetMembers();
+
+            foreach (IPropertyAccessor propertyAccessor in propertyList.PropertyAccessors) {
+                builder.TargetMember(propertyAccessor.Property.Name).Reset();
+            }
+
+            return builder;
         }
     }
 
     /// <summary>
     /// Type which configures mapping between objects of source and target types.
     /// </summary>
-    public partial class MapperConfig<TSource, TTarget>
+    public partial class MapperBuilder<TSource, TTarget>
     {
         #region Fields and properties
 
@@ -34,8 +56,8 @@ namespace Kirkin.Mapping
         /// Delegates invoked to produce a custom <see cref="MemberMapping{TSource, TTarget}"/> for
         /// the appropriate target member when generating/validating full mapping from source to target.
         /// </summary>
-        private readonly Dictionary<Member, Func<MapperConfig<TSource, TTarget>, MemberMapping<TSource, TTarget>>> CustomTargetMappingFactories
-            = new Dictionary<Member, Func<MapperConfig<TSource, TTarget>, MemberMapping<TSource, TTarget>>>();
+        private readonly Dictionary<Member, Func<MapperBuilder<TSource, TTarget>, MemberMapping<TSource, TTarget>>> CustomTargetMappingFactories
+            = new Dictionary<Member, Func<MapperBuilder<TSource, TTarget>, MemberMapping<TSource, TTarget>>>();
 
         /// <summary>
         /// Source members marked to be ignored.
@@ -104,9 +126,9 @@ namespace Kirkin.Mapping
         #region Constructors
 
         /// <summary>
-        /// Creates a new <see cref="MapperConfig{TSource, TTarget}"/> instance.
+        /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/> instance.
         /// </summary>
-        public MapperConfig()
+        public MapperBuilder()
         {
             // Defaults.
             MappingMode = MappingMode.Strict;
@@ -122,7 +144,7 @@ namespace Kirkin.Mapping
         /// Creates a <see cref="Mapper{TSource, TTarget}"/> instance
         /// configured accoring to the rules of this builder.
         /// </summary>
-        internal Mapper<TSource, TTarget> BuildMapper()
+        public Mapper<TSource, TTarget> BuildMapper()
         {
             return new Mapper<TSource, TTarget>(ProduceValidMemberMappings());
         }
@@ -172,7 +194,7 @@ namespace Kirkin.Mapping
 
             foreach (Member targetMember in targetMemberDict.Values)
             {
-                Func<MapperConfig<TSource, TTarget>, MemberMapping<TSource, TTarget>> customTargetMappingFactory;
+                Func<MapperBuilder<TSource, TTarget>, MemberMapping<TSource, TTarget>> customTargetMappingFactory;
 
                 if (CustomTargetMappingFactories.TryGetValue(targetMember, out customTargetMappingFactory))
                 {

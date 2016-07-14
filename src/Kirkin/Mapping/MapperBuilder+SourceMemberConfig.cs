@@ -2,7 +2,7 @@
 
 namespace Kirkin.Mapping
 {
-    partial class MapperConfig<TSource, TTarget>
+    partial class MapperBuilder<TSource, TTarget>
     {
         /// <summary>
         /// Member mapping configuration rewriter type.
@@ -12,7 +12,7 @@ namespace Kirkin.Mapping
             /// <summary>
             /// Mapping configuration specified when this instance was created.
             /// </summary>
-            private readonly MapperConfig<TSource, TTarget> MapperConfig;
+            private readonly MapperBuilder<TSource, TTarget> MapperBuilder;
 
             /// <summary>
             /// <see cref="Member"/> configured by this instance.
@@ -22,9 +22,9 @@ namespace Kirkin.Mapping
             /// <summary>
             /// Creates a new <see cref="SourceMemberConfig"/> instance.
             /// </summary>
-            internal SourceMemberConfig(MapperConfig<TSource, TTarget> mapperConfig, Member member)
+            internal SourceMemberConfig(MapperBuilder<TSource, TTarget> mapperBuilder, Member member)
             {
-                MapperConfig = mapperConfig;
+                MapperBuilder = mapperBuilder;
                 Member = member;
             }
 
@@ -34,7 +34,7 @@ namespace Kirkin.Mapping
             /// </summary>
             public void Ignore()
             {
-                MapperConfig.IgnoredSourceMembers.Add(Member);
+                MapperBuilder.IgnoredSourceMembers.Add(Member);
             }
 
             /// <summary>
@@ -43,7 +43,7 @@ namespace Kirkin.Mapping
             /// </summary>
             public void Reset()
             {
-                MapperConfig.IgnoredSourceMembers.Remove(Member);
+                MapperBuilder.IgnoredSourceMembers.Remove(Member);
             }
         }
     }

@@ -55,8 +55,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Logging\LoggerBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logging\LoggerBuilderExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DataMember.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DataRecordToObjectMapperConfig.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DataRowToObjectMapperConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DataRecordToObjectMapperBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DataRowToObjectMapperBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DbCommandExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\DefaultMappers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\Compilers\CachedMappingCompiler.cs" />
@@ -71,9 +71,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\PropertyMember.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\IMapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Mapper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperConfig+SourceMemberConfig.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperConfig+TargetMemberConfig.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperBuilder+SourceMemberConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperBuilder+TargetMemberConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Mapper`2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MappingException.cs" />

@@ -6,7 +6,7 @@ using Kirkin.Mapping.Engine.MemberMappings;
 
 namespace Kirkin.Mapping
 {
-    partial class MapperConfig<TSource, TTarget>
+    partial class MapperBuilder<TSource, TTarget>
     {
         /// <summary>
         /// Member mapping configuration rewriter type.
@@ -14,9 +14,9 @@ namespace Kirkin.Mapping
         public abstract class TargetMemberConfigBase
         {
             /// <summary>
-            /// Mapping configuration specified when this instance was created.
+            /// Builder specified when this instance was created.
             /// </summary>
-            protected readonly MapperConfig<TSource, TTarget> MapperConfig;
+            protected readonly MapperBuilder<TSource, TTarget> MapperBuilder;
 
             /// <summary>
             /// <see cref="Member"/> configured by this instance.
@@ -26,9 +26,9 @@ namespace Kirkin.Mapping
             /// <summary>
             /// Creates a new <see cref="TargetMemberConfigBase"/> instance.
             /// </summary>
-            internal TargetMemberConfigBase(MapperConfig<TSource, TTarget> mapperConfig, Member member)
+            internal TargetMemberConfigBase(MapperBuilder<TSource, TTarget> mapperBuilder, Member member)
             {
-                MapperConfig = mapperConfig;
+                MapperBuilder = mapperBuilder;
                 Member = member;
             }
 
@@ -38,8 +38,8 @@ namespace Kirkin.Mapping
             /// </summary>
             public void Ignore()
             {
-                MapperConfig.IgnoredTargetMembers.Add(Member);
-                MapperConfig.CustomTargetMappingFactories.Remove(Member);
+                MapperBuilder.IgnoredTargetMembers.Add(Member);
+                MapperBuilder.CustomTargetMappingFactories.Remove(Member);
             }
 
             /// <summary>
@@ -47,7 +47,7 @@ namespace Kirkin.Mapping
             /// </summary>
             public void MapTo(string sourceMemberName)
             {
-                Member sourceMember = MapperConfig.SourceMember(sourceMemberName).Member;
+                Member sourceMember = MapperBuilder.SourceMember(sourceMemberName).Member;
 
                 MapTo(sourceMember);
             }
@@ -57,7 +57,7 @@ namespace Kirkin.Mapping
             /// </summary>
             public void MapTo(string sourceMemberName, StringComparer nameComparer)
             {
-                Member sourceMember = MapperConfig.SourceMember(sourceMemberName, nameComparer).Member;
+                Member sourceMember = MapperBuilder.SourceMember(sourceMemberName, nameComparer).Member;
 
                 MapTo(sourceMember);
             }
@@ -67,8 +67,8 @@ namespace Kirkin.Mapping
             /// </summary>
             private void MapTo(Member sourceMember)
             {
-                MapperConfig.IgnoredTargetMembers.Remove(Member);
-                MapperConfig.CustomTargetMappingFactories[Member] = config => new DefaultMemberMapping<TSource, TTarget>(sourceMember, Member, config.NullableBehaviour);
+                MapperBuilder.IgnoredTargetMembers.Remove(Member);
+                MapperBuilder.CustomTargetMappingFactories[Member] = builder => new DefaultMemberMapping<TSource, TTarget>(sourceMember, Member, builder.NullableBehaviour);
             }
 
             /// <summary>
@@ -77,8 +77,8 @@ namespace Kirkin.Mapping
             /// </summary>
             public void Reset()
             {
-                MapperConfig.IgnoredTargetMembers.Remove(Member);
-                MapperConfig.CustomTargetMappingFactories.Remove(Member);
+                MapperBuilder.IgnoredTargetMembers.Remove(Member);
+                MapperBuilder.CustomTargetMappingFactories.Remove(Member);
             }
 
             #region Experimental
@@ -93,10 +93,10 @@ namespace Kirkin.Mapping
 
                 if (ignoreMatchingSource)
                 {
-                    foreach (Member sourceMember in MapperConfig.SourceMembers)
+                    foreach (Member sourceMember in MapperBuilder.SourceMembers)
                     {
-                        if (MapperConfig.MemberNameComparer.Equals(sourceMember.Name, Member.Name)) {
-                            MapperConfig.IgnoredSourceMembers.Add(sourceMember);
+                        if (MapperBuilder.MemberNameComparer.Equals(sourceMember.Name, Member.Name)) {
+                            MapperBuilder.IgnoredSourceMembers.Add(sourceMember);
                         }
                     }
                 }
@@ -113,8 +113,8 @@ namespace Kirkin.Mapping
             /// <summary>
             /// Creates a new <see cref="TargetMemberConfig"/> instance.
             /// </summary>
-            internal TargetMemberConfig(MapperConfig<TSource, TTarget> mapperConfig, Member member)
-                : base(mapperConfig, member)
+            internal TargetMemberConfig(MapperBuilder<TSource, TTarget> mapperBuilder, Member member)
+                : base(mapperBuilder, member)
             {
             }
 
@@ -123,8 +123,8 @@ namespace Kirkin.Mapping
             /// </summary>
             public void MapTo<TValue>(Expression<Func<TSource, TValue>> sourceValueSelector)
             {
-                MapperConfig.IgnoredTargetMembers.Remove(Member);
-                MapperConfig.CustomTargetMappingFactories[Member] = config => new ExpressionMemberMapping<TSource, TTarget, TValue>(Member, sourceValueSelector);
+                MapperBuilder.IgnoredTargetMembers.Remove(Member);
+                MapperBuilder.CustomTargetMappingFactories[Member] = builder => new ExpressionMemberMapping<TSource, TTarget, TValue>(Member, sourceValueSelector);
             }
 
             /// <summary>
@@ -132,8 +132,8 @@ namespace Kirkin.Mapping
             /// </summary>
             public void MapWithDelegate<TValue>(Func<TSource, TValue> sourceValueSelector)
             {
-                MapperConfig.IgnoredTargetMembers.Remove(Member);
-                MapperConfig.CustomTargetMappingFactories[Member] = config => new DelegateMemberMapping<TSource, TTarget, TValue>(Member, sourceValueSelector);
+                MapperBuilder.IgnoredTargetMembers.Remove(Member);
+                MapperBuilder.CustomTargetMappingFactories[Member] = builder => new DelegateMemberMapping<TSource, TTarget, TValue>(Member, sourceValueSelector);
             }
         }
 
@@ -145,8 +145,8 @@ namespace Kirkin.Mapping
             /// <summary>
             /// Creates a new <see cref="TargetMemberConfig{TValue}"/> instance.
             /// </summary>
-            internal TargetMemberConfig(MapperConfig<TSource, TTarget> mapperConfig, Member member)
-                : base(mapperConfig, member)
+            internal TargetMemberConfig(MapperBuilder<TSource, TTarget> mapperBuilder, Member member)
+                : base(mapperBuilder, member)
             {
             }
 
@@ -155,8 +155,8 @@ namespace Kirkin.Mapping
             /// </summary>
             public void MapTo(Expression<Func<TSource, TValue>> sourceValueSelector)
             {
-                MapperConfig.IgnoredTargetMembers.Remove(Member);
-                MapperConfig.CustomTargetMappingFactories[Member] = config => new ExpressionMemberMapping<TSource, TTarget, TValue>(Member, sourceValueSelector);
+                MapperBuilder.IgnoredTargetMembers.Remove(Member);
+                MapperBuilder.CustomTargetMappingFactories[Member] = builder => new ExpressionMemberMapping<TSource, TTarget, TValue>(Member, sourceValueSelector);
             }
 
             /// <summary>
@@ -164,8 +164,8 @@ namespace Kirkin.Mapping
             /// </summary>
             public void MapWithDelegate(Func<TSource, TValue> sourceValueSelector)
             {
-                MapperConfig.IgnoredTargetMembers.Remove(Member);
-                MapperConfig.CustomTargetMappingFactories[Member] = config => new DelegateMemberMapping<TSource, TTarget, TValue>(Member, sourceValueSelector);
+                MapperBuilder.IgnoredTargetMembers.Remove(Member);
+                MapperBuilder.CustomTargetMappingFactories[Member] = builder => new DelegateMemberMapping<TSource, TTarget, TValue>(Member, sourceValueSelector);
             }
         }
     }

@@ -47,7 +47,10 @@ namespace Kirkin.Tests.Mapping
         public void KirkinMapperConfiguredPropertyListClone()
         {
             Dummy source = new Dummy { ID = 1, Value = "Blah" };
-            IMapper<Dummy, Dummy> mapper = Kirkin.Mapping.Mapper.CreateMapper(PropertyList<Dummy>.Default);
+
+            Mapper<Dummy, Dummy> mapper = MapperBuilder
+                .FromPropertyList(PropertyList<Dummy>.Default)
+                .BuildMapper();
 
             for (int i = 0; i < 100000; i++) {
                 Dummy target = mapper.Map(source);

@@ -4,7 +4,6 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 
-using Kirkin.Mapping;
 using Kirkin.Mapping.Data;
 
 using Xunit;
@@ -35,8 +34,8 @@ namespace Kirkin.Tests.Mapping
 
                 using (var reader = cmd.ExecuteReader())
                 {
-                    var config = new DataRecordToObjectMapperConfig<PersonStub>(reader);
-                    var mapper = Mapper.CreateMapper(config);
+                    var builder = new DataRecordToObjectMapperBuilder<PersonStub>(reader);
+                    var mapper = builder.BuildMapper();
 
                     while (reader.Read())
                     {
@@ -71,9 +70,9 @@ namespace Kirkin.Tests.Mapping
 
                 using (var reader = cmd.ExecuteReader())
                 {
-                    var nonNullableMapper = Mapper.CreateMapper(new DataRecordToObjectMapperConfig<PersonStub>(reader));
-                    var nullableMapper = Mapper.CreateMapper(new DataRecordToObjectMapperConfig<NullablePersonStub>(reader));
-
+                    var nonNullableMapper = new DataRecordToObjectMapperBuilder<PersonStub>(reader).BuildMapper();
+                    var nullableMapper = new DataRecordToObjectMapperBuilder<NullablePersonStub>(reader).BuildMapper();
+                    
                     while (reader.Read())
                     {
                         var nonNullablePerson = nonNullableMapper.Map(reader, new PersonStub { personID = 1 });
@@ -111,7 +110,7 @@ namespace Kirkin.Tests.Mapping
 
                 using (var reader = cmd.ExecuteReader())
                 {
-                    var mapper = Mapper.CreateMapper(new DataRecordToObjectMapperConfig<NullablePersonStub>(reader));
+                    var mapper = new DataRecordToObjectMapperBuilder<NullablePersonStub>(reader).BuildMapper();
 
                     while (reader.Read())
                     {

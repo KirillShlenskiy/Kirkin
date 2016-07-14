@@ -8,10 +8,10 @@ using Kirkin.Mapping.Engine;
 namespace Kirkin.Mapping.Data
 {
     /// <summary>
-    /// <see cref="MapperConfig{TSource, TTarget}"/> implementation where
+    /// <see cref="MapperBuilder{TSource, TTarget}"/> implementation where
     /// the source is a <see cref="DataRow"/> and target is an object.
     /// </summary>
-    public class DataRowToObjectMapperConfig<TTarget> : MapperConfig<DataRow, TTarget>
+    public class DataRowToObjectMapperBuilder<TTarget> : MapperBuilder<DataRow, TTarget>
     {
         /// <summary>
         /// <see cref="DataTable"/> used to create this instance.
@@ -19,9 +19,9 @@ namespace Kirkin.Mapping.Data
         public DataTable DataTable { get; }
 
         /// <summary>
-        /// Creates a new instance of <see cref="DataRowToObjectMapperConfig{TTarget}"/>.
+        /// Creates a new instance of <see cref="DataRowToObjectMapperBuilder{TTarget}"/>.
         /// </summary>
-        public DataRowToObjectMapperConfig(DataTable dataTable)
+        public DataRowToObjectMapperBuilder(DataTable dataTable)
         {
             if (dataTable == null) throw new ArgumentNullException(nameof(dataTable));
 
