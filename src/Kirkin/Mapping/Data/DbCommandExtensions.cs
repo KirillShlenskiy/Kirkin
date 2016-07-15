@@ -36,9 +36,11 @@ namespace Kirkin.Mapping.Data
 
             using (IDataReader reader = command.ExecuteReader())
             {
-                DataRecordToObjectMapperBuilder<TEntity> builder = new DataRecordToObjectMapperBuilder<TEntity>(reader) {
-                    MappingMode = mappingMode
-                };
+                MapperBuilder<IDataRecord, TEntity> builder = MapperBuilder
+                    .FromDataReaderOrRecord(reader)
+                    .ToObject<TEntity>();
+
+                builder.MappingMode = mappingMode;
 
                 Mapper<IDataRecord, TEntity> mapper = builder.BuildMapper();
 
@@ -72,9 +74,11 @@ namespace Kirkin.Mapping.Data
 
             using (DbDataReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
             {
-                DataRecordToObjectMapperBuilder<TEntity> builder = new DataRecordToObjectMapperBuilder<TEntity>(reader) {
-                    MappingMode = mappingMode
-                };
+                MapperBuilder<IDataRecord, TEntity> builder = MapperBuilder
+                    .FromDataReaderOrRecord(reader)
+                    .ToObject<TEntity>();
+
+                builder.MappingMode = mappingMode;
 
                 Mapper<IDataRecord, TEntity> mapper = builder.BuildMapper();
                 List<TEntity> entities = new List<TEntity>();

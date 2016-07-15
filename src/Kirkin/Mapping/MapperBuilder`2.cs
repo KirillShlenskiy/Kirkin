@@ -315,6 +315,17 @@ namespace Kirkin.Mapping
         #region Fluent API
 
         /// <summary>
+        /// Executes the given configuration action on this
+        /// builder instance and returns the mutated instance.
+        /// </summary>
+        internal MapperBuilder<TSource, TTarget> Configure(Action<MapperBuilder<TSource, TTarget>> configureAction)
+        {
+            configureAction(this);
+
+            return this;
+        }
+
+        /// <summary>
         /// Returns a mapping configuration object for the member with the
         /// given name using this instance's <see cref="MemberNameComparer"/>.
         /// </summary>

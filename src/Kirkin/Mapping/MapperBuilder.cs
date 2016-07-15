@@ -18,10 +18,10 @@ namespace Kirkin.Mapping
     {
 #if !__MOBILE__
         /// <summary>
-        /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/> where
-        /// the source is a <see cref="IDataRecord"/> and target is an object.
+        /// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
+        /// instances mapping from the given <see cref="IDataRecord"/> source to various target types. 
         /// </summary>
-        internal static MapperBuilderFactory<IDataRecord> FromDataReaderOrRecord(IDataRecord dataRecord)
+        public static MapperBuilderFactory<IDataRecord> FromDataReaderOrRecord(IDataRecord dataRecord)
         {
             Member[] sourceMembers = DataMember.DataRecordMembers(dataRecord);
 
@@ -29,10 +29,10 @@ namespace Kirkin.Mapping
         }
 
         /// <summary>
-        /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/> where
-        /// the source is a <see cref="DataRow"/> and target is an object.
+        /// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
+        /// instances mapping from the given <see cref="DataTable"/> source to various target types. 
         /// </summary>
-        internal static MapperBuilderFactory<DataRow> FromDataTable(DataTable dataTable)
+        public static MapperBuilderFactory<DataRow> FromDataTable(DataTable dataTable)
         {
             Member[] sourceMembers = DataMember.DataTableMembers(dataTable);
 
@@ -63,6 +63,17 @@ namespace Kirkin.Mapping
         internal static MapperBuilder<TSource, TTarget> FromExpression<TSource, TTarget>(Expression<Func<TSource, TTarget>> expression)
         {
             throw new NotImplementedException(); // TODO.
+        }
+
+        /// <summary>
+        /// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
+        /// instances mapping from object sources of the given type to various target types. 
+        /// </summary>
+        internal static MapperBuilderFactory<TSource> FromObject<TSource>()
+        {
+            Member[] sourceMembers = PropertyMember.PublicInstanceProperties<TSource>();
+
+            return new MapperBuilderFactory<TSource>(sourceMembers);
         }
 
         /// <summary>

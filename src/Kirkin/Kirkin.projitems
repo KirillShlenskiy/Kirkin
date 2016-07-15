@@ -55,8 +55,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Logging\LoggerBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logging\LoggerBuilderExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DataMember.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DataRecordToObjectMapperBuilder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DataRowToObjectMapperBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DbCommandExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\DefaultMappers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\Compilers\CachedMappingCompiler.cs" />

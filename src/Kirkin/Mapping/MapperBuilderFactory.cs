@@ -8,7 +8,7 @@ namespace Kirkin.Mapping
     /// Partially configure mapper builder factory type.
     /// Participates in fluent mapper builder construction.
     /// </summary>
-    internal class MapperBuilderFactory<TSource>
+    public class MapperBuilderFactory<TSource>
     {
         private readonly Member[] SourceMembers;
 
