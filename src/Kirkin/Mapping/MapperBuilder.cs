@@ -25,18 +25,36 @@ namespace Kirkin.Mapping
         /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/> where
         /// the source is a <see cref="IDataRecord"/> and target is an object.
         /// </summary>
-        internal static MapperBuilder<IDataRecord, TTarget> FromDataRecord<TTarget>(IDataRecord dataRecord)
+        internal static MapperBuilderFactory<IDataRecord> FromDataReaderOrRecord(IDataRecord dataRecord)
         {
-            return new DataRecordToObjectMapperBuilder<TTarget>(dataRecord);
+            return new DataMapperBuilderFactory<IDataRecord>(DataMember.DataRecordMembers(dataRecord));
         }
 
         /// <summary>
         /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/> where
         /// the source is a <see cref="DataRow"/> and target is an object.
         /// </summary>
-        internal static MapperBuilder<DataRow, TTarget> FromDataTable<TTarget>(DataTable dataTable)
+        internal static MapperBuilderFactory<DataRow> FromDataTable(DataTable dataTable)
         {
-            return new DataRowToObjectMapperBuilder<TTarget>(dataTable);
+            return new DataMapperBuilderFactory<DataRow>(DataMember.DataTableMembers(dataTable));
+        }
+
+        sealed class DataMapperBuilderFactory<TSource> : MapperBuilderFactory<TSource>
+        {
+            internal DataMapperBuilderFactory(Member[] sourceMembers)
+                : base(sourceMembers)
+            {
+            }
+
+            protected override MapperBuilder<TSource, TTarget> CreateAndConfigureBuilder<TTarget>(Member[] targetMembers)
+            {
+                MapperBuilder<TSource, TTarget> builder = base.CreateAndConfigureBuilder<TTarget>(targetMembers);
+
+                builder.MappingMode = MappingMode.AllTargetMembers;
+                builder.MemberNameComparer = StringComparer.OrdinalIgnoreCase;
+
+                return builder;
+            }
         }
 #endif
         /// <summary>

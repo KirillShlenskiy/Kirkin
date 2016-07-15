@@ -35,7 +35,8 @@ namespace Kirkin.Tests.Mapping
                 using (var reader = cmd.ExecuteReader())
                 {
                     var mapper = MapperBuilder
-                        .FromDataRecord<PersonStub>(reader)
+                        .FromDataReaderOrRecord(reader)
+                        .ToObject<PersonStub>()
                         .BuildMapper();
 
                     while (reader.Read())
@@ -71,8 +72,8 @@ namespace Kirkin.Tests.Mapping
 
                 using (var reader = cmd.ExecuteReader())
                 {
-                    var nonNullableMapper = MapperBuilder.FromDataRecord<PersonStub>(reader).BuildMapper();
-                    var nullableMapper = MapperBuilder.FromDataRecord<NullablePersonStub>(reader).BuildMapper();
+                    var nonNullableMapper = MapperBuilder.FromDataReaderOrRecord(reader).ToObject<PersonStub>().BuildMapper();
+                    var nullableMapper = MapperBuilder.FromDataReaderOrRecord(reader).ToObject<NullablePersonStub>().BuildMapper();
                     
                     while (reader.Read())
                     {
@@ -111,7 +112,7 @@ namespace Kirkin.Tests.Mapping
 
                 using (var reader = cmd.ExecuteReader())
                 {
-                    var mapper = MapperBuilder.FromDataRecord<NullablePersonStub>(reader).BuildMapper();
+                    var mapper = MapperBuilder.FromDataReaderOrRecord(reader).ToObject<NullablePersonStub>().BuildMapper();
 
                     while (reader.Read())
                     {
