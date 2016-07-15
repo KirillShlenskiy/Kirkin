@@ -38,7 +38,7 @@ namespace Kirkin.Mapping.Data
             {
                 MapperBuilder<IDataRecord, TEntity> builder = MapperBuilder
                     .FromDataReaderOrRecord(reader)
-                    .ToObject<TEntity>();
+                    .ToType<TEntity>();
 
                 builder.MappingMode = mappingMode;
 
@@ -76,7 +76,7 @@ namespace Kirkin.Mapping.Data
             {
                 MapperBuilder<IDataRecord, TEntity> builder = MapperBuilder
                     .FromDataReaderOrRecord(reader)
-                    .ToObject<TEntity>();
+                    .ToType<TEntity>();
 
                 builder.MappingMode = mappingMode;
 

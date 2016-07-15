@@ -24,7 +24,7 @@ namespace Kirkin.Mapping
         /// Creates a <see cref="MapperBuilder{TSource, TTarget}"/> which
         /// configures mapping from source to an object of the given type.
         /// </summary>
-        public MapperBuilder<TSource, TTarget> ToObject<TTarget>()
+        public MapperBuilder<TSource, TTarget> ToType<TTarget>()
         {
             Member[] targetMembers = PropertyMember.PublicInstanceProperties<TTarget>();
 
@@ -35,7 +35,7 @@ namespace Kirkin.Mapping
         /// Creates a <see cref="MapperBuilder{TSource, TTarget}"/> which defines a
         /// mapping from source to the specified properties of the given target type. 
         /// </summary>
-        public MapperBuilder<TSource, TTarget> ToObject<TTarget>(PropertyList<TTarget> propertyList)
+        public MapperBuilder<TSource, TTarget> ToPropertyList<TTarget>(PropertyList<TTarget> propertyList)
         {
             if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
 
