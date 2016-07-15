@@ -12,16 +12,19 @@ namespace Kirkin.Mapping
     /// <summary>
     /// Type which configures mapping between objects of source and target types.
     /// </summary>
-    public partial class MapperBuilder<TSource, TTarget>
+    public sealed partial class MapperBuilder<TSource, TTarget>
     {
         #region Fields and properties
 
         /// <summary>
-        /// Delegates invoked to produce a custom <see cref="MemberMapping{TSource, TTarget}"/> for
-        /// the appropriate target member when generating/validating full mapping from source to target.
+        /// Source member list.
         /// </summary>
-        private readonly Dictionary<Member, Func<MapperBuilder<TSource, TTarget>, MemberMapping<TSource, TTarget>>> CustomTargetMappingFactories
-            = new Dictionary<Member, Func<MapperBuilder<TSource, TTarget>, MemberMapping<TSource, TTarget>>>();
+        internal readonly Member[] SourceMembers;
+
+        /// <summary>
+        /// Target member list.
+        /// </summary>
+        internal readonly Member[] TargetMembers;
 
         /// <summary>
         /// Source members marked to be ignored.
@@ -32,6 +35,13 @@ namespace Kirkin.Mapping
         /// Target members marked to be ignored.
         /// </summary>
         private readonly HashSet<Member> IgnoredTargetMembers = new HashSet<Member>();
+
+        /// <summary>
+        /// Delegates invoked to produce a custom <see cref="MemberMapping{TSource, TTarget}"/> for
+        /// the appropriate target member when generating/validating full mapping from source to target.
+        /// </summary>
+        private readonly Dictionary<Member, Func<MapperBuilder<TSource, TTarget>, MemberMapping<TSource, TTarget>>> CustomTargetMappingFactories
+            = new Dictionary<Member, Func<MapperBuilder<TSource, TTarget>, MemberMapping<TSource, TTarget>>>();
 
         /// <summary>
         /// <see cref="MappingMode"/> used when validating the
@@ -51,64 +61,24 @@ namespace Kirkin.Mapping
         /// </summary>
         public NullableBehaviour NullableBehaviour { get; set; }
 
-        private Member[] _sourceMembers;
-
-        /// <summary>
-        /// Source member list.
-        /// </summary>
-        internal Member[] SourceMembers
-        {
-            get
-            {
-                if (_sourceMembers == null) {
-                    _sourceMembers = GetSourceMembers();
-                }
-
-                return _sourceMembers;
-            }
-        }
-
-        private Member[] _targetMembers;
-
-        /// <summary>
-        /// Target member list.
-        /// </summary>
-        internal Member[] TargetMembers
-        {
-            get
-            {
-                if (_targetMembers == null) {
-                    _targetMembers = GetTargetMembers();
-                }
-
-                return _targetMembers;
-            }
-        }
-
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/> instance.
+        /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/>
+        /// instance using the given source and target member lists.
+        /// By default will use the list of public properties defined by source and target types.
         /// </summary>
-        public MapperBuilder()
+        internal MapperBuilder(Member[] sourceMembers = null, Member[] targetMembers = null)
         {
+            SourceMembers = sourceMembers ?? PropertyMember.PublicInstanceProperties<TSource>();
+            TargetMembers = targetMembers ?? PropertyMember.PublicInstanceProperties<TTarget>();
+
             // Defaults.
             MappingMode = MappingMode.Strict;
             MemberNameComparer = StringComparer.Ordinal;
             NullableBehaviour = NullableBehaviour.DefaultMapsToNull;
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/>
-        /// instance using the given source and target member lists.
-        /// </summary>
-        internal MapperBuilder(Member[] sourceMembers, Member[] targetMembers)
-            : this() // Set defaults.
-        {
-            _sourceMembers = sourceMembers;
-            _targetMembers = targetMembers;
         }
 
         #endregion
@@ -130,26 +100,6 @@ namespace Kirkin.Mapping
         public void ValidateMapping()
         {
             ProduceValidMemberMappings();
-        }
-
-        #endregion
-
-        #region Member list
-
-        /// <summary>
-        /// Gets the default source member list for this instance.
-        /// </summary>
-        protected virtual Member[] GetSourceMembers()
-        {
-            return PropertyMember.PublicInstanceProperties<TSource>();
-        }
-
-        /// <summary>
-        /// Gets the default target member list for this instance.
-        /// </summary>
-        protected virtual Member[] GetTargetMembers()
-        {
-            return PropertyMember.PublicInstanceProperties<TTarget>();
         }
 
         #endregion
