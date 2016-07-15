@@ -20,6 +20,25 @@ namespace Kirkin.Mapping
     /// </summary>
     public static class MapperBuilder
     {
+#if !__MOBILE__
+        /// <summary>
+        /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/> where
+        /// the source is a <see cref="IDataRecord"/> and target is an object.
+        /// </summary>
+        internal static MapperBuilder<IDataRecord, TTarget> FromDataRecord<TTarget>(IDataRecord dataRecord)
+        {
+            return new DataRecordToObjectMapperBuilder<TTarget>(dataRecord);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/> where
+        /// the source is a <see cref="DataRow"/> and target is an object.
+        /// </summary>
+        internal static MapperBuilder<DataRow, TTarget> FromDataTable<TTarget>(DataTable dataTable)
+        {
+            return new DataRowToObjectMapperBuilder<TTarget>(dataTable);
+        }
+#endif
         /// <summary>
         /// Expression-based <see cref="MapperBuilder{TSource, TTarget}"/> factory placeholder.
         /// </summary>
@@ -28,17 +47,6 @@ namespace Kirkin.Mapping
             throw new NotImplementedException(); // TODO.
         }
 
-#if !__MOBILE__
-        internal static MapperBuilder<IDataRecord, TTarget> FromDataRecord<TTarget>(IDataRecord dataRecord)
-        {
-            return new DataRecordToObjectMapperBuilder<TTarget>(dataRecord);
-        }
-
-        internal static MapperBuilder<DataRow, TTarget> FromDataTable<TTarget>(DataTable dataTable)
-        {
-            return new DataRowToObjectMapperBuilder<TTarget>(dataTable);
-        }
-#endif
         /// <summary>
         /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/> instance with the
         /// same source and target type, mapping all the properties in the given list.
