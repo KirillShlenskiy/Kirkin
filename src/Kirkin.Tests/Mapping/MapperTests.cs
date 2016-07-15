@@ -18,7 +18,6 @@ namespace Kirkin.Tests.Mapping
             };
 
             MapperBuilder<Dummy, LowercaseDummy> builder2 = new MapperBuilder<Dummy, LowercaseDummy> {
-                MappingMode = MappingMode.Strict,
                 MemberNameComparer = StringComparer.OrdinalIgnoreCase,
                 NullableBehaviour = NullableBehaviour.DefaultMapsToNull
             };
@@ -45,7 +44,7 @@ namespace Kirkin.Tests.Mapping
             var target = new LowercaseDummy();
 
             var builder = new MapperBuilder<Dummy, LowercaseDummy> {
-                MappingMode = MappingMode.AllTargetMembers,
+                MapAllSourceMembers = false,
                 MemberNameComparer = StringComparer.OrdinalIgnoreCase
             };
 
@@ -65,7 +64,7 @@ namespace Kirkin.Tests.Mapping
             var target = new LowercaseDummy();
 
             var builder = new MapperBuilder<Dummy, LowercaseDummy> {
-                MappingMode = MappingMode.AllTargetMembers,
+                MapAllSourceMembers = false,
                 MemberNameComparer = StringComparer.OrdinalIgnoreCase
             };
 
@@ -81,7 +80,10 @@ namespace Kirkin.Tests.Mapping
         [Fact]
         public void CustomUnmappedMemberMapping()
         {
-            var builder = new MapperBuilder<Dummy, LowercaseDummy> { MappingMode = MappingMode.Relaxed };
+            var builder = new MapperBuilder<Dummy, LowercaseDummy> {
+                MapAllSourceMembers = false,
+                MapAllTargetMembers = false
+            };
 
             Assert.Equal(0, builder.ProduceValidMemberMappings().Length);
 
@@ -97,7 +99,10 @@ namespace Kirkin.Tests.Mapping
         [Fact]
         public void ExecuteEmptyMapping()
         {
-            var builder = new MapperBuilder<Dummy, LowercaseDummy> { MappingMode = MappingMode.Relaxed };
+            var builder = new MapperBuilder<Dummy, LowercaseDummy> {
+                MapAllSourceMembers = false,
+                MapAllTargetMembers = false
+            };
 
             Assert.Equal(0, builder.ProduceValidMemberMappings().Length);
             builder.BuildMapper().Map(new Dummy());
@@ -107,7 +112,11 @@ namespace Kirkin.Tests.Mapping
         public void IgnoreMember()
         {
             var source = new Dummy { ID = 5, Value = "Test" };
-            var builder = new MapperBuilder<Dummy, Dummy> { MappingMode = MappingMode.Relaxed };
+
+            var builder = new MapperBuilder<Dummy, Dummy> {
+                MapAllSourceMembers = false,
+                MapAllTargetMembers = false
+            };
 
             builder.TargetMember(d => d.Value).Ignore();
 
@@ -120,12 +129,18 @@ namespace Kirkin.Tests.Mapping
         [Fact]
         public void IgnoreUnmappedMemberDoesNotThrow()
         {
-            var builder = new MapperBuilder<Dummy, LowercaseDummy> { MappingMode = MappingMode.Relaxed };
+            var builder = new MapperBuilder<Dummy, LowercaseDummy> {
+                MapAllSourceMembers = false,
+                MapAllTargetMembers = false
+            };
 
             builder.TargetMember(m => m.id).Ignore();
             builder.ValidateMapping();
 
-            builder = new MapperBuilder<Dummy, LowercaseDummy> { MappingMode = MappingMode.Relaxed };
+            builder = new MapperBuilder<Dummy, LowercaseDummy>{
+                MapAllSourceMembers = false,
+                MapAllTargetMembers = false
+            };
 
             builder.TargetMember(m => m.id).MapTo(builder.SourceMember(m => m.ID).Member.Name);
             builder.TargetMember(m => m.value).Ignore();
@@ -152,7 +167,7 @@ namespace Kirkin.Tests.Mapping
         [Fact]
         public void CompileMapBenchmark()
         {
-            var mappings = new MapperBuilder<ExtendedDummy, Dummy> { MappingMode = MappingMode.AllTargetMembers }
+            var mappings = new MapperBuilder<ExtendedDummy, Dummy> { MapAllSourceMembers = false }
                 .ProduceValidMemberMappings();
 
             var compiler = new MappingCompiler<ExtendedDummy, Dummy>();
@@ -165,7 +180,7 @@ namespace Kirkin.Tests.Mapping
         [Fact]
         public void CompileMapBenchmarkCached()
         {
-            var mappings = new MapperBuilder<ExtendedDummy, Dummy>() { MappingMode = MappingMode.AllTargetMembers }
+            var mappings = new MapperBuilder<ExtendedDummy, Dummy>() { MapAllSourceMembers = false }
                 .ProduceValidMemberMappings();
 
             var compiler = new CachedMappingCompiler<ExtendedDummy, Dummy>();
@@ -274,7 +289,8 @@ namespace Kirkin.Tests.Mapping
 
             var builder = new MapperBuilder<Dummy, NullableDummy> {
                 NullableBehaviour = NullableBehaviour.AssignDefaultAsIs,
-                MappingMode = MappingMode.Relaxed
+                MapAllSourceMembers = false,
+                MapAllTargetMembers = false
             };
 
             builder.BuildMapper().Map(dummy1, dummy2);
@@ -295,7 +311,13 @@ namespace Kirkin.Tests.Mapping
         public void MappingSucceeds()
         {
             var dummy = new Dummy { ID = 1, Value = "Test" };
-            var extendedDummy = new MapperBuilder<Dummy, ExtendedDummy> { MappingMode = MappingMode.Relaxed }.BuildMapper().Map(dummy);
+
+            var extendedDummy = new MapperBuilder<Dummy, ExtendedDummy> {
+                MapAllSourceMembers = false,
+                MapAllTargetMembers = false
+            }
+            .BuildMapper()
+            .Map(dummy);
 
             Assert.Equal(dummy.ID, extendedDummy.ID);
             Assert.Equal(dummy.Value, extendedDummy.Value);
@@ -305,9 +327,9 @@ namespace Kirkin.Tests.Mapping
             Assert.Equal(dummy.ID, extendedDummy.ID);
             Assert.Equal(dummy.Value, extendedDummy.Value);
 
-            new MapperBuilder<Dummy, ExtendedDummy> { MappingMode = MappingMode.AllSourceMembers }.BuildMapper().Map(dummy, extendedDummy);
+            new MapperBuilder<Dummy, ExtendedDummy> { MapAllTargetMembers = false }.BuildMapper().Map(dummy, extendedDummy);
             Mapper.MapAllSourceMembers(dummy, extendedDummy);
-            new MapperBuilder<ExtendedDummy, Dummy> { MappingMode = MappingMode.AllTargetMembers }.BuildMapper().Map(extendedDummy, dummy);
+            new MapperBuilder<ExtendedDummy, Dummy> { MapAllSourceMembers = false }.BuildMapper().Map(extendedDummy, dummy);
             Mapper.MapAllTargetMembers(extendedDummy, dummy);
         }
 
@@ -318,19 +340,19 @@ namespace Kirkin.Tests.Mapping
             var extendedDummy = new ExtendedDummy();
 
             Assert.Throws<MappingException>(() =>
-                new MapperBuilder<Dummy, ExtendedDummy> { MappingMode = MappingMode.Strict }.ValidateMapping()
+                new MapperBuilder<Dummy, ExtendedDummy>().ValidateMapping()
             );
 
             Assert.Throws<MappingException>(() => Mapper.MapStrict(new Dummy(), new ExtendedDummy()));
 
             Assert.Throws<MappingException>(() =>
-                new MapperBuilder<Dummy, ExtendedDummy> { MappingMode = MappingMode.AllTargetMembers }.ValidateMapping()
+                new MapperBuilder<Dummy, ExtendedDummy> { MapAllSourceMembers = false }.ValidateMapping()
             );
 
             Assert.Throws<MappingException>(() => Mapper.MapAllTargetMembers(new Dummy(), new ExtendedDummy()));
 
             Assert.Throws<MappingException>(() =>
-                new MapperBuilder<ExtendedDummy, Dummy> { MappingMode = MappingMode.AllSourceMembers }.ValidateMapping()
+                new MapperBuilder<ExtendedDummy, Dummy> { MapAllTargetMembers = false }.ValidateMapping()
             );
 
             Assert.Throws<MappingException>(() => Mapper.MapAllSourceMembers(new ExtendedDummy(), new Dummy()));

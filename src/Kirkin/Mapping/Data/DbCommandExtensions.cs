@@ -23,11 +23,9 @@ namespace Kirkin.Mapping.Data
         /// </summary>
         /// <typeparam name="TEntity">Desired type that each <see cref="IDataRecord"/> will be mapped to.</typeparam>
         /// <param name="command">The command to be executed.</param>
-        /// <param name="mappingMode">
-        /// Defines how strict the mapper is in terms of mapping
-        /// readable source properties to writeable target properties.
-        /// </param>
-        public static IEnumerable<TEntity> ExecuteEntities<TEntity>(this IDbCommand command, MappingMode mappingMode = MappingMode.AllTargetMembers)
+        /// <param name="mapAllSourceMembers">Determines whether an exception will be thrown if there are unmapped source members.</param>
+        /// <param name="mapAllTargetMembers">Determines whether an exception will be thrown if there are unmapped target members.</param>
+        public static IEnumerable<TEntity> ExecuteEntities<TEntity>(this IDbCommand command, bool mapAllSourceMembers = false, bool mapAllTargetMembers = true)
             where TEntity : new()
         {
             if (command.Connection != null && command.Connection.State == ConnectionState.Closed) {
@@ -40,7 +38,8 @@ namespace Kirkin.Mapping.Data
                     .FromDataReaderOrRecord(reader)
                     .ToType<TEntity>();
 
-                builder.MappingMode = mappingMode;
+                builder.MapAllSourceMembers = mapAllSourceMembers;
+                builder.MapAllTargetMembers = mapAllTargetMembers;
 
                 Mapper<IDataRecord, TEntity> mapper = builder.BuildMapper();
 
@@ -58,13 +57,12 @@ namespace Kirkin.Mapping.Data
         /// </summary>
         /// <typeparam name="TEntity">Desired type that each <see cref="DbDataRecord"/> will be mapped to.</typeparam>
         /// <param name="command">The command to be executed.</param>
-        /// <param name="mappingMode">
-        /// Defines how strict the mapper is in terms of mapping
-        /// readable source properties to writeable target properties.
-        /// </param>
+        /// <param name="mapAllSourceMembers">Determines whether an exception will be thrown if there are unmapped source members.</param>
+        /// <param name="mapAllTargetMembers">Determines whether an exception will be thrown if there are unmapped target members.</param>
         /// <param name="cancellationToken">Cancellation token to be checked throughout the operation.</param>
         public static async Task<TEntity[]> ExecuteEntitiesAsync<TEntity>(this DbCommand command, // Cannot use IDbCommand as it does not support TPL async.
-                                                                          MappingMode mappingMode = MappingMode.AllTargetMembers,
+                                                                          bool mapAllSourceMembers = false, 
+                                                                          bool mapAllTargetMembers = true,
                                                                           CancellationToken cancellationToken = default(CancellationToken))
             where TEntity : new()
         {
@@ -78,7 +76,8 @@ namespace Kirkin.Mapping.Data
                     .FromDataReaderOrRecord(reader)
                     .ToType<TEntity>();
 
-                builder.MappingMode = mappingMode;
+                builder.MapAllSourceMembers = mapAllSourceMembers;
+                builder.MapAllTargetMembers = mapAllTargetMembers;
 
                 Mapper<IDataRecord, TEntity> mapper = builder.BuildMapper();
                 List<TEntity> entities = new List<TEntity>();

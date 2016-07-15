@@ -50,7 +50,8 @@ namespace Kirkin.Mapping
             {
                 MapperBuilder<TSource, TTarget> builder = base.CreateAndConfigureBuilder<TTarget>(targetMembers);
 
-                builder.MappingMode = MappingMode.AllTargetMembers;
+                builder.MapAllSourceMembers = false;
+                builder.MapAllTargetMembers = true;
                 builder.MemberNameComparer = StringComparer.OrdinalIgnoreCase;
 
                 return builder;

@@ -7,7 +7,7 @@
     {
         /// <summary>
         /// Wraps the default <see cref="Mapper{TSource, TTarget}"/>
-        /// instance which uses <see cref="MappingMode.Strict"/>.
+        /// instance which does not allow unmapped source or target members.
         /// </summary>
         internal static class StrictMapper<TSource, TTarget>
         {
@@ -36,7 +36,8 @@
             private static Mapper<TSource, TTarget> CreateMapper()
             {
                 MapperBuilder<TSource, TTarget> config = new MapperBuilder<TSource, TTarget> {
-                    MappingMode = MappingMode.Strict
+                    MapAllSourceMembers = true,
+                    MapAllTargetMembers = true
                 };
 
                 return config.BuildMapper();
@@ -45,7 +46,7 @@
 
         /// <summary>
         /// Wraps the default <see cref="Mapper{TSource, TTarget}"/>
-        /// instance which uses <see cref="MappingMode.Relaxed"/>.
+        /// instance which allows unmapped source and target members.
         /// </summary>
         internal static class RelaxedMapper<TSource, TTarget>
         {
@@ -74,7 +75,8 @@
             private static Mapper<TSource, TTarget> CreateMapper()
             {
                 MapperBuilder<TSource, TTarget> config = new MapperBuilder<TSource, TTarget> {
-                    MappingMode = MappingMode.Relaxed
+                    MapAllSourceMembers = false,
+                    MapAllTargetMembers = false
                 };
 
                 return config.BuildMapper();
@@ -83,7 +85,7 @@
 
         /// <summary>
         /// Wraps the default <see cref="Mapper{TSource, TTarget}"/>
-        /// instance which uses <see cref="MappingMode.AllSourceMembers"/>.
+        /// instance which allows unmapped target members.
         /// </summary>
         internal static class AllSourceMembersMapper<TSource, TTarget>
         {
@@ -112,7 +114,8 @@
             private static Mapper<TSource, TTarget> CreateMapper()
             {
                 MapperBuilder<TSource, TTarget> config = new MapperBuilder<TSource, TTarget> {
-                    MappingMode = MappingMode.AllSourceMembers
+                    MapAllSourceMembers = true,
+                    MapAllTargetMembers = false
                 };
 
                 return config.BuildMapper();
@@ -121,7 +124,7 @@
 
         /// <summary>
         /// Wraps the default <see cref="Mapper{TSource, TTarget}"/>
-        /// instance which uses <see cref="MappingMode.AllTargetMembers"/>.
+        /// instance which allows unmapped source members.
         /// </summary>
         internal static class AllTargetMembersMapper<TSource, TTarget>
         {
@@ -150,7 +153,8 @@
             private static Mapper<TSource, TTarget> CreateMapper()
             {
                 MapperBuilder<TSource, TTarget> config = new MapperBuilder<TSource, TTarget> {
-                    MappingMode = MappingMode.AllTargetMembers
+                    MapAllSourceMembers = false,
+                    MapAllTargetMembers = true
                 };
 
                 return config.BuildMapper();

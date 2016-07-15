@@ -12,7 +12,7 @@
         /// Creates a new target instance, executes mapping from source
         /// to target and returns the newly created target instance.
         /// </summary>
-        public static TTarget Map<TSource, TTarget>(this IMapper<TSource, TTarget> mapper, TSource source)
+        public static TTarget Map<TSource, TTarget>(this Mapper<TSource, TTarget> mapper, TSource source)
             where TTarget : new()
         {
             return mapper.Map(source, new TTarget());

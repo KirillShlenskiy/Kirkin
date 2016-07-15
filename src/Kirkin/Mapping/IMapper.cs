@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Kirkin.Mapping.Engine;
 
@@ -8,8 +7,7 @@ namespace Kirkin.Mapping
     /// <summary>
     /// Performs mapping between objects of source and target types.
     /// </summary>
-    [Obsolete("Use the concrete Mapper{TSource, TTarget} type instead.")]
-    public interface IMapper<TSource, TTarget>
+    internal interface IMapper<TSource, TTarget> // To be retired.
     {
         /// <summary>
         /// Member mappings.
