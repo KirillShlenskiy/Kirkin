@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Kirkin.Mapping.Engine;
+using Kirkin.Reflection;
 
 namespace Kirkin.Mapping
 {
@@ -26,6 +27,19 @@ namespace Kirkin.Mapping
         public MapperBuilder<TSource, TTarget> ToObject<TTarget>()
         {
             Member[] targetMembers = PropertyMember.PublicInstanceProperties<TTarget>();
+
+            return CreateAndConfigureBuilder<TTarget>(targetMembers);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="MapperBuilder{TSource, TTarget}"/> which defines a
+        /// mapping from source to the specified properties of the given target type. 
+        /// </summary>
+        public MapperBuilder<TSource, TTarget> ToObject<TTarget>(PropertyList<TTarget> propertyList)
+        {
+            if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
+
+            Member[] targetMembers = PropertyMember.MembersFromPropertyList(propertyList);
 
             return CreateAndConfigureBuilder<TTarget>(targetMembers);
         }

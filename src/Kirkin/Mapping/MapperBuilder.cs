@@ -69,7 +69,7 @@ namespace Kirkin.Mapping
         /// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
         /// instances mapping from object sources of the given type to various target types. 
         /// </summary>
-        internal static MapperBuilderFactory<TSource> FromObject<TSource>()
+        public static MapperBuilderFactory<TSource> FromObject<TSource>()
         {
             Member[] sourceMembers = PropertyMember.PublicInstanceProperties<TSource>();
 
@@ -77,22 +77,16 @@ namespace Kirkin.Mapping
         }
 
         /// <summary>
-        /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/> instance with the
-        /// same source and target type, mapping all the properties in the given list.
+        /// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
+        /// instances mapping from the specified properties of the given type to various target types.
         /// </summary>
-        public static MapperBuilder<T, T> FromPropertyList<T>(PropertyList<T> propertyList)
+        public static MapperBuilderFactory<TSource> FromObject<TSource>(PropertyList<TSource> propertyList)
         {
             if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
 
-            Member[] members = new Member[propertyList.Properties.Length];
+            Member[] sourceMembers = PropertyMember.MembersFromPropertyList(propertyList);
 
-            for (int i = 0; i < propertyList.Properties.Length; i++) {
-                members[i] = new PropertyMember(propertyList.Properties[i]);
-            }
-
-            return new MapperBuilder<T, T>(members, members) {
-                MappingMode = MappingMode.Relaxed // No need to validate mapping.
-            };
+            return new MapperBuilderFactory<TSource>(sourceMembers);
         }
     }
 }

@@ -2,6 +2,8 @@
 using System.Linq.Expressions;
 using System.Reflection;
 
+using Kirkin.Reflection;
+
 namespace Kirkin.Mapping.Engine
 {
     /// <summary>
@@ -19,6 +21,20 @@ namespace Kirkin.Mapping.Engine
 
             for (int i = 0; i < properties.Length; i++) {
                 members[i] = new PropertyMember(properties[i]);
+            }
+
+            return members;
+        }
+
+        /// <summary>
+        /// Creates a collection of <see cref="PropertyMember"/> from the given <see cref="PropertyList{T}"/>.
+        /// </summary>
+        internal static PropertyMember[] MembersFromPropertyList<T>(PropertyList<T> propertyList)
+        {
+            PropertyMember[] members = new PropertyMember[propertyList.Properties.Length];
+
+            for (int i = 0; i < propertyList.Properties.Length; i++) {
+                members[i] = new PropertyMember(propertyList.Properties[i]);
             }
 
             return members;

@@ -596,7 +596,8 @@ namespace Kirkin.Tests.Mapping
             Dummy d1 = new Dummy { ID = 123, Value = "Zzz" };
 
             Dummy d2 = MapperBuilder
-                .FromPropertyList(PropertyList<Dummy>.Default.Without(d => d.Value))
+                .FromObject(PropertyList<Dummy>.Default.Without(d => d.Value))
+                .ToObject(PropertyList<Dummy>.Default.Without(d => d.Value))
                 .BuildMapper()
                 .Map(d1);
 
