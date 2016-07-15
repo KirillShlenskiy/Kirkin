@@ -31,17 +31,15 @@ namespace Kirkin.Mapping
         {
             if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
 
-            MapperBuilder<T, T> builder = new MapperBuilder<T, T> {
-                MappingMode = MappingMode.Relaxed // No need to validate mapping.
-            };
+            Member[] members = new Member[propertyList.Properties.Length];
 
-            builder.IgnoreAllTargetMembers();
-
-            foreach (IPropertyAccessor propertyAccessor in propertyList.PropertyAccessors) {
-                builder.TargetMember(propertyAccessor.Property.Name).Reset();
+            for (int i = 0; i < propertyList.Properties.Length; i++) {
+                members[i] = new PropertyMember(propertyList.Properties[i]);
             }
 
-            return builder;
+            return new MapperBuilder<T, T>(members, members) {
+                MappingMode = MappingMode.Relaxed // No need to validate mapping.
+            };
         }
     }
 
@@ -134,6 +132,17 @@ namespace Kirkin.Mapping
             MappingMode = MappingMode.Strict;
             MemberNameComparer = StringComparer.Ordinal;
             NullableBehaviour = NullableBehaviour.DefaultMapsToNull;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/>
+        /// instance using the given source and target member lists.
+        /// </summary>
+        internal MapperBuilder(Member[] sourceMembers, Member[] targetMembers)
+            : this() // Set defaults.
+        {
+            _sourceMembers = sourceMembers;
+            _targetMembers = targetMembers;
         }
 
         #endregion
