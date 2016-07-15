@@ -14,7 +14,7 @@ namespace Kirkin.Mapping
         /// </summary>
         public static Mapper<TSource, TTarget> CreateMapper<TSource, TTarget>()
         {
-            return StrictMapper<TSource, TTarget>.Default;
+            return DefaultMappers.StrictMapper<TSource, TTarget>.Instance;
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Kirkin.Mapping
         public static T Clone<T>(T source)
             where T : new()
         {
-            return RelaxedMapper<T, T>.Default.Map(source, new T());
+            return DefaultMappers.RelaxedMapper<T, T>.Instance.Map(source, new T());
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Kirkin.Mapping
         {
             // Treat target as TSource so as to prevent the default
             // mapping from failing due to unmapped target members.
-            return (TTarget)RelaxedMapper<TSource, TSource>.Default.Map(source, target);
+            return (TTarget)DefaultMappers.RelaxedMapper<TSource, TSource>.Instance.Map(source, target);
         }
 
         #endregion
@@ -77,7 +77,7 @@ namespace Kirkin.Mapping
         /// </summary>
         public static TTarget MapAllSourceMembers<TSource, TTarget>(TSource source, TTarget target)
         {
-            return AllSourceMembersMapper<TSource, TTarget>.Default.Map(source, target);
+            return DefaultMappers.AllSourceMembersMapper<TSource, TTarget>.Instance.Map(source, target);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Kirkin.Mapping
         /// </summary>
         public static TTarget MapAllTargetMembers<TSource, TTarget>(TSource source, TTarget target)
         {
-            return AllTargetMembersMapper<TSource, TTarget>.Default.Map(source, target);
+            return DefaultMappers.AllTargetMembersMapper<TSource, TTarget>.Instance.Map(source, target);
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace Kirkin.Mapping
         /// </summary>
         public static TTarget MapRelaxed<TSource, TTarget>(TSource source, TTarget target)
         {
-            return RelaxedMapper<TSource, TTarget>.Default.Map(source, target);
+            return DefaultMappers.RelaxedMapper<TSource, TTarget>.Instance.Map(source, target);
         }
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace Kirkin.Mapping
         /// </summary>
         public static TTarget MapStrict<TSource, TTarget>(TSource source, TTarget target)
         {
-            return StrictMapper<TSource, TTarget>.Default.Map(source, target);
+            return DefaultMappers.StrictMapper<TSource, TTarget>.Instance.Map(source, target);
         }
 
         #endregion
