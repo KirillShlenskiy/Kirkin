@@ -27,7 +27,7 @@ namespace Kirkin.Tests.Mapping
 
         public class MapperBenchmarks
         {
-            private readonly Mapper<Dummy, Dummy> Map = (Mapper<Dummy, Dummy>)Mapper.CreateMapper<Dummy, Dummy>();
+            private readonly Mapper<Dummy, Dummy> Map = new MapperBuilder<Dummy, Dummy>().BuildMapper();
             private readonly Dummy Source = new Dummy { ID = 123, Value = "Blah" };
             private readonly Dummy Target = new Dummy();
 
@@ -48,7 +48,7 @@ namespace Kirkin.Tests.Mapping
             [Benchmark]
             public void InterfaceMapper()
             {
-                IMapper<Dummy, Dummy> mapper = Map;
+                Mapper<Dummy, Dummy> mapper = Map;
 
                 mapper.Map(Source, Target);
             }

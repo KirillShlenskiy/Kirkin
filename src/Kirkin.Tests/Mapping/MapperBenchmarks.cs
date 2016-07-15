@@ -36,7 +36,7 @@ namespace Kirkin.Tests.Mapping
         public void KirkinMapperConfiguredAutomapClone()
         {
             Dummy source = new Dummy { ID = 1, Value = "Blah" };
-            IMapper<Dummy, Dummy> mapper = Kirkin.Mapping.Mapper.CreateMapper<Dummy, Dummy>();
+            Mapper<Dummy, Dummy> mapper = new MapperBuilder<Dummy, Dummy>().BuildMapper();
 
             for (int i = 0; i < 100000; i++) {
                 Dummy target = mapper.Map(source);

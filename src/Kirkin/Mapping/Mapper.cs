@@ -1,38 +1,10 @@
-﻿using System;
-
-namespace Kirkin.Mapping
+﻿namespace Kirkin.Mapping
 {
     /// <summary>
     /// Static <see cref="Mapper{TSource, TTarget}" /> proxy and factory methods.
     /// </summary>
     public static class Mapper
     {
-        #region Factory
-
-        /// <summary>
-        /// Creates and configures a new <see cref="Mapper{TSource, TTarget}"/> instance.
-        /// </summary>
-        public static Mapper<TSource, TTarget> CreateMapper<TSource, TTarget>()
-        {
-            return DefaultMappers.StrictMapper<TSource, TTarget>.Instance;
-        }
-
-        /// <summary>
-        /// Creates and configures a new <see cref="Mapper{TSource, TTarget}"/> instance.
-        /// </summary>
-        public static Mapper<TSource, TTarget> CreateMapper<TSource, TTarget>(Action<MapperBuilder<TSource, TTarget>> configAction)
-        {
-            if (configAction == null) throw new ArgumentNullException(nameof(configAction));
-
-            MapperBuilder<TSource, TTarget> builder = new MapperBuilder<TSource, TTarget>();
-
-            configAction(builder);
-
-            return builder.BuildMapper();
-        }
-
-        #endregion
-
         #region Same/derived type mapping
 
         /// <summary>
