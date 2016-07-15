@@ -72,6 +72,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperBuilder+SourceMemberConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperBuilder+TargetMemberConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperBuilderExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperBuilder`2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperBuilderFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperExtensions.cs" />
