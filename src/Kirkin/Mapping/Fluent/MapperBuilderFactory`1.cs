@@ -3,7 +3,7 @@
 using Kirkin.Mapping.Engine;
 using Kirkin.Reflection;
 
-namespace Kirkin.Mapping
+namespace Kirkin.Mapping.Fluent
 {
     /// <summary>
     /// Partially configure mapper builder factory type.

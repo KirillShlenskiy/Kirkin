@@ -54,6 +54,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Logging\Logger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logging\LoggerBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logging\LoggerBuilderExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DataMapperBuilderFactoryExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DataMember.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Data\DbCommandExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\DefaultMappers.cs" />
@@ -67,14 +68,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\MemberMappings\DelegateMemberMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\MemberMappings\ExpressionMemberMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\PropertyMember.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Fluent\MapperBuilderFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Fluent\MapperBuilderFactory`1.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\IMapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Mapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperBuilder+SourceMemberConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperBuilder+TargetMemberConfig.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperBuilderExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperBuilder`2.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperBuilderFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Mapper`2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MappingException.cs" />

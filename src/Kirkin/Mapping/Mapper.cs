@@ -1,10 +1,21 @@
-﻿namespace Kirkin.Mapping
+﻿using Kirkin.Mapping.Fluent;
+
+namespace Kirkin.Mapping
 {
     /// <summary>
     /// Static <see cref="Mapper{TSource, TTarget}" /> proxy and factory methods.
     /// </summary>
     public static class Mapper
     {
+        #region Builder factory
+
+        /// <summary>
+        /// Fluent <see cref="MapperBuilder{TSource, TTarget}"/> factory singleton.
+        /// </summary>
+        public static MapperBuilderFactory Builder { get; } = new MapperBuilderFactory();
+
+        #endregion
+
         #region Same/derived type mapping
 
         /// <summary>

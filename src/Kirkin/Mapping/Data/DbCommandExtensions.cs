@@ -34,7 +34,7 @@ namespace Kirkin.Mapping.Data
 
             using (IDataReader reader = command.ExecuteReader())
             {
-                MapperBuilder<IDataRecord, TEntity> builder = MapperBuilder
+                MapperBuilder<IDataRecord, TEntity> builder = Mapper.Builder
                     .FromDataReaderOrRecord(reader)
                     .ToType<TEntity>();
 
@@ -72,7 +72,7 @@ namespace Kirkin.Mapping.Data
 
             using (DbDataReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
             {
-                MapperBuilder<IDataRecord, TEntity> builder = MapperBuilder
+                MapperBuilder<IDataRecord, TEntity> builder = Mapper.Builder
                     .FromDataReaderOrRecord(reader)
                     .ToType<TEntity>();
 

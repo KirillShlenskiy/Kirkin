@@ -5,6 +5,8 @@ using Kirkin.Reflection;
 
 using Xunit;
 
+using Mapper = Kirkin.Mapping.Mapper;
+
 namespace Kirkin.Tests.Mapping
 {
     public class MapperBenchmarks
@@ -48,7 +50,7 @@ namespace Kirkin.Tests.Mapping
         {
             Dummy source = new Dummy { ID = 1, Value = "Blah" };
 
-            Mapper<Dummy, Dummy> mapper = MapperBuilder
+            Mapper<Dummy, Dummy> mapper = Mapper.Builder
                 .FromPropertyList(PropertyList<Dummy>.Default)
                 .ToPropertyList(PropertyList<Dummy>.Default)
                 .BuildMapper();
