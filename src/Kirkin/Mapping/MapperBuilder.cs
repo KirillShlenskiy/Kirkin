@@ -8,6 +8,11 @@ using Kirkin.Mapping.Engine;
 using Kirkin.Mapping.Engine.MemberMappings;
 using Kirkin.Reflection;
 
+#if !__MOBILE__
+using System.Data;
+using Kirkin.Mapping.Data;
+#endif
+
 namespace Kirkin.Mapping
 {
     /// <summary>
@@ -23,6 +28,17 @@ namespace Kirkin.Mapping
             throw new NotImplementedException(); // TODO.
         }
 
+#if !__MOBILE__
+        internal static MapperBuilder<IDataRecord, TTarget> FromDataRecord<TTarget>(IDataRecord dataRecord)
+        {
+            return new DataRecordToObjectMapperBuilder<TTarget>(dataRecord);
+        }
+
+        internal static MapperBuilder<DataRow, TTarget> FromDataTable<TTarget>(DataTable dataTable)
+        {
+            return new DataRowToObjectMapperBuilder<TTarget>(dataTable);
+        }
+#endif
         /// <summary>
         /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/> instance with the
         /// same source and target type, mapping all the properties in the given list.
