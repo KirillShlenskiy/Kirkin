@@ -123,13 +123,13 @@ namespace Kirkin.Tests.Mapping
             var builder = new MapperBuilder<Dummy, LowercaseDummy> { MappingMode = MappingMode.Relaxed };
 
             builder.TargetMember(m => m.id).Ignore();
-            builder.Validate();
+            builder.ValidateMapping();
 
             builder = new MapperBuilder<Dummy, LowercaseDummy> { MappingMode = MappingMode.Relaxed };
 
             builder.TargetMember(m => m.id).MapTo(builder.SourceMember(m => m.ID).Member.Name);
             builder.TargetMember(m => m.value).Ignore();
-            builder.Validate();
+            builder.ValidateMapping();
         }
 
         [Fact]
@@ -318,19 +318,19 @@ namespace Kirkin.Tests.Mapping
             var extendedDummy = new ExtendedDummy();
 
             Assert.Throws<MappingException>(() =>
-                new MapperBuilder<Dummy, ExtendedDummy> { MappingMode = MappingMode.Strict }.Validate()
+                new MapperBuilder<Dummy, ExtendedDummy> { MappingMode = MappingMode.Strict }.ValidateMapping()
             );
 
             Assert.Throws<MappingException>(() => Mapper.MapStrict(new Dummy(), new ExtendedDummy()));
 
             Assert.Throws<MappingException>(() =>
-                new MapperBuilder<Dummy, ExtendedDummy> { MappingMode = MappingMode.AllTargetMembers }.Validate()
+                new MapperBuilder<Dummy, ExtendedDummy> { MappingMode = MappingMode.AllTargetMembers }.ValidateMapping()
             );
 
             Assert.Throws<MappingException>(() => Mapper.MapAllTargetMembers(new Dummy(), new ExtendedDummy()));
 
             Assert.Throws<MappingException>(() =>
-                new MapperBuilder<ExtendedDummy, Dummy> { MappingMode = MappingMode.AllSourceMembers }.Validate()
+                new MapperBuilder<ExtendedDummy, Dummy> { MappingMode = MappingMode.AllSourceMembers }.ValidateMapping()
             );
 
             Assert.Throws<MappingException>(() => Mapper.MapAllSourceMembers(new ExtendedDummy(), new Dummy()));
@@ -507,11 +507,11 @@ namespace Kirkin.Tests.Mapping
 
             builder.TargetMember(d => d.ID).Ignore();
 
-            Assert.Throws<MappingException>(() => builder.Validate());
+            Assert.Throws<MappingException>(() => builder.ValidateMapping());
 
             builder.TargetMember(d => d.ID).Reset();
 
-            builder.Validate();
+            builder.ValidateMapping();
 
             Assert.Equal(2, builder.ProduceValidMemberMappings().Length);
 
@@ -519,7 +519,7 @@ namespace Kirkin.Tests.Mapping
 
             Assert.Equal(1, builder.ProduceValidMemberMappings().Length);
 
-            builder.Validate();
+            builder.ValidateMapping();
         }
 
         [Fact]
@@ -527,15 +527,15 @@ namespace Kirkin.Tests.Mapping
         {
             var builder = new MapperBuilder<Dummy, Dummyz>();
 
-            Assert.Throws<MappingException>(() => builder.Validate());
+            Assert.Throws<MappingException>(() => builder.ValidateMapping());
 
             builder.TargetMember(d => d.IDz).MapTo(d => d.ID);
 
-            Assert.Throws<MappingException>(() => builder.Validate());
+            Assert.Throws<MappingException>(() => builder.ValidateMapping());
 
             builder.TargetMember(d => d.Valuez).MapTo(d => d.Value);
 
-            builder.Validate();
+            builder.ValidateMapping();
         }
 
         [Fact]
@@ -543,15 +543,15 @@ namespace Kirkin.Tests.Mapping
         {
             var builder = new MapperBuilder<Dummy, Dummyz>();
 
-            Assert.Throws<MappingException>(() => builder.Validate());
+            Assert.Throws<MappingException>(() => builder.ValidateMapping());
 
             builder.TargetMember("IDz").MapTo("ID");
 
-            Assert.Throws<MappingException>(() => builder.Validate());
+            Assert.Throws<MappingException>(() => builder.ValidateMapping());
 
             builder.TargetMember("Valuez").MapTo("Value");
 
-            builder.Validate();
+            builder.ValidateMapping();
         }
 
         [Fact]

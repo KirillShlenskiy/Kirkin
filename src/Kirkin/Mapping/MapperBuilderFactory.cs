@@ -19,13 +19,20 @@ namespace Kirkin.Mapping
             SourceMembers = sourceMembers;
         }
 
+        /// <summary>
+        /// Creates a <see cref="MapperBuilder{TSource, TTarget}"/> which
+        /// configures mapping from source to an object of the given type.
+        /// </summary>
         public MapperBuilder<TSource, TTarget> ToObject<TTarget>()
         {
-            return CreateAndConfigureBuilder<TTarget>(
-                PropertyMember.PublicInstanceProperties<TTarget>()
-            );
+            Member[] targetMembers = PropertyMember.PublicInstanceProperties<TTarget>();
+
+            return CreateAndConfigureBuilder<TTarget>(targetMembers);
         }
 
+        /// <summary>
+        /// Core <see cref="MapperBuilder{TSource, TTarget}"/> factory method.
+        /// </summary>
         protected virtual MapperBuilder<TSource, TTarget> CreateAndConfigureBuilder<TTarget>(Member[] targetMembers)
         {
             return new MapperBuilder<TSource, TTarget>(SourceMembers, targetMembers);
