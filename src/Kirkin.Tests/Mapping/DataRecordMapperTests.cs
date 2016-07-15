@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Kirkin.Mapping;
 using Kirkin.Mapping.Data;
@@ -26,27 +27,14 @@ namespace Kirkin.Tests.Mapping
                 return;
             }
 
-            var stubs = new List<PersonStub>();
+            PersonStub[] stubs;
 
             using (var cn = new SqlConnection(ConnectionString))
             using (var cmd = new SqlCommand("SELECT TOP 10 * FROM Person ORDER BY PersonID", cn))
             {
-                cn.Open();
-
-                using (var reader = cmd.ExecuteReader())
-                {
-                    var mapper = Mapper.Builder
-                        .FromDataReaderOrRecord(reader)
-                        .ToType<PersonStub>()
-                        .BuildMapper();
-
-                    while (reader.Read())
-                    {
-                        var person = mapper.Map(reader, new PersonStub());
-
-                        stubs.Add(person);
-                    }
-                }
+                stubs = cmd
+                    .ExecuteEntities<PersonStub>()
+                    .ToArray();
             }
 
             Assert.NotEmpty(stubs);
@@ -98,34 +86,21 @@ namespace Kirkin.Tests.Mapping
         }
 
         [Fact]
-        public void MapDefaultOfTToNullableT()
+        public async Task MapDefaultOfTToNullableT()
         {
             if (!Environment.MachineName.Equals("BABUSHKA", StringComparison.OrdinalIgnoreCase)) {
                 return;
             }
 
-            var stubs = new List<NullablePersonStub>();
+            NullablePersonStub[] stubs;
 
             using (var cn = new SqlConnection(ConnectionString))
-            using (var cmd = new SqlCommand("SELECT TOP 10 0 AS PersonID, DisplayName FROM Person ORDER BY PersonID", cn))
-            {
-                cn.Open();
-
-                using (var reader = cmd.ExecuteReader())
-                {
-                    var mapper = Mapper.Builder.FromDataReaderOrRecord(reader).ToType<NullablePersonStub>().BuildMapper();
-
-                    while (reader.Read())
-                    {
-                        var nullablePerson = mapper.Map(reader, new NullablePersonStub { PersonID = 1 });
-
-                        stubs.Add(nullablePerson);
-                    }
-                }
+            using (var cmd = new SqlCommand("SELECT TOP 10 0 AS PersonID, DisplayName FROM Person ORDER BY PersonID", cn)) {
+                stubs = await cmd.ExecuteEntitiesAsync<NullablePersonStub>();
             }
 
             Assert.NotEmpty(stubs);
-            Assert.True(stubs.All(s => s.PersonID.HasValue && s.PersonID.Value == 0), "All PersonIDs expected to be NULL.");
+            Assert.True(stubs.All(s => s.PersonID.HasValue && s.PersonID.Value == 0), "All PersonIDs expected to be zero.");
 
             Debug.Print("Done.");
         }
