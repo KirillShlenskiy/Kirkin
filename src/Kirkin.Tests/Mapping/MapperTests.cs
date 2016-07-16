@@ -619,8 +619,8 @@ namespace Kirkin.Tests.Mapping
             Dummy d1 = new Dummy { ID = 123, Value = "Zzz" };
 
             Dummy d2 = Mapper.Builder
-                .From(PropertyMember.MembersFromPropertyList(PropertyList<Dummy>.Default.Without(d => d.Value)))
-                .To(PropertyMember.MembersFromPropertyList(PropertyList<Dummy>.Default.Without(d => d.Value)))
+                .From(PropertyMember.PropertyListMembers(PropertyList<Dummy>.Default.Without(d => d.Value)))
+                .To(PropertyMember.PropertyListMembers(PropertyList<Dummy>.Default.Without(d => d.Value)))
                 .BuildMapper()
                 .Map(d1);
 

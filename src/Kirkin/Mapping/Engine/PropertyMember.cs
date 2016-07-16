@@ -29,7 +29,7 @@ namespace Kirkin.Mapping.Engine
         /// <summary>
         /// Creates a collection of <see cref="PropertyMember"/> from the given <see cref="PropertyList{T}"/>.
         /// </summary>
-        internal static PropertyMember<T>[] MembersFromPropertyList<T>(PropertyList<T> propertyList)
+        public static PropertyMember<T>[] PropertyListMembers<T>(PropertyList<T> propertyList)
         {
             PropertyMember<T>[] members = new PropertyMember<T>[propertyList.Properties.Length];
 
