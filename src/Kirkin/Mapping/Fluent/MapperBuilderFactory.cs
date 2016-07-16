@@ -41,6 +41,15 @@ namespace Kirkin.Mapping.Fluent
             return new MapperBuilderFactory<TSource>(sourceMembers);
         }
 
+        internal MapperBuilderFactory<TSource> FromProvider<TSource>(IMemberListProvider<TSource> sourceMemberListProvider)
+        {
+            if (sourceMemberListProvider == null) throw new ArgumentNullException(nameof(sourceMemberListProvider));
+
+            Member[] sourceMembers = sourceMemberListProvider.GetMembers();
+
+            return new MapperBuilderFactory<TSource>(sourceMembers);
+        }
+
         /// <summary>
         /// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
         /// instances mapping from the specified properties of the given type to various target types.
