@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-using Kirkin.Reflection;
 using Kirkin.Mapping.Engine;
 
 namespace Kirkin.Mapping.Fluent
@@ -11,11 +10,22 @@ namespace Kirkin.Mapping.Fluent
     /// </summary>
     public sealed class MapperBuilderFactory
     {
-        internal MapperBuilderFactory()
+        /// <summary>
+        /// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
+        /// instances mapping from object sources of the given type to various target types. 
+        /// </summary>
+        public MapperBuilderFactory<TSource> From<TSource>()
         {
+            Member<TSource>[] sourceMembers = PropertyMember.PublicInstanceProperties<TSource>();
+
+            return From(sourceMembers);
         }
 
-        internal MapperBuilderFactory<TSource> From<TSource>(Member<TSource>[] sourceMembers)
+        /// <summary>
+        /// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
+        /// instances mapping from the specified members of the source type to various target types.
+        /// </summary>
+        public MapperBuilderFactory<TSource> From<TSource>(Member<TSource>[] sourceMembers)
         {
             if (sourceMembers == null) throw new ArgumentNullException(nameof(sourceMembers));
 
@@ -30,28 +40,17 @@ namespace Kirkin.Mapping.Fluent
             throw new NotImplementedException(); // TODO.
         }
 
-        /// <summary>
-        /// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
-        /// instances mapping from object sources of the given type to various target types. 
-        /// </summary>
-        public MapperBuilderFactory<TSource> FromType<TSource>()
-        {
-            Member<TSource>[] sourceMembers = PropertyMember.PublicInstanceProperties<TSource>();
+        ///// <summary>
+        ///// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
+        ///// instances mapping from the specified properties of the given type to various target types.
+        ///// </summary>
+        //public MapperBuilderFactory<TSource> FromPropertyList<TSource>(PropertyList<TSource> propertyList)
+        //{
+        //    if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
 
-            return new MapperBuilderFactory<TSource>(sourceMembers);
-        }
+        //    Member<TSource>[] sourceMembers = PropertyMember.MembersFromPropertyList(propertyList);
 
-        /// <summary>
-        /// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
-        /// instances mapping from the specified properties of the given type to various target types.
-        /// </summary>
-        public MapperBuilderFactory<TSource> FromPropertyList<TSource>(PropertyList<TSource> propertyList)
-        {
-            if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
-
-            Member<TSource>[] sourceMembers = PropertyMember.MembersFromPropertyList(propertyList);
-
-            return new MapperBuilderFactory<TSource>(sourceMembers);
-        }
+        //    return new MapperBuilderFactory<TSource>(sourceMembers);
+        //}
     }
 }

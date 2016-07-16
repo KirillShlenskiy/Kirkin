@@ -1,5 +1,6 @@
 ﻿#if !__MOBILE__
 
+using System;
 using System.Collections.Generic;
 using System.Data;
 
@@ -25,7 +26,9 @@ namespace Kirkin.Mapping.Data
         /// <param name="command">The command to be executed.</param>
         /// <param name="mapAllSourceMembers">Determines whether an exception will be thrown if there are unmapped source members.</param>
         /// <param name="mapAllTargetMembers">Determines whether an exception will be thrown if there are unmapped target members.</param>
-        public static IEnumerable<TEntity> ExecuteEntities<TEntity>(this IDbCommand command, bool mapAllSourceMembers = false, bool mapAllTargetMembers = true)
+        public static IEnumerable<TEntity> ExecuteEntities<TEntity>(this IDbCommand command,
+                                                                    bool mapAllSourceMembers = false,
+                                                                    bool mapAllTargetMembers = true)
             where TEntity : new()
         {
             if (command.Connection != null && command.Connection.State == ConnectionState.Closed) {
@@ -35,11 +38,12 @@ namespace Kirkin.Mapping.Data
             using (IDataReader reader = command.ExecuteReader())
             {
                 MapperBuilder<IDataRecord, TEntity> builder = Mapper.Builder
-                    .FromDataReaderOrRecord(reader)
-                    .ToType<TEntity>();
+                    .From(DataMember.DataReaderOrRecordMembers(reader))
+                    .To<TEntity>();
 
                 builder.MapAllSourceMembers = mapAllSourceMembers;
                 builder.MapAllTargetMembers = mapAllTargetMembers;
+                builder.MemberNameComparer = StringComparer.OrdinalIgnoreCase; // TODO: make this a parameter.
 
                 Mapper<IDataRecord, TEntity> mapper = builder.BuildMapper();
 
@@ -73,12 +77,13 @@ namespace Kirkin.Mapping.Data
             using (DbDataReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
             {
                 MapperBuilder<IDataRecord, TEntity> builder = Mapper.Builder
-                    .FromDataReaderOrRecord(reader)
-                    .ToType<TEntity>();
+                    .From(DataMember.DataReaderOrRecordMembers(reader))
+                    .To<TEntity>();
 
                 builder.MapAllSourceMembers = mapAllSourceMembers;
                 builder.MapAllTargetMembers = mapAllTargetMembers;
-
+                builder.MemberNameComparer = StringComparer.OrdinalIgnoreCase; // TODO: make this a parameter.
+                
                 Mapper<IDataRecord, TEntity> mapper = builder.BuildMapper();
                 List<TEntity> entities = new List<TEntity>();
 

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 
 using Kirkin.Mapping;
+using Kirkin.Mapping.Engine;
 using Kirkin.Reflection;
 
 using Xunit;
@@ -50,8 +51,8 @@ namespace Kirkin.Tests.Mapping
             Dummy source = new Dummy { ID = 1, Value = "Blah" };
 
             Mapper<Dummy, Dummy> mapper = Mapper.Builder
-                .FromPropertyList(PropertyList<Dummy>.Default)
-                .ToPropertyList(PropertyList<Dummy>.Default)
+                .From(PropertyMember.MembersFromPropertyList(PropertyList<Dummy>.Default))
+                .To(PropertyMember.MembersFromPropertyList(PropertyList<Dummy>.Default))
                 .BuildMapper();
 
             for (int i = 0; i < 100000; i++) {

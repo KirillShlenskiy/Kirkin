@@ -1,6 +1,5 @@
 ﻿#if !__MOBILE__
 
-using System;
 using System.Data;
 
 using Kirkin.Mapping.Engine;
@@ -11,7 +10,7 @@ namespace Kirkin.Mapping.Data
     /// <summary>
     /// Data-related fluent <see cref="MapperBuilderFactory"/> extension methods.
     /// </summary>
-    public static class DataMapperBuilderFactoryExtensions
+    internal static class DataMapperBuilderFactoryExtensions
     {
         /// <summary>
         /// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
@@ -19,9 +18,9 @@ namespace Kirkin.Mapping.Data
         /// </summary>
         public static MapperBuilderFactory<IDataRecord> FromDataReaderOrRecord(this MapperBuilderFactory factory, IDataRecord dataRecord)
         {
-            Member<IDataRecord>[] sourceMembers = DataMember.DataRecordMembers(dataRecord);
+            Member<IDataRecord>[] sourceMembers = DataMember.DataReaderOrRecordMembers(dataRecord);
 
-            return new DataMapperBuilderFactory<IDataRecord>(sourceMembers);
+            return new MapperBuilderFactory<IDataRecord>(sourceMembers);
         }
 
         /// <summary>
@@ -32,26 +31,7 @@ namespace Kirkin.Mapping.Data
         {
             Member<DataRow>[] sourceMembers = DataMember.DataTableMembers(dataTable);
 
-            return new DataMapperBuilderFactory<DataRow>(sourceMembers);
-        }
-
-        sealed class DataMapperBuilderFactory<TSource> : MapperBuilderFactory<TSource>
-        {
-            internal DataMapperBuilderFactory(Member<TSource>[] sourceMembers)
-                : base(sourceMembers)
-            {
-            }
-
-            protected override MapperBuilder<TSource, TTarget> CreateAndConfigureBuilder<TTarget>(Member<TTarget>[] targetMembers)
-            {
-                MapperBuilder<TSource, TTarget> builder = base.CreateAndConfigureBuilder(targetMembers);
-
-                builder.MapAllSourceMembers = false;
-                builder.MapAllTargetMembers = true;
-                builder.MemberNameComparer = StringComparer.OrdinalIgnoreCase;
-
-                return builder;
-            }
+            return new MapperBuilderFactory<DataRow>(sourceMembers);
         }
     }
 }

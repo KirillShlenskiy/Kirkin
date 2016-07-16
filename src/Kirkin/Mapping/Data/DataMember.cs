@@ -16,7 +16,7 @@ namespace Kirkin.Mapping.Data
         /// <summary>
         /// Resolves the member list from an <see cref="IDataRecord"/>.
         /// </summary>
-        public static Member<IDataRecord>[] DataRecordMembers(IDataRecord dataRecord)
+        public static Member<IDataRecord>[] DataReaderOrRecordMembers(IDataRecord dataRecord)
         {
             if (dataRecord == null) throw new ArgumentNullException(nameof(dataRecord));
 

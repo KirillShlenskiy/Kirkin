@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Kirkin.Mapping;
+using Kirkin.Mapping.Engine;
 using Kirkin.Mapping.Engine.Compilers;
 using Kirkin.Reflection;
 
@@ -618,8 +619,8 @@ namespace Kirkin.Tests.Mapping
             Dummy d1 = new Dummy { ID = 123, Value = "Zzz" };
 
             Dummy d2 = Mapper.Builder
-                .FromPropertyList(PropertyList<Dummy>.Default.Without(d => d.Value))
-                .ToPropertyList(PropertyList<Dummy>.Default.Without(d => d.Value))
+                .From(PropertyMember.MembersFromPropertyList(PropertyList<Dummy>.Default.Without(d => d.Value)))
+                .To(PropertyMember.MembersFromPropertyList(PropertyList<Dummy>.Default.Without(d => d.Value)))
                 .BuildMapper()
                 .Map(d1);
 
