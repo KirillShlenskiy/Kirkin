@@ -44,11 +44,9 @@ namespace Kirkin.Mapping.Fluent
             return CreateAndConfigureBuilder(targetMembers);
         }
 
-        internal MapperBuilder<TSource, TTarget> ToProvider<TTarget>(IMemberListProvider<TTarget> targetMemberListProvider)
+        internal MapperBuilder<TSource, TTarget> To<TTarget>(Member<TTarget>[] targetMembers)
         {
-            if (targetMemberListProvider == null) throw new ArgumentNullException(nameof(targetMemberListProvider));
-
-            Member<TTarget>[] targetMembers = targetMemberListProvider.GetMembers();
+            if (targetMembers == null) throw new ArgumentNullException(nameof(targetMembers));
 
             return CreateAndConfigureBuilder(targetMembers);
         }
