@@ -18,7 +18,7 @@ namespace Kirkin.Mapping.Data
 
         public Member<DataRow>[] GetMembers()
         {
-            return DataMember<DataRow>.DataTableMembers(DataTable);
+            return DataMember.DataTableMembers(DataTable);
         }
     }
 }

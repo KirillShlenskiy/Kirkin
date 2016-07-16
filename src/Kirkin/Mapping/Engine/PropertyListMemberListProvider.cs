@@ -18,7 +18,7 @@ namespace Kirkin.Mapping.Engine
 
         public Member<T>[] GetMembers()
         {
-            return PropertyMember<T>.MembersFromPropertyList(PropertyList);
+            return PropertyMember.MembersFromPropertyList(PropertyList);
         }
     }
 }

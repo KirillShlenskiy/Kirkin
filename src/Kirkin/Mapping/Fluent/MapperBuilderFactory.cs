@@ -36,7 +36,7 @@ namespace Kirkin.Mapping.Fluent
         /// </summary>
         public MapperBuilderFactory<TSource> FromType<TSource>()
         {
-            Member<TSource>[] sourceMembers = PropertyMember<TSource>.PublicInstanceProperties();
+            Member<TSource>[] sourceMembers = PropertyMember.PublicInstanceProperties<TSource>();
 
             return new MapperBuilderFactory<TSource>(sourceMembers);
         }
@@ -58,7 +58,7 @@ namespace Kirkin.Mapping.Fluent
         {
             if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
 
-            Member<TSource>[] sourceMembers = PropertyMember<TSource>.MembersFromPropertyList(propertyList);
+            Member<TSource>[] sourceMembers = PropertyMember.MembersFromPropertyList(propertyList);
 
             return new MapperBuilderFactory<TSource>(sourceMembers);
         }

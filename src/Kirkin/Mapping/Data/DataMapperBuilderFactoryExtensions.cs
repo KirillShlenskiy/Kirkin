@@ -19,7 +19,7 @@ namespace Kirkin.Mapping.Data
         /// </summary>
         public static MapperBuilderFactory<IDataRecord> FromDataReaderOrRecord(this MapperBuilderFactory factory, IDataRecord dataRecord)
         {
-            Member<IDataRecord>[] sourceMembers = DataMember<IDataRecord>.DataRecordMembers(dataRecord);
+            Member<IDataRecord>[] sourceMembers = DataMember.DataRecordMembers(dataRecord);
 
             return new DataMapperBuilderFactory<IDataRecord>(sourceMembers);
         }
@@ -30,7 +30,7 @@ namespace Kirkin.Mapping.Data
         /// </summary>
         public static MapperBuilderFactory<DataRow> FromDataTable(this MapperBuilderFactory factory, DataTable dataTable)
         {
-            Member<DataRow>[] sourceMembers = DataMember<DataRow>.DataTableMembers(dataTable);
+            Member<DataRow>[] sourceMembers = DataMember.DataTableMembers(dataTable);
 
             return new DataMapperBuilderFactory<DataRow>(sourceMembers);
         }

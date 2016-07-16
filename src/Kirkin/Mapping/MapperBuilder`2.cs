@@ -80,8 +80,8 @@ namespace Kirkin.Mapping
         /// </summary>
         internal MapperBuilder(Member<TSource>[] sourceMembers = null, Member<TTarget>[] targetMembers = null)
         {
-            SourceMembers = sourceMembers ?? PropertyMember<TSource>.PublicInstanceProperties();
-            TargetMembers = targetMembers ?? PropertyMember<TTarget>.PublicInstanceProperties();
+            SourceMembers = sourceMembers ?? PropertyMember.PublicInstanceProperties<TSource>();
+            TargetMembers = targetMembers ?? PropertyMember.PublicInstanceProperties<TTarget>();
 
             // Defaults.
             MapAllSourceMembers = true;

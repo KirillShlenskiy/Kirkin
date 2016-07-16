@@ -26,9 +26,9 @@ namespace Kirkin.Mapping.Fluent
         /// </summary>
         public MapperBuilder<TSource, TTarget> ToType<TTarget>()
         {
-            Member<TTarget>[] targetMembers = PropertyMember<TTarget>.PublicInstanceProperties();
+            Member<TTarget>[] targetMembers = PropertyMember.PublicInstanceProperties<TTarget>();
 
-            return CreateAndConfigureBuilder<TTarget>(targetMembers);
+            return CreateAndConfigureBuilder(targetMembers);
         }
 
         /// <summary>
@@ -39,9 +39,9 @@ namespace Kirkin.Mapping.Fluent
         {
             if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
 
-            Member<TTarget>[] targetMembers = PropertyMember<TTarget>.MembersFromPropertyList(propertyList);
+            Member<TTarget>[] targetMembers = PropertyMember.MembersFromPropertyList(propertyList);
 
-            return CreateAndConfigureBuilder<TTarget>(targetMembers);
+            return CreateAndConfigureBuilder(targetMembers);
         }
 
         internal MapperBuilder<TSource, TTarget> ToProvider<TTarget>(IMemberListProvider<TTarget> targetMemberListProvider)
@@ -50,7 +50,7 @@ namespace Kirkin.Mapping.Fluent
 
             Member<TTarget>[] targetMembers = targetMemberListProvider.GetMembers();
 
-            return CreateAndConfigureBuilder<TTarget>(targetMembers);
+            return CreateAndConfigureBuilder(targetMembers);
         }
 
         /// <summary>

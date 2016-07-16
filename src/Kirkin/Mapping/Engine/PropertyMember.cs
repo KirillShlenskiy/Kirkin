@@ -7,14 +7,14 @@ using Kirkin.Reflection;
 namespace Kirkin.Mapping.Engine
 {
     /// <summary>
-    /// <see cref="PropertyInfo"/>-based <see cref="Member"/> implementation.
+    /// <see cref="PropertyMember{T}"/> factory methods.
     /// </summary>
-    public sealed class PropertyMember<T> : Member<T>
+    public static class PropertyMember
     {
         /// <summary>
         /// Resolves the default member list for type (public instance properties).
         /// </summary>
-        public static PropertyMember<T>[] PublicInstanceProperties()
+        public static PropertyMember<T>[] PublicInstanceProperties<T>()
         {
             PropertyInfo[] properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
             PropertyMember<T>[] members = new PropertyMember<T>[properties.Length];
@@ -29,7 +29,7 @@ namespace Kirkin.Mapping.Engine
         /// <summary>
         /// Creates a collection of <see cref="PropertyMember"/> from the given <see cref="PropertyList{T}"/>.
         /// </summary>
-        internal static PropertyMember<T>[] MembersFromPropertyList(PropertyList<T> propertyList)
+        internal static PropertyMember<T>[] MembersFromPropertyList<T>(PropertyList<T> propertyList)
         {
             PropertyMember<T>[] members = new PropertyMember<T>[propertyList.Properties.Length];
 
@@ -39,9 +39,15 @@ namespace Kirkin.Mapping.Engine
 
             return members;
         }
+    }
 
+    /// <summary>
+    /// <see cref="PropertyInfo"/>-based <see cref="Member{T}"/> implementation.
+    /// </summary>
+    public sealed class PropertyMember<T> : Member<T>
+    {
         /// <summary>
-        /// Property which this <see cref="Member"/> proxies.
+        /// Property which this <see cref="Member{T}"/> proxies.
         /// </summary>
         /// <remarks>
         /// Must be public so that types derived from <see cref="Mapper{TSource, TTarget}"/>
