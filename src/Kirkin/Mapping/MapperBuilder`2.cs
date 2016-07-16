@@ -74,14 +74,25 @@ namespace Kirkin.Mapping
         #region Constructors
 
         /// <summary>
+        /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/> instance
+        /// which maps all public properties defined by source and target types.
+        /// </summary>
+        public MapperBuilder()
+            : this(PropertyMember.PublicInstanceProperties<TSource>(), PropertyMember.PublicInstanceProperties<TTarget>())
+        {
+        }
+
+        /// <summary>
         /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/>
         /// instance using the given source and target member lists.
-        /// By default will use the list of public properties defined by source and target types.
         /// </summary>
-        internal MapperBuilder(Member<TSource>[] sourceMembers = null, Member<TTarget>[] targetMembers = null)
+        internal MapperBuilder(Member<TSource>[] sourceMembers, Member<TTarget>[] targetMembers)
         {
-            SourceMembers = sourceMembers ?? PropertyMember.PublicInstanceProperties<TSource>();
-            TargetMembers = targetMembers ?? PropertyMember.PublicInstanceProperties<TTarget>();
+            if (sourceMembers == null) throw new ArgumentNullException(nameof(sourceMembers));
+            if (targetMembers == null) throw new ArgumentNullException(nameof(targetMembers));
+
+            SourceMembers = sourceMembers;
+            TargetMembers = targetMembers;
 
             // Defaults.
             MapAllSourceMembers = true;
