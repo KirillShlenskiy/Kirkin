@@ -11,6 +11,6 @@ namespace Kirkin.Mapping
         /// <summary>
         /// Resolves the collection of <see cref="Member"/> instances appropriate for the given type.
         /// </summary>
-        Member[] GetMembers();
+        Member<T>[] GetMembers();
     }
 }

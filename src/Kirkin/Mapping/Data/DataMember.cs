@@ -11,24 +11,24 @@ namespace Kirkin.Mapping.Data
     /// <summary>
     /// TDataSource-based <see cref="Member"/> implementation.
     /// </summary>
-    public abstract class DataMember : Member
+    public abstract class DataMember<T> : Member<T>
     {
         #region Factory methods
 
         /// <summary>
         /// Resolves the member list from an <see cref="IDataRecord"/>.
         /// </summary>
-        public static Member[] DataRecordMembers(IDataRecord dataRecord)
+        public static Member<T>[] DataRecordMembers(IDataRecord dataRecord)
         {
             if (dataRecord == null) throw new ArgumentNullException(nameof(dataRecord));
 
-            Member[] members = new Member[dataRecord.FieldCount];
+            Member<T>[] members = new Member<T>[dataRecord.FieldCount];
 
             for (int i = 0; i < dataRecord.FieldCount; i++)
             {
                 Type fieldType = TypeForMapping(dataRecord.GetFieldType(i), isNullable: true);
 
-                members[i] = new GenericDataMember<IDataRecord>(dataRecord.GetName(i), fieldType);
+                members[i] = new GenericDataMember(dataRecord.GetName(i), fieldType);
             }
 
             return members;
@@ -37,18 +37,18 @@ namespace Kirkin.Mapping.Data
         /// <summary>
         /// Resolves the member list from an <see cref="DataTable"/>.
         /// </summary>
-        public static Member[] DataTableMembers(DataTable dataTable)
+        public static Member<T>[] DataTableMembers(DataTable dataTable)
         {
             if (dataTable == null) throw new ArgumentNullException(nameof(dataTable));
 
-            Member[] members = new Member[dataTable.Columns.Count];
+            Member<T>[] members = new Member<T>[dataTable.Columns.Count];
 
             for (int i = 0; i < dataTable.Columns.Count; i++)
             {
                 DataColumn column = dataTable.Columns[i];
                 Type columnType = TypeForMapping(column.DataType, column.AllowDBNull);
 
-                members[i] = new GenericDataMember<DataRow>(column.ColumnName, columnType);
+                members[i] = new GenericDataMember(column.ColumnName, columnType);
             }
 
             return members;
@@ -98,7 +98,7 @@ namespace Kirkin.Mapping.Data
             Type = type;
         }
 
-        sealed class GenericDataMember<TDataSource> : DataMember
+        sealed class GenericDataMember : DataMember<T>
         {
             internal GenericDataMember(string name, Type type)
                 : base(name, type)
@@ -133,7 +133,7 @@ namespace Kirkin.Mapping.Data
                         value,
                         Expression.MakeIndex(
                             source,
-                            typeof(TDataSource).GetProperty("Item", typeof(object), new[] { typeof(string) }),
+                            typeof(T).GetProperty("Item", typeof(object), new[] { typeof(string) }),
                             new[] { Expression.Constant(Name) }
                         )
                     ),

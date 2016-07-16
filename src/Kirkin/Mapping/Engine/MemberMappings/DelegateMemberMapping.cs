@@ -18,7 +18,7 @@ namespace Kirkin.Mapping.Engine.MemberMappings
         /// <summary>
         /// Creates a new delegate-based mapping instance.
         /// </summary>
-        internal DelegateMemberMapping(Member targetMember, Func<TSource, TValue> sourceValueSelector)
+        internal DelegateMemberMapping(Member<TTarget> targetMember, Func<TSource, TValue> sourceValueSelector)
             : base(targetMember)
         {
             SourceValueSelector = sourceValueSelector;

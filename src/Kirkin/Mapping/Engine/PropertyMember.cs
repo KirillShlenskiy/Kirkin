@@ -9,18 +9,18 @@ namespace Kirkin.Mapping.Engine
     /// <summary>
     /// <see cref="PropertyInfo"/>-based <see cref="Member"/> implementation.
     /// </summary>
-    public sealed class PropertyMember : Member
+    public sealed class PropertyMember<T> : Member<T>
     {
         /// <summary>
         /// Resolves the default member list for type (public instance properties).
         /// </summary>
-        public static PropertyMember[] PublicInstanceProperties<T>()
+        public static PropertyMember<T>[] PublicInstanceProperties()
         {
             PropertyInfo[] properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            PropertyMember[] members = new PropertyMember[properties.Length];
+            PropertyMember<T>[] members = new PropertyMember<T>[properties.Length];
 
             for (int i = 0; i < properties.Length; i++) {
-                members[i] = new PropertyMember(properties[i]);
+                members[i] = new PropertyMember<T>(properties[i]);
             }
 
             return members;
@@ -29,12 +29,12 @@ namespace Kirkin.Mapping.Engine
         /// <summary>
         /// Creates a collection of <see cref="PropertyMember"/> from the given <see cref="PropertyList{T}"/>.
         /// </summary>
-        internal static PropertyMember[] MembersFromPropertyList<T>(PropertyList<T> propertyList)
+        internal static PropertyMember<T>[] MembersFromPropertyList(PropertyList<T> propertyList)
         {
-            PropertyMember[] members = new PropertyMember[propertyList.Properties.Length];
+            PropertyMember<T>[] members = new PropertyMember<T>[propertyList.Properties.Length];
 
             for (int i = 0; i < propertyList.Properties.Length; i++) {
-                members[i] = new PropertyMember(propertyList.Properties[i]);
+                members[i] = new PropertyMember<T>(propertyList.Properties[i]);
             }
 
             return members;

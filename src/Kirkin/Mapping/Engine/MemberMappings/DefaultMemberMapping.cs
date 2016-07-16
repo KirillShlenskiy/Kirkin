@@ -15,7 +15,7 @@ namespace Kirkin.Mapping.Engine.MemberMappings
         /// <summary>
         /// Mapping source member.
         /// </summary>
-        public Member SourceMember { get; }
+        public Member<TSource> SourceMember { get; }
 
         /// <summary>
         /// Nullable to non-nullable conversion behaviour of this instance.
@@ -25,7 +25,7 @@ namespace Kirkin.Mapping.Engine.MemberMappings
         /// <summary>
         /// Creates a new simple member-to-member mapping instance.
         /// </summary>
-        public DefaultMemberMapping(Member sourceMember, Member targetMember, NullableBehaviour nullableBehaviour)
+        public DefaultMemberMapping(Member<TSource> sourceMember, Member<TTarget> targetMember, NullableBehaviour nullableBehaviour)
             : base(targetMember)
         {
             SourceMember = sourceMember;

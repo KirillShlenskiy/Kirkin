@@ -10,12 +10,12 @@ namespace Kirkin.Mapping.Engine
         /// <summary>
         /// Mapping target member.
         /// </summary>
-        public Member TargetMember { get; }
+        public Member<TTarget> TargetMember { get; }
 
         /// <summary>
         /// Creates a new instance of <see cref="MemberMapping{TSource, TTarget}"/>.
         /// </summary>
-        internal MemberMapping(Member targetMember)
+        internal MemberMapping(Member<TTarget> targetMember)
         {
             TargetMember = targetMember;
         }

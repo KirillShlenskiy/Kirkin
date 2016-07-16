@@ -16,9 +16,9 @@ namespace Kirkin.Mapping.Data
             DataRecord = dataRecord;
         }
 
-        public Member[] GetMembers()
+        public Member<IDataRecord>[] GetMembers()
         {
-            return DataMember.DataRecordMembers(DataRecord);
+            return DataMember<IDataRecord>.DataRecordMembers(DataRecord);
         }
     }
 }

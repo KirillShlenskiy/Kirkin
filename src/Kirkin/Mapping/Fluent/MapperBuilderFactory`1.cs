@@ -11,9 +11,9 @@ namespace Kirkin.Mapping.Fluent
     /// </summary>
     public class MapperBuilderFactory<TSource>
     {
-        private readonly Member[] SourceMembers;
+        private readonly Member<TSource>[] SourceMembers;
 
-        internal MapperBuilderFactory(Member[] sourceMembers)
+        internal MapperBuilderFactory(Member<TSource>[] sourceMembers)
         {
             if (sourceMembers == null) throw new ArgumentNullException(nameof(sourceMembers));
 
@@ -26,7 +26,7 @@ namespace Kirkin.Mapping.Fluent
         /// </summary>
         public MapperBuilder<TSource, TTarget> ToType<TTarget>()
         {
-            Member[] targetMembers = PropertyMember.PublicInstanceProperties<TTarget>();
+            Member<TTarget>[] targetMembers = PropertyMember<TTarget>.PublicInstanceProperties();
 
             return CreateAndConfigureBuilder<TTarget>(targetMembers);
         }
@@ -39,7 +39,7 @@ namespace Kirkin.Mapping.Fluent
         {
             if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
 
-            Member[] targetMembers = PropertyMember.MembersFromPropertyList(propertyList);
+            Member<TTarget>[] targetMembers = PropertyMember<TTarget>.MembersFromPropertyList(propertyList);
 
             return CreateAndConfigureBuilder<TTarget>(targetMembers);
         }
@@ -48,7 +48,7 @@ namespace Kirkin.Mapping.Fluent
         {
             if (targetMemberListProvider == null) throw new ArgumentNullException(nameof(targetMemberListProvider));
 
-            Member[] targetMembers = targetMemberListProvider.GetMembers();
+            Member<TTarget>[] targetMembers = targetMemberListProvider.GetMembers();
 
             return CreateAndConfigureBuilder<TTarget>(targetMembers);
         }
@@ -56,7 +56,7 @@ namespace Kirkin.Mapping.Fluent
         /// <summary>
         /// Core <see cref="MapperBuilder{TSource, TTarget}"/> factory method.
         /// </summary>
-        protected virtual MapperBuilder<TSource, TTarget> CreateAndConfigureBuilder<TTarget>(Member[] targetMembers)
+        protected virtual MapperBuilder<TSource, TTarget> CreateAndConfigureBuilder<TTarget>(Member<TTarget>[] targetMembers)
         {
             return new MapperBuilder<TSource, TTarget>(SourceMembers, targetMembers);
         }

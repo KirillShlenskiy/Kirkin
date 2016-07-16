@@ -19,7 +19,7 @@ namespace Kirkin.Mapping.Data
         /// </summary>
         public static MapperBuilderFactory<IDataRecord> FromDataReaderOrRecord(this MapperBuilderFactory factory, IDataRecord dataRecord)
         {
-            Member[] sourceMembers = DataMember.DataRecordMembers(dataRecord);
+            Member<IDataRecord>[] sourceMembers = DataMember<IDataRecord>.DataRecordMembers(dataRecord);
 
             return new DataMapperBuilderFactory<IDataRecord>(sourceMembers);
         }
@@ -30,21 +30,21 @@ namespace Kirkin.Mapping.Data
         /// </summary>
         public static MapperBuilderFactory<DataRow> FromDataTable(this MapperBuilderFactory factory, DataTable dataTable)
         {
-            Member[] sourceMembers = DataMember.DataTableMembers(dataTable);
+            Member<DataRow>[] sourceMembers = DataMember<DataRow>.DataTableMembers(dataTable);
 
             return new DataMapperBuilderFactory<DataRow>(sourceMembers);
         }
 
         sealed class DataMapperBuilderFactory<TSource> : MapperBuilderFactory<TSource>
         {
-            internal DataMapperBuilderFactory(Member[] sourceMembers)
+            internal DataMapperBuilderFactory(Member<TSource>[] sourceMembers)
                 : base(sourceMembers)
             {
             }
 
-            protected override MapperBuilder<TSource, TTarget> CreateAndConfigureBuilder<TTarget>(Member[] targetMembers)
+            protected override MapperBuilder<TSource, TTarget> CreateAndConfigureBuilder<TTarget>(Member<TTarget>[] targetMembers)
             {
-                MapperBuilder<TSource, TTarget> builder = base.CreateAndConfigureBuilder<TTarget>(targetMembers);
+                MapperBuilder<TSource, TTarget> builder = base.CreateAndConfigureBuilder(targetMembers);
 
                 builder.MapAllSourceMembers = false;
                 builder.MapAllTargetMembers = true;

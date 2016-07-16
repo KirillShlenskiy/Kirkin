@@ -21,12 +21,12 @@ namespace Kirkin.Mapping
             /// <summary>
             /// <see cref="Member"/> configured by this instance.
             /// </summary>
-            public Member Member { get; }
+            public Member<TTarget> Member { get; }
 
             /// <summary>
             /// Creates a new <see cref="TargetMemberConfigBase"/> instance.
             /// </summary>
-            internal TargetMemberConfigBase(MapperBuilder<TSource, TTarget> mapperBuilder, Member member)
+            internal TargetMemberConfigBase(MapperBuilder<TSource, TTarget> mapperBuilder, Member<TTarget> member)
             {
                 MapperBuilder = mapperBuilder;
                 Member = member;
@@ -47,7 +47,7 @@ namespace Kirkin.Mapping
             /// </summary>
             public void MapTo(string sourceMemberName)
             {
-                Member sourceMember = MapperBuilder.SourceMember(sourceMemberName).Member;
+                Member<TSource> sourceMember = MapperBuilder.SourceMember(sourceMemberName).Member;
 
                 MapTo(sourceMember);
             }
@@ -57,7 +57,7 @@ namespace Kirkin.Mapping
             /// </summary>
             public void MapTo(string sourceMemberName, StringComparer nameComparer)
             {
-                Member sourceMember = MapperBuilder.SourceMember(sourceMemberName, nameComparer).Member;
+                Member<TSource> sourceMember = MapperBuilder.SourceMember(sourceMemberName, nameComparer).Member;
 
                 MapTo(sourceMember);
             }
@@ -65,7 +65,7 @@ namespace Kirkin.Mapping
             /// <summary>
             /// Maps this target member to the given source member.
             /// </summary>
-            private void MapTo(Member sourceMember)
+            private void MapTo(Member<TSource> sourceMember)
             {
                 MapperBuilder.IgnoredTargetMembers.Remove(Member);
                 MapperBuilder.CustomTargetMappingFactories[Member] = builder => new DefaultMemberMapping<TSource, TTarget>(sourceMember, Member, builder.NullableBehaviour);
@@ -93,7 +93,7 @@ namespace Kirkin.Mapping
 
                 if (ignoreMatchingSource)
                 {
-                    foreach (Member sourceMember in MapperBuilder.SourceMembers)
+                    foreach (Member<TSource> sourceMember in MapperBuilder.SourceMembers)
                     {
                         if (MapperBuilder.MemberNameComparer.Equals(sourceMember.Name, Member.Name)) {
                             MapperBuilder.IgnoredSourceMembers.Add(sourceMember);
@@ -113,7 +113,7 @@ namespace Kirkin.Mapping
             /// <summary>
             /// Creates a new <see cref="TargetMemberConfig"/> instance.
             /// </summary>
-            internal TargetMemberConfig(MapperBuilder<TSource, TTarget> mapperBuilder, Member member)
+            internal TargetMemberConfig(MapperBuilder<TSource, TTarget> mapperBuilder, Member<TTarget> member)
                 : base(mapperBuilder, member)
             {
             }
@@ -145,7 +145,7 @@ namespace Kirkin.Mapping
             /// <summary>
             /// Creates a new <see cref="TargetMemberConfig{TValue}"/> instance.
             /// </summary>
-            internal TargetMemberConfig(MapperBuilder<TSource, TTarget> mapperBuilder, Member member)
+            internal TargetMemberConfig(MapperBuilder<TSource, TTarget> mapperBuilder, Member<TTarget> member)
                 : base(mapperBuilder, member)
             {
             }

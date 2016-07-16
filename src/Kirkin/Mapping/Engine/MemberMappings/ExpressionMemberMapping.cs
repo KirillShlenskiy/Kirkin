@@ -17,7 +17,7 @@ namespace Kirkin.Mapping.Engine.MemberMappings
         /// <summary>
         /// Creates a new delegate-based mapping instance.
         /// </summary>
-        internal ExpressionMemberMapping(Member targetMember, Expression<Func<TSource, TValue>> sourceValueSelector)
+        internal ExpressionMemberMapping(Member<TTarget> targetMember, Expression<Func<TSource, TValue>> sourceValueSelector)
             : base(targetMember)
         {
             SourceValueSelector = sourceValueSelector;

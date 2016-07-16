@@ -17,12 +17,12 @@ namespace Kirkin.Mapping
             /// <summary>
             /// <see cref="Member"/> configured by this instance.
             /// </summary>
-            public Member Member { get; }
+            public Member<TSource> Member { get; }
 
             /// <summary>
             /// Creates a new <see cref="SourceMemberConfig"/> instance.
             /// </summary>
-            internal SourceMemberConfig(MapperBuilder<TSource, TTarget> mapperBuilder, Member member)
+            internal SourceMemberConfig(MapperBuilder<TSource, TTarget> mapperBuilder, Member<TSource> member)
             {
                 MapperBuilder = mapperBuilder;
                 Member = member;
