@@ -63,7 +63,7 @@ namespace Kirkin.Tests.Mapping
                 {
                     var nonNullableMapper = Mapper.Builder.FromDataReaderOrRecord(reader).ToType<PersonStub>().BuildMapper();
                     var nullableMapper = Mapper.Builder.FromDataReaderOrRecord(reader).ToType<NullablePersonStub>().BuildMapper();
-                    
+
                     while (reader.Read())
                     {
                         var nonNullablePerson = nonNullableMapper.Map(reader, new PersonStub { personID = 1 });

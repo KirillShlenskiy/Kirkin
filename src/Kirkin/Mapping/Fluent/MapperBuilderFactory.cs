@@ -15,6 +15,13 @@ namespace Kirkin.Mapping.Fluent
         {
         }
 
+        internal MapperBuilderFactory<TSource> From<TSource>(IMemberListProvider<TSource> memberListProvider)
+        {
+            if (memberListProvider == null) throw new ArgumentNullException(nameof(memberListProvider));
+
+            return new MapperBuilderFactory<TSource>(memberListProvider.GetMembers());
+        }
+
         /// <summary>
         /// Expression-based <see cref="MapperBuilder{TSource, TTarget}"/> factory placeholder.
         /// </summary>
