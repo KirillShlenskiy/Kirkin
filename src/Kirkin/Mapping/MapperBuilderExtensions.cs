@@ -1,11 +1,15 @@
 ﻿using System;
 
+using Kirkin.Mapping.Engine;
+using Kirkin.Mapping.Fluent;
+using Kirkin.Reflection;
+
 namespace Kirkin.Mapping
 {
     /// <summary>
     /// Fluent <see cref="MapperBuilder{TSource, TTarget}"/> extensions.
     /// </summary>
-    internal static class MapperBuilderExtensions
+    public static class MapperBuilderExtensions
     {
         /// <summary>
         /// Executes the given configuration action on this
@@ -17,6 +21,32 @@ namespace Kirkin.Mapping
             configureAction(builder);
 
             return builder;
+        }
+
+        /// <summary>
+        /// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
+        /// instances mapping from the specified properties of the given type to various target types.
+        /// </summary>
+        public static PartiallyConfiguredMapperBuilder<TSource> FromPropertyList<TSource>(this MapperBuilderFactory factory, PropertyList<TSource> propertyList)
+        {
+            if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
+
+            Member<TSource>[] sourceMembers = PropertyMember.PropertyListMembers(propertyList);
+
+            return factory.From(sourceMembers);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="MapperBuilder{TSource, TTarget}"/> which defines a
+        /// mapping from source to the specified members of the given target type. 
+        /// </summary>
+        public static MapperBuilder<TSource, TTarget> ToPropertyList<TSource, TTarget>(this PartiallyConfiguredMapperBuilder<TSource> factory, PropertyList<TTarget> propertyList)
+        {
+            if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
+
+            Member<TTarget>[] targetMembers = PropertyMember.PropertyListMembers(propertyList);
+
+            return factory.To(targetMembers);
         }
     }
 }

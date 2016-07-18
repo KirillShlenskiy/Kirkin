@@ -40,18 +40,5 @@ namespace Kirkin.Mapping.Fluent
 
             return new MapperBuilder<TSource, TTarget>(SourceMembers, targetMembers);
         }
-
-        ///// <summary>
-        ///// Creates a <see cref="MapperBuilder{TSource, TTarget}"/> which defines a
-        ///// mapping from source to the specified members of the given target type. 
-        ///// </summary>
-        //public MapperBuilder<TSource, TTarget> ToPropertyList<TTarget>(PropertyList<TTarget> propertyList)
-        //{
-        //    if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
-
-        //    Member<TTarget>[] targetMembers = PropertyMember.MembersFromPropertyList(propertyList);
-
-        //    return To(targetMembers);
-        //}
     }
 }

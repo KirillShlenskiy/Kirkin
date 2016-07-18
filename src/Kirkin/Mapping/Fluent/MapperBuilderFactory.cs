@@ -39,18 +39,5 @@ namespace Kirkin.Mapping.Fluent
         {
             throw new NotImplementedException(); // TODO.
         }
-
-        ///// <summary>
-        ///// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
-        ///// instances mapping from the specified properties of the given type to various target types.
-        ///// </summary>
-        //public MapperBuilderFactory<TSource> FromPropertyList<TSource>(PropertyList<TSource> propertyList)
-        //{
-        //    if (propertyList == null) throw new ArgumentNullException(nameof(propertyList));
-
-        //    Member<TSource>[] sourceMembers = PropertyMember.MembersFromPropertyList(propertyList);
-
-        //    return new MapperBuilderFactory<TSource>(sourceMembers);
-        //}
     }
 }
