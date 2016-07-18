@@ -8,11 +8,11 @@ namespace Kirkin.Mapping.Fluent
     /// Partially configure mapper builder factory type.
     /// Participates in fluent mapper builder construction.
     /// </summary>
-    public sealed class MapperBuilderFactory<TSource> // Cannot use struct as we want the constructor to be hidden.
+    public sealed class PartiallyConfiguredMapperBuilder<TSource> // Cannot use struct as we want the constructor to be hidden.
     {
         private readonly Member<TSource>[] SourceMembers;
 
-        internal MapperBuilderFactory(Member<TSource>[] sourceMembers)
+        internal PartiallyConfiguredMapperBuilder(Member<TSource>[] sourceMembers)
         {
             if (sourceMembers == null) throw new ArgumentNullException(nameof(sourceMembers));
 

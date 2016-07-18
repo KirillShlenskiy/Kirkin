@@ -14,7 +14,7 @@ namespace Kirkin.Mapping.Fluent
         /// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
         /// instances mapping from object sources of the given type to various target types. 
         /// </summary>
-        public MapperBuilderFactory<TSource> From<TSource>()
+        public PartiallyConfiguredMapperBuilder<TSource> From<TSource>()
         {
             Member<TSource>[] sourceMembers = PropertyMember.PublicInstanceProperties<TSource>();
 
@@ -25,11 +25,11 @@ namespace Kirkin.Mapping.Fluent
         /// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
         /// instances mapping from the specified members of the source type to various target types.
         /// </summary>
-        public MapperBuilderFactory<TSource> From<TSource>(Member<TSource>[] sourceMembers)
+        public PartiallyConfiguredMapperBuilder<TSource> From<TSource>(Member<TSource>[] sourceMembers)
         {
             if (sourceMembers == null) throw new ArgumentNullException(nameof(sourceMembers));
 
-            return new MapperBuilderFactory<TSource>(sourceMembers);
+            return new PartiallyConfiguredMapperBuilder<TSource>(sourceMembers);
         }
 
         /// <summary>

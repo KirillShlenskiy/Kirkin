@@ -69,7 +69,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\MemberMappings\ExpressionMemberMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\PropertyMember.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Fluent\MapperBuilderFactory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Fluent\MapperBuilderFactory`1.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Fluent\PartiallyConfiguredMapperBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\IMapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Mapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MapperBuilder+SourceMemberConfig.cs" />
