@@ -7,10 +7,29 @@ using Kirkin.Reflection;
 namespace Kirkin.Mapping
 {
     /// <summary>
-    /// Fluent <see cref="MapperBuilder{TSource, TTarget}"/> extensions.
+    /// Constrained <see cref="IMapper{TSource, TTarget}" /> extensions.
     /// </summary>
-    public static class MapperBuilderExtensions
+    public static class Extensions
     {
+        #region Mapper extensions
+
+        // Not defined on Mapper to avoid introducing a confusing
+        // overload for an often used static Map method.
+
+        /// <summary>
+        /// Creates a new target instance, executes mapping from source
+        /// to target and returns the newly created target instance.
+        /// </summary>
+        public static TTarget Map<TSource, TTarget>(this Mapper<TSource, TTarget> mapper, TSource source)
+            where TTarget : new()
+        {
+            return mapper.Map(source, new TTarget());
+        }
+
+        #endregion
+
+        #region Builder and fluent config extensions
+
         /// <summary>
         /// Executes the given configuration action on this
         /// builder instance and returns the mutated instance.
@@ -48,5 +67,7 @@ namespace Kirkin.Mapping
 
             return factory.To(targetMembers);
         }
+
+        #endregion
     }
 }
