@@ -37,6 +37,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="NuGetPack" Condition="'$(Configuration)' == 'Release'" AfterTargets="Build">
-    <Exec Command="for %%f in (..\..\NuGet\*.nuspec) do ..\..\NuGet\NuGet.exe pack %%f -OutputDirectory ..\..\NuGet" />
+    <Exec Command="for %%f in (..\..\..\NuGet\*.nuspec) do ..\..\..\NuGet\NuGet.exe pack %%f -OutputDirectory ..\..\..\NuGet" />
   </Target>
 </Project>
