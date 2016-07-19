@@ -13,9 +13,9 @@
     <description>Kirkin lib package</description>
   </metadata>
   <files>
-    <file src="..\src\Platforms\Kirkin-NET_40\bin\Release\Kirkin.dll" target="lib\net40" />
-    <file src="..\src\Platforms\Kirkin-NET_40\bin\Release\Kirkin.xml" target="lib\net40" />
-    <file src="..\src\Platforms\Kirkin-NET_45\bin\Release\Kirkin.dll" target="lib\net45" />
-    <file src="..\src\Platforms\Kirkin-NET_45\bin\Release\Kirkin.xml" target="lib\net45" />
+    <file src="..\src\Build\Kirkin-NET_40\bin\Release\Kirkin.dll" target="lib\net40" />
+    <file src="..\src\Build\Kirkin-NET_40\bin\Release\Kirkin.xml" target="lib\net40" />
+    <file src="..\src\Build\Kirkin-NET_45\bin\Release\Kirkin.dll" target="lib\net45" />
+    <file src="..\src\Build\Kirkin-NET_45\bin\Release\Kirkin.xml" target="lib\net45" />
   </files>
 </package>

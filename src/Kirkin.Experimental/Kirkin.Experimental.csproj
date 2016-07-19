@@ -95,7 +95,7 @@
     <Compile Include="ValueConversion\ValueConverterBase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Platforms\Kirkin-NET_45\Kirkin-NET_45.csproj">
+    <ProjectReference Include="..\Build\Kirkin-NET_45\Kirkin-NET_45.csproj">
       <Project>{71ff1be9-c99f-416f-a030-0aa846687e75}</Project>
       <Name>Kirkin-NET_45</Name>
     </ProjectReference>
