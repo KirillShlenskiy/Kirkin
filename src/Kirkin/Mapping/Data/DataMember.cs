@@ -4,8 +4,6 @@ using System;
 using System.Data;
 using System.Linq.Expressions;
 
-using Kirkin.Mapping.Engine;
-
 namespace Kirkin.Mapping.Data
 {
     /// <summary>

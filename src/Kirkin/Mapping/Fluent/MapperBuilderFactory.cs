@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-using Kirkin.Mapping.Engine;
-
 namespace Kirkin.Mapping.Fluent
 {
     /// <summary>

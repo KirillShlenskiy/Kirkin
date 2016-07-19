@@ -1,7 +1,5 @@
 ﻿using System;
 
-using Kirkin.Mapping.Engine;
-
 namespace Kirkin.Mapping.Fluent
 {
     /// <summary>

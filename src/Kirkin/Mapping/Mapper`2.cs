@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 using Kirkin.Collections.Generic;
-using Kirkin.Mapping.Engine;
 using Kirkin.Mapping.Engine.Compilers;
 
 namespace Kirkin.Mapping

@@ -1,6 +1,5 @@
 ﻿using System;
 
-using Kirkin.Mapping.Engine;
 using Kirkin.Mapping.Fluent;
 using Kirkin.Reflection;
 

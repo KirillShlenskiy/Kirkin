@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 
-using Kirkin.Mapping.Engine;
-
 namespace Kirkin.Mapping
 {
     /// <summary>

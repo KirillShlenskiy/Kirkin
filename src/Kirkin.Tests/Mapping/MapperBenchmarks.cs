@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 
 using Kirkin.Mapping;
-using Kirkin.Mapping.Engine;
 using Kirkin.Reflection;
 
 using Xunit;

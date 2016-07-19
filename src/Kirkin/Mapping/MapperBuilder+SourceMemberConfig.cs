@@ -1,6 +1,4 @@
-﻿using Kirkin.Mapping.Engine;
-
-namespace Kirkin.Mapping
+﻿namespace Kirkin.Mapping
 {
     partial class MapperBuilder<TSource, TTarget>
     {

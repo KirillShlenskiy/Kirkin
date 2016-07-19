@@ -4,7 +4,7 @@ using System.Reflection;
 
 using Kirkin.Reflection;
 
-namespace Kirkin.Mapping.Engine
+namespace Kirkin.Mapping
 {
     /// <summary>
     /// <see cref="PropertyMember{T}"/> factory methods.

@@ -2,7 +2,6 @@
 
 using System.Data;
 
-using Kirkin.Mapping.Engine;
 using Kirkin.Mapping.Fluent;
 
 namespace Kirkin.Mapping.Data

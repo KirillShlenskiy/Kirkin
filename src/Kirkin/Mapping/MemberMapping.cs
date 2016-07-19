@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Kirkin.Mapping.Engine
+namespace Kirkin.Mapping
 {
     /// <summary>
     /// Describes a mapping between two members.

@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using Kirkin.Reflection;
 using Kirkin.Utilities;
 
-namespace Kirkin.Mapping.Engine
+namespace Kirkin.Mapping
 {
     /// <summary>
     /// Mapped member definition.

@@ -62,12 +62,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\Compilers\MappingCompiler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\Compilers\MemberMappingCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\ExpressionTypeConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\Member.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\MemberMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\MemberMappings\DefaultMemberMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\MemberMappings\DelegateMemberMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\MemberMappings\ExpressionMemberMapping.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Engine\PropertyMember.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Fluent\MapperBuilderFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Fluent\PartiallyConfiguredMapperBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\IMapper.cs" />
@@ -78,7 +75,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Mapper`2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MappingException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\Member.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\MemberMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\NullableBehaviour.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\PropertyMember.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Percentage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Properties\AssemblyInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reflection\IPropertyAccessor.cs" />

@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 
 using Kirkin.Linq.Expressions;
-using Kirkin.Mapping.Engine;
 using Kirkin.Mapping.Engine.MemberMappings;
 
 namespace Kirkin.Mapping
