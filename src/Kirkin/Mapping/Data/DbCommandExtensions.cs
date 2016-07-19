@@ -24,11 +24,11 @@ namespace Kirkin.Mapping.Data
         /// </summary>
         /// <typeparam name="TEntity">Desired type that each <see cref="IDataRecord"/> will be mapped to.</typeparam>
         /// <param name="command">The command to be executed.</param>
-        /// <param name="mapAllSourceMembers">Determines whether an exception will be thrown if there are unmapped source members.</param>
-        /// <param name="mapAllTargetMembers">Determines whether an exception will be thrown if there are unmapped target members.</param>
+        /// <param name="allowUnmappedSourceMembers">Determines whether an exception will be thrown if there are unmapped source members.</param>
+        /// <param name="allowUnmappedTargetMembers">Determines whether an exception will be thrown if there are unmapped target members.</param>
         public static IEnumerable<TEntity> ExecuteEntities<TEntity>(this IDbCommand command,
-                                                                    bool mapAllSourceMembers = false,
-                                                                    bool mapAllTargetMembers = true)
+                                                                    bool allowUnmappedSourceMembers = true,
+                                                                    bool allowUnmappedTargetMembers = false)
             where TEntity : new()
         {
             if (command.Connection != null && command.Connection.State == ConnectionState.Closed) {
@@ -41,8 +41,8 @@ namespace Kirkin.Mapping.Data
                     .From(DataMember.DataReaderOrRecordMembers(reader))
                     .To<TEntity>();
 
-                builder.MapAllSourceMembers = mapAllSourceMembers;
-                builder.MapAllTargetMembers = mapAllTargetMembers;
+                builder.AllowUnmappedSourceMembers = allowUnmappedSourceMembers;
+                builder.AllowUnmappedTargetMembers = allowUnmappedTargetMembers;
                 builder.MemberNameComparer = StringComparer.OrdinalIgnoreCase; // TODO: make this a parameter.
 
                 Mapper<IDataRecord, TEntity> mapper = builder.BuildMapper();
@@ -61,12 +61,12 @@ namespace Kirkin.Mapping.Data
         /// </summary>
         /// <typeparam name="TEntity">Desired type that each <see cref="DbDataRecord"/> will be mapped to.</typeparam>
         /// <param name="command">The command to be executed.</param>
-        /// <param name="mapAllSourceMembers">Determines whether an exception will be thrown if there are unmapped source members.</param>
-        /// <param name="mapAllTargetMembers">Determines whether an exception will be thrown if there are unmapped target members.</param>
+        /// <param name="allowUnmappedSourceMembers">Determines whether an exception will be thrown if there are unmapped source members.</param>
+        /// <param name="allowUnmappedTargetMembers">Determines whether an exception will be thrown if there are unmapped target members.</param>
         /// <param name="cancellationToken">Cancellation token to be checked throughout the operation.</param>
         public static async Task<TEntity[]> ExecuteEntitiesAsync<TEntity>(this DbCommand command, // Cannot use IDbCommand as it does not support TPL async.
-                                                                          bool mapAllSourceMembers = false, 
-                                                                          bool mapAllTargetMembers = true,
+                                                                          bool allowUnmappedSourceMembers = true, 
+                                                                          bool allowUnmappedTargetMembers = false,
                                                                           CancellationToken cancellationToken = default(CancellationToken))
             where TEntity : new()
         {
@@ -80,8 +80,8 @@ namespace Kirkin.Mapping.Data
                     .From(DataMember.DataReaderOrRecordMembers(reader))
                     .To<TEntity>();
 
-                builder.MapAllSourceMembers = mapAllSourceMembers;
-                builder.MapAllTargetMembers = mapAllTargetMembers;
+                builder.AllowUnmappedSourceMembers = allowUnmappedSourceMembers;
+                builder.AllowUnmappedTargetMembers = allowUnmappedTargetMembers;
                 builder.MemberNameComparer = StringComparer.OrdinalIgnoreCase; // TODO: make this a parameter.
                 
                 Mapper<IDataRecord, TEntity> mapper = builder.BuildMapper();

@@ -36,8 +36,8 @@
             private static Mapper<TSource, TTarget> CreateMapper()
             {
                 MapperBuilder<TSource, TTarget> config = new MapperBuilder<TSource, TTarget> {
-                    MapAllSourceMembers = true,
-                    MapAllTargetMembers = true
+                    AllowUnmappedSourceMembers = false,
+                    AllowUnmappedTargetMembers = false
                 };
 
                 return config.BuildMapper();
@@ -75,8 +75,8 @@
             private static Mapper<TSource, TTarget> CreateMapper()
             {
                 MapperBuilder<TSource, TTarget> config = new MapperBuilder<TSource, TTarget> {
-                    MapAllSourceMembers = false,
-                    MapAllTargetMembers = false
+                    AllowUnmappedSourceMembers = true,
+                    AllowUnmappedTargetMembers = true
                 };
 
                 return config.BuildMapper();
@@ -114,8 +114,8 @@
             private static Mapper<TSource, TTarget> CreateMapper()
             {
                 MapperBuilder<TSource, TTarget> config = new MapperBuilder<TSource, TTarget> {
-                    MapAllSourceMembers = true,
-                    MapAllTargetMembers = false
+                    AllowUnmappedSourceMembers = false,
+                    AllowUnmappedTargetMembers = true
                 };
 
                 return config.BuildMapper();
@@ -153,8 +153,8 @@
             private static Mapper<TSource, TTarget> CreateMapper()
             {
                 MapperBuilder<TSource, TTarget> config = new MapperBuilder<TSource, TTarget> {
-                    MapAllSourceMembers = false,
-                    MapAllTargetMembers = true
+                    AllowUnmappedSourceMembers = true,
+                    AllowUnmappedTargetMembers = false
                 };
 
                 return config.BuildMapper();

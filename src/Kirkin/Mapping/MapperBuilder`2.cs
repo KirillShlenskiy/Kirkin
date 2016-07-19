@@ -14,7 +14,7 @@ namespace Kirkin.Mapping
     /// </summary>
     public sealed partial class MapperBuilder<TSource, TTarget>
     {
-        #region Fields and properties
+        #region Fields
 
         /// <summary>
         /// Source member list.
@@ -43,19 +43,23 @@ namespace Kirkin.Mapping
         private readonly Dictionary<Member<TTarget>, Func<MapperBuilder<TSource, TTarget>, MemberMapping<TSource, TTarget>>> CustomTargetMappingFactories
             = new Dictionary<Member<TTarget>, Func<MapperBuilder<TSource, TTarget>, MemberMapping<TSource, TTarget>>>();
 
-        /// <summary>
-        /// Gets or sets the value that determines whether an exception
-        /// will be thrown if there are unmapped source members when the
-        /// result of auto-mapping source and target members is validated.
-        /// </summary>
-        public bool MapAllSourceMembers { get; set; }
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Gets or sets the value that determines whether an exception
         /// will be thrown if there are unmapped source members when the
         /// result of auto-mapping source and target members is validated.
         /// </summary>
-        public bool MapAllTargetMembers { get; set; }
+        public bool AllowUnmappedSourceMembers { get; set; }
+
+        /// <summary>
+        /// Gets or sets the value that determines whether an exception
+        /// will be thrown if there are unmapped source members when the
+        /// result of auto-mapping source and target members is validated.
+        /// </summary>
+        public bool AllowUnmappedTargetMembers { get; set; }
 
         /// <summary>
         /// <see cref="StringComparer"/> used when comparing
@@ -95,8 +99,8 @@ namespace Kirkin.Mapping
             TargetMembers = targetMembers;
 
             // Defaults.
-            MapAllSourceMembers = true;
-            MapAllTargetMembers = true;
+            AllowUnmappedSourceMembers = false;
+            AllowUnmappedTargetMembers = false;
             MemberNameComparer = StringComparer.Ordinal;
             NullableBehaviour = NullableBehaviour.DefaultMapsToNull;
         }
@@ -154,7 +158,7 @@ namespace Kirkin.Mapping
                         memberMappings.Add(new DefaultMemberMapping<TSource, TTarget>(sourceMember, targetMember, NullableBehaviour));
                         sourceMemberDict.Remove(sourceMember.Name); // Saves some validation work down the track.
                     }
-                    else if (MapAllTargetMembers)
+                    else if (!AllowUnmappedTargetMembers)
                     {
                         throw new MappingException(
                             $"Entity mapping has failed. The following target member is unmapped: {typeof(TTarget).Name}.{targetMember.Name}."
@@ -163,7 +167,7 @@ namespace Kirkin.Mapping
                 }
             }
 
-            if (MapAllSourceMembers)
+            if (!AllowUnmappedSourceMembers)
             {
                 // Inspect generated mappings to see if source members which
                 // were not auto-mapped participate in user-defined mappings.
