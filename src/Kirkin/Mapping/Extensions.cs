@@ -33,8 +33,8 @@ namespace Kirkin.Mapping
         /// Executes the given configuration action on this
         /// builder instance and returns the mutated instance.
         /// </summary>
-        public static MapperBuilder<TSource, TTarget> Configure<TSource, TTarget>(this MapperBuilder<TSource, TTarget> builder,
-                                                                                  Action<MapperBuilder<TSource, TTarget>> configureAction)
+        internal static MapperBuilder<TSource, TTarget> Configure<TSource, TTarget>(this MapperBuilder<TSource, TTarget> builder,
+                                                                                    Action<MapperBuilder<TSource, TTarget>> configureAction)
         {
             configureAction(builder);
 
