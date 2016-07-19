@@ -8,6 +8,10 @@ namespace Kirkin.Mapping.Fluent
     /// </summary>
     public sealed class MapperBuilderFactory
     {
+        internal MapperBuilderFactory()
+        {
+        }
+
         /// <summary>
         /// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
         /// instances mapping from object sources of the given type to various target types. 
