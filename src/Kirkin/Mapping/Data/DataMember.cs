@@ -9,26 +9,24 @@ using Kirkin.Mapping.Engine;
 namespace Kirkin.Mapping.Data
 {
     /// <summary>
-    /// TDataSource-based <see cref="Member"/> implementation.
+    /// <see cref="DataMember{T}"/> factory methods. 
     /// </summary>
-    public abstract class DataMember : Member
+    public static class DataMember
     {
-        #region Factory methods
-
         /// <summary>
         /// Resolves the member list from an <see cref="IDataRecord"/>.
         /// </summary>
-        public static Member[] DataRecordMembers(IDataRecord dataRecord)
+        public static Member<IDataRecord>[] DataReaderOrRecordMembers(IDataRecord dataRecord)
         {
             if (dataRecord == null) throw new ArgumentNullException(nameof(dataRecord));
 
-            Member[] members = new Member[dataRecord.FieldCount];
+            Member<IDataRecord>[] members = new Member<IDataRecord>[dataRecord.FieldCount];
 
             for (int i = 0; i < dataRecord.FieldCount; i++)
             {
                 Type fieldType = TypeForMapping(dataRecord.GetFieldType(i), isNullable: true);
 
-                members[i] = new GenericDataMember<IDataRecord>(dataRecord.GetName(i), fieldType);
+                members[i] = new DataMember<IDataRecord>(dataRecord.GetName(i), fieldType);
             }
 
             return members;
@@ -37,18 +35,18 @@ namespace Kirkin.Mapping.Data
         /// <summary>
         /// Resolves the member list from an <see cref="DataTable"/>.
         /// </summary>
-        public static Member[] DataTableMembers(DataTable dataTable)
+        public static Member<DataRow>[] DataTableMembers(DataTable dataTable)
         {
             if (dataTable == null) throw new ArgumentNullException(nameof(dataTable));
 
-            Member[] members = new Member[dataTable.Columns.Count];
+            Member<DataRow>[] members = new Member<DataRow>[dataTable.Columns.Count];
 
             for (int i = 0; i < dataTable.Columns.Count; i++)
             {
                 DataColumn column = dataTable.Columns[i];
                 Type columnType = TypeForMapping(column.DataType, column.AllowDBNull);
 
-                members[i] = new GenericDataMember<DataRow>(column.ColumnName, columnType);
+                members[i] = new DataMember<DataRow>(column.ColumnName, columnType);
             }
 
             return members;
@@ -66,9 +64,13 @@ namespace Kirkin.Mapping.Data
 
             return concreteType;
         }
+    }
 
-        #endregion
-
+    /// <summary>
+    /// TDataSource-based <see cref="Member{T}"/> implementation.
+    /// </summary>
+    public sealed class DataMember<T> : Member<T>
+    {
         /// <summary>
         /// Returns true if this member supports read operations.
         /// </summary>
@@ -92,66 +94,58 @@ namespace Kirkin.Mapping.Data
         /// <summary>
         /// Creates a new instance of <see cref="DataMember"/>.
         /// </summary>
-        private DataMember(string name, Type type)
+        internal DataMember(string name, Type type)
         {
             Name = name;
             Type = type;
         }
 
-        sealed class GenericDataMember<TDataSource> : DataMember
+        /// <summary>
+        /// Produces an expression which retrieves the relevant member value from the source.
+        /// </summary>
+        protected internal override Expression ResolveGetter(ParameterExpression source)
         {
-            internal GenericDataMember(string name, Type type)
-                : base(name, type)
-            {
-            }
+            // Goal tree:
 
-            /// <summary>
-            /// Produces an expression which retrieves the relevant member value from the source.
-            /// </summary>
-            protected internal override Expression ResolveGetter(ParameterExpression source)
-            {
-                // Goal tree:
+            // record =>
+            // {
+            //     int result;
+            //     object value = record["FieldName"];
 
-                // record =>
-                // {
-                //     int result;
-                //     object value = record["FieldName"];
+            //     if (value != DBNull.Value) {
+            //         result = (int)value;
+            //     }
 
-                //     if (value != DBNull.Value) {
-                //         result = (int)value;
-                //     }
+            //     return result;
+            // };
 
-                //     return result;
-                // };
+            ParameterExpression result = Expression.Parameter(Type, nameof(result));
+            ParameterExpression value = Expression.Parameter(typeof(object), nameof(value));
 
-                ParameterExpression result = Expression.Parameter(Type, nameof(result));
-                ParameterExpression value = Expression.Parameter(typeof(object), nameof(value));
+            return Expression.Block(
+                new[] { result, value },
+                Expression.Assign(
+                    value,
+                    Expression.MakeIndex(
+                        source,
+                        typeof(T).GetProperty("Item", typeof(object), new[] { typeof(string) }),
+                        new[] { Expression.Constant(Name) }
+                    )
+                ),
+                Expression.IfThen(
+                    Expression.NotEqual(value, Expression.Constant(DBNull.Value)),
+                    Expression.Assign(result, Expression.Convert(value, Type))
+                ),
+                result
+            );
+        }
 
-                return Expression.Block(
-                    new[] { result, value },
-                    Expression.Assign(
-                        value,
-                        Expression.MakeIndex(
-                            source,
-                            typeof(TDataSource).GetProperty("Item", typeof(object), new[] { typeof(string) }),
-                            new[] { Expression.Constant(Name) }
-                        )
-                    ),
-                    Expression.IfThen(
-                        Expression.NotEqual(value, Expression.Constant(DBNull.Value)),
-                        Expression.Assign(result, Expression.Convert(value, Type))
-                    ),
-                    result
-                );
-            }
-
-            /// <summary>
-            /// Produces an expression which stores the value in the relevant member of the target.
-            /// </summary>
-            protected internal override Expression ResolveSetter(ParameterExpression target)
-            {
-                throw new NotSupportedException();
-            }
+        /// <summary>
+        /// Produces an expression which stores the value in the relevant member of the target.
+        /// </summary>
+        protected internal override Expression ResolveSetter(ParameterExpression target)
+        {
+            throw new NotSupportedException();
         }
     }
 }

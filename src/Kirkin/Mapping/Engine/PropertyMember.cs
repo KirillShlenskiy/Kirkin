@@ -2,30 +2,52 @@
 using System.Linq.Expressions;
 using System.Reflection;
 
+using Kirkin.Reflection;
+
 namespace Kirkin.Mapping.Engine
 {
     /// <summary>
-    /// <see cref="PropertyInfo"/>-based <see cref="Member"/> implementation.
+    /// <see cref="PropertyMember{T}"/> factory methods.
     /// </summary>
-    public sealed class PropertyMember : Member
+    public static class PropertyMember
     {
         /// <summary>
         /// Resolves the default member list for type (public instance properties).
         /// </summary>
-        public static PropertyMember[] PublicInstanceProperties<T>()
+        public static PropertyMember<T>[] PublicInstanceProperties<T>()
         {
             PropertyInfo[] properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            PropertyMember[] members = new PropertyMember[properties.Length];
+            PropertyMember<T>[] members = new PropertyMember<T>[properties.Length];
 
             for (int i = 0; i < properties.Length; i++) {
-                members[i] = new PropertyMember(properties[i]);
+                members[i] = new PropertyMember<T>(properties[i]);
             }
 
             return members;
         }
 
         /// <summary>
-        /// Property which this <see cref="Member"/> proxies.
+        /// Creates a collection of <see cref="PropertyMember"/> from the given <see cref="PropertyList{T}"/>.
+        /// </summary>
+        public static PropertyMember<T>[] PropertyListMembers<T>(PropertyList<T> propertyList)
+        {
+            PropertyMember<T>[] members = new PropertyMember<T>[propertyList.Properties.Length];
+
+            for (int i = 0; i < propertyList.Properties.Length; i++) {
+                members[i] = new PropertyMember<T>(propertyList.Properties[i]);
+            }
+
+            return members;
+        }
+    }
+
+    /// <summary>
+    /// <see cref="PropertyInfo"/>-based <see cref="Member{T}"/> implementation.
+    /// </summary>
+    public sealed class PropertyMember<T> : Member<T>
+    {
+        /// <summary>
+        /// Property which this <see cref="Member{T}"/> proxies.
         /// </summary>
         /// <remarks>
         /// Must be public so that types derived from <see cref="Mapper{TSource, TTarget}"/>

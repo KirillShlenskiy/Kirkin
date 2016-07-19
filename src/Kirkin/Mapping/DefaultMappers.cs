@@ -1,154 +1,164 @@
 ﻿namespace Kirkin.Mapping
 {
     /// <summary>
-    /// Wraps the default <see cref="IMapper{TSource, TTarget}"/>
-    /// instance which uses <see cref="MappingMode.Strict"/>.
+    /// Container type for default mapper instances.
     /// </summary>
-    internal static class StrictMapper<TSource, TTarget>
+    internal static class DefaultMappers
     {
-        // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
-        private static Mapper<TSource, TTarget> _default;
-
         /// <summary>
-        /// Default <see cref="Mapper{TSource, TTarget}"/> instance.
-        /// *DO NOT* mutate this instance.
+        /// Wraps the default <see cref="Mapper{TSource, TTarget}"/>
+        /// instance which does not allow unmapped source or target members.
         /// </summary>
-        internal static Mapper<TSource, TTarget> Default
+        internal static class StrictMapper<TSource, TTarget>
         {
-            get
-            {
-                if (_default == null) {
-                    _default = CreateMapper();
-                }
+            // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
+            private static Mapper<TSource, TTarget> _instance;
 
-                return _default;
+            /// <summary>
+            /// Default <see cref="Mapper{TSource, TTarget}"/> instance.
+            /// *DO NOT* mutate this instance.
+            /// </summary>
+            internal static Mapper<TSource, TTarget> Instance
+            {
+                get
+                {
+                    if (_instance == null) {
+                        _instance = CreateMapper();
+                    }
+
+                    return _instance;
+                }
+            }
+
+            /// <summary>
+            /// Creates a new mapper instance using appropriate member mapping rules.
+            /// </summary>
+            private static Mapper<TSource, TTarget> CreateMapper()
+            {
+                MapperBuilder<TSource, TTarget> config = new MapperBuilder<TSource, TTarget> {
+                    AllowUnmappedSourceMembers = false,
+                    AllowUnmappedTargetMembers = false
+                };
+
+                return config.BuildMapper();
             }
         }
 
         /// <summary>
-        /// Creates a new mapper instance using appropriate member mapping rules.
+        /// Wraps the default <see cref="Mapper{TSource, TTarget}"/>
+        /// instance which allows unmapped source and target members.
         /// </summary>
-        private static Mapper<TSource, TTarget> CreateMapper()
+        internal static class RelaxedMapper<TSource, TTarget>
         {
-            MapperConfig<TSource, TTarget> config = new MapperConfig<TSource, TTarget> {
-                MappingMode = MappingMode.Strict
-            };
+            // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
+            private static Mapper<TSource, TTarget> _instance;
 
-            return config.BuildMapper();
-        }
-    }
-
-    /// <summary>
-    /// Wraps the default <see cref="IMapper{TSource, TTarget}"/>
-    /// instance which uses <see cref="MappingMode.Relaxed"/>.
-    /// </summary>
-    internal static class RelaxedMapper<TSource, TTarget>
-    {
-        // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
-        private static Mapper<TSource, TTarget> _default;
-
-        /// <summary>
-        /// Default <see cref="Mapper{TSource, TTarget}"/> instance.
-        /// *DO NOT* mutate this instance.
-        /// </summary>
-        internal static Mapper<TSource, TTarget> Default
-        {
-            get
+            /// <summary>
+            /// Default <see cref="Mapper{TSource, TTarget}"/> instance.
+            /// *DO NOT* mutate this instance.
+            /// </summary>
+            internal static Mapper<TSource, TTarget> Instance
             {
-                if (_default == null) {
-                    _default = CreateMapper();
-                }
+                get
+                {
+                    if (_instance == null) {
+                        _instance = CreateMapper();
+                    }
 
-                return _default;
+                    return _instance;
+                }
+            }
+
+            /// <summary>
+            /// Creates a new mapper instance using appropriate member mapping rules.
+            /// </summary>
+            private static Mapper<TSource, TTarget> CreateMapper()
+            {
+                MapperBuilder<TSource, TTarget> config = new MapperBuilder<TSource, TTarget> {
+                    AllowUnmappedSourceMembers = true,
+                    AllowUnmappedTargetMembers = true
+                };
+
+                return config.BuildMapper();
             }
         }
 
         /// <summary>
-        /// Creates a new mapper instance using appropriate member mapping rules.
+        /// Wraps the default <see cref="Mapper{TSource, TTarget}"/>
+        /// instance which allows unmapped target members.
         /// </summary>
-        private static Mapper<TSource, TTarget> CreateMapper()
+        internal static class AllSourceMembersMapper<TSource, TTarget>
         {
-            MapperConfig<TSource, TTarget> config = new MapperConfig<TSource, TTarget> {
-                MappingMode = MappingMode.Relaxed
-            };
+            // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
+            private static Mapper<TSource, TTarget> _instance;
 
-            return config.BuildMapper();
-        }
-    }
-
-    /// <summary>
-    /// Wraps the default <see cref="IMapper{TSource, TTarget}"/>
-    /// instance which uses <see cref="MappingMode.AllSourceMembers"/>.
-    /// </summary>
-    internal static class AllSourceMembersMapper<TSource, TTarget>
-    {
-        // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
-        private static Mapper<TSource, TTarget> _default;
-
-        /// <summary>
-        /// Default <see cref="Mapper{TSource, TTarget}"/> instance.
-        /// *DO NOT* mutate this instance.
-        /// </summary>
-        internal static Mapper<TSource, TTarget> Default
-        {
-            get
+            /// <summary>
+            /// Default <see cref="Mapper{TSource, TTarget}"/> instance.
+            /// *DO NOT* mutate this instance.
+            /// </summary>
+            internal static Mapper<TSource, TTarget> Instance
             {
-                if (_default == null) {
-                    _default = CreateMapper();
-                }
+                get
+                {
+                    if (_instance == null) {
+                        _instance = CreateMapper();
+                    }
 
-                return _default;
+                    return _instance;
+                }
+            }
+
+            /// <summary>
+            /// Creates a new mapper instance using appropriate member mapping rules.
+            /// </summary>
+            private static Mapper<TSource, TTarget> CreateMapper()
+            {
+                MapperBuilder<TSource, TTarget> config = new MapperBuilder<TSource, TTarget> {
+                    AllowUnmappedSourceMembers = false,
+                    AllowUnmappedTargetMembers = true
+                };
+
+                return config.BuildMapper();
             }
         }
 
         /// <summary>
-        /// Creates a new mapper instance using appropriate member mapping rules.
+        /// Wraps the default <see cref="Mapper{TSource, TTarget}"/>
+        /// instance which allows unmapped source members.
         /// </summary>
-        private static Mapper<TSource, TTarget> CreateMapper()
+        internal static class AllTargetMembersMapper<TSource, TTarget>
         {
-            MapperConfig<TSource, TTarget> config = new MapperConfig<TSource, TTarget> {
-                MappingMode = MappingMode.AllSourceMembers
-            };
+            // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
+            private static Mapper<TSource, TTarget> _instance;
 
-            return config.BuildMapper();
-        }
-    }
-
-    /// <summary>
-    /// Wraps the default <see cref="IMapper{TSource, TTarget}"/>
-    /// instance which uses <see cref="MappingMode.AllTargetMembers"/>.
-    /// </summary>
-    internal static class AllTargetMembersMapper<TSource, TTarget>
-    {
-        // Lazy initialized to avoid a TypeInitializationException in case of a bad mapping,
-        private static Mapper<TSource, TTarget> _default;
-
-        /// <summary>
-        /// Default <see cref="Mapper{TSource, TTarget}"/> instance.
-        /// *DO NOT* mutate this instance.
-        /// </summary>
-        internal static Mapper<TSource, TTarget> Default
-        {
-            get
+            /// <summary>
+            /// Default <see cref="Mapper{TSource, TTarget}"/> instance.
+            /// *DO NOT* mutate this instance.
+            /// </summary>
+            internal static Mapper<TSource, TTarget> Instance
             {
-                if (_default == null) {
-                    _default = CreateMapper();
+                get
+                {
+                    if (_instance == null) {
+                        _instance = CreateMapper();
+                    }
+
+                    return _instance;
                 }
-
-                return _default;
             }
-        }
 
-        /// <summary>
-        /// Creates a new mapper instance using appropriate member mapping rules.
-        /// </summary>
-        private static Mapper<TSource, TTarget> CreateMapper()
-        {
-            MapperConfig<TSource, TTarget> config = new MapperConfig<TSource, TTarget> {
-                MappingMode = MappingMode.AllTargetMembers
-            };
+            /// <summary>
+            /// Creates a new mapper instance using appropriate member mapping rules.
+            /// </summary>
+            private static Mapper<TSource, TTarget> CreateMapper()
+            {
+                MapperBuilder<TSource, TTarget> config = new MapperBuilder<TSource, TTarget> {
+                    AllowUnmappedSourceMembers = true,
+                    AllowUnmappedTargetMembers = false
+                };
 
-            return config.BuildMapper();
+                return config.BuildMapper();
+            }
         }
     }
 }

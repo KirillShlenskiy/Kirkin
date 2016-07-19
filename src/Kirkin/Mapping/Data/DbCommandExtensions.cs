@@ -1,5 +1,6 @@
 ﻿#if !__MOBILE__
 
+using System;
 using System.Collections.Generic;
 using System.Data;
 
@@ -23,11 +24,11 @@ namespace Kirkin.Mapping.Data
         /// </summary>
         /// <typeparam name="TEntity">Desired type that each <see cref="IDataRecord"/> will be mapped to.</typeparam>
         /// <param name="command">The command to be executed.</param>
-        /// <param name="mappingMode">
-        /// Defines how strict the mapper is in terms of mapping
-        /// readable source properties to writeable target properties.
-        /// </param>
-        public static IEnumerable<TEntity> ExecuteEntities<TEntity>(this IDbCommand command, MappingMode mappingMode = MappingMode.AllTargetMembers)
+        /// <param name="allowUnmappedSourceMembers">Determines whether an exception will be thrown if there are unmapped source members.</param>
+        /// <param name="allowUnmappedTargetMembers">Determines whether an exception will be thrown if there are unmapped target members.</param>
+        public static IEnumerable<TEntity> ExecuteEntities<TEntity>(this IDbCommand command,
+                                                                    bool allowUnmappedSourceMembers = true,
+                                                                    bool allowUnmappedTargetMembers = false)
             where TEntity : new()
         {
             if (command.Connection != null && command.Connection.State == ConnectionState.Closed) {
@@ -36,11 +37,15 @@ namespace Kirkin.Mapping.Data
 
             using (IDataReader reader = command.ExecuteReader())
             {
-                DataRecordToObjectMapperConfig<TEntity> config = new DataRecordToObjectMapperConfig<TEntity>(reader) {
-                    MappingMode = mappingMode
-                };
+                MapperBuilder<IDataRecord, TEntity> builder = Mapper.Builder
+                    .From(DataMember.DataReaderOrRecordMembers(reader))
+                    .To<TEntity>();
 
-                Mapper<IDataRecord, TEntity> mapper = config.BuildMapper();
+                builder.AllowUnmappedSourceMembers = allowUnmappedSourceMembers;
+                builder.AllowUnmappedTargetMembers = allowUnmappedTargetMembers;
+                builder.MemberNameComparer = StringComparer.OrdinalIgnoreCase; // TODO: make this a parameter.
+
+                Mapper<IDataRecord, TEntity> mapper = builder.BuildMapper();
 
                 while (reader.Read()) {
                     yield return mapper.Map(reader);
@@ -56,13 +61,12 @@ namespace Kirkin.Mapping.Data
         /// </summary>
         /// <typeparam name="TEntity">Desired type that each <see cref="DbDataRecord"/> will be mapped to.</typeparam>
         /// <param name="command">The command to be executed.</param>
-        /// <param name="mappingMode">
-        /// Defines how strict the mapper is in terms of mapping
-        /// readable source properties to writeable target properties.
-        /// </param>
+        /// <param name="allowUnmappedSourceMembers">Determines whether an exception will be thrown if there are unmapped source members.</param>
+        /// <param name="allowUnmappedTargetMembers">Determines whether an exception will be thrown if there are unmapped target members.</param>
         /// <param name="cancellationToken">Cancellation token to be checked throughout the operation.</param>
         public static async Task<TEntity[]> ExecuteEntitiesAsync<TEntity>(this DbCommand command, // Cannot use IDbCommand as it does not support TPL async.
-                                                                          MappingMode mappingMode = MappingMode.AllTargetMembers,
+                                                                          bool allowUnmappedSourceMembers = true, 
+                                                                          bool allowUnmappedTargetMembers = false,
                                                                           CancellationToken cancellationToken = default(CancellationToken))
             where TEntity : new()
         {
@@ -72,11 +76,15 @@ namespace Kirkin.Mapping.Data
 
             using (DbDataReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
             {
-                DataRecordToObjectMapperConfig<TEntity> config = new DataRecordToObjectMapperConfig<TEntity>(reader) {
-                    MappingMode = mappingMode
-                };
+                MapperBuilder<IDataRecord, TEntity> builder = Mapper.Builder
+                    .From(DataMember.DataReaderOrRecordMembers(reader))
+                    .To<TEntity>();
 
-                Mapper<IDataRecord, TEntity> mapper = config.BuildMapper();
+                builder.AllowUnmappedSourceMembers = allowUnmappedSourceMembers;
+                builder.AllowUnmappedTargetMembers = allowUnmappedTargetMembers;
+                builder.MemberNameComparer = StringComparer.OrdinalIgnoreCase; // TODO: make this a parameter.
+                
+                Mapper<IDataRecord, TEntity> mapper = builder.BuildMapper();
                 List<TEntity> entities = new List<TEntity>();
 
                 while (await reader.ReadAsync().ConfigureAwait(false)) {

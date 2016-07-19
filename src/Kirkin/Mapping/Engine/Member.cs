@@ -9,7 +9,7 @@ namespace Kirkin.Mapping.Engine
     /// <summary>
     /// Mapped member definition.
     /// </summary>
-    public abstract class Member : IEquatable<Member>
+    public abstract class Member<T> : IEquatable<Member<T>>
     {
         /// <summary>
         /// Name of the mapped member.
@@ -44,7 +44,7 @@ namespace Kirkin.Mapping.Engine
         /// <summary>
         /// Determines whether the specified object is equal to the current object.
         /// </summary>
-        public virtual bool Equals(Member other)
+        public virtual bool Equals(Member<T> other)
         {
             return other != null
                 && other.GetType() == GetType() // Exact type in case ResolveGetter/Setter overridden.
@@ -59,7 +59,7 @@ namespace Kirkin.Mapping.Engine
         /// </summary>
         public sealed override bool Equals(object obj)
         {
-            return Equals(obj as Member);
+            return Equals(obj as Member<T>);
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Kirkin.Mapping.Engine
         /// </summary>
         public override string ToString()
         {
-            return PropertyList<Member>.Default.ToString(this);
+            return PropertyList<Member<T>>.Default.ToString(this);
         }
     }
 }

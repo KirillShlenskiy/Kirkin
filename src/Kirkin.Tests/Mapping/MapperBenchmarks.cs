@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 
 using Kirkin.Mapping;
+using Kirkin.Mapping.Engine;
 using Kirkin.Reflection;
 
 using Xunit;
+
+using Mapper = Kirkin.Mapping.Mapper;
 
 namespace Kirkin.Tests.Mapping
 {
@@ -26,9 +29,8 @@ namespace Kirkin.Tests.Mapping
         {
             Dummy source = new Dummy { ID = 1, Value = "Blah" };
 
-            for (int i = 0; i < 1000000; i++)
-            {
-                Dummy target = Kirkin.Mapping.Mapper.Clone(source);
+            for (int i = 0; i < 100000; i++) {
+                Dummy target = Mapper.Clone(source);
             }
         }
 
@@ -36,7 +38,7 @@ namespace Kirkin.Tests.Mapping
         public void KirkinMapperConfiguredAutomapClone()
         {
             Dummy source = new Dummy { ID = 1, Value = "Blah" };
-            IMapper<Dummy, Dummy> mapper = Kirkin.Mapping.Mapper.CreateMapper<Dummy, Dummy>();
+            Mapper<Dummy, Dummy> mapper = new MapperBuilder<Dummy, Dummy>().BuildMapper();
 
             for (int i = 0; i < 100000; i++) {
                 Dummy target = mapper.Map(source);
@@ -47,7 +49,11 @@ namespace Kirkin.Tests.Mapping
         public void KirkinMapperConfiguredPropertyListClone()
         {
             Dummy source = new Dummy { ID = 1, Value = "Blah" };
-            IMapper<Dummy, Dummy> mapper = Kirkin.Mapping.Mapper.CreateMapper(PropertyList<Dummy>.Default);
+
+            Mapper<Dummy, Dummy> mapper = Mapper.Builder
+                .From(PropertyMember.PropertyListMembers(PropertyList<Dummy>.Default))
+                .To(PropertyMember.PropertyListMembers(PropertyList<Dummy>.Default))
+                .BuildMapper();
 
             for (int i = 0; i < 100000; i++) {
                 Dummy target = mapper.Map(source);

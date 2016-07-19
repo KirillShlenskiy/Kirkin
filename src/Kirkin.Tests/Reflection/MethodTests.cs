@@ -8,7 +8,7 @@ namespace Kirkin.Tests.Reflection
 {
     public class MethodTests
     {
-        [Fact(Skip = "TODO")]
+        //[Fact(Skip = "TODO")]
         public void CreateDelegateFromGenericExpression()
         {
             Func<string, string> func = Method

@@ -68,7 +68,7 @@ namespace Kirkin.Tests.Reflection
             var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
             var dummy1 = new Dummy();
             var dummy2 = new Dummy();
-            var mapper = Mapper.CreateMapper<Dummy, Dummy>();
+            var mapper = new MapperBuilder<Dummy, Dummy>().BuildMapper();
 
             for (var i = 0; i < 1000000; i++)
             {
@@ -87,7 +87,7 @@ namespace Kirkin.Tests.Reflection
             var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
             var dummy1 = new Dummy();
             var dummy2 = new Dummy();
-            var mapper = Mapper.CreateMapper<Dummy, Dummy>();
+            var mapper = new MapperBuilder<Dummy, Dummy>().BuildMapper();
 
             for (var i = 0; i < 10000; i++)
             {
@@ -142,7 +142,7 @@ namespace Kirkin.Tests.Reflection
             var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
             var dummy1 = new Dummy();
             var dummy2 = new Dummy();
-            var mapper = Mapper.CreateMapper<Dummy, Dummy>();
+            var mapper = new MapperBuilder<Dummy, Dummy>().BuildMapper();
 
             for (var i = 0; i < 10; i++)
             {

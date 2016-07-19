@@ -10,48 +10,56 @@ using Kirkin.Mapping.Engine.MemberMappings;
 namespace Kirkin.Mapping
 {
     /// <summary>
-    /// <see cref="MapperConfig{TSource, TTarget}"/> factory methods.
-    /// </summary>
-    internal static class MapperConfig
-    {
-        /// <summary>
-        /// Expression-based <see cref="MapperConfig{TSource, TTarget}"/> factory placeholder.
-        /// </summary>
-        public static MapperConfig<TSource, TTarget> FromExpression<TSource, TTarget>(Expression<Func<TSource, TTarget>> expression)
-        {
-            throw new NotImplementedException(); // TODO.
-        }
-    }
-
-    /// <summary>
     /// Type which configures mapping between objects of source and target types.
     /// </summary>
-    public partial class MapperConfig<TSource, TTarget>
+    public sealed partial class MapperBuilder<TSource, TTarget>
     {
-        #region Fields and properties
+        #region Fields
+
+        /// <summary>
+        /// Source member list.
+        /// </summary>
+        internal readonly Member<TSource>[] SourceMembers;
+
+        /// <summary>
+        /// Target member list.
+        /// </summary>
+        internal readonly Member<TTarget>[] TargetMembers;
+
+        /// <summary>
+        /// Source members marked to be ignored.
+        /// </summary>
+        private readonly HashSet<Member<TSource>> IgnoredSourceMembers = new HashSet<Member<TSource>>();
+
+        /// <summary>
+        /// Target members marked to be ignored.
+        /// </summary>
+        private readonly HashSet<Member<TTarget>> IgnoredTargetMembers = new HashSet<Member<TTarget>>();
 
         /// <summary>
         /// Delegates invoked to produce a custom <see cref="MemberMapping{TSource, TTarget}"/> for
         /// the appropriate target member when generating/validating full mapping from source to target.
         /// </summary>
-        private readonly Dictionary<Member, Func<MapperConfig<TSource, TTarget>, MemberMapping<TSource, TTarget>>> CustomTargetMappingFactories
-            = new Dictionary<Member, Func<MapperConfig<TSource, TTarget>, MemberMapping<TSource, TTarget>>>();
+        private readonly Dictionary<Member<TTarget>, Func<MapperBuilder<TSource, TTarget>, MemberMapping<TSource, TTarget>>> CustomTargetMappingFactories
+            = new Dictionary<Member<TTarget>, Func<MapperBuilder<TSource, TTarget>, MemberMapping<TSource, TTarget>>>();
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
-        /// Source members marked to be ignored.
+        /// Gets or sets the value that determines whether an exception
+        /// will be thrown if there are unmapped source members when the
+        /// result of auto-mapping source and target members is validated.
         /// </summary>
-        private readonly HashSet<Member> IgnoredSourceMembers = new HashSet<Member>();
+        public bool AllowUnmappedSourceMembers { get; set; }
 
         /// <summary>
-        /// Target members marked to be ignored.
+        /// Gets or sets the value that determines whether an exception
+        /// will be thrown if there are unmapped source members when the
+        /// result of auto-mapping source and target members is validated.
         /// </summary>
-        private readonly HashSet<Member> IgnoredTargetMembers = new HashSet<Member>();
-
-        /// <summary>
-        /// <see cref="MappingMode"/> used when validating the
-        /// results of auto-mapping source and target members.
-        /// </summary>
-        public MappingMode MappingMode { get; set; }
+        public bool AllowUnmappedTargetMembers { get; set; }
 
         /// <summary>
         /// <see cref="StringComparer"/> used when comparing
@@ -65,51 +73,34 @@ namespace Kirkin.Mapping
         /// </summary>
         public NullableBehaviour NullableBehaviour { get; set; }
 
-        private Member[] _sourceMembers;
-
-        /// <summary>
-        /// Source member list.
-        /// </summary>
-        internal Member[] SourceMembers
-        {
-            get
-            {
-                if (_sourceMembers == null) {
-                    _sourceMembers = GetSourceMembers();
-                }
-
-                return _sourceMembers;
-            }
-        }
-
-        private Member[] _targetMembers;
-
-        /// <summary>
-        /// Target member list.
-        /// </summary>
-        internal Member[] TargetMembers
-        {
-            get
-            {
-                if (_targetMembers == null) {
-                    _targetMembers = GetTargetMembers();
-                }
-
-                return _targetMembers;
-            }
-        }
-
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Creates a new <see cref="MapperConfig{TSource, TTarget}"/> instance.
+        /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/> instance
+        /// which maps all public properties defined by source and target types.
         /// </summary>
-        public MapperConfig()
+        public MapperBuilder()
+            : this(PropertyMember.PublicInstanceProperties<TSource>(), PropertyMember.PublicInstanceProperties<TTarget>())
         {
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="MapperBuilder{TSource, TTarget}"/>
+        /// instance using the given source and target member lists.
+        /// </summary>
+        internal MapperBuilder(Member<TSource>[] sourceMembers, Member<TTarget>[] targetMembers)
+        {
+            if (sourceMembers == null) throw new ArgumentNullException(nameof(sourceMembers));
+            if (targetMembers == null) throw new ArgumentNullException(nameof(targetMembers));
+
+            SourceMembers = sourceMembers;
+            TargetMembers = targetMembers;
+
             // Defaults.
-            MappingMode = MappingMode.Strict;
+            AllowUnmappedSourceMembers = false;
+            AllowUnmappedTargetMembers = false;
             MemberNameComparer = StringComparer.Ordinal;
             NullableBehaviour = NullableBehaviour.DefaultMapsToNull;
         }
@@ -119,40 +110,20 @@ namespace Kirkin.Mapping
         #region Public methods
 
         /// <summary>
-        /// Creates a <see cref="Mapper{TSource, TTarget}"/> instance
-        /// configured accoring to the rules of this builder.
+        /// Creates an immutable <see cref="Mapper{TSource, TTarget}"/>
+        /// instance configured accoring to the rules defined by this builder.
         /// </summary>
-        internal Mapper<TSource, TTarget> BuildMapper()
+        public Mapper<TSource, TTarget> BuildMapper()
         {
             return new Mapper<TSource, TTarget>(ProduceValidMemberMappings());
         }
 
         /// <summary>
-        /// Validates member mapping according to this instance's <see cref="MappingMode"/>.
+        /// Validates member mapping according to this instance's configuration.
         /// </summary>
-        public void Validate()
+        internal void ValidateMapping()
         {
             ProduceValidMemberMappings();
-        }
-
-        #endregion
-
-        #region Member list
-
-        /// <summary>
-        /// Gets the default source member list for this instance.
-        /// </summary>
-        protected virtual Member[] GetSourceMembers()
-        {
-            return PropertyMember.PublicInstanceProperties<TSource>();
-        }
-
-        /// <summary>
-        /// Gets the default target member list for this instance.
-        /// </summary>
-        protected virtual Member[] GetTargetMembers()
-        {
-            return PropertyMember.PublicInstanceProperties<TTarget>();
         }
 
         #endregion
@@ -167,12 +138,12 @@ namespace Kirkin.Mapping
         {
             // Produce member map.
             List<MemberMapping<TSource, TTarget>> memberMappings = new List<MemberMapping<TSource, TTarget>>(TargetMembers.Length);
-            Dictionary<string, Member> sourceMemberDict = BuildMemberDictionary(SourceMembers, IgnoredSourceMembers, MemberNameComparer, mustBeReadable: true);
-            Dictionary<string, Member> targetMemberDict = BuildMemberDictionary(TargetMembers, IgnoredTargetMembers, MemberNameComparer, mustBeWriteable: true);
+            Dictionary<string, Member<TSource>> sourceMemberDict = BuildMemberDictionary(SourceMembers, IgnoredSourceMembers, MemberNameComparer, mustBeReadable: true);
+            Dictionary<string, Member<TTarget>> targetMemberDict = BuildMemberDictionary(TargetMembers, IgnoredTargetMembers, MemberNameComparer, mustBeWriteable: true);
 
-            foreach (Member targetMember in targetMemberDict.Values)
+            foreach (Member<TTarget> targetMember in targetMemberDict.Values)
             {
-                Func<MapperConfig<TSource, TTarget>, MemberMapping<TSource, TTarget>> customTargetMappingFactory;
+                Func<MapperBuilder<TSource, TTarget>, MemberMapping<TSource, TTarget>> customTargetMappingFactory;
 
                 if (CustomTargetMappingFactories.TryGetValue(targetMember, out customTargetMappingFactory))
                 {
@@ -180,14 +151,14 @@ namespace Kirkin.Mapping
                 }
                 else
                 {
-                    Member sourceMember;
+                    Member<TSource> sourceMember;
 
                     if (sourceMemberDict.TryGetValue(targetMember.Name, out sourceMember))
                     {
                         memberMappings.Add(new DefaultMemberMapping<TSource, TTarget>(sourceMember, targetMember, NullableBehaviour));
                         sourceMemberDict.Remove(sourceMember.Name); // Saves some validation work down the track.
                     }
-                    else if (MappingMode == MappingMode.Strict || MappingMode == MappingMode.AllTargetMembers)
+                    else if (!AllowUnmappedTargetMembers)
                     {
                         throw new MappingException(
                             $"Entity mapping has failed. The following target member is unmapped: {typeof(TTarget).Name}.{targetMember.Name}."
@@ -196,17 +167,17 @@ namespace Kirkin.Mapping
                 }
             }
 
-            if (MappingMode == MappingMode.Strict || MappingMode == MappingMode.AllSourceMembers)
+            if (!AllowUnmappedSourceMembers)
             {
                 // Inspect generated mappings to see if source members which
                 // were not auto-mapped participate in user-defined mappings.
                 ParameterExpression param = Expression.Parameter(typeof(TSource), "source");
 
-                foreach (Member sourceMember in sourceMemberDict.Values)
+                foreach (Member<TSource> sourceMember in sourceMemberDict.Values)
                 {
                     bool found = false;
 
-                    if (sourceMember is PropertyMember)
+                    if (sourceMember is PropertyMember<TSource>)
                     {
                         foreach (MemberMapping<TSource, TTarget> mapping in memberMappings)
                         {
@@ -214,7 +185,7 @@ namespace Kirkin.Mapping
 
                             foreach (PropertyInfo potentialMatch in ExpressionHelpers.ExtractProperties<TSource>(sourceExpr))
                             {
-                                if (sourceMember.Equals(new PropertyMember(potentialMatch)))
+                                if (sourceMember.Equals(new PropertyMember<TSource>(potentialMatch)))
                                 {
                                     found = true;
                                     break;
@@ -240,16 +211,16 @@ namespace Kirkin.Mapping
         /// <summary>
         /// Creates member dictionaries used for auto mapping.
         /// </summary>
-        private static Dictionary<string, Member> BuildMemberDictionary(
-            Member[] members,
-            HashSet<Member> ignoredMembers,
+        private static Dictionary<string, Member<T>> BuildMemberDictionary<T>(
+            Member<T>[] members,
+            HashSet<Member<T>> ignoredMembers,
             StringComparer memberNameComparer,
             bool mustBeReadable = false,
             bool mustBeWriteable = false)
         {
-            Dictionary<string, Member> dict = new Dictionary<string, Member>(members.Length, memberNameComparer);
+            Dictionary<string, Member<T>> dict = new Dictionary<string, Member<T>>(members.Length, memberNameComparer);
 
-            foreach (Member member in members)
+            foreach (Member<T> member in members)
             {
                 if (ignoredMembers.Contains(member)) {
                     continue;
@@ -272,7 +243,7 @@ namespace Kirkin.Mapping
 
         internal void IgnoreAllTargetMembers()
         {
-            foreach (Member targetMember in TargetMembers)
+            foreach (Member<TTarget> targetMember in TargetMembers)
             {
                 IgnoredTargetMembers.Add(targetMember);
                 CustomTargetMappingFactories.Remove(targetMember);
@@ -332,7 +303,7 @@ namespace Kirkin.Mapping
         /// </summary>
         public SourceMemberConfig SourceMember(string name, StringComparer nameComparer)
         {
-            foreach (Member sourceMember in SourceMembers)
+            foreach (Member<TSource> sourceMember in SourceMembers)
             {
                 if (nameComparer.Equals(name, sourceMember.Name)) {
                     return new SourceMemberConfig(this, sourceMember);
@@ -357,7 +328,7 @@ namespace Kirkin.Mapping
         /// </summary>
         public TargetMemberConfig TargetMember(string name, StringComparer nameComparer)
         {
-            foreach (Member targetMember in TargetMembers)
+            foreach (Member<TTarget> targetMember in TargetMembers)
             {
                 if (nameComparer.Equals(name, targetMember.Name)) {
                     return new TargetMemberConfig(this, targetMember);
@@ -374,12 +345,12 @@ namespace Kirkin.Mapping
         {
             // Only supporting property-based Members.
             PropertyInfo sourceMemberProperty = ExpressionUtil.Property(sourceMemberSelector);
-            PropertyMember sourceMemberCandidate = new PropertyMember(sourceMemberProperty);
+            PropertyMember<TSource> sourceMemberCandidate = new PropertyMember<TSource>(sourceMemberProperty);
 
             // This is less restrictive than source member selection
             // for the purpose of auto mapping. Here we are not checking
             // CanRead, because the member is explicitly provided to us.
-            foreach (Member sourceMember in SourceMembers)
+            foreach (Member<TSource> sourceMember in SourceMembers)
             {
                 if (sourceMemberCandidate.Equals(sourceMember)) {
                     return new SourceMemberConfig(this, sourceMember);
@@ -396,12 +367,12 @@ namespace Kirkin.Mapping
         {
             // Only supporting property-based Members.
             PropertyInfo targetMemberProperty = ExpressionUtil.Property(targetMemberSelector);
-            PropertyMember targetMemberCandidate = new PropertyMember(targetMemberProperty);
+            PropertyMember<TTarget> targetMemberCandidate = new PropertyMember<TTarget>(targetMemberProperty);
 
             // This is less restrictive than target member selection
             // for the purpose of auto mapping. Here we are not checking
             // CanWrite, because the member is explicitly provided to us.
-            foreach (Member targetMember in TargetMembers)
+            foreach (Member<TTarget> targetMember in TargetMembers)
             {
                 if (targetMemberCandidate.Equals(targetMember)) {
                     return new TargetMemberConfig<TValue>(this, targetMember);

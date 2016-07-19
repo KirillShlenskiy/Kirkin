@@ -7,7 +7,7 @@ namespace Kirkin.Mapping
     /// <summary>
     /// Performs mapping between objects of source and target types.
     /// </summary>
-    public interface IMapper<TSource, TTarget>
+    internal interface IMapper<TSource, TTarget> // To be retired.
     {
         /// <summary>
         /// Member mappings.
