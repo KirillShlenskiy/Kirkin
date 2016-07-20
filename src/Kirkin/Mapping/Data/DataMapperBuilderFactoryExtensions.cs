@@ -9,7 +9,7 @@ namespace Kirkin.Mapping.Data
     /// <summary>
     /// Data-related fluent <see cref="MapperBuilderFactory"/> extension methods.
     /// </summary>
-    internal static class DataMapperBuilderFactoryExtensions
+    public static class DataMapperBuilderFactoryExtensions
     {
         /// <summary>
         /// Produces an intermediate factory object that can create <see cref="MapperBuilder{TSource, TTarget}"/>
