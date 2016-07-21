@@ -32,7 +32,7 @@ namespace Kirkin.Mapping.Fluent
         /// Creates a <see cref="MapperBuilder{TSource, TTarget}"/> which
         /// configures mapping from source to the given members of the target type.
         /// </summary>
-        internal MapperBuilder<TSource, TTarget> To<TTarget>(Member<TTarget>[] targetMembers)
+        public MapperBuilder<TSource, TTarget> To<TTarget>(Member<TTarget>[] targetMembers)
         {
             if (targetMembers == null) throw new ArgumentNullException(nameof(targetMembers));
 
