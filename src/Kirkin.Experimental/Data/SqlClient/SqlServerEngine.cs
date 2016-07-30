@@ -4,38 +4,20 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 
+using Kirkin.Collections.Generic;
+
 namespace Kirkin.Data.SqlClient
 {
-    internal sealed class SqlServerEngine : IDisposable
+    internal class SqlServerEngine : IDisposable
     {
         public string ConnectionString { get; }
         private SqlConnection _connection;
 
-        private SqlConnection Connection
-        {
-            get
-            {
-                if (_connection == null)
-                {
-                    SqlConnection connection = new SqlConnection(ConnectionString);
-
-                    try
-                    {
-                        connection.Open();
-                    }
-                    catch
-                    {
-                        connection.Dispose();
-
-                        throw;
-                    }
-
-                    _connection = connection;
-                }
-
-                return _connection;
-            }
-        }
+        ///// <summary>
+        ///// Set this to true if you don't care about ambiguous column names.
+        ///// The default value is false.
+        ///// </summary>
+        //public bool AllowAmbiguousColumnNames { get; set; }
 
         internal SqlServerEngine(string connectionString)
         {
@@ -44,9 +26,11 @@ namespace Kirkin.Data.SqlClient
             ConnectionString = connectionString;
         }
 
+        #region ExecuteQuery
+
         public IEnumerable<Dictionary<string, object>> ExecuteQuery(string sql)
         {
-            return ExecuteQuery(sql, Enumerable.Empty<SqlParameter>());
+            return ExecuteQuery(sql, Array<SqlParameter>.Empty);
         }
 
         public IEnumerable<Dictionary<string, object>> ExecuteQuery(string sql, object parameters)
@@ -54,20 +38,7 @@ namespace Kirkin.Data.SqlClient
             if (string.IsNullOrEmpty(sql)) throw new ArgumentException("Invalid SQL.");
             if (parameters == null) throw new ArgumentNullException(nameof(parameters));
 
-            List<SqlParameter> sqlParameters = new List<SqlParameter>();
-
-            foreach (PropertyInfo prop in parameters.GetType().GetProperties())
-            {
-                object value = prop.GetValue(parameters);
-
-                if (value == null) {
-                    value = DBNull.Value;
-                }
-
-                sqlParameters.Add(new SqlParameter("@" + prop.Name, value));
-            }
-
-            return ExecuteQuery(sql, sqlParameters.ToArray());
+            return ExecuteQuery(sql, ExtractParameters(parameters).ToArray());
         }
 
         public IEnumerable<Dictionary<string, object>> ExecuteQuery(string sql, params SqlParameter[] parameters)
@@ -75,7 +46,7 @@ namespace Kirkin.Data.SqlClient
             if (string.IsNullOrEmpty(sql)) throw new ArgumentException("Invalid SQL.");
             if (parameters == null) throw new ArgumentNullException(nameof(parameters));
 
-            using (SqlCommand command = new SqlCommand(sql, Connection))
+            using (SqlCommand command = new SqlCommand(sql, GetOpenConnection()))
             {
                 command.Parameters.AddRange(parameters.ToArray());
 
@@ -85,6 +56,47 @@ namespace Kirkin.Data.SqlClient
                         yield return ReaderToDictionary(reader);
                     }
                 }
+            }
+        }
+
+        #endregion
+
+        #region Util
+
+        private SqlConnection GetOpenConnection()
+        {
+            if (_connection == null)
+            {
+                SqlConnection connection = new SqlConnection(ConnectionString);
+
+                try
+                {
+                    connection.Open();
+                }
+                catch
+                {
+                    connection.Dispose();
+
+                    throw;
+                }
+
+                _connection = connection;
+            }
+
+            return _connection;
+        }
+
+        protected virtual IEnumerable<SqlParameter> ExtractParameters(object parameters)
+        {
+            foreach (PropertyInfo prop in parameters.GetType().GetProperties())
+            {
+                object value = prop.GetValue(parameters);
+
+                if (value == null) {
+                    value = DBNull.Value;
+                }
+
+                yield return new SqlParameter("@" + prop.Name, value);
             }
         }
 
@@ -107,11 +119,17 @@ namespace Kirkin.Data.SqlClient
             return dict;
         }
 
+        #endregion
+
+        #region Cleanup
+
         public void Dispose()
         {
             if (_connection != null) {
                 _connection.Dispose();
             }
         }
+
+        #endregion
     }
 }

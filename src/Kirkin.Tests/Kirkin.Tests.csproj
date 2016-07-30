@@ -105,6 +105,7 @@
     <Compile Include="Collections\Generic\VectorTests.cs" />
     <Compile Include="Collections\Specialised\SingleElementReadOnlyListTests.cs" />
     <Compile Include="CustomEqualityComparerTests.cs" />
+    <Compile Include="Data\SqlClient\SqlServerEngineTests.cs" />
     <Compile Include="Dependencies\ContainerTests.cs" />
     <Compile Include="Functional\DisposableTests.cs" />
     <Compile Include="Experimental\BoxingPerfTests.cs" />
