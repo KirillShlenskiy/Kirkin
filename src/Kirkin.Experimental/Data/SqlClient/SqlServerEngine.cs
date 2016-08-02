@@ -59,6 +59,45 @@ namespace Kirkin.Data.SqlClient
             }
         }
 
+        public Dictionary<string, object> SingleOrDefault(string sql)
+        {
+            return SingleOrDefault(sql, Array<SqlParameter>.Empty);
+        }
+
+        public Dictionary<string, object> SingleOrDefault(string sql, object parameters)
+        {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentException("Invalid SQL.");
+            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+
+            return SingleOrDefault(sql, ExtractParameters(parameters).ToArray());
+        }
+
+        public Dictionary<string, object> SingleOrDefault(string sql, params SqlParameter[] parameters)
+        {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentException("Invalid SQL.");
+            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+
+            using (SqlCommand command = new SqlCommand(sql, GetOpenConnection()))
+            {
+                command.Parameters.AddRange(parameters.ToArray());
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    Dictionary<string, object> result = null;
+
+                    if (reader.Read()) {
+                        result = ReaderToDictionary(reader);
+                    }
+
+                    if (reader.Read()) {
+                        throw new InvalidOperationException("More than one row in the result set.");
+                    }
+
+                    return result;
+                }
+            }
+        }
+
         #endregion
 
         #region Util
