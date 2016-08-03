@@ -1,43 +1,202 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Reflection;
 
-//namespace Kirkin.Data.SqlClient
-//{
-//    /// <summary>
-//    /// Type which abstracts away connection and command management.
-//    /// </summary>
-//    public sealed class SqlServerCommand
-//    {
-//        public string ConnectionString
-//        {
-//            get
-//            {
-//                return ConnectionFactory.ConnectionString;
-//            }
-//        }
+using Kirkin.Collections.Generic;
 
-//        private readonly SqlServerConnectionFactory ConnectionFactory;
-//        private readonly bool OwnsConnectionFactory;
+namespace Kirkin.Data.SqlClient
+{
+    /// <summary>
+    /// Type which abstracts away connection and command management.
+    /// </summary>
+    public sealed class SqlServerCommand
+    {
+        #region Fields and properties
 
-//        public SqlServerCommand(string connectionString)
-//            : this(new SqlServerConnectionFactory(connectionString))
-//        {
-//        }
+        private readonly object ConnectionObj; // SqlServerConnectionFactory or connection string.
 
-//        public SqlServerCommand(SqlServerConnectionFactory connectionFactory)
-//        {
-//            if (connectionFactory == null) throw new ArgumentNullException(nameof(connectionFactory));
+        public string ConnectionString
+        {
+            get
+            {
+                SqlServerConnectionFactory connectionFactory = ConnectionObj as SqlServerConnectionFactory;
 
-//            ConnectionFactory = connectionFactory;
-//        }
+                if (connectionFactory != null) {
+                    return connectionFactory.ConnectionString;
+                }
 
-//        private SqlServerCommand(SqlServerConnectionFactory connectionFactory, bool ownsConnectionFactory)
-//        {
-//            ConnectionFactory = connectionFactory;
-//            OwnsConnectionFactory = ownsConnectionFactory;
-//        }
-//    }
-//}
+                return (string)ConnectionObj;
+            }
+        }
+
+        #endregion
+
+        #region Constructor
+
+        public SqlServerCommand(string connectionString)
+        {
+            if (string.IsNullOrEmpty(connectionString)) throw new ArgumentException("Invalid connection string.");
+
+            ConnectionObj = connectionString;
+        }
+
+        public SqlServerCommand(SqlServerConnectionFactory connectionFactory)
+        {
+            if (connectionFactory == null) throw new ArgumentNullException(nameof(connectionFactory));
+
+            ConnectionObj = connectionFactory;
+        }
+
+        #endregion
+
+        #region ExecuteQuery
+
+        public IEnumerable<Dictionary<string, object>> ExecuteQuery(string sql)
+        {
+            return ExecuteQuery(sql, Array<SqlParameter>.Empty);
+        }
+
+        public IEnumerable<Dictionary<string, object>> ExecuteQuery(string sql, object parameters)
+        {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentException("Invalid SQL.");
+            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+
+            return ExecuteQuery(sql, ExtractParameters(parameters).ToArray());
+        }
+
+        public IEnumerable<Dictionary<string, object>> ExecuteQuery(string sql, params SqlParameter[] parameters)
+        {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentException("Invalid SQL.");
+            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+
+            using (ConnectionManager manager = new ConnectionManager(ConnectionObj))
+            using (SqlCommand command = new SqlCommand(sql, manager.GetOpenConnection()))
+            {
+                command.Parameters.AddRange(parameters.ToArray());
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read()) {
+                        yield return ReaderToDictionary(reader);
+                    }
+                }
+            }
+        }
+
+        public Dictionary<string, object> SingleOrDefault(string sql)
+        {
+            return SingleOrDefault(sql, Array<SqlParameter>.Empty);
+        }
+
+        public Dictionary<string, object> SingleOrDefault(string sql, object parameters)
+        {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentException("Invalid SQL.");
+            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+
+            return SingleOrDefault(sql, ExtractParameters(parameters).ToArray());
+        }
+
+        public Dictionary<string, object> SingleOrDefault(string sql, params SqlParameter[] parameters)
+        {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentException("Invalid SQL.");
+            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+
+            using (ConnectionManager manager = new ConnectionManager(ConnectionObj))
+            using (SqlCommand command = new SqlCommand(sql, manager.GetOpenConnection()))
+            {
+                command.Parameters.AddRange(parameters.ToArray());
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    Dictionary<string, object> result = null;
+
+                    if (reader.Read()) {
+                        result = ReaderToDictionary(reader);
+                    }
+
+                    if (reader.Read()) {
+                        throw new InvalidOperationException("More than one row in the result set.");
+                    }
+
+                    return result;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Plumbing
+
+        private IEnumerable<SqlParameter> ExtractParameters(object parameters)
+        {
+            foreach (PropertyInfo prop in parameters.GetType().GetProperties())
+            {
+                object value = prop.GetValue(parameters);
+
+                if (value == null) {
+                    value = DBNull.Value;
+                }
+
+                yield return new SqlParameter("@" + prop.Name, value);
+            }
+        }
+
+        private static Dictionary<string, object> ReaderToDictionary(SqlDataReader reader)
+        {
+            Dictionary<string, object> dict = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                string name = reader.GetName(i);
+                object value = reader[i];
+
+                if (value == DBNull.Value) {
+                    value = null;
+                }
+
+                dict.Add(name, value);
+            }
+
+            return dict;
+        }
+
+        struct ConnectionManager : IDisposable
+        {
+            private readonly SqlServerConnectionFactory ConnectionFactory;
+            private readonly bool NeedToDisposeFactory;
+
+            internal ConnectionManager(object connectionObj)
+            {
+                ConnectionFactory = connectionObj as SqlServerConnectionFactory;
+
+                if (ConnectionFactory == null)
+                {
+                    string connectionString = (string)connectionObj;
+
+                    ConnectionFactory = new SqlServerConnectionFactory(connectionString);
+                    NeedToDisposeFactory = true;
+                }
+                else
+                {
+                    NeedToDisposeFactory = false;
+                }
+            }
+
+            public SqlConnection GetOpenConnection()
+            {
+                return ConnectionFactory.GetOpenConnection();
+            }
+
+            public void Dispose()
+            {
+                if (NeedToDisposeFactory) {
+                    ConnectionFactory.Dispose();
+                }
+            }
+        }
+
+        #endregion
+    }
+}
