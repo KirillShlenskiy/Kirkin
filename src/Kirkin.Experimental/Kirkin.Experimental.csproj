@@ -53,6 +53,7 @@
     <Compile Include="Collections\Generic\TinyBuffer.cs" />
     <Compile Include="Collections\Specialised\SingleElementReadOnlyList.cs" />
     <Compile Include="CustomEqualityComparer.cs" />
+    <Compile Include="Data\SqlClient\SqlCommandExtensions.cs" />
     <Compile Include="Data\SqlClient\SqlServerCommand.cs" />
     <Compile Include="Data\SqlClient\SqlServerConnectionFactory.cs" />
     <Compile Include="Data\SqlClient\SqlServerEngine.cs" />

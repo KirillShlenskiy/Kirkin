@@ -79,7 +79,7 @@ namespace Kirkin.Data.SqlClient
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read()) {
-                        yield return ReaderToDictionary(reader);
+                        yield return SqlCommandExtensions.ReaderToDictionary(reader);
                     }
                 }
             }
@@ -113,7 +113,7 @@ namespace Kirkin.Data.SqlClient
                     Dictionary<string, object> result = null;
 
                     if (reader.Read()) {
-                        result = ReaderToDictionary(reader);
+                        result = SqlCommandExtensions.ReaderToDictionary(reader);
                     }
 
                     if (reader.Read()) {
@@ -141,25 +141,6 @@ namespace Kirkin.Data.SqlClient
 
                 yield return new SqlParameter("@" + prop.Name, value);
             }
-        }
-
-        private static Dictionary<string, object> ReaderToDictionary(SqlDataReader reader)
-        {
-            Dictionary<string, object> dict = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-
-            for (int i = 0; i < reader.FieldCount; i++)
-            {
-                string name = reader.GetName(i);
-                object value = reader[i];
-
-                if (value == DBNull.Value) {
-                    value = null;
-                }
-
-                dict.Add(name, value);
-            }
-
-            return dict;
         }
 
         struct ConnectionManager : IDisposable
