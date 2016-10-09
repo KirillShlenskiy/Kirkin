@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 namespace Kirkin.Mapping.Data
 {
     /// <summary>
-    /// <see cref="DataMember{T}"/> factory methods. 
+    /// Data-related <see cref="Member{T}"/> factory methods. 
     /// </summary>
     public static class DataMember
     {
@@ -67,7 +67,7 @@ namespace Kirkin.Mapping.Data
     /// <summary>
     /// TDataSource-based <see cref="Member{T}"/> implementation.
     /// </summary>
-    public sealed class DataMember<T> : Member<T>
+    internal sealed class DataMember<T> : Member<T>
     {
         /// <summary>
         /// Returns true if this member supports read operations.
