@@ -1,0 +1,3 @@
+﻿- PropertyValueEqualityComparer.Equals / GetHashCode static proxies?
+
+  Think TypeMapping<T>.Default.Map being substituted for TypeMapping.Map - use type inference for future-proofing reflection-based code.
