@@ -128,6 +128,7 @@
     <Compile Include="Logging\LoggerTests.cs" />
     <Compile Include="Mapping\ConcreteVsInterfaceMapperBenchmarks.cs" />
     <Compile Include="Mapping\DataRecordMapperTests.cs" />
+    <Compile Include="Mapping\DelegateMemberMappingTests.cs" />
     <Compile Include="Mapping\ExpressMapperTests.cs" />
     <Compile Include="Mapping\MapperBenchmarks.cs" />
     <Compile Include="Mapping\MapperTests.cs" />
