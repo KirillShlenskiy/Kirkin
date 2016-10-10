@@ -7,7 +7,7 @@ namespace Kirkin.Mapping
     internal sealed class DelegateMember<TObject, TValue>
         : Member<TObject>
     {
-        private readonly Func<TObject, TValue> _getter;
+        private readonly Expression<Func<TObject, TValue>> _getter;
         private readonly Action<TObject, TValue> _setter;
 
         public override bool CanRead
@@ -36,7 +36,7 @@ namespace Kirkin.Mapping
             }
         }
 
-        public DelegateMember(string name, Func<TObject, TValue> getter)
+        public DelegateMember(string name, Expression<Func<TObject, TValue>> getter)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
             if (getter == null) throw new ArgumentNullException(nameof(getter));
@@ -54,7 +54,7 @@ namespace Kirkin.Mapping
             _setter = setter;
         }
 
-        public DelegateMember(string name, Func<TObject, TValue> getter, Action<TObject, TValue> setter)
+        public DelegateMember(string name, Expression<Func<TObject, TValue>> getter, Action<TObject, TValue> setter)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
             if (getter == null) throw new ArgumentNullException(nameof(getter));
@@ -67,24 +67,39 @@ namespace Kirkin.Mapping
 
         protected internal override Expression ResolveGetter(ParameterExpression source)
         {
-            if (!CanRead){
+            if (!CanRead) {
                 throw new NotSupportedException($"This {nameof(DelegateMember<TObject, TValue>)} does not provide a getter.");
             }
 
-            MethodInfo invokeMethod = typeof(Func<TObject, TValue>).GetMethod("Invoke");
-
-            return Expression.Call(Expression.Constant(_getter), invokeMethod, source);
+            return new SubstituteParameterVisitor(source).Visit(_getter.Body);
         }
 
         protected internal override Expression ResolveSetter(ParameterExpression target)
         {
-            if (!CanWrite){
-                throw new NotSupportedException($"This {nameof(DelegateMember<TObject, TValue>)} does not provide a setter.");
+            throw new NotImplementedException();
+
+            //if (!CanWrite) {
+            //    throw new NotSupportedException($"This {nameof(ExpressionMember<TObject, TValue>)} does not provide a setter.");
+            //}
+
+            //MethodInfo invokeMethod = typeof(Action<TObject, TValue>).GetMethod("Invoke");
+
+            //return Expression.Call(Expression.Constant(_setter), invokeMethod, target);
+        }
+
+        sealed class SubstituteParameterVisitor : ExpressionVisitor
+        {
+            public readonly ParameterExpression NewParameterExpression;
+
+            internal SubstituteParameterVisitor(ParameterExpression newParameterExpression)
+            {
+                NewParameterExpression = newParameterExpression;
             }
 
-            MethodInfo invokeMethod = typeof(Action<TObject, TValue>).GetMethod("Invoke");
-
-            return Expression.Call(Expression.Constant(_getter), invokeMethod, target);
+            protected override Expression VisitParameter(ParameterExpression node)
+            {
+                return NewParameterExpression;
+            }
         }
     }
 }
