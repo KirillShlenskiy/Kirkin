@@ -20,7 +20,7 @@ namespace Kirkin.Tests.Mapping
             );
 
             Mapper<Dictionary<string, object>, Dummy> mapper = Mapper.Builder
-                .From(new Member<Dictionary<string, object>>[] { idMember, valueMember })
+                .From(new[] { idMember, valueMember })
                 .To<Dummy>()
                 .BuildMapper();
 
@@ -40,8 +40,7 @@ namespace Kirkin.Tests.Mapping
         {
 
             // Setter only.
-            Member<Dictionary<string, object>> idMember
-                = DelegateMember.WriteOnly<Dictionary<string, object>, int>("ID", (dict, id) => dict["ID"] = id);
+            Member<Dictionary<string, object>> idMember = DelegateMember.WriteOnly<Dictionary<string, object>, int>("ID", (dict, id) => dict["ID"] = id);
 
             // Getter and setter.
             Member<Dictionary<string, object>> valueMember = DelegateMember.ReadWrite<Dictionary<string, object>, string>(
@@ -50,7 +49,7 @@ namespace Kirkin.Tests.Mapping
 
             Mapper<Dummy, Dictionary<string, object>> mapper = Mapper.Builder
                 .From<Dummy>()
-                .To(new Member<Dictionary<string, object>>[] { idMember, valueMember })
+                .To(new[] { idMember, valueMember })
                 .BuildMapper();
 
             Dummy d = new Dummy {
@@ -62,6 +61,17 @@ namespace Kirkin.Tests.Mapping
             Dictionary<string, object> values = mapper.Map(d);
 
             Assert.Equal(2, values.Count);
+            Assert.Equal(123, values["ID"]);
+            Assert.Equal("Test", values["Value"]);
+
+            d.ID = 321;
+            d.Value = "tseT";
+
+            mapper.Map(d, values);
+
+            Assert.Equal(2, values.Count);
+            Assert.Equal(321, values["ID"]);
+            Assert.Equal("tseT", values["Value"]);
         }
 
         sealed class Dummy
