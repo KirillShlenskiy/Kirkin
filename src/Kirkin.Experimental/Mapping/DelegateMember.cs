@@ -4,6 +4,27 @@ using System.Reflection;
 
 namespace Kirkin.Mapping
 {
+    /// <summary>
+    /// Delegate-based <see cref="Member{T}"/> factory methods.
+    /// </summary>
+    public static class DelegateMember
+    {
+        public static Member<TObject> ReadOnly<TObject, TValue>(string name, Func<TObject, TValue> getter)
+        {
+            return new DelegateMember<TObject, TValue>(name, getter);
+        }
+
+        public static Member<TObject> WriteOnly<TObject, TValue>(string name, Action<TObject, TValue> setter)
+        {
+            return new DelegateMember<TObject, TValue>(name, setter);
+        }
+
+        public static Member<TObject> ReadWrite<TObject, TValue>(string name, Func<TObject, TValue> getter, Action<TObject, TValue> setter)
+        {
+            return new DelegateMember<TObject, TValue>(name, getter, setter);
+        }
+    }
+
     internal sealed class DelegateMember<TObject, TValue>
         : Member<TObject>
     {

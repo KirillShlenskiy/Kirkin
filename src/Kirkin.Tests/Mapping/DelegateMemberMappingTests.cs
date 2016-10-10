@@ -12,12 +12,12 @@ namespace Kirkin.Tests.Mapping
         public void Getter()
         {
             // Getter only.
-            DelegateMember<Dictionary<string, object>, int> idMember
-                = new DelegateMember<Dictionary<string, object>, int>("ID", dict => (int)dict["ID"]);
+            Member<Dictionary<string, object>> idMember = DelegateMember.ReadOnly<Dictionary<string, object>, int>("ID", dict => (int)dict["ID"]);
 
             // Getter and setter.
-            DelegateMember<Dictionary<string, object>, string> valueMember
-                = new DelegateMember<Dictionary<string, object>, string>("Value", dict => (string)dict["Value"], (dict, value) => dict["Value"] = value);
+            Member<Dictionary<string, object>> valueMember = DelegateMember.ReadWrite<Dictionary<string, object>, string>(
+                "Value", dict => (string)dict["Value"], (dict, value) => dict["Value"] = value
+            );
 
             Mapper<Dictionary<string, object>, Dummy> mapper = Mapper.Builder
                 .From(new Member<Dictionary<string, object>>[] { idMember, valueMember })
@@ -39,13 +39,14 @@ namespace Kirkin.Tests.Mapping
         public void Setter()
         {
 
-            // Getter only.
-            DelegateMember<Dictionary<string, object>, int> idMember
-                = new DelegateMember<Dictionary<string, object>, int>("ID", (dict, id) => dict["ID"] = id);
+            // Setter only.
+            Member<Dictionary<string, object>> idMember
+                = DelegateMember.WriteOnly<Dictionary<string, object>, int>("ID", (dict, id) => dict["ID"] = id);
 
             // Getter and setter.
-            DelegateMember<Dictionary<string, object>, string> valueMember
-                = new DelegateMember<Dictionary<string, object>, string>("Value", dict => (string)dict["Value"], (dict, value) => dict["Value"] = value);
+            Member<Dictionary<string, object>> valueMember = DelegateMember.ReadWrite<Dictionary<string, object>, string>(
+                "Value", dict => (string)dict["Value"], (dict, value) => dict["Value"] = value
+            );
 
             Mapper<Dummy, Dictionary<string, object>> mapper = Mapper.Builder
                 .From<Dummy>()
