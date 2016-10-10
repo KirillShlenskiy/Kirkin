@@ -7,14 +7,14 @@ namespace Kirkin.Mapping
     internal sealed class DelegateMember<TObject, TValue>
         : Member<TObject>
     {
-        private readonly Expression<Func<TObject, TValue>> _getter;
-        private readonly Action<TObject, TValue> _setter;
+        private readonly Func<TObject, TValue> Getter;
+        private readonly Action<TObject, TValue> Setter;
 
         public override bool CanRead
         {
             get
             {
-                return _getter != null;
+                return Getter != null;
             }
         }
 
@@ -22,7 +22,7 @@ namespace Kirkin.Mapping
         {
             get
             {
-                return _setter != null;
+                return Setter != null;
             }
         }
 
@@ -36,13 +36,13 @@ namespace Kirkin.Mapping
             }
         }
 
-        public DelegateMember(string name, Expression<Func<TObject, TValue>> getter)
+        public DelegateMember(string name, Func<TObject, TValue> getter)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
             if (getter == null) throw new ArgumentNullException(nameof(getter));
 
             Name = name;
-            _getter = getter;
+            Getter = getter;
         }
 
         public DelegateMember(string name, Action<TObject, TValue> setter)
@@ -51,18 +51,18 @@ namespace Kirkin.Mapping
             if (setter == null) throw new ArgumentNullException(nameof(setter));
 
             Name = name;
-            _setter = setter;
+            Setter = setter;
         }
 
-        public DelegateMember(string name, Expression<Func<TObject, TValue>> getter, Action<TObject, TValue> setter)
+        public DelegateMember(string name, Func<TObject, TValue> getter, Action<TObject, TValue> setter)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
             if (getter == null) throw new ArgumentNullException(nameof(getter));
             if (setter == null) throw new ArgumentNullException(nameof(setter));
 
             Name = name;
-            _getter = getter;
-            _setter = setter;
+            Getter = getter;
+            Setter = setter;
         }
 
         protected internal override Expression ResolveGetter(ParameterExpression source)
@@ -71,34 +71,48 @@ namespace Kirkin.Mapping
                 throw new NotSupportedException($"This {nameof(DelegateMember<TObject, TValue>)} does not provide a getter.");
             }
 
-            return new SubstituteParameterVisitor(source).Visit(_getter.Body);
+            MethodInfo invokeMethod = typeof(Func<TObject, TValue>).GetMethod("Invoke");
+            
+            return Expression.Call(Expression.Constant(Getter), invokeMethod, source);
         }
 
         protected internal override Expression ResolveSetter(ParameterExpression target)
         {
-            throw new NotImplementedException();
-
-            //if (!CanWrite) {
-            //    throw new NotSupportedException($"This {nameof(ExpressionMember<TObject, TValue>)} does not provide a setter.");
-            //}
-
-            //MethodInfo invokeMethod = typeof(Action<TObject, TValue>).GetMethod("Invoke");
-
-            //return Expression.Call(Expression.Constant(_setter), invokeMethod, target);
-        }
-
-        sealed class SubstituteParameterVisitor : ExpressionVisitor
-        {
-            public readonly ParameterExpression NewParameterExpression;
-
-            internal SubstituteParameterVisitor(ParameterExpression newParameterExpression)
-            {
-                NewParameterExpression = newParameterExpression;
+            if (!CanWrite) {
+                throw new NotSupportedException($"This {nameof(DelegateMember<TObject, TValue>)} does not provide a setter.");
             }
 
-            protected override Expression VisitParameter(ParameterExpression node)
+            // Challenge: the expression needs to be assignable, so we'll use a proxy type with a
+            // write-only property that will invoke the Setter action when its value is assigned.
+            ConstructorInfo assignerConstructor = typeof(Assigner).GetConstructor(new[] { typeof(TObject), typeof(Action<TObject, TValue>) });
+
+            if (assignerConstructor == null) {
+                throw new InvalidOperationException("Assignment proxy constructor cannot be resolved.");
+            }
+
+            return Expression.Property(
+                Expression.New(assignerConstructor, target, Expression.Constant(Setter)),
+                nameof(Assigner.Value)
+            );
+        }
+
+        struct Assigner
+        {
+            private readonly TObject Object;
+            private readonly Action<TObject, TValue> Action;
+
+            public Assigner(TObject obj, Action<TObject, TValue> action)
             {
-                return NewParameterExpression;
+                Object = obj;
+                Action = action;
+            }
+
+            public TValue Value
+            {
+                set
+                {
+                    Action(Object, value);
+                }
             }
         }
     }
