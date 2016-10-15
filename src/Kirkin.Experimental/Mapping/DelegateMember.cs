@@ -11,16 +11,26 @@ namespace Kirkin.Mapping
     {
         public static Member<TObject> ReadOnly<TObject, TValue>(string name, Func<TObject, TValue> getter)
         {
-            return new DelegateMember<TObject, TValue>(name, getter);
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (getter == null) throw new ArgumentNullException(nameof(getter));
+
+            return new DelegateMember<TObject, TValue>(name, getter, null);
         }
 
         public static Member<TObject> WriteOnly<TObject, TValue>(string name, Action<TObject, TValue> setter)
         {
-            return new DelegateMember<TObject, TValue>(name, setter);
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (setter == null) throw new ArgumentNullException(nameof(setter));
+
+            return new DelegateMember<TObject, TValue>(name, null, setter);
         }
 
         public static Member<TObject> ReadWrite<TObject, TValue>(string name, Func<TObject, TValue> getter, Action<TObject, TValue> setter)
         {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (getter == null) throw new ArgumentNullException(nameof(getter));
+            if (setter == null) throw new ArgumentNullException(nameof(setter));
+
             return new DelegateMember<TObject, TValue>(name, getter, setter);
         }
     }
@@ -57,30 +67,8 @@ namespace Kirkin.Mapping
             }
         }
 
-        public DelegateMember(string name, Func<TObject, TValue> getter)
+        internal DelegateMember(string name, Func<TObject, TValue> getter, Action<TObject, TValue> setter)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
-            if (getter == null) throw new ArgumentNullException(nameof(getter));
-
-            Name = name;
-            Getter = getter;
-        }
-
-        public DelegateMember(string name, Action<TObject, TValue> setter)
-        {
-            if (name == null) throw new ArgumentNullException(nameof(name));
-            if (setter == null) throw new ArgumentNullException(nameof(setter));
-
-            Name = name;
-            Setter = setter;
-        }
-
-        public DelegateMember(string name, Func<TObject, TValue> getter, Action<TObject, TValue> setter)
-        {
-            if (name == null) throw new ArgumentNullException(nameof(name));
-            if (getter == null) throw new ArgumentNullException(nameof(getter));
-            if (setter == null) throw new ArgumentNullException(nameof(setter));
-
             Name = name;
             Getter = getter;
             Setter = setter;
