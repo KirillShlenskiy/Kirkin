@@ -30,6 +30,52 @@ namespace Kirkin.Tests.Mapping
             Assert.Equal("Test", d.Value);
         }
 
+        [Fact]
+        public void DelegateMappingBenchmark()
+        {
+            Member<Dictionary<string, object>> idMember = DelegateMember.ReadOnly<Dictionary<string, object>, int>("ID", dict => (int)dict["ID"]);
+            Member<Dictionary<string, object>> valueMember = DelegateMember.ReadOnly<Dictionary<string, object>, string>("Value", dict => (string)dict["Value"]);
+
+            Mapper<Dictionary<string, object>, Dummy> mapper = Mapper.Builder
+                .From(new[] { idMember, valueMember })
+                .To<Dummy>()
+                .BuildMapper();
+
+            Dictionary<string, object> values = new Dictionary<string, object> {
+                { "ID", 123 },
+                { "Value", "Test" }
+            };
+
+            Dummy d = new Dummy();
+
+            for (int i = 0; i < 5000000; i++) {
+                mapper.Map(values, d);
+            }
+        }
+
+        [Fact]
+        public void ExpressionMappingBenchmark()
+        {
+            Member<Dictionary<string, object>> idMember = new ExpressionMember<Dictionary<string, object>, int>("ID", dict => (int)dict["ID"]);
+            Member<Dictionary<string, object>> valueMember = new ExpressionMember<Dictionary<string, object>, string>("Value", dict => (string)dict["Value"]);
+
+            Mapper<Dictionary<string, object>, Dummy> mapper = Mapper.Builder
+                .From(new[] { idMember, valueMember })
+                .To<Dummy>()
+                .BuildMapper();
+
+            Dictionary<string, object> values = new Dictionary<string, object> {
+                { "ID", 123 },
+                { "Value", "Test" }
+            };
+
+            Dummy d = new Dummy();
+
+            for (int i = 0; i < 5000000; i++) {
+                mapper.Map(values, d);
+            }
+        }
+
         sealed class Dummy
         {
             public int ID { get; set; }
