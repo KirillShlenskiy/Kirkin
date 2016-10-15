@@ -74,6 +74,7 @@
     <Compile Include="Linq\Expressions\ExpressionEngine.cs" />
     <Compile Include="Logging\FormattedLogger.cs" />
     <Compile Include="Mapping\DelegateMember.cs" />
+    <Compile Include="Mapping\ExpressionMember.cs" />
     <Compile Include="NonNullableString.cs" />
     <Compile Include="Optional.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

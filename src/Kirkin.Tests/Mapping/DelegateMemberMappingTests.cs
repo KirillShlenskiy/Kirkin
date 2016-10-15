@@ -38,7 +38,6 @@ namespace Kirkin.Tests.Mapping
         [Fact]
         public void Setter()
         {
-
             // Setter only.
             Member<Dictionary<string, object>> idMember = DelegateMember.WriteOnly<Dictionary<string, object>, int>("ID", (dict, id) => dict["ID"] = id);
 
