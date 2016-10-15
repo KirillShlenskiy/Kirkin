@@ -1,4 +1,9 @@
-﻿- Mapper: delegate-based Member implementation.
+﻿- Mapper: member factory:
+
+  Member.ReadOnly.FromProperty<Dummy>(d => d.ID);
+  Member.ReadWrite.ExpressionGetterDelegateSetter<Dummy, int>(d => d.ID, (d, value) => d.ID = value);
+  Member.Factory.ReadOnlyFromExpression<Dummy>(d => d.ID);
+  Member.Factory.ReadWriteHybrid<Dummy>(d => d.ID, (d, value) => d.ID = (int)value);
 
 - PropertyValueEqualityComparer.Equals / GetHashCode static proxies?
   
