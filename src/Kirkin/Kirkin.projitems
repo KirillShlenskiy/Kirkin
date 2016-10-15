@@ -46,6 +46,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Linq\ArrayExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Linq\EnumerableExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Linq\Expressions\ExpressionUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Linq\Expressions\SubstituteParameterVisitor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logging\EntryFilter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logging\EntryFormatter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logging\FileLogger.cs" />
