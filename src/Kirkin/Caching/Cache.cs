@@ -47,7 +47,7 @@ namespace Kirkin.Caching
         /// The value returned by its <see cref="ICache{T}.Value"/> property
         /// is guaranteed to be correct for the current key value.
         /// </summary>
-        public static ICache<TValue> Create<TKey, TValue>(Func<TKey> volatileKeySelector, Func<TKey, TValue> valueFactory)
+        internal static ICache<TValue> Create<TKey, TValue>(Func<TKey> volatileKeySelector, Func<TKey, TValue> valueFactory)
         {
             if (volatileKeySelector == null) throw new ArgumentNullException(nameof(volatileKeySelector));
             if (valueFactory == null) throw new ArgumentNullException(nameof(valueFactory));
