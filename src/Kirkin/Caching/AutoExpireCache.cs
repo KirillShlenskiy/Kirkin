@@ -48,9 +48,8 @@ namespace Kirkin.Caching
         /// </summary>
         protected override bool IsCurrentValueValid()
         {
-            return EnvironmentTicksAtLastStoreValue != -1 &&
-                (ExpireAfter == InfiniteTimeSpan ||
-                    ExpireAfter.TotalMilliseconds > (Environment.TickCount - EnvironmentTicksAtLastStoreValue));
+            return EnvironmentTicksAtLastStoreValue != -1
+                && (ExpireAfter == InfiniteTimeSpan || ExpireAfter.TotalMilliseconds > (Environment.TickCount - EnvironmentTicksAtLastStoreValue));
         }
 
         /// <summary>
