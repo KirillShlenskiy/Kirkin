@@ -40,8 +40,8 @@ namespace Kirkin.Mapping.Engine.MemberMappings
             // Resolve and convert value automatically.
             Expression source = SourceMember.ResolveGetter(sourceParam);
 
-            if (SourceMember.Type != TargetMember.Type) {
-                return ExpressionTypeConverter.ChangeType(source, TargetMember.Type, NullableBehaviour);
+            if (SourceMember.MemberType != TargetMember.MemberType) {
+                return ExpressionTypeConverter.ChangeType(source, TargetMember.MemberType, NullableBehaviour);
             }
 
             return source;

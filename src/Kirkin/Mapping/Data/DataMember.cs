@@ -87,15 +87,15 @@ namespace Kirkin.Mapping.Data
         /// <summary>
         /// Runtime type of the member.
         /// </summary>
-        public override Type Type { get; }
+        public override Type MemberType { get; }
 
         /// <summary>
         /// Creates a new instance of <see cref="DataMember"/>.
         /// </summary>
-        internal DataMember(string name, Type type)
+        internal DataMember(string name, Type memberType)
         {
             Name = name;
-            Type = type;
+            MemberType = memberType;
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace Kirkin.Mapping.Data
             //     return result;
             // };
 
-            ParameterExpression result = Expression.Parameter(Type, nameof(result));
+            ParameterExpression result = Expression.Parameter(MemberType, nameof(result));
             ParameterExpression value = Expression.Parameter(typeof(object), nameof(value));
 
             return Expression.Block(
@@ -132,7 +132,7 @@ namespace Kirkin.Mapping.Data
                 ),
                 Expression.IfThen(
                     Expression.NotEqual(value, Expression.Constant(DBNull.Value)),
-                    Expression.Assign(result, Expression.Convert(value, Type))
+                    Expression.Assign(result, Expression.Convert(value, MemberType))
                 ),
                 result
             );

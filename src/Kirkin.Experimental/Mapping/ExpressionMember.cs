@@ -31,7 +31,7 @@ namespace Kirkin.Mapping
 
         public override string Name { get; }
 
-        public override Type Type
+        public override Type MemberType
         {
             get
             {
@@ -85,7 +85,7 @@ namespace Kirkin.Mapping
 
         public override string Name { get; }
 
-        public override Type Type
+        public override Type MemberType
         {
             get
             {

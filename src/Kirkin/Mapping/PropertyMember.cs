@@ -91,7 +91,7 @@ namespace Kirkin.Mapping
         /// <summary>
         /// Runtime type of the member.
         /// </summary>
-        public override Type Type
+        public override Type MemberType
         {
             get
             {

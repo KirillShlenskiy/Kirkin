@@ -61,7 +61,7 @@ namespace Kirkin.Data.SqlClient
                 }
             }
 
-            public override Type Type
+            public override Type MemberType
             {
                 get
                 {

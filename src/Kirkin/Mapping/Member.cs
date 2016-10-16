@@ -19,7 +19,7 @@ namespace Kirkin.Mapping
         /// <summary>
         /// Runtime type of the member.
         /// </summary>
-        public abstract Type Type { get; }
+        public abstract Type MemberType { get; }
 
         /// <summary>
         /// Returns true if this member supports read operations.
@@ -49,7 +49,7 @@ namespace Kirkin.Mapping
             return other != null
                 && other.GetType() == GetType() // Exact type in case ResolveGetter/Setter overridden.
                 && other.Name == Name
-                && other.Type == Type
+                && other.MemberType == MemberType
                 && other.CanRead == CanRead
                 && other.CanWrite == CanWrite;
         }
@@ -70,7 +70,7 @@ namespace Kirkin.Mapping
             return Hash.Combine(
                 GetType().GetHashCode(),
                 Name.GetHashCode(),
-                Type.GetHashCode()
+                MemberType.GetHashCode()
             );
         }
 
