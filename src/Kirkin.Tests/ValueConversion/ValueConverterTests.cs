@@ -31,6 +31,16 @@ namespace Kirkin.Tests.ValueConversion
         }
 
         [Fact]
+        public void PerfValueNonGeneric()
+        {
+            object value = 123;
+
+            for (int i = 0; i < 10000000; i++) {
+                ValueConverter.Default.Convert(value, typeof(int));
+            }
+        }
+
+        [Fact]
         public void PerfValueStatic()
         {
             object value = 123;
@@ -65,15 +75,6 @@ namespace Kirkin.Tests.ValueConversion
         /// </summary>
         public static class StaticConverter
         {
-            ///// <summary>
-            ///// Singleton <see cref="ValueConverter"/> instance.
-            ///// </summary>
-            //public static ValueConverter Default { get; } = new ValueConverter();
-
-            //private ValueConverter()
-            //{
-            //}
-
             /// <summary>
             /// Converts the value to the given type.
             /// Returns T if the value can be cast.
