@@ -3,6 +3,8 @@ using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
 
+using Kirkin.Linq.Expressions;
+
 namespace Kirkin.ValueConversion
 {
     /// <summary>
@@ -43,7 +45,7 @@ namespace Kirkin.ValueConversion
 
         private Func<object, object> ResolveConvertDelegateSlow(Type type)
         {
-            MethodInfo interpretMethod = InstanceMethod<ValueConverter>(vc => vc.Convert<int>(null));
+            MethodInfo interpretMethod = ExpressionUtil.InstanceMethod<ValueConverter>(vc => vc.Convert<int>(null));
 
             // Lambda expression:
             // (object value) => (object)this.Convert<T>(value);
@@ -59,17 +61,6 @@ namespace Kirkin.ValueConversion
                 .Compile();
 
             return ConvertDelegatesByReturnType.GetOrAdd(type, func);
-        }
-
-        private static MethodInfo InstanceMethod<T>(Expression<Action<T>> methodCall)
-        {
-            MethodCallExpression call = methodCall.Body as MethodCallExpression;
-
-            if (call == null) {
-                throw new InvalidOperationException($"The given expression is not a {nameof(MethodCallExpression)}");
-            }
-
-            return call.Method;
         }
 
         #endregion
