@@ -21,18 +21,18 @@ namespace Kirkin.Mapping.Fluent
         /// Creates a <see cref="MapperBuilder{TSource, TTarget}"/> which
         /// configures mapping from source to an object of the given type.
         /// </summary>
-        public MapperBuilder<TSource, TTarget> To<TTarget>()
+        public MapperBuilder<TSource, TTarget> ToPublicInstanceProperties<TTarget>()
         {
             Member<TTarget>[] targetMembers = PropertyMember.PublicInstanceProperties<TTarget>();
 
-            return To(targetMembers);
+            return ToMembers(targetMembers);
         }
 
         /// <summary>
         /// Creates a <see cref="MapperBuilder{TSource, TTarget}"/> which
         /// configures mapping from source to the given members of the target type.
         /// </summary>
-        public MapperBuilder<TSource, TTarget> To<TTarget>(Member<TTarget>[] targetMembers)
+        public MapperBuilder<TSource, TTarget> ToMembers<TTarget>(Member<TTarget>[] targetMembers)
         {
             if (targetMembers == null) throw new ArgumentNullException(nameof(targetMembers));
 

@@ -20,8 +20,8 @@ namespace Kirkin.Tests.Mapping
             );
 
             Mapper<Dictionary<string, object>, Dummy> mapper = Mapper.Builder
-                .From(new[] { idMember, valueMember })
-                .To<Dummy>()
+                .FromMembers(new[] { idMember, valueMember })
+                .ToPublicInstanceProperties<Dummy>()
                 .BuildMapper();
 
             Dictionary<string, object> values = new Dictionary<string, object> {
@@ -47,8 +47,8 @@ namespace Kirkin.Tests.Mapping
             );
 
             Mapper<Dummy, Dictionary<string, object>> mapper = Mapper.Builder
-                .From<Dummy>()
-                .To(new[] { idMember, valueMember })
+                .FromPublicInstanceProperties<Dummy>()
+                .ToMembers(new[] { idMember, valueMember })
                 .BuildMapper();
 
             Dummy d = new Dummy {

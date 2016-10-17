@@ -15,8 +15,8 @@ namespace Kirkin.Data.SqlClient
             Member<SqlCommand>[] parameterMembers = ResolveMembers(command);
 
             MapperBuilder<T, SqlCommand> builder = Mapper.Builder
-                .From<T>()
-                .To(parameterMembers);
+                .FromPublicInstanceProperties<T>()
+                .ToMembers(parameterMembers);
 
             builder.AllowUnmappedTargetMembers = true;
             builder.MemberNameComparer = StringComparer.OrdinalIgnoreCase;

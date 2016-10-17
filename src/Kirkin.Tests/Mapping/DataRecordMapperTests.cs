@@ -62,14 +62,14 @@ namespace Kirkin.Tests.Mapping
                 using (var reader = cmd.ExecuteReader())
                 {
                     var nonNullableMapper = Mapper.Builder
-                        .From(DataMember.DataReaderOrRecordMembers(reader))
-                        .To<PersonStub>()
+                        .FromMembers(DataMember.DataReaderOrRecordMembers(reader))
+                        .ToPublicInstanceProperties<PersonStub>()
                         .Configure(b => b.MemberNameComparer = StringComparer.OrdinalIgnoreCase)
                         .BuildMapper();
 
                     var nullableMapper = Mapper.Builder
-                        .From(DataMember.DataReaderOrRecordMembers(reader))
-                        .To<NullablePersonStub>()
+                        .FromMembers(DataMember.DataReaderOrRecordMembers(reader))
+                        .ToPublicInstanceProperties<NullablePersonStub>()
                         .Configure(b => b.MemberNameComparer = StringComparer.OrdinalIgnoreCase)
                         .BuildMapper();
 

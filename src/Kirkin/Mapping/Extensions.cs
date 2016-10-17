@@ -51,7 +51,7 @@ namespace Kirkin.Mapping
 
             Member<TSource>[] sourceMembers = PropertyMember.PropertyListMembers(propertyList);
 
-            return factory.From(sourceMembers);
+            return factory.FromMembers(sourceMembers);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Kirkin.Mapping
 
             Member<TTarget>[] targetMembers = PropertyMember.PropertyListMembers(propertyList);
 
-            return factory.To(targetMembers);
+            return factory.ToMembers(targetMembers);
         }
 
         #endregion

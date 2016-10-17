@@ -38,8 +38,8 @@ namespace Kirkin.Mapping.Data
             using (IDataReader reader = command.ExecuteReader())
             {
                 MapperBuilder<IDataRecord, TEntity> builder = Mapper.Builder
-                    .From(DataMember.DataReaderOrRecordMembers(reader))
-                    .To<TEntity>();
+                    .FromMembers(DataMember.DataReaderOrRecordMembers(reader))
+                    .ToPublicInstanceProperties<TEntity>();
 
                 builder.AllowUnmappedSourceMembers = allowUnmappedSourceMembers;
                 builder.AllowUnmappedTargetMembers = allowUnmappedTargetMembers;
@@ -77,8 +77,8 @@ namespace Kirkin.Mapping.Data
             using (DbDataReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
             {
                 MapperBuilder<IDataRecord, TEntity> builder = Mapper.Builder
-                    .From(DataMember.DataReaderOrRecordMembers(reader))
-                    .To<TEntity>();
+                    .FromMembers(DataMember.DataReaderOrRecordMembers(reader))
+                    .ToPublicInstanceProperties<TEntity>();
 
                 builder.AllowUnmappedSourceMembers = allowUnmappedSourceMembers;
                 builder.AllowUnmappedTargetMembers = allowUnmappedTargetMembers;
