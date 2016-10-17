@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq.Expressions;
 
+using Kirkin.Linq.Expressions;
+
 namespace Kirkin.Refs
 {
     /// <summary>
@@ -86,14 +88,46 @@ namespace Kirkin.Refs
         internal ValueRef<TRef> Ref<TRef>(Expression<Func<T, TRef>> expression)
         {
             // Expression currying: replace parameter with constant (reduce to Func<TRef>).
-            ParameterExpression parameterToReplace = expression.Parameters[0];
-
             Expression<Func<TRef>> reducedGetterExpression = Expression.Lambda<Func<TRef>>(
                 new SubstituteParameterVisitor(Expression.Constant(Value)).Visit(expression.Body)
             );
 
             Func<TRef> getter = reducedGetterExpression.Compile();
-            Action<TRef> setter = ValueRef.MakeSetter(reducedGetterExpression);
+            Action<TRef> setter;
+
+            if (typeof(T).IsValueType)
+            {
+                // Value type: invoke getter, apply action, invoke setter.
+                // T obj = Getter();
+                // obj.Child = value;
+                // Setter(obj);
+                ParameterExpression value = Expression.Parameter(typeof(TRef), "value");
+                ParameterExpression obj = Expression.Variable(typeof(T), "obj");
+
+                Expression valuePropertyExpr = Expression.MakeMemberAccess(
+                    Expression.Constant(this),
+                    ExpressionUtil.Property<ValueRef<T>>(r => r.Value)
+                );
+
+                BlockExpression block = Expression.Block(
+                    new[] { obj },
+                    Expression.Assign(obj, valuePropertyExpr),
+                    Expression.Assign(
+                        new SubstituteParameterVisitor(obj).Visit(expression.Body),
+                        value
+                    ),
+                    Expression.Assign(valuePropertyExpr, obj)
+                );
+
+                setter = Expression
+                    .Lambda<Action<TRef>>(block, value)
+                    .Compile();
+            }
+            else
+            {
+                // Simple case: reference type.
+                setter = ValueRef.MakeSetter(reducedGetterExpression);
+            }
 
             return new ValueRef<TRef>(getter, setter);
         }
