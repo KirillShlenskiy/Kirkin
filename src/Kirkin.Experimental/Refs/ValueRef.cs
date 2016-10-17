@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-using Kirkin.Linq.Expressions;
-
 namespace Kirkin.Refs
 {
     /// <summary>
@@ -91,13 +89,13 @@ namespace Kirkin.Refs
         }
 
         /// <summary>
-        /// Produces a reference to a child member of this <see cref="ValueRef{T}"/>.
+        /// Produces a reference to a child member of the value that this <see cref="ValueRef{T}"/> is pointing to.
         /// </summary>
-        public ValueRef<TRef> Capture<TRef>(Expression<Func<T, TRef>> expression)
+        public ValueRef<TRef> Ref<TRef>(Expression<Func<T, TRef>> expression)
         {
             Expression valuePropertyExpr = Expression.MakeMemberAccess(
                 Expression.Constant(this),
-                ExpressionUtil.Property<ValueRef<T>>(r => r.Value)
+                typeof(ValueRef<T>).GetProperty(nameof(Value))
             );
 
             // Expression currying: replace parameter with Value property access (reducing it to Func<TRef>).

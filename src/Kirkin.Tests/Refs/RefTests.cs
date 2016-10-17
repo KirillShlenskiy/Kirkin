@@ -71,8 +71,8 @@ namespace Kirkin.Tests.Refs
 
             ValueRef<int> widthRef = ValueRef
                 .Capture(() => dummy.Frame)
-                .Capture(f => f.Size)
-                .Capture(s => s.Width);
+                .Ref(f => f.Size)
+                .Ref(s => s.Width);
 
             Assert.Equal(0, widthRef.Value);
 
