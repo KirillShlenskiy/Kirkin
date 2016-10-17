@@ -30,6 +30,28 @@ namespace Kirkin.Tests.Refs
             Assert.ThrowsAny<Exception>(() => weakID.Value = "222");
         }
 
+        [Fact]
+        public void LocalRef()
+        {
+            int value = 123;
+            IRef<int> valueRef = Ref.FromExpression(() => value);
+
+            Assert.Equal(123, valueRef.Value);
+
+            valueRef.Value = 321;
+
+            Assert.Equal(321, value);
+
+            IRef weakID = valueRef;
+
+            Assert.Equal(321, weakID.Value);
+
+            weakID.Value = 111;
+
+            Assert.Equal(111, value);
+            Assert.ThrowsAny<Exception>(() => weakID.Value = "222");
+        }
+
         sealed class Dummy
         {
             public int ID { get; set; }
