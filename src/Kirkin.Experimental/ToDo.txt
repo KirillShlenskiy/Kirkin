@@ -1,10 +1,11 @@
-﻿- Mapper: member factory:
-
+﻿* Mapper: member factory:
   Member.ReadOnly.FromProperty<Dummy>(d => d.ID);
   Member.ReadWrite.ExpressionGetterDelegateSetter<Dummy, int>(d => d.ID, (d, value) => d.ID = value);
   Member.Factory.ReadOnlyFromExpression<Dummy>(d => d.ID);
   Member.Factory.ReadWriteHybrid<Dummy>(d => d.ID, (d, value) => d.ID = (int)value);
 
-- PropertyValueEqualityComparer.Equals / GetHashCode static proxies?
-  
+* Mapper: custom event/delegate-based Member<T> mapping to allow injection of code to be executed at mapping stage.
+  This would be useful to be able to replicate the old TypeMapping.Map<T>(T source, T target, out int changeCount) behaviour. 
+
+* PropertyValueEqualityComparer.Equals / GetHashCode static proxies?
   Think TypeMapping<T>.Default.Map being substituted for TypeMapping.Map - use type inference for future-proofing reflection-based code.
