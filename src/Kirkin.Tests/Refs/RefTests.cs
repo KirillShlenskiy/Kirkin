@@ -12,7 +12,7 @@ namespace Kirkin.Tests.Refs
         public void PropertyRef()
         {
             Dummy dummy = new Dummy { ID = 123 };
-            ValueRef<int> id = ValueRef.Capture(() => dummy.ID);
+            ValueRef<int> id = ValueRef.FromExpression(() => dummy.ID);
 
             Assert.Equal(123, id.Value);
 
@@ -34,7 +34,7 @@ namespace Kirkin.Tests.Refs
         public void LocalRef()
         {
             int value = 123;
-            ValueRef<int> valueRef = ValueRef.Capture(() => value);
+            ValueRef<int> valueRef = ValueRef.FromExpression(() => value);
 
             Assert.Equal(123, valueRef.Value);
 
@@ -70,7 +70,7 @@ namespace Kirkin.Tests.Refs
             Dummy dummy = new Dummy();
 
             ValueRef<int> widthRef = ValueRef
-                .Capture(() => dummy.Frame)
+                .FromExpression(() => dummy.Frame)
                 .Ref(f => f.Size)
                 .Ref(s => s.Width);
 
@@ -80,6 +80,32 @@ namespace Kirkin.Tests.Refs
 
             Assert.Equal(123, dummy.Frame.Size.Width);
             Assert.Equal(123, widthRef.Value);
+        }
+
+        [Fact]
+        public void MultilevelStructSwap()
+        {
+            Dummy dummy = new Dummy();
+
+            ValueRef<int> widthRef = ValueRef
+                .FromExpression(() => dummy.Frame)
+                .Ref(f => f.Size)
+                .Ref(s => s.Width);
+
+            Assert.Equal(0, widthRef.Value);
+
+            dummy.Frame = new Frame { Size = new Size { Width = 123 } };
+
+            Assert.Equal(123, widthRef.Value);
+
+            dummy = new Dummy();
+
+            Assert.Equal(0, widthRef.Value);
+
+            widthRef.Value = 321;
+
+            Assert.Equal(321, dummy.Frame.Size.Width);
+            Assert.Equal(321, widthRef.Value);
         }
 
         //[Fact]
