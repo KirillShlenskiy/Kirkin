@@ -52,17 +52,17 @@ namespace Kirkin.Tests.Refs
             Assert.ThrowsAny<Exception>(() => weakID.Value = "222");
         }
 
-        [Fact]
-        public void AdjustStructProperty()
-        {
-            Dummy dummy = new Dummy();
+        //[Fact]
+        //public void AdjustStructProperty()
+        //{
+        //    Dummy dummy = new Dummy();
 
-            ValueRef
-                .Capture(() => dummy.Size)
-                .Adjust(v => { v.Width = 123; return v; });
+        //    ValueRef
+        //        .Capture(() => dummy.Frame)
+        //        .Adjust(v => { v.Size.Width = 123; return v; });
 
-            Assert.Equal(123, dummy.Size.Width);
-        }
+        //    Assert.Equal(123, dummy.Size.Width);
+        //}
 
         [Fact]
         public void MultilevelStructRef()
@@ -70,22 +70,43 @@ namespace Kirkin.Tests.Refs
             Dummy dummy = new Dummy();
 
             ValueRef<int> widthRef = ValueRef
-                .Capture(() => dummy.Size)
+                .Capture(() => dummy.Frame)
+                .Capture(f => f.Size)
                 .Capture(s => s.Width);
 
             Assert.Equal(0, widthRef.Value);
 
             widthRef.Value = 123;
 
-            Assert.Equal(123, dummy.Size.Width);
+            Assert.Equal(123, dummy.Frame.Size.Width);
             Assert.Equal(123, widthRef.Value);
         }
+
+        //[Fact]
+        //public void Api()
+        //{
+        //    Dummy dummy = new Dummy();
+
+        //    ValueRef.Capture(() => dummy.Frame.Size.Width).Value = 123;
+        //}
 
         sealed class Dummy
         {
             public int ID { get; set; }
             public string Value { get; set; }
+            public Frame Frame { get; set; }
+        }
+
+        struct Frame
+        {
+            public Position Position { get; set; }
             public Size Size { get; set; }
+        }
+
+        struct Position
+        {
+            public int X { get; set; }
+            public int Y { get; set; }
         }
 
         struct Size
