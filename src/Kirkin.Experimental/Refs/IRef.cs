@@ -1,12 +1,13 @@
 ﻿namespace Kirkin.Refs
 {
-    public interface IRef
+    /// <summary>
+    /// Reference to a value.
+    /// </summary>
+    internal interface IRef
     {
+        /// <summary>
+        /// Gets or sets the value that this reference is pointing to.
+        /// </summary>
         object Value { get; set; }
-    }
-
-    public interface IRef<T> : IRef
-    {
-        new T Value { get; set; }
     }
 }

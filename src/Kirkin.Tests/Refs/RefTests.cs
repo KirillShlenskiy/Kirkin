@@ -12,7 +12,7 @@ namespace Kirkin.Tests.Refs
         public void PropertyRef()
         {
             Dummy dummy = new Dummy { ID = 123 };
-            IRef<int> id = Ref.FromExpression(() => dummy.ID);
+            ValueRef<int> id = ValueRef.FromExpression(() => dummy.ID);
 
             Assert.Equal(123, id.Value);
 
@@ -34,7 +34,7 @@ namespace Kirkin.Tests.Refs
         public void LocalRef()
         {
             int value = 123;
-            IRef<int> valueRef = Ref.FromExpression(() => value);
+            ValueRef<int> valueRef = ValueRef.FromExpression(() => value);
 
             Assert.Equal(123, valueRef.Value);
 
