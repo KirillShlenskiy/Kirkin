@@ -79,7 +79,7 @@ namespace Kirkin.Refs
         /// <summary>
         /// Creates a new <see cref="ValueRef{T}"/> instance with the given value getter and setter.
         /// </summary>
-        public ValueRef(Func<T> getter, Action<T> setter)
+        internal ValueRef(Func<T> getter, Action<T> setter)
         {
             if (getter == null) throw new ArgumentNullException(nameof(getter));
             if (setter == null) throw new ArgumentNullException(nameof(setter));
@@ -91,7 +91,7 @@ namespace Kirkin.Refs
         /// <summary>
         /// Produces a reference to a child member of the value that this <see cref="ValueRef{T}"/> is pointing to.
         /// </summary>
-        public ValueRef<TRef> Ref<TRef>(Expression<Func<T, TRef>> expression)
+        public ValueRef<TChild> Ref<TChild>(Expression<Func<T, TChild>> expression)
         {
             Expression valuePropertyExpr = Expression.MakeMemberAccess(
                 Expression.Constant(this),
@@ -99,17 +99,17 @@ namespace Kirkin.Refs
             );
 
             // Expression currying: replace parameter with Value property access (reducing it to Func<TRef>).
-            Expression<Func<TRef>> reducedGetterExpression = Expression.Lambda<Func<TRef>>(
+            Expression<Func<TChild>> reducedGetterExpression = Expression.Lambda<Func<TChild>>(
                 new SubstituteParameterVisitor(valuePropertyExpr).Visit(expression.Body)
             );
 
-            Func<TRef> getter = reducedGetterExpression.Compile();
-            Action<TRef> setter;
+            Func<TChild> getter = reducedGetterExpression.Compile();
+            Action<TChild> setter;
 
             if (typeof(T).IsValueType)
             {
                 // Value type: invoke getter, apply action, invoke setter.
-                ParameterExpression value = Expression.Parameter(typeof(TRef), "value");
+                ParameterExpression value = Expression.Parameter(typeof(TChild), "value");
                 ParameterExpression obj = Expression.Variable(typeof(T), "obj");
 
                 // T obj;
@@ -124,7 +124,7 @@ namespace Kirkin.Refs
                 );
 
                 setter = Expression
-                    .Lambda<Action<TRef>>(block, value)
+                    .Lambda<Action<TChild>>(block, value)
                     .Compile();
             }
             else
@@ -133,7 +133,7 @@ namespace Kirkin.Refs
                 setter = ValueRef.MakeSetter(reducedGetterExpression);
             }
 
-            return new ValueRef<TRef>(getter, setter);
+            return new ValueRef<TChild>(getter, setter);
         }
 
         sealed class SubstituteParameterVisitor : ExpressionVisitor
