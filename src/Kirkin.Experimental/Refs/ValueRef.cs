@@ -14,7 +14,7 @@ namespace Kirkin.Refs
         /// Creates a <see cref="ValueRef{T}"/> from the given expression.
         /// Throws if the expression cannot act as LHS in an assignment operation.
         /// </summary>
-        public static ValueRef<T> FromExpression<T>(Expression<Func<T>> expr)
+        public static ValueRef<T> Capture<T>(Expression<Func<T>> expr)
         {
             if (expr == null) throw new ArgumentNullException(nameof(expr));
 
@@ -85,11 +85,16 @@ namespace Kirkin.Refs
             Setter = setter;
         }
 
-        internal ValueRef<TRef> Ref<TRef>(Expression<Func<T, TRef>> expression)
+        internal ValueRef<TRef> Capture<TRef>(Expression<Func<T, TRef>> expression)
         {
-            // Expression currying: replace parameter with constant (reduce to Func<TRef>).
+            Expression valuePropertyExpr = Expression.MakeMemberAccess(
+                Expression.Constant(this),
+                ExpressionUtil.Property<ValueRef<T>>(r => r.Value)
+            );
+
+            // Expression currying: replace parameter with Value property access (reducing it to Func<TRef>).
             Expression<Func<TRef>> reducedGetterExpression = Expression.Lambda<Func<TRef>>(
-                new SubstituteParameterVisitor(Expression.Constant(Value)).Visit(expression.Body)
+                new SubstituteParameterVisitor(valuePropertyExpr).Visit(expression.Body)
             );
 
             Func<TRef> getter = reducedGetterExpression.Compile();
@@ -98,24 +103,17 @@ namespace Kirkin.Refs
             if (typeof(T).IsValueType)
             {
                 // Value type: invoke getter, apply action, invoke setter.
-                // T obj = Getter();
-                // obj.Child = value;
-                // Setter(obj);
                 ParameterExpression value = Expression.Parameter(typeof(TRef), "value");
                 ParameterExpression obj = Expression.Variable(typeof(T), "obj");
 
-                Expression valuePropertyExpr = Expression.MakeMemberAccess(
-                    Expression.Constant(this),
-                    ExpressionUtil.Property<ValueRef<T>>(r => r.Value)
-                );
-
+                // T obj;
+                // obj = this.Value;
+                // obj.Child = value;
+                // this.Value = obj;
                 BlockExpression block = Expression.Block(
                     new[] { obj },
                     Expression.Assign(obj, valuePropertyExpr),
-                    Expression.Assign(
-                        new SubstituteParameterVisitor(obj).Visit(expression.Body),
-                        value
-                    ),
+                    Expression.Assign(new SubstituteParameterVisitor(obj).Visit(expression.Body), value),
                     Expression.Assign(valuePropertyExpr, obj)
                 );
 

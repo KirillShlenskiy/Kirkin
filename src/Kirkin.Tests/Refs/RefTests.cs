@@ -12,7 +12,7 @@ namespace Kirkin.Tests.Refs
         public void PropertyRef()
         {
             Dummy dummy = new Dummy { ID = 123 };
-            ValueRef<int> id = ValueRef.FromExpression(() => dummy.ID);
+            ValueRef<int> id = ValueRef.Capture(() => dummy.ID);
 
             Assert.Equal(123, id.Value);
 
@@ -34,7 +34,7 @@ namespace Kirkin.Tests.Refs
         public void LocalRef()
         {
             int value = 123;
-            ValueRef<int> valueRef = ValueRef.FromExpression(() => value);
+            ValueRef<int> valueRef = ValueRef.Capture(() => value);
 
             Assert.Equal(123, valueRef.Value);
 
@@ -58,7 +58,7 @@ namespace Kirkin.Tests.Refs
             Dummy dummy = new Dummy();
 
             ValueRef
-                .FromExpression(() => dummy.Size)
+                .Capture(() => dummy.Size)
                 .Adjust(v => { v.Width = 123; return v; });
 
             Assert.Equal(123, dummy.Size.Width);
@@ -69,12 +69,16 @@ namespace Kirkin.Tests.Refs
         {
             Dummy dummy = new Dummy();
 
-            ValueRef
-                .FromExpression(() => dummy.Size)
-                .Ref(s => s.Width)
-                .Value = 123;
+            ValueRef<int> widthRef = ValueRef
+                .Capture(() => dummy.Size)
+                .Capture(s => s.Width);
+
+            Assert.Equal(0, widthRef.Value);
+
+            widthRef.Value = 123;
 
             Assert.Equal(123, dummy.Size.Width);
+            Assert.Equal(123, widthRef.Value);
         }
 
         sealed class Dummy
