@@ -81,6 +81,8 @@
     <Compile Include="ReferenceCounting\Borrowed.cs" />
     <Compile Include="ReferenceCounting\SharedResourceManager.cs" />
     <Compile Include="Reflection\Method.cs" />
+    <Compile Include="Refs\IRef.cs" />
+    <Compile Include="Refs\Ref.cs" />
     <Compile Include="Serialization\Serializer.cs" />
     <Compile Include="Serialization\XmlSerializer.cs" />
     <Compile Include="Text\Url.cs" />

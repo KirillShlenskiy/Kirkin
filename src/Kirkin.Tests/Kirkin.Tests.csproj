@@ -138,6 +138,7 @@
     <Compile Include="Reflection\MethodTests.cs" />
     <Compile Include="Reflection\PropertyAccessorTests.cs" />
     <Compile Include="Reflection\PropertyAccessorFactoryTests.cs" />
+    <Compile Include="Refs\RefTests.cs" />
     <Compile Include="Scratchpad.cs" />
     <Compile Include="StringCompareTests.cs" />
     <Compile Include="Text\TextTests.cs" />
