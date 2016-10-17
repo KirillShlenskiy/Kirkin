@@ -52,10 +52,29 @@ namespace Kirkin.Tests.Refs
             Assert.ThrowsAny<Exception>(() => weakID.Value = "222");
         }
 
+        [Fact]
+        public void AdjustStructProperty()
+        {
+            Dummy dummy = new Dummy();
+
+            ValueRef
+                .FromExpression(() => dummy.Size)
+                .Adjust(v => { v.Width = 123; return v; });
+
+            Assert.Equal(123, dummy.Size.Width);
+        }
+
         sealed class Dummy
         {
             public int ID { get; set; }
             public string Value { get; set; }
+            public Size Size { get; set; }
+        }
+
+        struct Size
+        {
+            public int Width { get; set; }
+            public int Height { get; set; }
         }
     }
 }

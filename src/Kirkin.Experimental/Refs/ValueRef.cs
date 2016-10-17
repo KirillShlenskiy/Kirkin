@@ -34,7 +34,7 @@ namespace Kirkin.Refs
     /// Provides both getter and setter on <see cref="Value"/> as read-only and write-only cases are already 
     /// adequately handled by <see cref="System.Func{T}"/> and <see cref="System.Action{T}"/> respectively.
     /// </remarks>
-    public struct ValueRef<T> : IRef
+    public sealed class ValueRef<T> : IRef
     {
         private readonly Func<T> Getter;
         private readonly Action<T> Setter;
@@ -76,6 +76,13 @@ namespace Kirkin.Refs
         {
             Getter = getter;
             Setter = setter;
+        }
+
+        internal void Adjust(Func<T, T> func)
+        {
+            T value = Value;
+
+            Value = func(value);
         }
     }
 }
