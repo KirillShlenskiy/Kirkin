@@ -6,7 +6,7 @@ using Kirkin.Linq.Expressions;
 namespace Kirkin.Refs
 {
     /// <summary>
-    /// <see cref="ValueRef{T}"/> factory methods.
+    /// Mutable reference to a value (<see cref="ValueRef{T}"/>) factory methods.
     /// </summary>
     public static class ValueRef
     {
@@ -28,6 +28,8 @@ namespace Kirkin.Refs
         {
             ParameterExpression valueParam = Expression.Parameter(typeof(T), "value");
 
+            // We're not substituting parameter because there isn't one to substitute.
+            // The container object is closed over (producing a ConstantExpression).
             return Expression
                 .Lambda<Action<T>>(Expression.Assign(expr.Body, valueParam), valueParam)
                 .Compile();
@@ -35,7 +37,7 @@ namespace Kirkin.Refs
     }
 
     /// <summary>
-    /// Reference to a value.
+    /// Mutable reference to a value.
     /// </summary>
     /// <remarks>
     /// Provides both getter and setter on <see cref="Value"/> as read-only and write-only cases are already 
@@ -81,11 +83,17 @@ namespace Kirkin.Refs
         /// </summary>
         public ValueRef(Func<T> getter, Action<T> setter)
         {
+            if (getter == null) throw new ArgumentNullException(nameof(getter));
+            if (setter == null) throw new ArgumentNullException(nameof(setter));
+
             Getter = getter;
             Setter = setter;
         }
 
-        internal ValueRef<TRef> Capture<TRef>(Expression<Func<T, TRef>> expression)
+        /// <summary>
+        /// Produces a reference to a child member of this <see cref="ValueRef{T}"/>.
+        /// </summary>
+        public ValueRef<TRef> Capture<TRef>(Expression<Func<T, TRef>> expression)
         {
             Expression valuePropertyExpr = Expression.MakeMemberAccess(
                 Expression.Constant(this),
