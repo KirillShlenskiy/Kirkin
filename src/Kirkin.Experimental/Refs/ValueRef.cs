@@ -17,13 +17,18 @@ namespace Kirkin.Refs
             if (expr == null) throw new ArgumentNullException(nameof(expr));
 
             Func<T> getter = expr.Compile();
-            ParameterExpression valueParam = Expression.Parameter(typeof(T), "value");
-
-            Action<T> setter = Expression
-                .Lambda<Action<T>>(Expression.Assign(expr.Body, valueParam), valueParam)
-                .Compile();
+            Action<T> setter = MakeSetter(expr);
 
             return new ValueRef<T>(getter, setter);
+        }
+
+        internal static Action<T> MakeSetter<T>(Expression<Func<T>> expr)
+        {
+            ParameterExpression valueParam = Expression.Parameter(typeof(T), "value");
+
+            return Expression
+                .Lambda<Action<T>>(Expression.Assign(expr.Body, valueParam), valueParam)
+                .Compile();
         }
     }
 
@@ -76,6 +81,36 @@ namespace Kirkin.Refs
         {
             Getter = getter;
             Setter = setter;
+        }
+
+        internal ValueRef<TRef> Ref<TRef>(Expression<Func<T, TRef>> expression)
+        {
+            // Expression currying: replace parameter with constant (reduce to Func<TRef>).
+            ParameterExpression parameterToReplace = expression.Parameters[0];
+
+            Expression<Func<TRef>> reducedGetterExpression = Expression.Lambda<Func<TRef>>(
+                new SubstituteParameterVisitor(Expression.Constant(Value)).Visit(expression.Body)
+            );
+
+            Func<TRef> getter = reducedGetterExpression.Compile();
+            Action<TRef> setter = ValueRef.MakeSetter(reducedGetterExpression);
+
+            return new ValueRef<TRef>(getter, setter);
+        }
+
+        sealed class SubstituteParameterVisitor : ExpressionVisitor
+        {
+            private readonly Expression Replacement;
+
+            internal SubstituteParameterVisitor(Expression replacement)
+            {
+                Replacement = replacement;
+            }
+
+            protected override Expression VisitParameter(ParameterExpression node)
+            {
+                return Replacement;
+            }
         }
 
         internal void Adjust(Func<T, T> func)

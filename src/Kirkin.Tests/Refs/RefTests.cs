@@ -64,6 +64,19 @@ namespace Kirkin.Tests.Refs
             Assert.Equal(123, dummy.Size.Width);
         }
 
+        [Fact]
+        public void MultilevelStructRef()
+        {
+            Dummy dummy = new Dummy();
+
+            ValueRef
+                .FromExpression(() => dummy.Size)
+                .Ref(s => s.Width)
+                .Value = 123;
+
+            Assert.Equal(123, dummy.Size.Width);
+        }
+
         sealed class Dummy
         {
             public int ID { get; set; }
