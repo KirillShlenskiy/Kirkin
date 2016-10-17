@@ -1,4 +1,8 @@
-﻿using System;
+﻿#if !NET_40 && !__MOBILE__
+    #define PROHIBIT_REENTRANCY
+#endif
+
+using System;
 using System.Threading;
 
 namespace Kirkin.Caching
@@ -34,12 +38,13 @@ namespace Kirkin.Caching
         /// <summary>
         /// Returns true if the cached value is current and ready to use.
         /// </summary>
-        public bool IsValid // Explicit to discourage use where thread safety is required.
+        public bool IsValid
         {
             get
             {
+#if PROHIBIT_REENTRANCY
                 CheckReentrancy();
-
+#endif
                 lock (StateLock) {
                     return IsCurrentValueValid();
                 }
@@ -104,8 +109,9 @@ namespace Kirkin.Caching
         /// </summary>
         public void Invalidate()
         {
+#if PROHIBIT_REENTRANCY
             CheckReentrancy();
-
+#endif
             lock (StateLock)
             {
                 unchecked { Version++; }
@@ -119,8 +125,9 @@ namespace Kirkin.Caching
         /// </summary>
         public bool TryGetValue(out T value)
         {
+#if PROHIBIT_REENTRANCY
             CheckReentrancy();
-
+#endif
             lock (StateLock)
             {
                 if (IsCurrentValueValid())
@@ -134,18 +141,6 @@ namespace Kirkin.Caching
 
             value = default(T);
             return false;
-        }
-
-        /// <summary>
-        /// Ensures that StateLock is not already taken.
-        /// </summary>
-        private void CheckReentrancy()
-        {
-#if !NET_40 && !__MOBILE__
-            if (Monitor.IsEntered(StateLock)) {
-                throw new InvalidOperationException("StateLock already taken out. Re-entrancy prohibited.");
-            }
-#endif
         }
 
         /// <summary>
@@ -174,5 +169,17 @@ namespace Kirkin.Caching
         {
             CurrentValue = newValue;
         }
+
+#if PROHIBIT_REENTRANCY
+        /// <summary>
+        /// Ensures that StateLock is not already taken.
+        /// </summary>
+        private void CheckReentrancy()
+        {
+            if (Monitor.IsEntered(StateLock)) {
+                throw new InvalidOperationException("StateLock already taken out. Re-entrancy prohibited.");
+            }
+        }
+#endif
     }
 }
