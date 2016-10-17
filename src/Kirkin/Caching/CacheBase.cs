@@ -15,11 +15,18 @@ namespace Kirkin.Caching
         private readonly object StateLock = new object(); // Fast.
         private readonly object ValueGenerationLock = new object(); // Slow.
         private int Version; // Incremented, never reset.
+        private T _currentValue;
 
         /// <summary>
         /// Provides direct access to the current value stored by this instance (valid or otherwise).
         /// </summary>
-        protected T CurrentValue { get; private set; }
+        protected T CurrentValue
+        {
+            get
+            {
+                return _currentValue;
+            }
+        }
 
         /// <summary>
         /// Returns the cached value initialising it using the factory delegate if necessary.
@@ -132,7 +139,7 @@ namespace Kirkin.Caching
             {
                 if (IsCurrentValueValid())
                 {
-                    value = CurrentValue;
+                    value = _currentValue;
                     return true;
                 }
 
@@ -167,7 +174,7 @@ namespace Kirkin.Caching
         /// </summary>
         protected virtual void StoreValue(T newValue)
         {
-            CurrentValue = newValue;
+            _currentValue = newValue;
         }
 
 #if PROHIBIT_REENTRANCY
