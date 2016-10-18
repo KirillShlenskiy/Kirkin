@@ -185,6 +185,8 @@ namespace Kirkin
 
         #region Interlocked operations
 
+        // TODO: InterlockedRead, InterlockedAdd.
+
         /// <summary>
         /// Sets a <see cref="Timestamp"/> to the specified value and returns the original value, as an atomic operation.
         /// </summary>
@@ -223,13 +225,15 @@ namespace Kirkin
 
         #region Volatile operations
 
+        // TODO: Remove?
+
         /// <summary>
         /// Reads the value of the specified field. On systems that require it, inserts a
         //  memory barrier that prevents the processor from reordering memory operations
         //  as follows: If a read or write appears after this method in the code, the processor
         //  cannot move it before this method.
         /// </summary>
-        public static Timestamp VolatileRead(ref Timestamp location)
+        internal static Timestamp VolatileRead(ref Timestamp location)
         {
             return new Timestamp(Volatile.Read(ref location.Value));
         }
@@ -240,7 +244,7 @@ namespace Kirkin
         //  as follows: If a memory operation appears before this method in the code, the
         //  processor cannot move it after this method.
         /// </summary>
-        public static void VolatileWrite(ref Timestamp location, Timestamp value)
+        internal static void VolatileWrite(ref Timestamp location, Timestamp value)
         {
             Volatile.Write(ref location.Value, value.Value);
         }
