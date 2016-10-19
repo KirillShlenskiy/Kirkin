@@ -129,6 +129,81 @@ namespace Kirkin.Tests.Mapping
             Assert.Equal(123, dummy2.ID);
             Assert.Equal("Zzz", dummy2.Value);
             Assert.Equal(2, changeCount);
+
+            dummy2 = new Dummy();
+
+            mapper.Map(dummy1, dummy2);
+
+            Assert.Equal(4, changeCount); // No reset.
+        }
+
+        [Fact]
+        public void SimulateTypeMappingMapAndCountChangesWithCustomWrapperType()
+        {
+            int changeCount = 0;
+
+            Mapper<Dummy, ChangeCounter<Dummy>> mapper = Mapper.Builder
+                .FromPublicInstanceProperties<Dummy>()
+                .ToMembers(
+                    PropertyMember
+                        .PublicInstanceProperties<Dummy>()
+                        .Select(m =>
+                        {
+                            Member<ChangeCounter<Dummy>> changeTrackingMemberDecorator = DelegateMember.ReadWrite<ChangeCounter<Dummy>, object>(
+                                m.Name,
+                                d => m.Property.GetValue(d.Target),
+                                (d, v) =>
+                                {
+                                    object currentValue = m.Property.GetValue(d.Target);
+
+                                    if (!Equals(v, currentValue))
+                                    {
+                                        m.Property.SetValue(d.Target, v);
+
+                                        d.ChangeCount++;
+                                    }
+                                }
+                            );
+
+                            return changeTrackingMemberDecorator;
+                        })
+                        .ToArray()
+                )
+                .BuildMapper();
+
+            Dummy dummy1 = new Dummy();
+            Dummy dummy2 = new Dummy();
+
+            changeCount = mapper.Map(dummy1, new ChangeCounter<Dummy>(dummy2)).ChangeCount;
+
+            Assert.Equal(0, changeCount);
+
+            dummy1.ID = 123;
+            dummy1.Value = "Zzz";
+
+            changeCount = mapper.Map(dummy1, new ChangeCounter<Dummy>(dummy2)).ChangeCount;
+
+            Assert.Equal(123, dummy2.ID);
+            Assert.Equal("Zzz", dummy2.Value);
+            Assert.Equal(2, changeCount);
+
+            dummy2 = new Dummy();
+
+            changeCount = mapper.Map(dummy1, new ChangeCounter<Dummy>(dummy2)).ChangeCount;
+
+            Assert.Equal(2, changeCount); // No reset.
+        }
+
+        class ChangeCounter<T>
+        {
+            public T Target { get; }
+            public int ChangeCount { get; set;}
+
+            public ChangeCounter(T target)
+            {
+                Target = target;
+                ChangeCount = 0;
+            }
         }
     }
 }
