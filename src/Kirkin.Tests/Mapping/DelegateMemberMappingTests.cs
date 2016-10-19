@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 using Kirkin.Mapping;
 
@@ -77,6 +78,57 @@ namespace Kirkin.Tests.Mapping
         {
             public int ID { get; set; }
             public string Value { get; set; }
+        }
+
+        [Fact]
+        public void SimulateTypeMappingMapAndCountChanges()
+        {
+            int changeCount = 0;
+
+            Mapper<Dummy, Dummy> mapper = Mapper.Builder
+                .FromPublicInstanceProperties<Dummy>()
+                .ToMembers(
+                    PropertyMember
+                        .PublicInstanceProperties<Dummy>()
+                        .Select(m =>
+                        {
+                            Member<Dummy> changeTrackingMemberDecorator = DelegateMember.ReadWrite<Dummy, object>(
+                                m.Name,
+                                d => m.Property.GetValue(d),
+                                (d, v) =>
+                                {
+                                    object currentValue = m.Property.GetValue(d);
+
+                                    if (!Equals(v, currentValue))
+                                    {
+                                        m.Property.SetValue(d, v);
+
+                                        changeCount++;
+                                    }
+                                }
+                            );
+
+                            return changeTrackingMemberDecorator;
+                        })
+                        .ToArray()
+                )
+                .BuildMapper();
+
+            Dummy dummy1 = new Dummy();
+            Dummy dummy2 = new Dummy();
+
+            mapper.Map(dummy1, dummy2);
+
+            Assert.Equal(0, changeCount);
+
+            dummy1.ID = 123;
+            dummy1.Value = "Zzz";
+
+            mapper.Map(dummy1, dummy2);
+
+            Assert.Equal(123, dummy2.ID);
+            Assert.Equal("Zzz", dummy2.Value);
+            Assert.Equal(2, changeCount);
         }
     }
 }
