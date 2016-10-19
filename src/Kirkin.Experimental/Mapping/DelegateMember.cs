@@ -17,12 +17,30 @@ namespace Kirkin.Mapping
             return new DelegateMember<TObject, TValue>(name, getter, null);
         }
 
+        public static Member<TObject> ReadOnly<TObject>(string name, Type memberType, Func<TObject, object> getter)
+        {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (memberType == null) throw new ArgumentNullException(nameof(memberType));
+            if (getter == null) throw new ArgumentNullException(nameof(getter));
+
+            return new DelegateMember<TObject>(name, memberType, getter, null);
+        }
+
         public static Member<TObject> WriteOnly<TObject, TValue>(string name, Action<TObject, TValue> setter)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
             if (setter == null) throw new ArgumentNullException(nameof(setter));
 
             return new DelegateMember<TObject, TValue>(name, null, setter);
+        }
+
+        public static Member<TObject> WriteOnly<TObject>(string name, Type memberType, Action<TObject, object> setter)
+        {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (memberType == null) throw new ArgumentNullException(nameof(memberType));
+            if (setter == null) throw new ArgumentNullException(nameof(setter));
+
+            return new DelegateMember<TObject>(name, memberType, null, setter);
         }
 
         public static Member<TObject> ReadWrite<TObject, TValue>(string name, Func<TObject, TValue> getter, Action<TObject, TValue> setter)
@@ -32,6 +50,16 @@ namespace Kirkin.Mapping
             if (setter == null) throw new ArgumentNullException(nameof(setter));
 
             return new DelegateMember<TObject, TValue>(name, getter, setter);
+        }
+
+        public static Member<TObject> ReadWrite<TObject>(string name, Type memberType, Func<TObject, object> getter, Action<TObject, object> setter)
+        {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (memberType == null) throw new ArgumentNullException(nameof(memberType));
+            if (getter == null) throw new ArgumentNullException(nameof(getter));
+            if (setter == null) throw new ArgumentNullException(nameof(setter));
+
+            return new DelegateMember<TObject>(name, memberType, getter, setter);
         }
     }
 
@@ -111,6 +139,95 @@ namespace Kirkin.Mapping
             private readonly Action<TObject, TValue> Action;
 
             public Assigner(TObject obj, Action<TObject, TValue> action)
+            {
+                Object = obj;
+                Action = action;
+            }
+
+            public TValue Value
+            {
+                set
+                {
+                    Action(Object, value);
+                }
+            }
+        }
+    }
+
+    internal sealed class DelegateMember<TObject>
+        : Member<TObject>
+    {
+        private readonly Func<TObject, object> Getter;
+        private readonly Action<TObject, object> Setter;
+
+        public override bool CanRead
+        {
+            get
+            {
+                return Getter != null;
+            }
+        }
+
+        public override bool CanWrite
+        {
+            get
+            {
+                return Setter != null;
+            }
+        }
+
+        public override string Name { get; }
+        public override Type MemberType { get; }
+
+        internal DelegateMember(string name, Type memberType, Func<TObject, object> getter, Action<TObject, object> setter)
+        {
+            Name = name;
+            MemberType = memberType;
+            Getter = getter;
+            Setter = setter;
+        }
+
+        protected internal override Expression ResolveGetter(ParameterExpression source)
+        {
+            if (!CanRead) {
+                throw new NotSupportedException($"This {nameof(DelegateMember<TObject>)} does not provide a getter.");
+            }
+
+            MethodInfo invokeMethod = typeof(Func<TObject, object>).GetMethod("Invoke");
+            
+            return Expression.Convert(
+                Expression.Call(Expression.Constant(Getter), invokeMethod, source), MemberType
+            );
+        }
+
+        protected internal override Expression ResolveSetter(ParameterExpression target)
+        {
+            if (!CanWrite) {
+                throw new NotSupportedException($"This {nameof(DelegateMember<TObject>)} does not provide a setter.");
+            }
+
+            // Challenge: the expression needs to be assignable, so we'll use a proxy type with a
+            // write-only property that will invoke the Setter action when its value is assigned.
+            ConstructorInfo assignerConstructor = typeof(Assigner<>)
+                .MakeGenericType(typeof(TObject), MemberType)
+                .GetConstructor(new[] { typeof(TObject), typeof(Action<TObject, object>) });
+
+            if (assignerConstructor == null) {
+                throw new InvalidOperationException("Assignment proxy constructor cannot be resolved.");
+            }
+
+            return Expression.Property(
+                Expression.New(assignerConstructor, target, Expression.Constant(Setter)),
+                nameof(Assigner<object>.Value)
+            );
+        }
+
+        struct Assigner<TValue>
+        {
+            private readonly TObject Object;
+            private readonly Action<TObject, object> Action;
+
+            public Assigner(TObject obj, Action<TObject, object> action)
             {
                 Object = obj;
                 Action = action;

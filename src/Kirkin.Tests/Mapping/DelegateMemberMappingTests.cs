@@ -81,6 +81,28 @@ namespace Kirkin.Tests.Mapping
         }
 
         [Fact]
+        public void NonGenericGetterAndSetter()
+        {
+            Member<Dummy>[] members = {
+                DelegateMember.ReadWrite<Dummy>("ID", typeof(int), d => d.ID, (d, id) => d.ID = (int)id),
+                DelegateMember.ReadWrite<Dummy>("Value", typeof(string), d => d.Value, (d, value) => d.Value = (string)value),
+            };
+
+            Mapper<Dummy, Dummy> mapper = new MapperBuilder<Dummy, Dummy>(members, members).BuildMapper();
+
+            Dummy dummy1 = new Dummy {
+                ID = 123,
+                Value = "Zzz"
+            };
+
+            Dummy dummy2 = mapper.Map(dummy1);
+
+            Assert.NotSame(dummy1, dummy2);
+            Assert.Equal(123, dummy2.ID);
+            Assert.Equal("Zzz", dummy2.Value);
+        }
+
+        [Fact]
         public void SimulateTypeMappingMapAndCountChanges()
         {
             int changeCount = 0;
@@ -92,8 +114,9 @@ namespace Kirkin.Tests.Mapping
                         .PublicInstanceProperties<Dummy>()
                         .Select(m =>
                         {
-                            Member<Dummy> changeTrackingMemberDecorator = DelegateMember.ReadWrite<Dummy, object>(
+                            Member<Dummy> changeTrackingMemberDecorator = DelegateMember.ReadWrite<Dummy>(
                                 m.Name,
+                                m.MemberType,
                                 d => m.Property.GetValue(d),
                                 (d, v) =>
                                 {
@@ -149,8 +172,9 @@ namespace Kirkin.Tests.Mapping
                         .PublicInstanceProperties<Dummy>()
                         .Select(m =>
                         {
-                            Member<ChangeCounter<Dummy>> changeTrackingMemberDecorator = DelegateMember.ReadWrite<ChangeCounter<Dummy>, object>(
+                            Member<ChangeCounter<Dummy>> changeTrackingMemberDecorator = DelegateMember.ReadWrite<ChangeCounter<Dummy>>(
                                 m.Name,
+                                m.MemberType,
                                 d => m.Property.GetValue(d.Target),
                                 (d, v) =>
                                 {
