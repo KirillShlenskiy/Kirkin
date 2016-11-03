@@ -154,9 +154,24 @@ namespace Kirkin.Mapping
         }
     }
 
-    internal sealed class DelegateMember<TObject>
+    public sealed class DelegateMember<TObject>
         : Member<TObject>
     {
+        public static Member<TObject> ReadOnly<TValue>(string name, Func<TObject, TValue> getter)
+        {
+            return DelegateMember.ReadOnly(name, getter);
+        }
+
+        public static Member<TObject> WriteOnly<TValue>(string name, Action<TObject, TValue> setter)
+        {
+            return DelegateMember.WriteOnly(name, setter);
+        }
+
+        public static Member<TObject> ReadWrite<TValue>(string name, Func<TObject, TValue> getter, Action<TObject, TValue> setter)
+        {
+            return DelegateMember.ReadWrite(name, getter, setter);
+        }
+
         private readonly Func<TObject, object> Getter;
         private readonly Action<TObject, object> Setter;
 
