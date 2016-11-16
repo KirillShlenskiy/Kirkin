@@ -41,7 +41,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Dependencies\ResolutionFailedException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Functional\Disposable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Functional\Retryable.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)IO\ReactiveFileMonitor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\StreamUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Linq\ArrayExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Linq\EnumerableExtensions.cs" />
@@ -80,6 +79,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MemberMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\NullableBehaviour.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\PropertyMember.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Monitoring\IMonitor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Monitoring\ReactiveFileMonitor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Percentage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Properties\AssemblyInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reflection\IPropertyAccessor.cs" />

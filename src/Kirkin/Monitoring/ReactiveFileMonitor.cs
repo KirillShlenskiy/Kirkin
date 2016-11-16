@@ -6,12 +6,12 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Kirkin.IO
+namespace Kirkin.Monitoring
 {
     /// <summary>
     /// Simple monitor for log files which always grow.
     /// </summary>
-    public sealed class ReactiveFileMonitor
+    public sealed class ReactiveFileMonitor : IMonitor<string>
     {
         /// <summary>
         /// Full path to the log file monitored by this instance.
@@ -29,6 +29,22 @@ namespace Kirkin.IO
         /// Raised on the thread which calls MonitorAsync if the SynchronizationContext is not null.
         /// </summary>
         public event Action<string> LineRead;
+
+        /// <summary>
+        /// Raised when the monitor detects a new line appended to the log file.
+        /// Raised on the thread which calls MonitorAsync if the SynchronizationContext is not null.
+        /// </summary>
+        event Action<string> IMonitor<string>.EntryRead
+        {
+            add
+            {
+                LineRead += value;
+            }
+            remove
+            {
+                LineRead -= value;
+            }
+        }
 
         /// <summary>
         /// Creates a new instance of the monitor which reports
@@ -161,9 +177,7 @@ namespace Kirkin.IO
                                         break;
                                     }
 
-                                    if (LineRead != null) {
-                                        LineRead(line);
-                                    }
+                                    LineRead?.Invoke(line);
 
                                     // Successfully reported line.
                                     lastStreamPosition = positionBeforeCopy + (int)ms.Position;
