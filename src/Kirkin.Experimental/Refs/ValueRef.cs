@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Kirkin.Refs
@@ -20,6 +21,37 @@ namespace Kirkin.Refs
             Action<T> setter = MakeSetter(expr);
 
             return new ValueRef<T>(getter, setter);
+        }
+
+        /// <summary>
+        /// Value assignment shortcut utility which performs all the necessary
+        /// copies of struct values in the member chain along the way.
+        /// </summary>
+        internal static void Set<T>(Expression<Func<T>> assignableExpr, T value)
+        {
+            // Example:
+            // ValueRef<int> widthRef = ValueRef
+            //    .Assignable(() => dummy.Frame)
+            //    .Ref(f => f.Size)
+            //    .Ref(s => s.Width);
+            //
+            // widthRef.Value = 123;
+            //
+            // VS:
+            //
+            // ValueRef.Set(() => dummy.Frame.Size.Width, 123);
+            throw new NotImplementedException();
+
+            Stack<MemberExpression> memberExpressions = new Stack<MemberExpression>();
+            Expression expr = assignableExpr.Body;
+            MemberExpression memberExpr;
+
+            while ((memberExpr = expr as MemberExpression) != null)
+            {
+                memberExpressions.Push(memberExpr);
+
+                expr = memberExpr;
+            }
         }
 
         internal static Action<T> MakeSetter<T>(Expression<Func<T>> expr)
