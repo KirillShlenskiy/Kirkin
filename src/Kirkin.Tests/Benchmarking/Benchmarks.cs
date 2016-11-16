@@ -26,7 +26,9 @@ namespace Kirkin.Tests.Benchmarking
             ManualConfig config = new ManualConfig();
 
             config.Add(Job.Default);
-            config.Add(DefaultConfig.Instance.GetColumns().ToArray());
+
+            // TODO: Fix.
+            //config.Add(DefaultConfig.Instance.GetColumns().ToArray());
 
             return config;
         }
