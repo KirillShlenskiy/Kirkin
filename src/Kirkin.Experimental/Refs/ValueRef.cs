@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
+using Kirkin.Linq.Expressions;
+
 namespace Kirkin.Refs
 {
     /// <summary>
@@ -130,7 +132,7 @@ namespace Kirkin.Refs
                 typeof(ValueRef<T>).GetProperty(nameof(Value))
             );
 
-            // Expression currying: replace parameter with Value property access (reducing it to Func<TRef>).
+            // Expression currying: replace parameter with Value property access (reducing it to Func<TChild>).
             Expression<Func<TChild>> reducedGetterExpression = Expression.Lambda<Func<TChild>>(
                 new SubstituteParameterVisitor(valuePropertyExpr).Visit(expression.Body)
             );
@@ -166,21 +168,6 @@ namespace Kirkin.Refs
             }
 
             return new ValueRef<TChild>(getter, setter);
-        }
-
-        sealed class SubstituteParameterVisitor : ExpressionVisitor
-        {
-            private readonly Expression Replacement;
-
-            internal SubstituteParameterVisitor(Expression replacement)
-            {
-                Replacement = replacement;
-            }
-
-            protected override Expression VisitParameter(ParameterExpression node)
-            {
-                return Replacement;
-            }
         }
 
         internal void Adjust(Func<T, T> func)

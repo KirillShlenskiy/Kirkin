@@ -8,9 +8,11 @@ namespace Kirkin.Linq.Expressions
     /// </summary>
     internal sealed class SubstituteParameterVisitor : ExpressionVisitor
     {
-        private readonly ParameterExpression NewParameter;
+        // Using Expression rather than ParameterExpression to
+        // support constant value injection in place of parameters.
+        private readonly Expression NewParameter;
 
-        internal SubstituteParameterVisitor(ParameterExpression newParameter)
+        internal SubstituteParameterVisitor(Expression newParameter)
         {
             NewParameter = newParameter;
         }
