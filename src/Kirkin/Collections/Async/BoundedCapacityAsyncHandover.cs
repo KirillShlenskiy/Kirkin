@@ -121,8 +121,7 @@ namespace Kirkin.Collections.Async
             }
             finally
             {
-                if (needToReleaseCapacitySemaphore)
-                {
+                if (needToReleaseCapacitySemaphore) {
                     CapacitySemaphore.Release();
                 }
             }

@@ -14,7 +14,7 @@ namespace Kirkin.Collections.Async
     /// </summary>
     public abstract class AsyncHandoverBase<T>
     {
-        #region Fields
+#region Fields
 
         // Queue of items waiting to be handed
         // over at the next call to TryTakeAsync.
@@ -26,9 +26,9 @@ namespace Kirkin.Collections.Async
         private readonly Queue<TaskCompletionSource<TakeResult<T>>> Waiters
             = new Queue<TaskCompletionSource<TakeResult<T>>>();
 
-        #endregion
+#endregion
 
-        #region Properties
+#region Properties
 
         /// <summary>
         /// True if this collection allows adding.
@@ -64,9 +64,9 @@ namespace Kirkin.Collections.Async
             }
         }
 
-        #endregion
+#endregion
 
-        #region Constructors
+#region Constructors
 
         /// <summary>
         /// Creates a new instance of the async collection
@@ -89,9 +89,9 @@ namespace Kirkin.Collections.Async
             AllowsAdding = true;
         }
 
-        #endregion
+#endregion
 
-        #region Add/TryAdd
+#region Add/TryAdd
 
         /// <summary>
         /// Hands the item over to the waiters
@@ -143,9 +143,9 @@ namespace Kirkin.Collections.Async
             }
         }
 
-        #endregion
+#endregion
 
-        #region TryTake
+#region TryTake
 
         /// <summary>
         /// Attempts to immediately remove and return
@@ -171,7 +171,7 @@ namespace Kirkin.Collections.Async
         /// This method completes synchronously if
         /// an item is available in the queue.
         /// </summary>
-        public async Task<TakeResult<T>> TryTakeAsync(CancellationToken ct)
+        public Task<TakeResult<T>> TryTakeAsync(CancellationToken ct)
         {
             TaskCompletionSource<TakeResult<T>> waiter;
 
@@ -184,12 +184,12 @@ namespace Kirkin.Collections.Async
                 // Check if an item was queued while
                 // we were waiting for the mutex.
                 if (TryTakeImmediately(out item)) {
-                    return new TakeResult<T>(item);
+                    return Task.FromResult(new TakeResult<T>(item));
                 }
 
                 if (!AllowsAdding) {
                     // CompleteAdding was called. No point waiting for Add.
-                    return default(TakeResult<T>);
+                    return Task.FromResult(default(TakeResult<T>));
                 }
 
                 ct.ThrowIfCancellationRequested();
@@ -202,9 +202,14 @@ namespace Kirkin.Collections.Async
 
             // Wait for the next call to Add or CompleteAdding.
             if (!ct.CanBeCanceled) {
-                return await waiter.Task.ConfigureAwait(false);
+                return waiter.Task;
             }
 
+            return TryTakeAsyncImpl(waiter, ct);
+        }
+
+        private async Task<TakeResult<T>> TryTakeAsyncImpl(TaskCompletionSource<TakeResult<T>> waiter, CancellationToken ct)
+        {
             // Cancellation support.
             // TrySetCanceled will not do anything if it is
             // preempted by a call to TrySetResult, in which 
@@ -215,9 +220,9 @@ namespace Kirkin.Collections.Async
             }
         }
 
-        #endregion
+#endregion
 
-        #region CompleteAdding/Misc
+#region CompleteAdding/Misc
 
         /// <summary>
         /// Sets the AllowsAdding flag to false
@@ -262,7 +267,7 @@ namespace Kirkin.Collections.Async
             }
         }
 
-        #endregion
+#endregion
     }
 }
 
