@@ -103,6 +103,8 @@ namespace Kirkin.Tests.Reflection
         [Fact]
         public void CopyBenchmarkAutoMapperLargeDefaultMapper()
         {
+            AutoMapper.Mapper.Initialize(config => config.CreateMap<Dummy, Dummy>());
+
             var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
             var dummy1 = new Dummy();
             var dummy2 = new Dummy();
