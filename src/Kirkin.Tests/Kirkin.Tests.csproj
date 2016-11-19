@@ -129,6 +129,7 @@
     <Compile Include="Data\SqlClient\SqlServerEngineTests.cs" />
     <Compile Include="Dependencies\ContainerTests.cs" />
     <Compile Include="Experimental\CastleCodegenTests.cs" />
+    <Compile Include="Experimental\ImmutableArrayFactoryTests.cs" />
     <Compile Include="Functional\DisposableTests.cs" />
     <Compile Include="Experimental\BoxingPerfTests.cs" />
     <Compile Include="Experimental\ExperimentalTests.cs" />
