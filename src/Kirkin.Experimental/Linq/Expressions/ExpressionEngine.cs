@@ -80,6 +80,14 @@ namespace Kirkin.Linq.Expressions
             return (Expression<Action<TObject, TMember>>)expression;
         }
 
+        /// <summary>
+        /// Creates an expression which represents invoking the given constructor.
+        /// </summary>
+        /// <typeparam name="TDelegate">
+        /// Type of delegate described by the resultant expression. Must take in the
+        /// list of parameters matching the given constructor, and return an object of
+        /// type which defines the given constructor.
+        /// </typeparam>
         internal static Expression<TDelegate> Constructor<TDelegate>(ConstructorInfo constructor)
         {
             ParameterInfo[] parameters = constructor.GetParameters();
