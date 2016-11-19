@@ -1,6 +1,7 @@
 ﻿//#define CACHING
 
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -28,9 +29,9 @@ namespace Kirkin.Linq.Expressions
         /// <summary>
         /// Creates an expression which represents reading a field or getting the value of a property.
         /// </summary>
-        public static Expression<Func<TObject, TMember>> Getter<TObject, TMember>(MemberInfo memberInfo)
+        public static Expression<Func<TObject, TMember>> Getter<TObject, TMember>(MemberInfo member)
         {
-            if (memberInfo == null) throw new ArgumentNullException(nameof(memberInfo));
+            if (member == null) throw new ArgumentNullException(nameof(member));
 
             Expression expression;
 #if CACHING
@@ -41,7 +42,7 @@ namespace Kirkin.Linq.Expressions
 
                 // o => o.Field;
                 expression = Expression.Lambda<Func<TObject, TMember>>(
-                    Expression.MakeMemberAccess(param, memberInfo),
+                    Expression.MakeMemberAccess(param, member),
                     param
                 );
 #if CACHING
@@ -54,9 +55,9 @@ namespace Kirkin.Linq.Expressions
         /// <summary>
         /// Creates an expression which represents writing a field or setting the value of a property.
         /// </summary>
-        public static Expression<Action<TObject, TMember>> Setter<TObject, TMember>(MemberInfo memberInfo)
+        public static Expression<Action<TObject, TMember>> Setter<TObject, TMember>(MemberInfo member)
         {
-            if (memberInfo == null) throw new ArgumentNullException(nameof(memberInfo));
+            if (member == null) throw new ArgumentNullException(nameof(member));
 
             Expression expression;
 #if CACHING
@@ -68,7 +69,7 @@ namespace Kirkin.Linq.Expressions
 
                 // (o, value) => o.Field = value;
                 expression = Expression.Lambda<Action<TObject, TMember>>(
-                    Expression.Assign(Expression.MakeMemberAccess(param, memberInfo), value),
+                    Expression.Assign(Expression.MakeMemberAccess(param, member), value),
                     param,
                     value
                 );
@@ -77,6 +78,28 @@ namespace Kirkin.Linq.Expressions
             }
 #endif
             return (Expression<Action<TObject, TMember>>)expression;
+        }
+
+        internal static Expression<TDelegate> Constructor<TDelegate>(ConstructorInfo constructor)
+        {
+            Type delegateType = typeof(TDelegate);
+
+            if (!delegateType.IsGenericType) throw new ArgumentException("Delegate type must be generic.");
+
+            Type[] genericArgs = delegateType.GetGenericArguments();
+
+            if (genericArgs.Length > 1)
+            {
+                List<ParameterExpression> parameters = new List<ParameterExpression>(genericArgs.Length - 1);
+
+                for (int i = 0; i < genericArgs.Length - 1; i++) {
+                    parameters.Add(Expression.Parameter(genericArgs[i]));
+                }
+
+                return Expression.Lambda<TDelegate>(Expression.New(constructor), parameters);
+            }
+
+            return Expression.Lambda<TDelegate>(Expression.New(constructor));
         }
     }
 }
