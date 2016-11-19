@@ -82,21 +82,17 @@ namespace Kirkin.Linq.Expressions
 
         internal static Expression<TDelegate> Constructor<TDelegate>(ConstructorInfo constructor)
         {
-            Type delegateType = typeof(TDelegate);
+            ParameterInfo[] parameters = constructor.GetParameters();
 
-            if (!delegateType.IsGenericType) throw new ArgumentException("Delegate type must be generic.");
-
-            Type[] genericArgs = delegateType.GetGenericArguments();
-
-            if (genericArgs.Length > 1)
+            if (parameters.Length != 0)
             {
-                List<ParameterExpression> parameters = new List<ParameterExpression>(genericArgs.Length - 1);
+                ParameterExpression[] parameterExpressions = new ParameterExpression[parameters.Length];
 
-                for (int i = 0; i < genericArgs.Length - 1; i++) {
-                    parameters.Add(Expression.Parameter(genericArgs[i]));
+                for (int i = 0; i < parameters.Length; i++) {
+                    parameterExpressions[i] = Expression.Parameter(parameters[i].ParameterType);
                 }
 
-                return Expression.Lambda<TDelegate>(Expression.New(constructor), parameters);
+                return Expression.Lambda<TDelegate>(Expression.New(constructor, parameterExpressions), parameterExpressions);
             }
 
             return Expression.Lambda<TDelegate>(Expression.New(constructor));
