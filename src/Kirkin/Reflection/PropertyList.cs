@@ -25,16 +25,27 @@ namespace Kirkin.Reflection
         private static PropertyList<T> CreateDefault()
         {
             PropertyInfo[] properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            ArrayBuilder<IPropertyAccessor> accessors = new ArrayBuilder<IPropertyAccessor>(properties.Length);
+            int i = 0;
 
             foreach (PropertyInfo prop in properties)
             {
                 if (prop.CanRead) {
-                    accessors.UnsafeAdd(PropertyAccessorFactory.Resolve(prop));
+                    i++;
                 }
             }
 
-            return new PropertyList<T>(accessors.ToArray());
+            IPropertyAccessor[] accessors = new IPropertyAccessor[i];
+
+            i = 0;
+
+            foreach (PropertyInfo prop in properties)
+            {
+                if (prop.CanRead) {
+                    accessors[i++] = PropertyAccessorFactory.Resolve(prop);
+                }
+            }
+
+            return new PropertyList<T>(accessors);
         }
 
         /// <summary>
