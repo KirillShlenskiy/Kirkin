@@ -24,6 +24,20 @@ namespace Kirkin.Tests.Experimental
         }
 
         [Fact]
+        public void NoCopy()
+        {
+            int[] integers = { 1, 2, 3 };
+            ImmutableArray<int> immutable = ImmutableArrayFactory.WrapArray(integers);
+
+            Assert.Equal(integers, immutable);
+
+            integers[0] = 123;
+
+            Assert.Equal(123, immutable[0]);
+            Assert.Equal(integers, immutable);
+        }
+
+        [Fact]
         public void WrapWithReflectionPerf()
         {
             int[] integers = { 1, 2, 3 };
