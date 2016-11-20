@@ -81,7 +81,7 @@ namespace Kirkin.Linq.Expressions
         }
 
         /// <summary>
-        /// Creates an expression which represents invoking the given constructor.
+        /// Creates an expression which represents the invocation of the given constructor.
         /// </summary>
         /// <typeparam name="TDelegate">
         /// Type of delegate described by the resultant expression. Must take in the
