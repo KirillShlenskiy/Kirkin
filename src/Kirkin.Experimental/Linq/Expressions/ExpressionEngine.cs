@@ -195,5 +195,30 @@ namespace Kirkin.Linq.Expressions
                 return Constructor<TDelegate>(constructor);
             }
         }
+
+        /// <summary>
+        /// Creates an expression which represents the invocation of the given method.
+        /// </summary>
+        /// <typeparam name="TDelegate">
+        /// Type of delegate described by the resultant expression. The delegate's
+        /// list of parameters and return type must match the given method.
+        /// </typeparam>
+        public static Expression<TDelegate> Method<TDelegate>(MethodInfo method)
+        {
+            ParameterInfo[] parameters = method.GetParameters();
+
+            if (parameters.Length != 0)
+            {
+                ParameterExpression[] parameterExpressions = new ParameterExpression[parameters.Length];
+
+                for (int i = 0; i < parameters.Length; i++) {
+                    parameterExpressions[i] = Expression.Parameter(parameters[i].ParameterType);
+                }
+
+                return Expression.Lambda<TDelegate>(Expression.Call(method, parameterExpressions), parameterExpressions);
+            }
+
+            return Expression.Lambda<TDelegate>(Expression.Call(method));
+        }
     }
 }
