@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
+using Kirkin.Collections.Generic;
+
 #if CACHING
 using System.Collections.Concurrent;
 using Kirkin.Reflection;
@@ -90,6 +92,8 @@ namespace Kirkin.Linq.Expressions
         /// </typeparam>
         public static Expression<TDelegate> Constructor<TDelegate>(ConstructorInfo constructor)
         {
+            if (constructor == null) throw new ArgumentNullException(nameof(constructor));
+
             ParameterInfo[] parameters = constructor.GetParameters();
 
             if (parameters.Length != 0)
@@ -104,6 +108,64 @@ namespace Kirkin.Linq.Expressions
             }
 
             return Expression.Lambda<TDelegate>(Expression.New(constructor));
+        }
+
+        internal static ConstructorResolution<T> Constructor<T>()
+        {
+            return ConstructorResolution<T>.Instance;
+        }
+
+        internal sealed class ConstructorResolution<T>
+        {
+            internal static readonly ConstructorResolution<T> Instance = new ConstructorResolution<T>();
+
+            private ConstructorResolution()
+            {
+            }
+
+            public Expression<Func<T>> Parameterless(bool nonPublic = false)
+            {
+                ConstructorInfo constructor = ConstructorWithGivenParameters(Array<Type>.Empty, nonPublic);
+
+                return Constructor<Func<T>>(constructor);
+            }
+
+            public Expression<Func<TArg, T>> WithArguments<TArg>(bool nonPublic = false)
+            {
+                ConstructorInfo constructor = ConstructorWithGivenParameters(new[] { typeof(TArg) }, nonPublic);
+
+                return Constructor<Func<TArg, T>>(constructor);
+            }
+
+            public Expression<Func<TArg1, TArg2, T>> WithArguments<TArg1, TArg2>(bool nonPublic = false)
+            {
+                ConstructorInfo constructor = ConstructorWithGivenParameters(new[] { typeof(TArg1), typeof(TArg2) }, nonPublic);
+
+                return Constructor<Func<TArg1, TArg2, T>>(constructor);
+            }
+
+            public Expression<Func<TArg1, TArg2, TArg3, T>> WithArguments<TArg1, TArg2, TArg3>(bool nonPublic = false)
+            {
+                ConstructorInfo constructor = ConstructorWithGivenParameters(new[] { typeof(TArg1), typeof(TArg2), typeof(TArg3) }, nonPublic);
+
+                return Constructor<Func<TArg1, TArg2, TArg3, T>>(constructor);
+            }
+
+            public Expression<Func<TArg1, TArg2, TArg3, TArg4, T>> WithArguments<TArg1, TArg2, TArg3, TArg4>(bool nonPublic = false)
+            {
+                ConstructorInfo constructor = ConstructorWithGivenParameters(new[] { typeof(TArg1), typeof(TArg2), typeof(TArg3), typeof(TArg4) }, nonPublic);
+
+                return Constructor<Func<TArg1, TArg2, TArg3, TArg4, T>>(constructor);
+            }
+
+            private static ConstructorInfo ConstructorWithGivenParameters(Type[] parameterTypes, bool nonPublic)
+            {
+                BindingFlags bindingFlags = nonPublic
+                    ? BindingFlags.Instance | BindingFlags.NonPublic
+                    : BindingFlags.Instance;
+
+                return typeof(T).GetConstructor(bindingFlags, null, parameterTypes, null);
+            }
         }
     }
 }

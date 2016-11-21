@@ -30,25 +30,18 @@ namespace Kirkin.Collections.Immutable
             {
                 get
                 {
-                    if (_value == null) {
-                        _value = CompileConstructor();
+                    if (_value == null)
+                    {
+                        // It's a safe bet to assume that ImmutableArray<T> will always
+                        // provide a non-public constructor wrapping a mutable array.
+                        _value = ExpressionEngine
+                            .Constructor<ImmutableArray<T>>()
+                            .WithArguments<T[]>(nonPublic: true)
+                            .Compile();
                     }
 
                     return _value;
                 }
-            }
-
-            private static Func<T[], ImmutableArray<T>> CompileConstructor()
-            {
-                // It's a safe bet to assume that ImmutableArray<T> will always
-                // provide a non-public constructor wrapping a mutable array.
-                ConstructorInfo constructor = typeof(ImmutableArray<T>).GetConstructor(
-                    BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(T[]) }, null
-                );
-
-                return ExpressionEngine
-                    .Constructor<Func<T[], ImmutableArray<T>>>(constructor)
-                    .Compile();
             }
         }
     }
