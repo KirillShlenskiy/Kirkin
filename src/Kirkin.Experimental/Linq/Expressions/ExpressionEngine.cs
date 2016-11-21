@@ -1,7 +1,6 @@
 ﻿//#define CACHING
 
 using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -130,32 +129,32 @@ namespace Kirkin.Linq.Expressions
                 return Constructor<Func<T>>(constructor);
             }
 
-            public Expression<Func<TArg, T>> WithArguments<TArg>(bool nonPublic = false)
+            public Expression<Func<TParam, T>> WithParameters<TParam>(bool nonPublic = false)
             {
-                ConstructorInfo constructor = ConstructorWithGivenParameters(new[] { typeof(TArg) }, nonPublic);
+                ConstructorInfo constructor = ConstructorWithGivenParameters(new[] { typeof(TParam) }, nonPublic);
 
-                return Constructor<Func<TArg, T>>(constructor);
+                return Constructor<Func<TParam, T>>(constructor);
             }
 
-            public Expression<Func<TArg1, TArg2, T>> WithArguments<TArg1, TArg2>(bool nonPublic = false)
+            public Expression<Func<TParam1, TParam2, T>> WithParameters<TParam1, TParam2>(bool nonPublic = false)
             {
-                ConstructorInfo constructor = ConstructorWithGivenParameters(new[] { typeof(TArg1), typeof(TArg2) }, nonPublic);
+                ConstructorInfo constructor = ConstructorWithGivenParameters(new[] { typeof(TParam1), typeof(TParam2) }, nonPublic);
 
-                return Constructor<Func<TArg1, TArg2, T>>(constructor);
+                return Constructor<Func<TParam1, TParam2, T>>(constructor);
             }
 
-            public Expression<Func<TArg1, TArg2, TArg3, T>> WithArguments<TArg1, TArg2, TArg3>(bool nonPublic = false)
+            public Expression<Func<TParam1, TParam2, TParam3, T>> WithParameters<TParam1, TParam2, TParam3>(bool nonPublic = false)
             {
-                ConstructorInfo constructor = ConstructorWithGivenParameters(new[] { typeof(TArg1), typeof(TArg2), typeof(TArg3) }, nonPublic);
+                ConstructorInfo constructor = ConstructorWithGivenParameters(new[] { typeof(TParam1), typeof(TParam2), typeof(TParam3) }, nonPublic);
 
-                return Constructor<Func<TArg1, TArg2, TArg3, T>>(constructor);
+                return Constructor<Func<TParam1, TParam2, TParam3, T>>(constructor);
             }
 
-            public Expression<Func<TArg1, TArg2, TArg3, TArg4, T>> WithArguments<TArg1, TArg2, TArg3, TArg4>(bool nonPublic = false)
+            public Expression<Func<TParam1, TParam2, TParam3, TParam4, T>> WithParameters<TParam1, TParam2, TParam3, TParam4>(bool nonPublic = false)
             {
-                ConstructorInfo constructor = ConstructorWithGivenParameters(new[] { typeof(TArg1), typeof(TArg2), typeof(TArg3), typeof(TArg4) }, nonPublic);
+                ConstructorInfo constructor = ConstructorWithGivenParameters(new[] { typeof(TParam1), typeof(TParam2), typeof(TParam3), typeof(TParam4) }, nonPublic);
 
-                return Constructor<Func<TArg1, TArg2, TArg3, TArg4, T>>(constructor);
+                return Constructor<Func<TParam1, TParam2, TParam3, TParam4, T>>(constructor);
             }
 
             private static ConstructorInfo ConstructorWithGivenParameters(Type[] parameterTypes, bool nonPublic)

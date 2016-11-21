@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Immutable;
-using System.Reflection;
 
 using Kirkin.Linq.Expressions;
 
@@ -36,7 +35,7 @@ namespace Kirkin.Collections.Immutable
                         // provide a non-public constructor wrapping a mutable array.
                         _value = ExpressionEngine
                             .Constructor<ImmutableArray<T>>()
-                            .WithArguments<T[]>(nonPublic: true)
+                            .WithParameters<T[]>(nonPublic: true)
                             .Compile();
                     }
 
