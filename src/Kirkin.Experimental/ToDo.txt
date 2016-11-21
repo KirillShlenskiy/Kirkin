@@ -12,3 +12,7 @@
 
 * PropertyValueEqualityComparer.Equals / GetHashCode static proxies?
   Think TypeMapping<T>.Default.Map being substituted for TypeMapping.Map - use type inference for future-proofing reflection-based code.
+
+* ExpressionEngine constructor support:
+  ExpressionEngine.Constructor<ImmutableArray<T>, T[]>(nonPublic: true).Compile();
+  ExpressionEngine.Constructor<ImmutableArray<T>>().WithArgument<T[]>(nonPublic: true).Compile();

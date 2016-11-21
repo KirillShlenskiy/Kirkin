@@ -88,7 +88,7 @@ namespace Kirkin.Linq.Expressions
         /// list of parameters matching the given constructor, and return an object of
         /// type which defines the given constructor.
         /// </typeparam>
-        internal static Expression<TDelegate> Constructor<TDelegate>(ConstructorInfo constructor)
+        public static Expression<TDelegate> Constructor<TDelegate>(ConstructorInfo constructor)
         {
             ParameterInfo[] parameters = constructor.GetParameters();
 
