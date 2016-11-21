@@ -112,19 +112,19 @@ namespace Kirkin.Linq.Expressions
         /// <summary>
         /// Returns the constructor resolution helper for type <typeparamref name="T"/>.
         /// </summary>
-        public static ConstructorResolution<T> Constructor<T>()
+        public static ConstructorResolutionHelper<T> Constructor<T>()
         {
-            return ConstructorResolution<T>.Instance;
+            return ConstructorResolutionHelper<T>.Instance;
         }
 
         /// <summary>
         /// Constructor expression resolution helper type.
         /// </summary>
-        public sealed class ConstructorResolution<T>
+        public sealed class ConstructorResolutionHelper<T>
         {
-            internal static readonly ConstructorResolution<T> Instance = new ConstructorResolution<T>();
+            internal static readonly ConstructorResolutionHelper<T> Instance = new ConstructorResolutionHelper<T>();
 
-            private ConstructorResolution()
+            private ConstructorResolutionHelper()
             {
             }
 
@@ -135,9 +135,7 @@ namespace Kirkin.Linq.Expressions
             /// <param name="nonPublic">True if non-public constructors can be matched.</param>
             public Expression<Func<T>> Parameterless(bool nonPublic = false)
             {
-                ConstructorInfo constructor = ConstructorWithGivenParameters(Array<Type>.Empty, nonPublic);
-
-                return Constructor<Func<T>>(constructor);
+                return ConstructorWithGivenParameters<Func<T>>(Array<Type>.Empty, nonPublic);
             }
 
             /// <summary>
@@ -147,9 +145,7 @@ namespace Kirkin.Linq.Expressions
             /// <param name="nonPublic">True if non-public constructors can be matched.</param>
             public Expression<Func<TParam, T>> WithParameters<TParam>(bool nonPublic = false)
             {
-                ConstructorInfo constructor = ConstructorWithGivenParameters(new[] { typeof(TParam) }, nonPublic);
-
-                return Constructor<Func<TParam, T>>(constructor);
+                return ConstructorWithGivenParameters<Func<TParam, T>>(new[] { typeof(TParam) }, nonPublic);
             }
 
             /// <summary>
@@ -159,9 +155,7 @@ namespace Kirkin.Linq.Expressions
             /// <param name="nonPublic">True if non-public constructors can be matched.</param>
             public Expression<Func<TParam1, TParam2, T>> WithParameters<TParam1, TParam2>(bool nonPublic = false)
             {
-                ConstructorInfo constructor = ConstructorWithGivenParameters(new[] { typeof(TParam1), typeof(TParam2) }, nonPublic);
-
-                return Constructor<Func<TParam1, TParam2, T>>(constructor);
+                return ConstructorWithGivenParameters<Func<TParam1, TParam2, T>>(new[] { typeof(TParam1), typeof(TParam2) }, nonPublic);
             }
 
             /// <summary>
@@ -171,9 +165,8 @@ namespace Kirkin.Linq.Expressions
             /// <param name="nonPublic">True if non-public constructors can be matched.</param>
             public Expression<Func<TParam1, TParam2, TParam3, T>> WithParameters<TParam1, TParam2, TParam3>(bool nonPublic = false)
             {
-                ConstructorInfo constructor = ConstructorWithGivenParameters(new[] { typeof(TParam1), typeof(TParam2), typeof(TParam3) }, nonPublic);
-
-                return Constructor<Func<TParam1, TParam2, TParam3, T>>(constructor);
+                return ConstructorWithGivenParameters<Func<TParam1, TParam2, TParam3, T>>(
+                    new[] { typeof(TParam1), typeof(TParam2), typeof(TParam3) }, nonPublic);
             }
 
             /// <summary>
@@ -183,12 +176,11 @@ namespace Kirkin.Linq.Expressions
             /// <param name="nonPublic">True if non-public constructors can be matched.</param>
             public Expression<Func<TParam1, TParam2, TParam3, TParam4, T>> WithParameters<TParam1, TParam2, TParam3, TParam4>(bool nonPublic = false)
             {
-                ConstructorInfo constructor = ConstructorWithGivenParameters(new[] { typeof(TParam1), typeof(TParam2), typeof(TParam3), typeof(TParam4) }, nonPublic);
-
-                return Constructor<Func<TParam1, TParam2, TParam3, TParam4, T>>(constructor);
+                return ConstructorWithGivenParameters<Func<TParam1, TParam2, TParam3, TParam4, T>>(
+                    new[] { typeof(TParam1), typeof(TParam2), typeof(TParam3), typeof(TParam4) }, nonPublic);
             }
 
-            private static ConstructorInfo ConstructorWithGivenParameters(Type[] parameterTypes, bool nonPublic)
+            private static Expression<TDelegate> ConstructorWithGivenParameters<TDelegate>(Type[] parameterTypes, bool nonPublic)
             {
                 BindingFlags bindingFlags = nonPublic
                     ? BindingFlags.Instance | BindingFlags.NonPublic
@@ -200,7 +192,7 @@ namespace Kirkin.Linq.Expressions
                     throw new InvalidOperationException("Unable to resolve the constructor with matching parameters.");
                 }
 
-                return constructor;
+                return Constructor<TDelegate>(constructor);
             }
         }
     }
