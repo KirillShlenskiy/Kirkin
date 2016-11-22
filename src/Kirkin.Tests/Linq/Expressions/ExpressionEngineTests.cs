@@ -79,6 +79,42 @@ namespace Kirkin.Tests.Linq.Expressions
                     _id = value;
                 }
             }
+
+            private int AddOne(int input)
+            {
+                return input + 1;
+            }
+
+            public override string ToString()
+            {
+                return ID.ToString();
+            }
+        }
+
+        [Fact]
+        public void InstanceMethodParameterless()
+        {
+            Dummy dummy = new Dummy { ID = 123 };
+
+            Func<Dummy, string> func = ExpressionEngine
+                .Method<Dummy>()
+                .Func<string>("ToString")
+                .Compile();
+
+            Assert.Equal("123", func(dummy));
+        }
+
+        [Fact]
+        public void InstanceMethodWithOneParameter()
+        {
+            Dummy dummy = new Dummy { ID = 123 };
+
+            Func<Dummy, int, int> func = ExpressionEngine
+                .Method<Dummy>()
+                .Func<int, int>("AddOne", nonPublic: true)
+                .Compile();
+
+            Assert.Equal(43, func(dummy, 42));
         }
     }
 }
