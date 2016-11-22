@@ -77,6 +77,8 @@
     <Compile Include="Linq\ArrayExtensions.Untested.cs" />
     <Compile Include="Linq\ExperimentalEnumerableExtensions.cs" />
     <Compile Include="Linq\Expressions\ExpressionEngine.cs" />
+    <Compile Include="Linq\Expressions\Fluent\ConstructorResolutionHelper.cs" />
+    <Compile Include="Linq\Expressions\Fluent\MethodResolutionHelpercs.cs" />
     <Compile Include="Logging\FormattedLogger.cs" />
     <Compile Include="Mapping\DelegateMember.cs" />
     <Compile Include="Mapping\ExpressionMember.cs" />
