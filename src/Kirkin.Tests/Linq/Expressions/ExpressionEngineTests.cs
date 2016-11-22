@@ -105,6 +105,19 @@ namespace Kirkin.Tests.Linq.Expressions
         }
 
         [Fact]
+        public void InstanceMethodParameterlessCaseInsensitive()
+        {
+            Dummy dummy = new Dummy { ID = 123 };
+
+            Func<Dummy, string> func = ExpressionEngine
+                .Method<Dummy>()
+                .Func<string>("tostring", ignoreCase: true)
+                .Compile();
+
+            Assert.Equal("123", func(dummy));
+        }
+
+        [Fact]
         public void InstanceMethodWithOneParameter()
         {
             Dummy dummy = new Dummy { ID = 123 };
