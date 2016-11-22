@@ -4,6 +4,9 @@ using System.Reflection;
 
 namespace Kirkin.Linq.Expressions.Fluent
 {
+    /// <summary>
+    /// Instance field or property expression resolution helper type.
+    /// </summary>
     public sealed class FieldOrPropertyResolutionHelper<T>
     {
         internal static readonly FieldOrPropertyResolutionHelper<T> Instance = new FieldOrPropertyResolutionHelper<T>();
@@ -12,11 +15,17 @@ namespace Kirkin.Linq.Expressions.Fluent
         {
         }
 
+        /// <summary>
+        /// Returns the expression that represents reading from the given field or property.
+        /// </summary>
         public Expression<Func<T, TMember>> Getter<TMember>(MemberInfo member)
         {
             return ExpressionEngine.Getter<T, TMember>(member);
         }
 
+        /// <summary>
+        /// Returns the expression that represents reading from the given field or property.
+        /// </summary>
         public Expression<Func<T, TMember>> Getter<TMember>(string name, bool nonPublic = false, bool ignoreCase = false)
         {
             BindingFlags bindingFlags = nonPublic
@@ -36,17 +45,26 @@ namespace Kirkin.Linq.Expressions.Fluent
             return Getter<TMember>(member);
         }
 
+        /// <summary>
+        /// Returns the expression that represents reading from the given field or property.
+        /// </summary>
         public Expression<Func<T, TMember>> Getter<TMember>(Expression<Func<T, TMember>> expression)
         {
             // Here for completeness.
             return expression;
         }
 
+        /// <summary>
+        /// Returns the expression that represents assigning value to the given field or property.
+        /// </summary>
         public Expression<Action<T, TMember>> Setter<TMember>(MemberInfo member)
         {
             return ExpressionEngine.Setter<T, TMember>(member);
         }
 
+        /// <summary>
+        /// Returns the expression that represents assigning value to the given field or property.
+        /// </summary>
         public Expression<Action<T, TMember>> Setter<TMember>(string name, bool nonPublic = false, bool ignoreCase = false)
         {
             BindingFlags bindingFlags = nonPublic
@@ -66,6 +84,9 @@ namespace Kirkin.Linq.Expressions.Fluent
             return Setter<TMember>(member);
         }
 
+        /// <summary>
+        /// Returns the expression that represents assigning value to the given field or property.
+        /// </summary>
         public Expression<Action<T, TMember>> Setter<TMember>(Expression<Func<T, TMember>> expression)
         {
             return ExpressionEngine.Setter<T, TMember>(ExpressionUtil.Member(expression));
