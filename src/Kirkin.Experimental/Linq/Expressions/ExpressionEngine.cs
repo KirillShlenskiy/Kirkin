@@ -110,7 +110,7 @@ namespace Kirkin.Linq.Expressions
         }
 
         /// <summary>
-        /// Returns the constructor resolution helper for type <typeparamref name="T"/>.
+        /// Returns the instance constructor resolution helper for type <typeparamref name="T"/>.
         /// </summary>
         public static ConstructorResolutionHelper<T> Constructor<T>()
         {
@@ -118,7 +118,7 @@ namespace Kirkin.Linq.Expressions
         }
 
         /// <summary>
-        /// Constructor expression resolution helper type.
+        /// Instance constructor expression resolution helper type.
         /// </summary>
         public sealed class ConstructorResolutionHelper<T>
         {
@@ -130,7 +130,7 @@ namespace Kirkin.Linq.Expressions
 
             /// <summary>
             /// Creates an expression which represents the invocation of the
-            /// parameterless constructor of type <typeparamref name="T"/>.
+            /// parameterless instance constructor of type <typeparamref name="T"/>.
             /// </summary>
             /// <param name="nonPublic">True if non-public constructors can be matched.</param>
             public Expression<Func<T>> Parameterless(bool nonPublic = false)
@@ -139,7 +139,7 @@ namespace Kirkin.Linq.Expressions
             }
 
             /// <summary>
-            /// Creates an expression which represents the invocation of the
+            /// Creates an expression which represents the invocation of the instance
             /// constructor of type <typeparamref name="T"/> with the given parameter.
             /// </summary>
             /// <param name="nonPublic">True if non-public constructors can be matched.</param>
@@ -149,7 +149,7 @@ namespace Kirkin.Linq.Expressions
             }
 
             /// <summary>
-            /// Creates an expression which represents the invocation of the
+            /// Creates an expression which represents the invocation of the instance
             /// constructor of type <typeparamref name="T"/> with the given parameters.
             /// </summary>
             /// <param name="nonPublic">True if non-public constructors can be matched.</param>
@@ -159,7 +159,7 @@ namespace Kirkin.Linq.Expressions
             }
 
             /// <summary>
-            /// Creates an expression which represents the invocation of the
+            /// Creates an expression which represents the invocation of the instance
             /// constructor of type <typeparamref name="T"/> with the given parameters.
             /// </summary>
             /// <param name="nonPublic">True if non-public constructors can be matched.</param>
@@ -170,7 +170,7 @@ namespace Kirkin.Linq.Expressions
             }
 
             /// <summary>
-            /// Creates an expression which represents the invocation of the
+            /// Creates an expression which represents the invocation of the instance
             /// constructor of type <typeparamref name="T"/> with the given parameters.
             /// </summary>
             /// <param name="nonPublic">True if non-public constructors can be matched.</param>
