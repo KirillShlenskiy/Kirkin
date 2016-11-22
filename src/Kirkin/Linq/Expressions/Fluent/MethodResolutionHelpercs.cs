@@ -21,7 +21,9 @@ namespace Kirkin.Linq.Expressions.Fluent
         /// Creates an expression which represents the invocation of the instance
         /// method of type <typeparamref name="T"/> with no parameters.
         /// </summary>
+        /// <param name="name">Name of the method to look for.</param>
         /// <param name="nonPublic">True if non-public methods can be matched.</param>
+        /// <param name="ignoreCase">True if the name match is non case-sensitive.</param>
         public Expression<Action<T>> Void(string name, bool nonPublic = false, bool ignoreCase = false)
         {
             return InstanceMethod<Action<T>>(name, Array<Type>.Empty, nonPublic, ignoreCase);
@@ -31,7 +33,9 @@ namespace Kirkin.Linq.Expressions.Fluent
         /// Creates an expression which represents the invocation of the instance
         /// method of type <typeparamref name="T"/> with the given parameters.
         /// </summary>
+        /// <param name="name">Name of the method to look for.</param>
         /// <param name="nonPublic">True if non-public methods can be matched.</param>
+        /// <param name="ignoreCase">True if the name match is non case-sensitive.</param>
         public Expression<Action<T, TParam>> Void<TParam>(string name, bool nonPublic = false, bool ignoreCase = false)
         {
             return InstanceMethod<Action<T, TParam>>(name, new[] { typeof(TParam) }, nonPublic, ignoreCase);
@@ -41,7 +45,9 @@ namespace Kirkin.Linq.Expressions.Fluent
         /// Creates an expression which represents the invocation of the instance
         /// method of type <typeparamref name="T"/> with the given parameters.
         /// </summary>
+        /// <param name="name">Name of the method to look for.</param>
         /// <param name="nonPublic">True if non-public methods can be matched.</param>
+        /// <param name="ignoreCase">True if the name match is non case-sensitive.</param>
         public Expression<Action<T, TParam1, TParam2>> Void<TParam1, TParam2>(string name, bool nonPublic = false, bool ignoreCase = false)
         {
             return InstanceMethod<Action<T, TParam1, TParam2>>(name, new[] { typeof(TParam1), typeof(TParam2) }, nonPublic, ignoreCase);
@@ -51,7 +57,9 @@ namespace Kirkin.Linq.Expressions.Fluent
         /// Creates an expression which represents the invocation of the instance
         /// method of type <typeparamref name="T"/> with the given parameters.
         /// </summary>
+        /// <param name="name">Name of the method to look for.</param>
         /// <param name="nonPublic">True if non-public methods can be matched.</param>
+        /// <param name="ignoreCase">True if the name match is non case-sensitive.</param>
         public Expression<Action<T, TParam1, TParam2, TParam3>> Void<TParam1, TParam2, TParam3>(string name, bool nonPublic = false, bool ignoreCase = false)
         {
             return InstanceMethod<Action<T, TParam1, TParam2, TParam3>>(
@@ -62,7 +70,9 @@ namespace Kirkin.Linq.Expressions.Fluent
         /// Creates an expression which represents the invocation of the instance
         /// method of type <typeparamref name="T"/> with the given parameters.
         /// </summary>
+        /// <param name="name">Name of the method to look for.</param>
         /// <param name="nonPublic">True if non-public methods can be matched.</param>
+        /// <param name="ignoreCase">True if the name match is non case-sensitive.</param>
         public Expression<Action<T, TParam1, TParam2, TParam3, TParam4>> Void<TParam1, TParam2, TParam3, TParam4>(string name, bool nonPublic = false, bool ignoreCase = false)
         {
             return InstanceMethod<Action<T, TParam1, TParam2, TParam3, TParam4>>(
@@ -73,7 +83,9 @@ namespace Kirkin.Linq.Expressions.Fluent
         /// Creates an expression which represents the invocation of the instance
         /// method of type <typeparamref name="T"/> with no parameters.
         /// </summary>
+        /// <param name="name">Name of the method to look for.</param>
         /// <param name="nonPublic">True if non-public methods can be matched.</param>
+        /// <param name="ignoreCase">True if the name match is non case-sensitive.</param>
         public Expression<Func<T, TReturn>> Func<TReturn>(string name, bool nonPublic = false, bool ignoreCase = false)
         {
             return InstanceMethod<Func<T, TReturn>>(name, Array<Type>.Empty, nonPublic, ignoreCase);
@@ -83,7 +95,9 @@ namespace Kirkin.Linq.Expressions.Fluent
         /// Creates an expression which represents the invocation of the instance
         /// method of type <typeparamref name="T"/> with the given parameters.
         /// </summary>
+        /// <param name="name">Name of the method to look for.</param>
         /// <param name="nonPublic">True if non-public methods can be matched.</param>
+        /// <param name="ignoreCase">True if the name match is non case-sensitive.</param>
         public Expression<Func<T, TParam, TReturn>> Func<TParam, TReturn>(string name, bool nonPublic = false, bool ignoreCase = false)
         {
             return InstanceMethod<Func<T, TParam, TReturn>>(name, new[] { typeof(TParam) }, nonPublic, ignoreCase);
@@ -93,7 +107,9 @@ namespace Kirkin.Linq.Expressions.Fluent
         /// Creates an expression which represents the invocation of the instance
         /// method of type <typeparamref name="T"/> with the given parameters.
         /// </summary>
+        /// <param name="name">Name of the method to look for.</param>
         /// <param name="nonPublic">True if non-public methods can be matched.</param>
+        /// <param name="ignoreCase">True if the name match is non case-sensitive.</param>
         public Expression<Func<T, TParam1, TParam2, TReturn>> Func<TParam1, TParam2, TReturn>(string name, bool nonPublic = false, bool ignoreCase = false)
         {
             return InstanceMethod<Func<T, TParam1, TParam2, TReturn>>(name, new[] { typeof(TParam1), typeof(TParam2) }, nonPublic, ignoreCase);
@@ -103,7 +119,9 @@ namespace Kirkin.Linq.Expressions.Fluent
         /// Creates an expression which represents the invocation of the instance
         /// method of type <typeparamref name="T"/> with the given parameters.
         /// </summary>
+        /// <param name="name">Name of the method to look for.</param>
         /// <param name="nonPublic">True if non-public methods can be matched.</param>
+        /// <param name="ignoreCase">True if the name match is non case-sensitive.</param>
         public Expression<Func<T, TParam1, TParam2, TParam3, TReturn>> Func<TParam1, TParam2, TParam3, TReturn>(string name, bool nonPublic = false, bool ignoreCase = false)
         {
             return InstanceMethod<Func<T, TParam1, TParam2, TParam3, TReturn>>(
@@ -114,7 +132,9 @@ namespace Kirkin.Linq.Expressions.Fluent
         /// Creates an expression which represents the invocation of the instance
         /// method of type <typeparamref name="T"/> with the given parameters.
         /// </summary>
+        /// <param name="name">Name of the method to look for.</param>
         /// <param name="nonPublic">True if non-public methods can be matched.</param>
+        /// <param name="ignoreCase">True if the name match is non case-sensitive.</param>
         public Expression<Func<T, TParam1, TParam2, TParam3, TParam4, TReturn>> Func<TParam1, TParam2, TParam3, TParam4, TReturn>(string name, bool nonPublic = false, bool ignoreCase = false)
         {
             return InstanceMethod<Func<T, TParam1, TParam2, TParam3, TParam4, TReturn>>(
