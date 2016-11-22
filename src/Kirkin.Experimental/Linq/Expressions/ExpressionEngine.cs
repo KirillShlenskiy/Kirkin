@@ -13,73 +13,12 @@ using Kirkin.Reflection;
 
 namespace Kirkin.Linq.Expressions
 {
-    internal static class ExpressionEngine
+    /// <summary>
+    /// Member expression resolution utility.
+    /// </summary>
+    public static class ExpressionEngine
     {
-        static class Cache<T>
-        {
-            internal static readonly ParameterExpression Param = Expression.Parameter(typeof(T), "o");
-#if CACHING
-            internal static readonly ConcurrentDictionary<MemberInfo, Expression> Getters
-                = new ConcurrentDictionary<MemberInfo, Expression>(MemberInfoEqualityComparer.Instance);
-
-            internal static readonly ConcurrentDictionary<MemberInfo, Expression> Setters
-                = new ConcurrentDictionary<MemberInfo, Expression>(MemberInfoEqualityComparer.Instance);
-#endif
-        }
-
-        /// <summary>
-        /// Creates an expression which represents reading a field or getting the value of a property.
-        /// </summary>
-        public static Expression<Func<TObject, TMember>> Getter<TObject, TMember>(MemberInfo member)
-        {
-            if (member == null) throw new ArgumentNullException(nameof(member));
-
-            Expression expression;
-#if CACHING
-            if (!Cache<TObject>.Getters.TryGetValue(memberInfo, out expression))
-            {
-#endif
-                ParameterExpression param = Cache<TObject>.Param;
-
-                // o => o.Field;
-                expression = Expression.Lambda<Func<TObject, TMember>>(
-                    Expression.MakeMemberAccess(param, member),
-                    param
-                );
-#if CACHING
-                Cache<TObject>.Getters.TryAdd(memberInfo, expression);
-            }
-#endif
-            return (Expression<Func<TObject, TMember>>)expression;
-        }
-
-        /// <summary>
-        /// Creates an expression which represents writing a field or setting the value of a property.
-        /// </summary>
-        public static Expression<Action<TObject, TMember>> Setter<TObject, TMember>(MemberInfo member)
-        {
-            if (member == null) throw new ArgumentNullException(nameof(member));
-
-            Expression expression;
-#if CACHING
-            if (!Cache<TObject>.Setters.TryGetValue(memberInfo, out expression))
-            {
-#endif
-                ParameterExpression param = Cache<TObject>.Param;
-                ParameterExpression value = Expression.Parameter(typeof(TMember), "value");
-
-                // (o, value) => o.Field = value;
-                expression = Expression.Lambda<Action<TObject, TMember>>(
-                    Expression.Assign(Expression.MakeMemberAccess(param, member), value),
-                    param,
-                    value
-                );
-#if CACHING
-                Cache<TObject>.Setters.TryAdd(memberInfo, expression);
-            }
-#endif
-            return (Expression<Action<TObject, TMember>>)expression;
-        }
+        #region Public API
 
         /// <summary>
         /// Creates an expression which represents the invocation of the given constructor.
@@ -115,6 +54,14 @@ namespace Kirkin.Linq.Expressions
         public static ConstructorResolutionHelper<T> Constructor<T>()
         {
             return ConstructorResolutionHelper<T>.Instance;
+        }
+
+        /// <summary>
+        /// Returns the instance field or property resolution helper for type <typeparamref name="T"/>.
+        /// </summary>
+        public static FieldOrPropertyResolutionHelper<T> FieldOrProperty<T>()
+        {
+            return FieldOrPropertyResolutionHelper<T>.Instance;
         }
 
         /// <summary>
@@ -158,5 +105,77 @@ namespace Kirkin.Linq.Expressions
         {
             return MethodResolutionHelper<T>.Instance;
         }
+
+        #endregion
+
+        #region Getter/setter implementation
+
+        static class Cache<T>
+        {
+            internal static readonly ParameterExpression Param = Expression.Parameter(typeof(T), "o");
+#if CACHING
+            internal static readonly ConcurrentDictionary<MemberInfo, Expression> Getters
+                = new ConcurrentDictionary<MemberInfo, Expression>(MemberInfoEqualityComparer.Instance);
+
+            internal static readonly ConcurrentDictionary<MemberInfo, Expression> Setters
+                = new ConcurrentDictionary<MemberInfo, Expression>(MemberInfoEqualityComparer.Instance);
+#endif
+        }
+
+        /// <summary>
+        /// Creates an expression which represents reading a field or getting the value of a property.
+        /// </summary>
+        internal static Expression<Func<TObject, TMember>> Getter<TObject, TMember>(MemberInfo member)
+        {
+            if (member == null) throw new ArgumentNullException(nameof(member));
+
+            Expression expression;
+#if CACHING
+            if (!Cache<TObject>.Getters.TryGetValue(memberInfo, out expression))
+            {
+#endif
+                ParameterExpression param = Cache<TObject>.Param;
+
+                // o => o.Field;
+                expression = Expression.Lambda<Func<TObject, TMember>>(
+                    Expression.MakeMemberAccess(param, member),
+                    param
+                );
+#if CACHING
+                Cache<TObject>.Getters.TryAdd(memberInfo, expression);
+            }
+#endif
+            return (Expression<Func<TObject, TMember>>)expression;
+        }
+
+        /// <summary>
+        /// Creates an expression which represents writing a field or setting the value of a property.
+        /// </summary>
+        internal static Expression<Action<TObject, TMember>> Setter<TObject, TMember>(MemberInfo member)
+        {
+            if (member == null) throw new ArgumentNullException(nameof(member));
+
+            Expression expression;
+#if CACHING
+            if (!Cache<TObject>.Setters.TryGetValue(memberInfo, out expression))
+            {
+#endif
+                ParameterExpression param = Cache<TObject>.Param;
+                ParameterExpression value = Expression.Parameter(typeof(TMember), "value");
+
+                // (o, value) => o.Field = value;
+                expression = Expression.Lambda<Action<TObject, TMember>>(
+                    Expression.Assign(Expression.MakeMemberAccess(param, member), value),
+                    param,
+                    value
+                );
+#if CACHING
+                Cache<TObject>.Setters.TryAdd(memberInfo, expression);
+            }
+#endif
+            return (Expression<Action<TObject, TMember>>)expression;
+        }
+
+        #endregion
     }
 }
