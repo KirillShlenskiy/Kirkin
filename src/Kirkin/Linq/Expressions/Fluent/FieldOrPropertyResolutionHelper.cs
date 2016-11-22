@@ -20,7 +20,7 @@ namespace Kirkin.Linq.Expressions.Fluent
         /// </summary>
         public Expression<Func<T, TMember>> Getter<TMember>(MemberInfo member)
         {
-            return ExpressionEngine.Getter<T, TMember>(member);
+            return InstanceMemberExpressions.Getter<T, TMember>(member);
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Kirkin.Linq.Expressions.Fluent
         /// </summary>
         public Expression<Action<T, TMember>> Setter<TMember>(MemberInfo member)
         {
-            return ExpressionEngine.Setter<T, TMember>(member);
+            return InstanceMemberExpressions.Setter<T, TMember>(member);
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Kirkin.Linq.Expressions.Fluent
         /// </summary>
         public Expression<Action<T, TMember>> Setter<TMember>(Expression<Func<T, TMember>> expression)
         {
-            return ExpressionEngine.Setter<T, TMember>(ExpressionUtil.Member(expression));
+            return InstanceMemberExpressions.Setter<T, TMember>(ExpressionUtil.Member(expression));
         }
     }
 }

@@ -81,7 +81,7 @@ namespace Kirkin.Linq.Expressions.Fluent
                 throw new InvalidOperationException("Unable to resolve the constructor with matching parameters.");
             }
 
-            return ExpressionEngine.Constructor<TDelegate>(constructor);
+            return InstanceMemberExpressions.Constructor<TDelegate>(constructor);
         }
     }
 }
