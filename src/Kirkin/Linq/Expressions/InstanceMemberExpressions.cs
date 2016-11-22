@@ -131,7 +131,7 @@ namespace Kirkin.Linq.Expressions
 
             Expression expression;
 #if CACHING
-            if (!Cache<TObject>.Getters.TryGetValue(memberInfo, out expression))
+            if (!Cache<TObject>.Getters.TryGetValue(member, out expression))
             {
 #endif
                 ParameterExpression param = Cache<TObject>.Param;
@@ -142,7 +142,7 @@ namespace Kirkin.Linq.Expressions
                     param
                 );
 #if CACHING
-                Cache<TObject>.Getters.TryAdd(memberInfo, expression);
+                Cache<TObject>.Getters.TryAdd(member, expression);
             }
 #endif
             return (Expression<Func<TObject, TMember>>)expression;
@@ -157,7 +157,7 @@ namespace Kirkin.Linq.Expressions
 
             Expression expression;
 #if CACHING
-            if (!Cache<TObject>.Setters.TryGetValue(memberInfo, out expression))
+            if (!Cache<TObject>.Setters.TryGetValue(member, out expression))
             {
 #endif
                 ParameterExpression param = Cache<TObject>.Param;
@@ -170,7 +170,7 @@ namespace Kirkin.Linq.Expressions
                     value
                 );
 #if CACHING
-                Cache<TObject>.Setters.TryAdd(memberInfo, expression);
+                Cache<TObject>.Setters.TryAdd(member, expression);
             }
 #endif
             return (Expression<Action<TObject, TMember>>)expression;
