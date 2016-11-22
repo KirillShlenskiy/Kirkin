@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Kirkin.Tests.Linq.Expressions
 {
-    public class ExpressionEngineTests
+    public class InstanceMemberExpressionsTests
     {
         [Fact] // 155
         public void Perf()
