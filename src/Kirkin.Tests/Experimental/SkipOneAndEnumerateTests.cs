@@ -25,9 +25,7 @@ namespace Kirkin.Tests.Experimental
             {
                 int[] skipResult = new int[array.Length - 1];
 
-                for (int j = 0; j < skipResult.Length; j++) {
-                    skipResult[j] = array[j + 1];
-                }
+                Array.Copy(array, 1, skipResult, 0, skipResult.Length);
 
                 Enumerate(skipResult);
             }

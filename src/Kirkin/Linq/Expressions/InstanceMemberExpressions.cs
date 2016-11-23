@@ -78,21 +78,22 @@ namespace Kirkin.Linq.Expressions
 
             if (parameters.Length != 0)
             {
-                ParameterExpression[] parameterExpressions = new ParameterExpression[parameters.Length];
+                ParameterExpression[] parameterExpressions = new ParameterExpression[parameters.Length + 1];
+
+                parameterExpressions[0] = instance;
 
                 for (int i = 0; i < parameters.Length; i++) {
-                    parameterExpressions[i] = Expression.Parameter(parameters[i].ParameterType);
+                    parameterExpressions[i + 1] = Expression.Parameter(parameters[i].ParameterType);
                 }
+#if NET_40
+                // In .NET 4.0 ArraySegment<T> does not implement IEnumerable<T>.
+                ParameterExpression[] methodCallParameters = new ParameterExpression[parameterExpressions.Length - 1];
 
-                ParameterExpression[] parameterExpressionsPrefixedByInstance = new ParameterExpression[parameterExpressions.Length + 1];
-
-                parameterExpressionsPrefixedByInstance[0] = instance;
-
-                for (int i = 0; i < parameterExpressions.Length; i++) {
-                    parameterExpressionsPrefixedByInstance[i + 1] = parameterExpressions[i];
-                }
-
-                return Expression.Lambda<TDelegate>(Expression.Call(instance, method, parameterExpressions), parameterExpressionsPrefixedByInstance);
+                Array.Copy(parameterExpressions, 1, methodCallParameters, 0, methodCallParameters.Length);
+#else
+                ArraySegment<ParameterExpression> methodCallParameters = new ArraySegment<ParameterExpression>(parameterExpressions, 1, parameterExpressions.Length - 1);
+#endif
+                return Expression.Lambda<TDelegate>(Expression.Call(instance, method, methodCallParameters), parameterExpressions);
             }
 
             return Expression.Lambda<TDelegate>(Expression.Call(instance, method), instance);
