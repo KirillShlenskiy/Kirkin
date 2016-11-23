@@ -79,7 +79,7 @@ namespace Kirkin.Caching
                 {
                     Serializer.Serialize(clone, cloneStream);
 
-                    if (!ms.GetBuffer().SequenceEqual(cloneStream.GetBuffer())) {
+                    if (!ms.ToArray().SequenceEqual(cloneStream.ToArray())) {
                         throw new InvalidOperationException("Unable to persist object: roundtrip serialization validation failed.");
                     }
                 }
