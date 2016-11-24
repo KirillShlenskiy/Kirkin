@@ -20,12 +20,13 @@ namespace Kirkin.Mapping.Engine
                 return value;
             }
 
-            return ComplexConversion(value, value.Type, targetType, nullableBehaviour);
+            return ComplexConversion(value, targetType, nullableBehaviour);
         }
 
-        private static Expression ComplexConversion(Expression value, Type sourceType, Type targetType, NullableBehaviour nullableBehaviour)
+        private static Expression ComplexConversion(Expression value, Type targetType, NullableBehaviour nullableBehaviour)
         {
             // Nullable handling.
+            Type sourceType = value.Type;
             Type nullableSourceType = Nullable.GetUnderlyingType(sourceType);
             Type nullableTargetType = Nullable.GetUnderlyingType(targetType);
 
