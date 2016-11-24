@@ -627,6 +627,16 @@ namespace Kirkin.Tests.Mapping
             Assert.Null(d2.Value);
         }
 
+        [Fact]
+        public void DisallowTypeConversions()
+        {
+            new MapperBuilder<Dummy, Dummy>().Configure(b => b.AllowedConversions.Clear()).BuildMapper();
+            new MapperBuilder<Dummy, NullableDummy>().Configure(b => b.AllowedConversions.Clear()).BuildMapper();
+
+            //Assert.Throws<MappingException>(() => new MapperBuilder<NullableDummy, Dummy>().Configure(b => b.AllowedConversions.Clear()).BuildMapper());
+            Assert.Throws<MappingException>(() => new MapperBuilder<ConvertibleDummy, Dummy>().Configure(b => b.AllowedConversions.Clear()).BuildMapper());
+        }
+
         struct Size
         {
             public int Width { get; set; }

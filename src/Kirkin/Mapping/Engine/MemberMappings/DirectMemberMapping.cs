@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 
-using Kirkin.Collections.Generic;
 using Kirkin.Utilities;
 
 namespace Kirkin.Mapping.Engine.MemberMappings
@@ -11,36 +8,30 @@ namespace Kirkin.Mapping.Engine.MemberMappings
     /// <summary>
     /// Direct mapping between source and target members with support for conversions.
     /// </summary>
-    internal sealed class DefaultMemberMapping<TSource, TTarget>
+    internal sealed class DirectMemberMapping<TSource, TTarget>
         : MemberMapping<TSource, TTarget>
-        , IEquatable<DefaultMemberMapping<TSource, TTarget>>
+        , IEquatable<DirectMemberMapping<TSource, TTarget>>
     {
-        private readonly IValueConversion[] _allowedConversions;
-
         /// <summary>
         /// Mapping source member.
         /// </summary>
         public Member<TSource> SourceMember { get; }
-        
-        /// <summary>
-        /// Value conversions supported by this instance.
-        /// </summary>
-        public Vector<IValueConversion> AllowedConversions { get; }
-
-        /// <summary>
-        /// Nullable to non-nullable conversion behaviour of this instance.
-        /// </summary>
-        public NullableBehaviour NullableBehaviour { get; }
 
         /// <summary>
         /// Creates a new simple member-to-member mapping instance.
         /// </summary>
-        public DefaultMemberMapping(Member<TSource> sourceMember, Member<TTarget> targetMember, IEnumerable<IValueConversion> allowedConversions, NullableBehaviour nullableBehaviour)
+        public DirectMemberMapping(Member<TSource> sourceMember, Member<TTarget> targetMember)
             : base(targetMember)
         {
+            if (!targetMember.MemberType.IsAssignableFrom(sourceMember.MemberType))
+            {
+                throw new MappingException(
+                    $"Value of member {typeof(TSource).Name}.{sourceMember.Name} ({sourceMember.MemberType.Name}) is not " +
+                    $"directly assignable to {typeof(TTarget).Name}{targetMember.Name} ({targetMember.MemberType.Name})."
+                );
+            }
+
             SourceMember = sourceMember;
-            _allowedConversions = allowedConversions.ToArray();
-            NullableBehaviour = nullableBehaviour;
         }
 
         /// <summary>
@@ -48,33 +39,18 @@ namespace Kirkin.Mapping.Engine.MemberMappings
         /// </summary>
         internal override Expression GetSourceValueExpression(ParameterExpression sourceParam)
         {
-            // Resolve and convert value automatically.
-            Expression source = SourceMember.ResolveGetter(sourceParam);
-
-            if (SourceMember.MemberType != TargetMember.MemberType)
-            {
-                Expression convertedSource;
-
-                foreach (IValueConversion conversion in _allowedConversions)
-                {
-                    if (conversion.TryConvert(source, TargetMember.MemberType, NullableBehaviour, out convertedSource)) {
-                        return convertedSource;
-                    }
-                }
-            }
-
-            return source;
+            return SourceMember.ResolveGetter(sourceParam);
         }
 
         /// <summary>
         /// Determines whether the specified object is equal to the current object.
         /// </summary>
-        public bool Equals(DefaultMemberMapping<TSource, TTarget> other)
+        public bool Equals(DirectMemberMapping<TSource, TTarget> other)
         {
             return other != null
                 && SourceMember.Equals(other.SourceMember)
                 && TargetMember.Equals(other.TargetMember)
-                && NullableBehaviour == other.NullableBehaviour;
+                && GetType() == other.GetType();
         }
 
         /// <summary>
@@ -82,7 +58,7 @@ namespace Kirkin.Mapping.Engine.MemberMappings
         /// </summary>
         public override bool Equals(object obj)
         {
-            return Equals(obj as DefaultMemberMapping<TSource, TTarget>);
+            return Equals(obj as DirectMemberMapping<TSource, TTarget>);
         }
 
         /// <summary>
@@ -93,7 +69,7 @@ namespace Kirkin.Mapping.Engine.MemberMappings
             return Hash.Combine(
                 SourceMember.GetHashCode(),
                 TargetMember.GetHashCode(),
-                NullableBehaviour.GetHashCode()
+                GetType().GetHashCode()
             );
         }
 

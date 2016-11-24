@@ -67,7 +67,7 @@ namespace Kirkin.Mapping
             private void MapTo(Member<TSource> sourceMember)
             {
                 MapperBuilder.IgnoredTargetMembers.Remove(Member);
-                MapperBuilder.CustomTargetMappingFactories[Member] = builder => new DefaultMemberMapping<TSource, TTarget>(sourceMember, Member, builder.NullableBehaviour);
+                MapperBuilder.CustomTargetMappingFactories[Member] = builder => builder.CreateDefaultAutoMemberMapping(sourceMember, Member);
             }
 
             /// <summary>

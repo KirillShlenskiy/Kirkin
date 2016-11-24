@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 
 using Kirkin.Linq.Expressions;
+using Kirkin.Mapping.Engine;
 using Kirkin.Mapping.Engine.MemberMappings;
 
 namespace Kirkin.Mapping
@@ -60,6 +61,20 @@ namespace Kirkin.Mapping
         /// </summary>
         public bool AllowUnmappedTargetMembers { get; set; }
 
+        ///// <summary>
+        ///// Gets or sets the value that determines whether the mapper is
+        ///// allowed to perform complex type conversions (i.e. enum -> string, nullable/non-nullable
+        ///// conversions and Convert.ChangeType) on the values of auto-mapped
+        ///// properties of the source and target types. The default value is true.
+        ///// </summary>
+        //public bool AllowTypeConversionsOnAutoMappedProperties { get; set; } = true;
+
+        /// <summary>
+        /// Well-known type conversions applied to the given source
+        /// expression so as to produce the desired return type.
+        /// </summary>
+        internal List<IValueConversion> AllowedConversions { get; }
+
         /// <summary>
         /// <see cref="StringComparer"/> used when comparing
         /// member names for equality for the purpose of auto-mapping.
@@ -102,6 +117,20 @@ namespace Kirkin.Mapping
             AllowUnmappedTargetMembers = false;
             MemberNameComparer = StringComparer.Ordinal;
             NullableBehaviour = NullableBehaviour.DefaultMapsToNull;
+
+            // Allowed conversions.
+            AllowedConversions = new List<IValueConversion> {
+                // String -> Enum mapping (taken from ExpressMapper and improved).
+                // Must come before "normal" nullable/non-nullable conversions.
+                new StringToEnumValueConversion(),
+                // Non-string -> string (simply calls value.ToString()).
+                new ToStringValueConversion(),
+                // Nullable -> non-nullable or non-nullable -> nullable.
+                new NullableValueConversion(),
+                // Attempt cast (will likely work for most IConvertible
+                // types, so no special handling for them).
+                new CastValueConversion()
+            };
         }
 
         #endregion
@@ -154,7 +183,9 @@ namespace Kirkin.Mapping
 
                     if (sourceMemberDict.TryGetValue(targetMember.Name, out sourceMember))
                     {
-                        memberMappings.Add(new DefaultMemberMapping<TSource, TTarget>(sourceMember, targetMember, NullableBehaviour));
+                        MemberMapping<TSource, TTarget> memberMapping = CreateDefaultAutoMemberMapping(sourceMember, targetMember);
+
+                        memberMappings.Add(memberMapping);
                         sourceMemberDict.Remove(sourceMember.Name); // Saves some validation work down the track.
                     }
                     else if (!AllowUnmappedTargetMembers)
@@ -238,6 +269,14 @@ namespace Kirkin.Mapping
             }
 
             return dict;
+        }
+
+        /// <summary>
+        /// Creates the default member mapping used for auto-mapped members.
+        /// </summary>
+        internal MemberMapping<TSource, TTarget> CreateDefaultAutoMemberMapping(Member<TSource> sourceMember, Member<TTarget> targetMember)
+        {
+            return new DefaultMemberMapping<TSource, TTarget>(sourceMember, targetMember, AllowedConversions, NullableBehaviour);
         }
 
         internal void IgnoreAllTargetMembers()
