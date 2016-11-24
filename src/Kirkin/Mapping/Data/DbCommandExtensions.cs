@@ -64,6 +64,8 @@ namespace Kirkin.Mapping.Data
         public static IEnumerable<TEntity> ExecuteEntities<TEntity>(this IDbCommand command, Action<MapperBuilder<IDataRecord, TEntity>> configAction)
             where TEntity : new()
         {
+            if (configAction == null) throw new ArgumentNullException(nameof(configAction));
+
             if (command.Connection != null && command.Connection.State == ConnectionState.Closed) {
                 command.Connection.Open();
             }
@@ -144,6 +146,8 @@ namespace Kirkin.Mapping.Data
                                                                           CancellationToken cancellationToken = default(CancellationToken))
             where TEntity : new()
         {
+            if (configAction == null) throw new ArgumentNullException(nameof(configAction));
+
             if (command.Connection != null && command.Connection.State == ConnectionState.Closed) {
                 await command.Connection.OpenAsync(cancellationToken).ConfigureAwait(false);
             }
