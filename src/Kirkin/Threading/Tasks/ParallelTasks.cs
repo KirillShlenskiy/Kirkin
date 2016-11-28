@@ -164,7 +164,6 @@ namespace Kirkin.Threading.Tasks
         {
             if (taskFactories == null) throw new ArgumentNullException(nameof(taskFactories));
             if (maxDegreeOfParallelism <= 0) throw new ArgumentException(nameof(maxDegreeOfParallelism));
-
             return ForEachAsyncWorker(taskFactories, new ParallelTaskOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism }, f => f(), null);
         }
 
