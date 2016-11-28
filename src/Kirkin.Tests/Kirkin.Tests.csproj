@@ -168,6 +168,7 @@
     <Compile Include="Text\TextTests.cs" />
     <Compile Include="Text\UrlUtilTests.cs" />
     <Compile Include="Threading\AsyncManualResetEventTests.cs" />
+    <Compile Include="Threading\AsyncSemaphoreTests.cs" />
     <Compile Include="Threading\AtomicValueTests.cs" />
     <Compile Include="Threading\Tasks\DelayAwaitableTests.cs" />
     <Compile Include="Threading\Tasks\ParallelTasksTests.cs" />

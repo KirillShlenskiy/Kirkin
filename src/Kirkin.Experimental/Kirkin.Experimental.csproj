@@ -95,6 +95,7 @@
     <Compile Include="Text\Url.cs" />
     <Compile Include="Threading\AsyncAutoResetEvent.cs" />
     <Compile Include="Threading\AsyncManualResetEvent.cs" />
+    <Compile Include="Threading\AsyncSemaphore.cs" />
     <Compile Include="Threading\Atomic.cs" />
     <Compile Include="Threading\Atomic`.cs" />
     <Compile Include="Threading\Tasks\AwaitableCompletionSource.cs" />
