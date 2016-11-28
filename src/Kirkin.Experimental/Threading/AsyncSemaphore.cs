@@ -53,17 +53,29 @@ namespace Kirkin.Threading
 
         public void Release(int releaseCount = 1)
         {
+            if (releaseCount < 1) throw new ArgumentOutOfRangeException(nameof(releaseCount));
+
             lock (Waiters)
             {
-                if (Waiters.Count != 0)
-                {
-                    TaskCompletionSource<bool> tcs = Waiters.Dequeue();
+                // Validate release count.
+                int newCount = _count - Waiters.Count + releaseCount;
 
-                    tcs.SetResult(true);
+                if (newCount > MaxCount) {
+                    throw new InvalidOperationException("Semaphore count after Release exceeds max count.");
                 }
-                else
+
+                for (int i = 0; i < releaseCount; i++)
                 {
-                    _count += releaseCount;
+                    if (Waiters.Count != 0)
+                    {
+                        TaskCompletionSource<bool> tcs = Waiters.Dequeue();
+
+                        tcs.SetResult(true);
+                    }
+                    else
+                    {
+                        _count++;
+                    }
                 }
             }
         }
