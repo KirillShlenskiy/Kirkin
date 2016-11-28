@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Kirkin.Threading
@@ -32,7 +33,7 @@ namespace Kirkin.Threading
             MaxCount = maxCount;
         }
 
-        public Task WaitAsync()
+        public Task WaitAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             lock (Waiters)
             {
@@ -43,7 +44,18 @@ namespace Kirkin.Threading
                     return s_completedTask;
                 }
 
-                TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+                TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>(cancellationToken);
+
+                if (cancellationToken.CanBeCanceled)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    cancellationToken.Register(
+                        state => ((TaskCompletionSource<bool>)state).TrySetCanceled(),
+                        tcs,
+                        useSynchronizationContext: false
+                    );
+                }
 
                 Waiters.Enqueue(tcs);
 
@@ -57,24 +69,33 @@ namespace Kirkin.Threading
 
             lock (Waiters)
             {
-                // Validate release count.
-                int newCount = _count - Waiters.Count + releaseCount;
-
-                if (newCount > MaxCount) {
-                    throw new InvalidOperationException("Semaphore count after Release exceeds max count.");
-                }
-
                 for (int i = 0; i < releaseCount; i++)
                 {
-                    if (Waiters.Count != 0)
+                    bool waiterSet = false;
+
+                    while (Waiters.Count != 0)
                     {
                         TaskCompletionSource<bool> tcs = Waiters.Dequeue();
 
-                        tcs.SetResult(true);
+                        if (tcs.TrySetResult(true))
+                        {
+                            waiterSet = true;
+
+                            break;
+                        }
                     }
-                    else
+
+                    if (!waiterSet)
                     {
-                        _count++;
+                        // Validate release count. We can't compute this value before the
+                        // loop due to possibility of races with cancellable waiters.
+                        int newCount = _count + 1;
+
+                        if (newCount > MaxCount) {
+                            throw new InvalidOperationException("Semaphore count after Release exceeds max count.");
+                        }
+
+                        _count = newCount;
                     }
                 }
             }

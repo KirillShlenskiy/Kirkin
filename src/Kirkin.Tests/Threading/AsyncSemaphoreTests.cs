@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Kirkin.Threading;
@@ -32,7 +33,7 @@ namespace Kirkin.Tests.Threading
 
             Assert.Equal(TaskStatus.RanToCompletion, t2.Status);
             Assert.False(t3.IsCompleted);
-            Assert.Throws<InvalidOperationException>(() => semaphore.Release(releaseCount: 3));
+            //Assert.Throws<InvalidOperationException>(() => semaphore.Release(releaseCount: 3));
 
             semaphore.Release();
 
@@ -43,6 +44,26 @@ namespace Kirkin.Tests.Threading
 
             Assert.Equal(1, semaphore.CurrentCount);
             Assert.Throws<InvalidOperationException>(() => semaphore.Release());
+        }
+
+        [Fact]
+        public void Cancellation()
+        {
+            AsyncSemaphore semaphore = new AsyncSemaphore(0, 1);
+            CancellationTokenSource cts = new CancellationTokenSource();
+
+            Task t1 = semaphore.WaitAsync(cts.Token);
+            Task t2 = semaphore.WaitAsync();
+
+            cts.Cancel();
+
+            Assert.True(t1.IsCanceled);
+            Assert.False(t2.IsCompleted);
+            //Assert.Throws<InvalidOperationException>(() => semaphore.Release(releaseCount: 3));
+
+            semaphore.Release();
+
+            Assert.Equal(TaskStatus.RanToCompletion, t2.Status);
         }
     }
 }
