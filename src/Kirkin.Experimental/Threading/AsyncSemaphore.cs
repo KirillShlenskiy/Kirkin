@@ -69,6 +69,21 @@ namespace Kirkin.Threading
 
             lock (Waiters)
             {
+                int bestGuessNewCount = _count + releaseCount;
+
+                // Waiters can race with us, but this is a reasonable
+                // fail-safe in simple sequential scenarios.
+                foreach (TaskCompletionSource<bool> tcs in Waiters)
+                {
+                    if (!tcs.Task.IsCompleted) {
+                        bestGuessNewCount--;
+                    }
+                }
+
+                if (bestGuessNewCount > MaxCount) {
+                    ThrowSemaphoreCountExceeded();
+                }
+
                 for (int i = 0; i < releaseCount; i++)
                 {
                     bool waiterSet = false;
@@ -92,13 +107,18 @@ namespace Kirkin.Threading
                         int newCount = _count + 1;
 
                         if (newCount > MaxCount) {
-                            throw new InvalidOperationException("Semaphore count after Release exceeds max count.");
+                            ThrowSemaphoreCountExceeded();
                         }
 
                         _count = newCount;
                     }
                 }
             }
+        }
+
+        private static void ThrowSemaphoreCountExceeded()
+        {
+            throw new InvalidOperationException("Semaphore count after Release exceeds max count.");
         }
     }
 }

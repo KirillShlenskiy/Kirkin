@@ -33,7 +33,7 @@ namespace Kirkin.Tests.Threading
 
             Assert.Equal(TaskStatus.RanToCompletion, t2.Status);
             Assert.False(t3.IsCompleted);
-            //Assert.Throws<InvalidOperationException>(() => semaphore.Release(releaseCount: 3));
+            Assert.Throws<InvalidOperationException>(() => semaphore.Release(releaseCount: 3));
 
             semaphore.Release();
 
@@ -59,7 +59,7 @@ namespace Kirkin.Tests.Threading
 
             Assert.True(t1.IsCanceled);
             Assert.False(t2.IsCompleted);
-            //Assert.Throws<InvalidOperationException>(() => semaphore.Release(releaseCount: 3));
+            Assert.Throws<InvalidOperationException>(() => semaphore.Release(releaseCount: 3));
 
             semaphore.Release();
 
