@@ -72,7 +72,7 @@ namespace Kirkin.Threading
 
                 Waiters.Enqueue(tcs);
 
-                return tcs.Task;
+                return tcs.Task; // Synchronous completion ok?
             }
         }
 
@@ -95,7 +95,7 @@ namespace Kirkin.Threading
                     {
                         TaskCompletionSource<bool> tcs = Waiters.Dequeue();
 
-                        if (tcs.TrySetResult(true)) // Synchronous completion ok?
+                        if (tcs.TrySetResult(true))
                         {
                             waiterSet = true;
 
