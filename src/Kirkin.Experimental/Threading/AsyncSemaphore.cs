@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace Kirkin.Threading
 {
+    /// <summary>
+    /// Limits the number of threads that can access a resource concurrently.
+    /// </summary>
     public sealed class AsyncSemaphore
     {
         private static readonly Task s_completedTask = Task.FromResult(true);
@@ -22,17 +25,27 @@ namespace Kirkin.Threading
 
         public int MaxCount { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AsyncSemaphore"/> class.
+        /// </summary>
         public AsyncSemaphore(int initialCount)
             : this(initialCount, int.MaxValue)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AsyncSemaphore"/> class.
+        /// </summary>
         public AsyncSemaphore(int initialCount, int maxCount)
         {
             _count = initialCount;
             MaxCount = maxCount;
         }
 
+        /// <summary>
+        /// Asynchronously waits to enter the <see cref="AsyncSemaphore"/>,
+        /// while observing the given <see cref="CancellationToken"/>.
+        /// </summary>
         public Task WaitAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             lock (Waiters)
@@ -63,26 +76,16 @@ namespace Kirkin.Threading
             }
         }
 
+        // <summary>
+        /// Exits the <see cref="AsyncSemaphore"/> a specified number of times.
+        /// </summary>
         public void Release(int releaseCount = 1)
         {
             if (releaseCount < 1) throw new ArgumentOutOfRangeException(nameof(releaseCount));
 
             lock (Waiters)
             {
-                int bestGuessNewCount = _count + releaseCount;
-
-                // Waiters can race with us, but this is a reasonable
-                // fail-safe in simple sequential scenarios.
-                foreach (TaskCompletionSource<bool> tcs in Waiters)
-                {
-                    if (!tcs.Task.IsCompleted) {
-                        bestGuessNewCount--;
-                    }
-                }
-
-                if (bestGuessNewCount > MaxCount) {
-                    ThrowSemaphoreCountExceeded();
-                }
+                ValidateReleaseCount(releaseCount);
 
                 for (int i = 0; i < releaseCount; i++)
                 {
@@ -92,7 +95,7 @@ namespace Kirkin.Threading
                     {
                         TaskCompletionSource<bool> tcs = Waiters.Dequeue();
 
-                        if (tcs.TrySetResult(true))
+                        if (tcs.TrySetResult(true)) // Synchronous completion ok?
                         {
                             waiterSet = true;
 
@@ -113,6 +116,24 @@ namespace Kirkin.Threading
                         _count = newCount;
                     }
                 }
+            }
+        }
+
+        private void ValidateReleaseCount(int releaseCount)
+        {
+            int bestGuessNewCount = _count + releaseCount;
+
+            // Waiters can race with us, but this is a reasonable
+            // fail-safe in simple sequential scenarios.
+            foreach (TaskCompletionSource<bool> tcs in Waiters)
+            {
+                if (!tcs.Task.IsCompleted) {
+                    bestGuessNewCount--;
+                }
+            }
+
+            if (bestGuessNewCount > MaxCount) {
+                ThrowSemaphoreCountExceeded();
             }
         }
 
