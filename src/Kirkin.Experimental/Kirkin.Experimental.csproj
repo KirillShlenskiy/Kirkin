@@ -106,6 +106,7 @@
     <Compile Include="Threading\Tasks\DelayTaskFactory.cs" />
     <Compile Include="Threading\Tasks\DelayTaskSource.cs" />
     <Compile Include="Threading\Tasks\TaskEx2.cs" />
+    <Compile Include="Threading\Tasks\TaskUtil.cs" />
     <Compile Include="Timestamp.cs" />
     <Compile Include="Transactions\PropertyTrackingTransaction.cs" />
     <Compile Include="Transactions\PropertyTrackingTransaction`.cs" />

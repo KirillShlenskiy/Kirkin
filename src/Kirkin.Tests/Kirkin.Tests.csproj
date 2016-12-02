@@ -172,6 +172,7 @@
     <Compile Include="Threading\AtomicValueTests.cs" />
     <Compile Include="Threading\Tasks\DelayAwaitableTests.cs" />
     <Compile Include="Threading\Tasks\ParallelTasksTests.cs" />
+    <Compile Include="Threading\Tasks\TaskUtilTests.cs" />
     <Compile Include="Threading\Tasks\ThrottledTaskSourceTests.cs" />
     <Compile Include="Transactions\PropertyTrackingTransactionTests.cs" />
     <Compile Include="Reflection\PropertyListTests.cs" />
