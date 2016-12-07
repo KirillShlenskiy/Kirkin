@@ -1,7 +1,7 @@
 ﻿namespace Kirkin.Decisions
 {
-    public interface IPreference<TInput, TOutput>
+    public interface IPreference<TInput>
     {
-        Decision<TInput, TOutput> EstimateFitness(TInput input);
+        Decision<TInput> EstimateFitness(TInput input);
     }
 }

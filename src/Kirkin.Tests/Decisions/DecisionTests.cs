@@ -20,9 +20,9 @@ namespace Kirkin.Tests.Decisions
             Output = output;
         }
 
-        sealed class EvenPreference : IPreference<int, double>
+        sealed class EvenPreference : IPreference<double>
         {
-            public Decision<int, double> EstimateFitness(int input)
+            public Decision<double> EstimateFitness(double input)
             {
                 return Decision.Create(this, input, input % 2 == 0 ? 1 : 0);
             }
@@ -31,14 +31,9 @@ namespace Kirkin.Tests.Decisions
         [Fact]
         public void DecideSomething()
         {
-            IPreference<double, double> makeItBig = new HigherIsBetterPreference(0, 10);
-            IPreference<int, double> evenIsBetter = new EvenPreference();
-
-            IPreference<int, double> pref = new CompositePreference<int, double>(
-                "Comp",
-                new ProjectPreference<int, double, double>("Cast", i => i, makeItBig),
-                evenIsBetter
-            );
+            IPreference<double> makeItBig = new HigherIsBetterPreference(0, 10);
+            IPreference<double> evenIsBetter = new EvenPreference();
+            IPreference<double> pref = new CompositePreference<double>("Comp", makeItBig, evenIsBetter);
 
             for (int i = 0; i <= 10; i++)
             {

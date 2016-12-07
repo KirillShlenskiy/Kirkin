@@ -3,20 +3,20 @@
 namespace Kirkin.Decisions
 {
     /// <summary>
-    /// <see cref="Decision{TInput, TOutput}"/> factory methods.
+    /// <see cref="Decision{TInput}"/> factory methods.
     /// </summary>
     public static class Decision
     {
-        public static Decision<TInput, TOutput> Create<TInput, TOutput>(IPreference<TInput, TOutput> preference, TInput input, double fitness)
+        public static Decision<TInput> Create<TInput>(IPreference<TInput> preference, TInput input, double fitness)
         {
-            return new SimpleDecision<TInput, TOutput>(preference, input, fitness);
+            return new SimpleDecision<TInput>(preference, input, fitness);
         }
 
-        sealed class SimpleDecision<TInput, TOutput> : Decision<TInput, TOutput>
+        sealed class SimpleDecision<TInput> : Decision<TInput>
         {
             public override double Fitness { get; }
 
-            public SimpleDecision(IPreference<TInput, TOutput> preference, TInput input, double fitness)
+            public SimpleDecision(IPreference<TInput> preference, TInput input, double fitness)
                 : base(preference, input)
             {
                 Fitness = fitness;
@@ -28,12 +28,12 @@ namespace Kirkin.Decisions
             }
         }
 
-        public static Decision<TInput, TOutput> Wrap<TInput, TOutput>(IPreference<TInput, TOutput> preference, TInput input, IDecision inner)
+        public static Decision<TInput> Wrap<TInput>(IPreference<TInput> preference, TInput input, IDecision inner)
         {
-            return new WrapperDecision<TInput, TOutput>(preference, input, inner);
+            return new WrapperDecision<TInput>(preference, input, inner);
         }
 
-        sealed class WrapperDecision<TInput, TOutput> : Decision<TInput, TOutput>
+        sealed class WrapperDecision<TInput> : Decision<TInput>
         {
             public IDecision Inner { get; }
 
@@ -45,7 +45,7 @@ namespace Kirkin.Decisions
                 }
             }
 
-            public WrapperDecision(IPreference<TInput, TOutput> preference, TInput input, IDecision inner)
+            public WrapperDecision(IPreference<TInput> preference, TInput input, IDecision inner)
                 : base(preference, input)
             {
                 Inner = inner;
@@ -57,14 +57,14 @@ namespace Kirkin.Decisions
             //}
         }
 
-        public static Decision<TInput, TOutput> Combine<TInput, TOutput>(IPreference<TInput, TOutput> preference, TInput input, params Decision<TInput, TOutput>[] decisions)
+        public static Decision<TInput> Combine<TInput>(IPreference<TInput> preference, TInput input, params Decision<TInput>[] decisions)
         {
-            return new CompositeDecision<TInput, TOutput>(preference, input, decisions);
+            return new CompositeDecision<TInput>(preference, input, decisions);
         }
 
-        sealed class CompositeDecision<TInput, TOutput> : Decision<TInput, TOutput>
+        sealed class CompositeDecision<TInput> : Decision<TInput>
         {
-            public Decision<TInput, TOutput>[] Decisions { get; }
+            public Decision<TInput>[] Decisions { get; }
 
             public override double Fitness
             {
@@ -83,7 +83,7 @@ namespace Kirkin.Decisions
                 }
             }
 
-            public CompositeDecision(IPreference<TInput, TOutput> preference, TInput input, params Decision<TInput, TOutput>[] decisions)
+            public CompositeDecision(IPreference<TInput> preference, TInput input, params Decision<TInput>[] decisions)
                 : base(preference, input)
             {
                 Decisions = decisions;
@@ -100,13 +100,13 @@ namespace Kirkin.Decisions
     /// Encapsulates a decision about the fitness of the given
     /// input from with regards to a particular preference.
     /// </summary>
-    public abstract class Decision<TInput, TOutput>
+    public abstract class Decision<TInput>
         : IDecision
     {
         /// <summary>
         /// Preference used to calculate fitness.
         /// </summary>
-        public IPreference<TInput, TOutput> Preference { get; }
+        public IPreference<TInput> Preference { get; }
 
         /// <summary>
         /// Input used to calculate fitness.
@@ -118,17 +118,14 @@ namespace Kirkin.Decisions
         /// </summary>
         public abstract double Fitness { get; }
 
-        /// <summary>
-        /// Creates a new <see cref="Decision{TInput, TOutput}"/> instance.
-        /// </summary>
-        protected Decision(IPreference<TInput, TOutput> preference, TInput input)
+        protected Decision(IPreference<TInput> preference, TInput input)
         {
             Preference = preference;
             Input = input;
         }
 
         /// <summary>
-        /// Returns a string representation of this <see cref="Decision{TInput, TOutput}"/> instance.
+        /// Returns a string representation of this <see cref="Decision{TInput}"/> instance.
         /// </summary>
         public override string ToString()
         {

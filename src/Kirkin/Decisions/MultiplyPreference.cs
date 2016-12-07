@@ -2,12 +2,12 @@
 
 namespace Kirkin.Decisions
 {
-    public sealed class MultiplyPreference : IPreference<double, double>
+    public sealed class MultiplyPreference : IPreference<double>
     {
-        public IPreference<double, double> Source { get; }
+        public IPreference<double> Source { get; }
         public double Multiplier { get; }
 
-        public MultiplyPreference(IPreference<double, double> source, double multiplier)
+        public MultiplyPreference(IPreference<double> source, double multiplier)
         {
             if (multiplier < 0 || multiplier > 1) throw new ArgumentOutOfRangeException(nameof(multiplier));
 
@@ -15,7 +15,7 @@ namespace Kirkin.Decisions
             Multiplier = multiplier;
         }
 
-        public Decision<double, double> EstimateFitness(double input)
+        public Decision<double> EstimateFitness(double input)
         {
             // Elimination:
             if (Multiplier == 0.0) return Decision.Create(this, input, double.NaN);
