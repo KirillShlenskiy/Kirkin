@@ -7,6 +7,10 @@ namespace Kirkin.Decisions
     /// </summary>
     public static class Decision
     {
+        /// <summary>
+        /// Creates a simple decision with the given fitness value
+        /// based on the given preference and input combination.
+        /// </summary>
         public static Decision<TInput> Create<TInput>(IPreference<TInput> preference, TInput input, double fitness)
         {
             return new SimpleDecision<TInput>(preference, input, fitness);
@@ -28,6 +32,9 @@ namespace Kirkin.Decisions
             }
         }
 
+        /// <summary>
+        /// Decorates a decision with new preference and input values.
+        /// </summary>
         public static Decision<TInput> Wrap<TInput>(IPreference<TInput> preference, TInput input, IDecision inner)
         {
             return new WrapperDecision<TInput>(preference, input, inner);
@@ -50,13 +57,12 @@ namespace Kirkin.Decisions
             {
                 Inner = inner;
             }
-
-            //public override string ToString()
-            //{
-            //    return $"{base.ToString()} wraps [{Inner}]";
-            //}
         }
 
+        /// <summary>
+        /// Creates a composite decision whose fitness is the average
+        /// of the fitness values of its constituent decisions.
+        /// </summary>
         public static Decision<TInput> Combine<TInput>(IPreference<TInput> preference, TInput input, params Decision<TInput>[] decisions)
         {
             return new CompositeDecision<TInput>(preference, input, decisions);
@@ -118,6 +124,9 @@ namespace Kirkin.Decisions
         /// </summary>
         public abstract double Fitness { get; }
 
+        /// <summary>
+        /// Creates a new <see cref="Decision{TInput}"/> instance.
+        /// </summary>
         protected Decision(IPreference<TInput> preference, TInput input)
         {
             Preference = preference;
