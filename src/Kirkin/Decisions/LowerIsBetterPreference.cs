@@ -1,6 +1,6 @@
 ﻿namespace Kirkin.Decisions
 {
-    public sealed class LowerIsBetterPreference : IPreference<double>
+    public sealed class LowerIsBetterPreference : IPreference<double, double>
     {
         public double MinValue { get; }
         public double MaxValue { get; }
@@ -11,7 +11,7 @@
             MaxValue = maxValue;
         }
 
-        public Decision<double> EstimateFitness(double input)
+        public Decision<double, double> EstimateFitness(double input)
         {
             // Elimination:
             if (MinValue == MaxValue) return Decision.Create(this, input, double.NaN);

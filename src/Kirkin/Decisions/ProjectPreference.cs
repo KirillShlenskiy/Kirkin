@@ -2,23 +2,23 @@
 
 namespace Kirkin.Decisions
 {
-    public sealed class ProjectPreference<TInput, TTransform>
-        : IPreference<TInput>
+    public sealed class ProjectPreference<TInput, TTransform, TOutput>
+        : IPreference<TInput, TOutput>
     {
         public string Name { get; }
         public Func<TInput, TTransform> Projection { get; }
-        public IPreference<TTransform> Preference { get; }
+        public IPreference<TTransform, TOutput> Preference { get; }
 
         public ProjectPreference(string name,
                                  Func<TInput, TTransform> projection,
-                                 IPreference<TTransform> preference)
+                                 IPreference<TTransform, TOutput> preference)
         {
             Name = name;
             Projection = projection;
             Preference = preference;
         }
 
-        public Decision<TInput> EstimateFitness(TInput input)
+        public Decision<TInput, TOutput> EstimateFitness(TInput input)
         {
             TTransform intermediateInput = Projection(input);
             IDecision intermediateDecision = Preference.EstimateFitness(intermediateInput);

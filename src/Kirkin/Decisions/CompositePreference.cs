@@ -2,21 +2,21 @@
 
 namespace Kirkin.Decisions
 {
-    public sealed class CompositePreference<TInput>
-        : IPreference<TInput>
+    public sealed class CompositePreference<TInput, TOutput>
+        : IPreference<TInput, TOutput>
     {
         public string Name { get; }
-        public IPreference<TInput>[] Preferences { get; }
+        public IPreference<TInput, TOutput>[] Preferences { get; }
 
-        public CompositePreference(string name, params IPreference<TInput>[] criteria)
+        public CompositePreference(string name, params IPreference<TInput, TOutput>[] criteria)
         {
             Name = name;
             Preferences = criteria;
         }
 
-        public Decision<TInput> EstimateFitness(TInput input)
+        public Decision<TInput, TOutput> EstimateFitness(TInput input)
         {
-            Decision<TInput>[] estimates = Preferences
+            Decision<TInput, TOutput>[] estimates = Preferences
                 .Select(c => c.EstimateFitness(input))
                 .ToArray();
 
