@@ -3,7 +3,7 @@ using System.Linq;
 
 using Xunit;
 
-namespace Kirkin.Tests.Experimental
+namespace Kirkin.Tests.Decisions
 {
     public class BestMatchTests
     {
