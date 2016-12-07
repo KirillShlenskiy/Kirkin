@@ -36,6 +36,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\KeyedCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\Vector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Specialised\UndoRedoCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Decisions\CompositePreference.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Decisions\Decision.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Decisions\ExponentialAdjustPreference.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Decisions\HigherIsBetterPreference.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Decisions\IDecision.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Decisions\IPreference.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Decisions\LowerIsBetterPreference.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Decisions\MultiplyPreference.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Decisions\ProjectPreference.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dependencies\Container.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dependencies\DisposableRegistrationException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dependencies\ResolutionFailedException.cs" />
