@@ -127,6 +127,7 @@
     <Compile Include="Collections\Specialised\SingleElementReadOnlyListTests.cs" />
     <Compile Include="CustomEqualityComparerTests.cs" />
     <Compile Include="Data\SqlClient\SqlServerEngineTests.cs" />
+    <Compile Include="Decisions\DecisionTests.cs" />
     <Compile Include="Dependencies\ContainerTests.cs" />
     <Compile Include="Experimental\BestMatchTests.cs" />
     <Compile Include="Experimental\CastleCodegenTests.cs" />
