@@ -39,6 +39,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Decisions\CompositePreference.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Decisions\Decision.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Decisions\ExponentialAdjustPreference.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Decisions\Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Decisions\HigherIsBetterPreference.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Decisions\IDecision.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Decisions\IPreference.cs" />
