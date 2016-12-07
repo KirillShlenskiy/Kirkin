@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 using Xunit;
@@ -11,70 +10,45 @@ namespace Kirkin.Tests.Experimental
         [Fact]
         public void Matching()
         {
-            Info[] left = {
-                new Info('a', 'b', 'c'),
-                new Info('d', 'e', 'f'),
-                new Info('a', 'b', 'f')
-            };
+            string[] left = { "zzz", "abc", "def", "abf" };
+            string[] right = { "abc", "def", "caf" };
 
-            Info[] right = {
-                new Info('a', 'b', 'c'),
-                new Info('d', 'e', 'f')
-            };
+            Match[] bestMatches = left
+                .SelectMany(l => right.Select(r => new Match(l, r))) // Cross product: all possible matches.
+                .Where(m => m.Quality > 0)
+                .OrderByDescending(m => m.Quality)
+                // Collect.
+                .Aggregate(new List<Match>(), (list, match) =>
+                {
+                    // We only want items on the left and right sides to appear in the result once.
+                    if (!list.Any(m => m.Left == match.Left || m.Right == match.Right)) {
+                        list.Add(match);
+                    }
 
-            // Cross product.
-            Match[] matches = left
-                .SelectMany(l => right.Select(r => new Match(l, r, MatchQuality(l, r))))
+                    return list;
+                })
                 .ToArray();
 
-            // Find best fit.
-            // ... ?
-
-            var z = 0;
-        }
-
-        static double MatchQuality(Info left, Info right)
-        {
-            return (double)left.Data.Intersect(right.Data).Count() / 3;
-        }
-
-        sealed class Info
-        {
-            public char[] Data { get; }
-
-            public Info(params char[] data)
-            {
-                Data = data;
-            }
-
-            public override bool Equals(object obj)
-            {
-                Info other = obj as Info;
-                return other != null && other.Data.SequenceEqual(Data);
-            }
-
-            public override int GetHashCode()
-            {
-                return new string(Data).GetHashCode();
-            }
-
-            public override string ToString()
-            {
-                return "[" + string.Join(", ", Data) + "]";
-            }
+            Assert.Equal(3, bestMatches.Length);
         }
 
         sealed class Match
         {
-            public Info Left { get; }
-            public Info Right { get; }
-            public double Quality { get; }
+            public string Left { get; }
+            public string Right { get; }
 
-            public Match(Info left, Info right, double quality)
+            public double Quality
+            {
+                get
+                {
+                    return (double)Left.Intersect(Right).Count() / 3;
+                }
+            }
+
+            public Match(string left, string right)
             {
                 Left = left;
                 Right = right;
-                Quality = quality;
             }
 
             public override string ToString()
