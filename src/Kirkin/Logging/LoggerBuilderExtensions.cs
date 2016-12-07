@@ -10,7 +10,7 @@ namespace Kirkin.Logging
     public static class LoggerBuilderExtensions
     {
         /// <summary>
-        /// Mutates the given builder's <see cref="LoggerBuilder.Formatters"/>
+        /// Mutates the builder's <see cref="LoggerBuilder.Formatters"/>
         /// collection by adding a log entry filter with the given parameters
         /// to it, and returns the mutated <see cref="LoggerBuilder"/> instance.
         /// </summary>
@@ -24,7 +24,7 @@ namespace Kirkin.Logging
         }
 
         /// <summary>
-        /// Mutates the given builder's <see cref="LoggerBuilder.Formatters"/>
+        /// Mutates the builder's <see cref="LoggerBuilder.Formatters"/>
         /// collection by adding a log entry formatter to it, and
         /// returns the mutated <see cref="LoggerBuilder"/> instance.
         /// </summary>
@@ -38,8 +38,8 @@ namespace Kirkin.Logging
         }
 
         /// <summary>
-        /// Mutates the given builder by adding a logger which will process the entry when
-        /// the built logger insance's <see cref="Logger.Log(string)"/> mehod is called. 
+        /// Mutates the builder by adding a logger which will process the entry when the
+        /// <see cref="Logger.Log(string)"/> mehod is called on a logger instance created by this builder.
         /// </summary>
         public static LoggerBuilder AddLogger(this LoggerBuilder builder, Logger logger)
         {
@@ -58,8 +58,8 @@ namespace Kirkin.Logging
         }
 
         /// <summary>
-        /// Mutates the given builder by adding a logging action to be invoked when
-        /// the built logger insance's <see cref="Logger.Log(string)"/> mehod is called. 
+        /// Mutates the builder by adding a logging action to be invoked when the
+        /// <see cref="Logger.Log(string)"/> method is called on a logger instance created by this builder. 
         /// </summary>
         public static LoggerBuilder AddLogAction(this LoggerBuilder builder, Action<string> logAction)
         {
