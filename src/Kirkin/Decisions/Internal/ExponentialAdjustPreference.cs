@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Kirkin.Decisions
+namespace Kirkin.Decisions.Internal
 {
-    public class ExponentialAdjustPreference : IPreference<double>
+    internal class ExponentialAdjustPreference : IPreference<double>
     {
         public IPreference<double> Source { get; }
 

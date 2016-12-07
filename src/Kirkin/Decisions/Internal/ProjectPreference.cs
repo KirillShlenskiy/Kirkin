@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Kirkin.Decisions
+namespace Kirkin.Decisions.Internal
 {
-    public sealed class ProjectPreference<TInput, TTransform>
+    internal sealed class ProjectPreference<TInput, TTransform>
         : IPreference<TInput>
     {
         public string Name { get; }

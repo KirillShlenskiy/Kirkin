@@ -1,11 +1,11 @@
-﻿namespace Kirkin.Decisions
+﻿namespace Kirkin.Decisions.Internal
 {
-    public sealed class LowerIsBetterPreference : IPreference<double>
+    internal sealed class HigherIsBetterPreference : IPreference<double>
     {
         public double MinValue { get; }
         public double MaxValue { get; }
 
-        public LowerIsBetterPreference(double minValue, double maxValue)
+        public HigherIsBetterPreference(double minValue, double maxValue)
         {
             MinValue = minValue;
             MaxValue = maxValue;
@@ -17,18 +17,18 @@
             if (MinValue == MaxValue) return Decision.Create(this, input, double.NaN);
 
             // Extremities:
-            if (input <= MinValue) return Decision.Create(this, input, 1.0);
-            if (input >= MaxValue) return Decision.Create(this, input, 0.0);
+            if (input >= MaxValue) return Decision.Create(this, input, 1.0);
+            if (input <= MinValue) return Decision.Create(this, input, 0.0);
 
             // Calc:
-            double fitness = 1.0 - (input - MinValue) / (MaxValue - MinValue);
+            double fitness = (input - MinValue) / (MaxValue - MinValue);
 
             return Decision.Create(this, input, fitness);
         }
 
         public override string ToString()
         {
-            return $"Lower is better: {MinValue} - {MaxValue}";
+            return $"Higher is better: {MinValue} - {MaxValue}";
         }
     }
 }

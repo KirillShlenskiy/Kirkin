@@ -26,18 +26,23 @@ namespace Kirkin.Tests.Decisions
             {
                 return Decision.Create(this, input, input % 2 == 0 ? 1 : 0);
             }
+
+            public override string ToString()
+            {
+                return "Evens = 1, else 0";
+            }
         }
 
         [Fact]
         public void DecideSomething()
         {
-            IPreference<int> makeItBig = new HigherIsBetterPreference(0, 10).WithInputConversion((int i) => i);
+            IPreference<int> makeItBig = Preference.HigherIsBetter(0, 10).WithInputConversion((int i) => i);
             IPreference<int> evenIsBetter = new EvenPreference();
-            IPreference<int> pref = new CompositePreference<int>("Comp", makeItBig, evenIsBetter);
+            IPreference<int> combined = Preference.Combine("Comp", makeItBig, evenIsBetter);
 
             for (int i = 0; i <= 10; i++)
             {
-                IDecision decision = pref.EstimateFitness(i);
+                IDecision decision = combined.EstimateFitness(i);
 
                 Output.WriteLine($"{i} -> {decision}");
             }

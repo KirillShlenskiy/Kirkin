@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Kirkin.Decisions
+namespace Kirkin.Decisions.Internal
 {
-    public sealed class MultiplyPreference : IPreference<double>
+    internal sealed class MultiplyPreference : IPreference<double>
     {
         public IPreference<double> Source { get; }
         public double Multiplier { get; }

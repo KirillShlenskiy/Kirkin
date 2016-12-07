@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 
-namespace Kirkin.Decisions
+namespace Kirkin.Decisions.Internal
 {
-    public sealed class CompositePreference<TInput>
+    internal sealed class CompositePreference<TInput>
         : IPreference<TInput>
     {
         public string Name { get; }
