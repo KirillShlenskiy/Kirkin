@@ -110,6 +110,7 @@
     <Compile Include="Timestamp.cs" />
     <Compile Include="Transactions\PropertyTrackingTransaction.cs" />
     <Compile Include="Transactions\PropertyTrackingTransaction`.cs" />
+    <Compile Include="Utilities\MD5Hash.cs" />
     <Compile Include="ValueConversion\ValueConverter.cs" />
     <Compile Include="ValueConversion\ValueConverterBase.cs" />
   </ItemGroup>
