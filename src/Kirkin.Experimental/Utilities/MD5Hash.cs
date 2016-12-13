@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 
 namespace Kirkin.Utilities
@@ -49,7 +48,7 @@ namespace Kirkin.Utilities
         }
 
         /// <summary>
-        /// Returns the Base64 representation of this instance.
+        /// Returns the hex representation of this instance.
         /// </summary>
         public override string ToString()
         {
@@ -60,13 +59,12 @@ namespace Kirkin.Utilities
         }
 
         /// <summary>
-        /// Returns the string representation of this instance.
+        /// Returns the Base64 representation of this string.
         /// </summary>
-        public string ToString(int toBase)
+        /// <returns></returns>
+        public string ToBase64String()
         {
-            return string.Concat(
-                HashBytes.Select(b => Convert.ToString(b, toBase))
-            );
+            return Convert.ToBase64String(HashBytes);
         }
     }
 }

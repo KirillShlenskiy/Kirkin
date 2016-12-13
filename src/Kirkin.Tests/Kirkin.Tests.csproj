@@ -178,6 +178,7 @@
     <Compile Include="Threading\Tasks\ThrottledTaskSourceTests.cs" />
     <Compile Include="Transactions\PropertyTrackingTransactionTests.cs" />
     <Compile Include="Reflection\PropertyListTests.cs" />
+    <Compile Include="Utilities\MD5HashTests.cs" />
     <Compile Include="Validation\ValidatorTests.cs" />
     <Compile Include="ValueConversion\ValueConverterTests.cs" />
   </ItemGroup>
