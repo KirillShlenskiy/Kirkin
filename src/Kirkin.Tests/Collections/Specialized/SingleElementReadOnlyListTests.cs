@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-using Kirkin.Collections.Specialised;
+using Kirkin.Collections.Specialized;
 
 using Xunit;
 
-namespace Kirkin.Tests.Collections.Specialised
+namespace Kirkin.Tests.Collections.Specialized
 {
     public class SingleElementReadOnlyListTests
     {

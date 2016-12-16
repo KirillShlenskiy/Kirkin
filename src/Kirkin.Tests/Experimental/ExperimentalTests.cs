@@ -46,7 +46,7 @@ namespace Kirkin.Tests.Experimental
 
             for (int i = 0; i < 100000000; i++)
             {
-                MaterialiseVal(builder);
+                MaterializeVal(builder);
             }
         }
 
@@ -59,18 +59,18 @@ namespace Kirkin.Tests.Experimental
 
             for (int i = 0; i < 100000000; i++)
             {
-                MaterialiseRef(ref builder);
+                MaterializeRef(ref builder);
             }
         }
 
         //[MethodImpl(MethodImplOptions.NoInlining)]
-        private static T[] MaterialiseVal<T>(ArrayBuilder<T> builder)
+        private static T[] MaterializeVal<T>(ArrayBuilder<T> builder)
         {
             return builder.ToArray();
         }
 
         //[MethodImpl(MethodImplOptions.NoInlining)]
-        private static T[] MaterialiseRef<T>(ref ArrayBuilder<T> builder)
+        private static T[] MaterializeRef<T>(ref ArrayBuilder<T> builder)
         {
             return builder.ToArray();
         }

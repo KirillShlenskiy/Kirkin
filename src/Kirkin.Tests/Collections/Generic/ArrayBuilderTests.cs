@@ -98,7 +98,7 @@ namespace Kirkin.Tests.Collections.Generic
         [Fact]
         public void AddManyBenchmarkLinqToImmutableArrayPreallocated()
         {
-            // Perf: ToImmutableArray is optimised for cases
+            // Perf: ToImmutableArray is optimized for cases
             // where collection count can be divined, so this
             // method is expected to perform much better than
             // its IEnumerable equivalent in some scenarios.

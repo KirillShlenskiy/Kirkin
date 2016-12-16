@@ -4,7 +4,7 @@ using System.Threading;
 namespace Kirkin.ReferenceCounting
 {
     /// <summary>
-    /// Counted reference to a lazy-initialised shared resource.
+    /// Counted reference to a lazy-initialized shared resource.
     /// </summary>
     public sealed class Borrowed<T> : IDisposable
         where T : class
@@ -30,7 +30,7 @@ namespace Kirkin.ReferenceCounting
         }
 
         /// <summary>
-        /// Creates a new lazy-initialised disposable instance.
+        /// Creates a new lazy-initialized disposable instance.
         /// </summary>
         internal Borrowed(SharedResourceManager<T> manager, Lazy<T> cache)
         {

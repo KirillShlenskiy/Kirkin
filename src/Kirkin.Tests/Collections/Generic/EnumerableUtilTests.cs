@@ -14,7 +14,7 @@ namespace Kirkin.Tests.Collections.Generic
             var col1 = (IEnumerable<int>)new[] { 1, 2, 3 };
             var col2 = col1;
 
-            EnumerableUtil.EnsureMaterialised(ref col2);
+            EnumerableUtil.EnsureMaterialized(ref col2);
 
             Assert.Same(col1, col2);
         }
@@ -25,18 +25,18 @@ namespace Kirkin.Tests.Collections.Generic
             var col1 = (IEnumerable<int>)new List<int>(new[] { 1, 2, 3 });
             var col2 = col1;
 
-            EnumerableUtil.EnsureMaterialised(ref col2);
+            EnumerableUtil.EnsureMaterialized(ref col2);
 
             Assert.Same(col1, col2);
         }
 
         [Fact]
-        public void Materialise()
+        public void Materialize()
         {
             var col1 = Enumerable.Range(1, 3);
             var col2 = col1;
 
-            EnumerableUtil.EnsureMaterialised(ref col2);
+            EnumerableUtil.EnsureMaterialized(ref col2);
 
             Assert.NotSame(col1, col2);
         }

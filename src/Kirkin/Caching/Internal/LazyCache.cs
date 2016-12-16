@@ -63,7 +63,7 @@ namespace Kirkin.Caching.Internal
         /// </summary>
         private T GetValueSlow(Lazy<T> currentLazy)
         {
-            // Slow path: need to initialise value.
+            // Slow path: need to initialize value.
             T value;
             Lazy<T> startLazy;
 

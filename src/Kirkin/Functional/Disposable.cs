@@ -77,7 +77,7 @@ namespace Kirkin.Functional
             // It is legal for arg to be any value including null.
             if (disposeAction == null) throw new ArgumentNullException("disposeAction");
 
-            return new ParametrisedDisposableActor<T>(arg, disposeAction);
+            return new ParametrizedDisposableActor<T>(arg, disposeAction);
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace Kirkin.Functional
         /// <summary>
         /// Performs the specified operation when Dispose is called.
         /// </summary>
-        private sealed class ParametrisedDisposableActor<T> : IDisposable
+        private sealed class ParametrizedDisposableActor<T> : IDisposable
         {
             private readonly T Arg;
             private Action<T> Action;
@@ -152,7 +152,7 @@ namespace Kirkin.Functional
             /// <summary>
             /// Creates a new instance of the class.
             /// </summary>
-            public ParametrisedDisposableActor(T arg, Action<T> action)
+            public ParametrizedDisposableActor(T arg, Action<T> action)
             {
                 Arg = arg;
                 Action = action;

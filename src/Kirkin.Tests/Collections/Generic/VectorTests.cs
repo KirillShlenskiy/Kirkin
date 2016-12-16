@@ -200,7 +200,7 @@ namespace Kirkin.Tests.Collections.Generic
         }
 
         [Fact]
-        public void UninitialisedEquatesToNull()
+        public void UninitializedEquatesToNull()
         {
             var vec = default(Vector<int>);
 

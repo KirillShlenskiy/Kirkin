@@ -25,7 +25,7 @@ namespace Kirkin.ChangeTracking
         public object CurrentValue { get; }
 
         /// <summary>
-        /// Initialises a new instance with the given PropertyInfo, original and current values.
+        /// Initializes a new instance with the given PropertyInfo, original and current values.
         /// </summary>
         internal PropertyValueChange(PropertyInfo property, object originalValue, object currentValue)
         {

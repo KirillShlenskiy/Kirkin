@@ -45,7 +45,7 @@ namespace Kirkin.ReferenceCounting
         }
 
         /// <summary>
-        /// Produces a counted reference to the lazily initialised shared resource.
+        /// Produces a counted reference to the lazily initialized shared resource.
         /// </summary>
         public Borrowed<T> Borrow()
         {

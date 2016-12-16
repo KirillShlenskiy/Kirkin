@@ -93,7 +93,7 @@ namespace Kirkin.Collections.Generic
         /// <summary>
         /// Adds the given item to the builder.
         /// Throws if the underlying array is not
-        /// initialised or its capacity exceeded.
+        /// initialized or its capacity exceeded.
         /// </summary>
         public void UnsafeAdd(T item)
         {
@@ -101,7 +101,7 @@ namespace Kirkin.Collections.Generic
         }
 
         /// <summary>
-        /// Materialises the array.
+        /// Materializes the array.
         /// </summary>
         public T[] ToArray()
         {
@@ -112,7 +112,7 @@ namespace Kirkin.Collections.Generic
         }
 
         /// <summary>
-        /// Materialises the array.
+        /// Materializes the array.
         /// </summary>
         private T[] ToArraySlow()
         {

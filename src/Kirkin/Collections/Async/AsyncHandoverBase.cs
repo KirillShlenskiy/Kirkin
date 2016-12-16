@@ -37,7 +37,7 @@ namespace Kirkin.Collections.Async
         public bool AllowsAdding { get; private set; }
 
         /// <summary>
-        /// Gets the number of materialised items waiting
+        /// Gets the number of materialized items waiting
         /// to be passed to consumers.
         /// If this number is greater than zero, the next
         /// call to TryTakeAsync will complete synchronously.

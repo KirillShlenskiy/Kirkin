@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Kirkin.Collections.Specialised
+namespace Kirkin.Collections.Specialized
 {
     /// <summary>
-    /// Unoptimised undo-redo collection similar to a
+    /// Unoptimized undo-redo collection similar to a
     /// linked list or a stack which remembers its popped
     /// items and is capable of re-adding them.
     /// </summary>

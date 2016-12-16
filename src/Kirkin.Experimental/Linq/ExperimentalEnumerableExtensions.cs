@@ -17,7 +17,7 @@ namespace Kirkin.Linq
         {
             if (collection == null) throw new ArgumentNullException("collection");
 
-            EnumerableUtil.EnsureMaterialised(ref collection);
+            EnumerableUtil.EnsureMaterialized(ref collection);
 
             HashSet<T> result = new HashSet<T>(ObjectReferenceEqualityComparer<T>.Default);
 

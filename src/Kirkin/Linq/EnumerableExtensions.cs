@@ -74,7 +74,7 @@ namespace Kirkin.Linq
 
         /// <summary>
         /// Breaks up the given sequence into smaller
-        /// materialised sequences of the given size.
+        /// materialized sequences of the given size.
         /// </summary>
         public static IEnumerable<T[]> Chunkify<T>(this IEnumerable<T> collection, int chunkSize)
         {

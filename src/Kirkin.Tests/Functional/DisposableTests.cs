@@ -62,7 +62,7 @@ namespace Kirkin.Tests.Functional
         }
 
         [Fact]
-        public void ParametrisedCreate1()
+        public void ParametrizedCreate1()
         {
             var i = 0;
             var d = Disposable.Create(123, _ => i++);
@@ -75,7 +75,7 @@ namespace Kirkin.Tests.Functional
         }
 
         [Fact]
-        public void ParametrisedCreate2()
+        public void ParametrizedCreate2()
         {
             var i = 1;
             var d = Disposable.Create(i, j => i = j + 1);

@@ -28,7 +28,7 @@ namespace Kirkin.Threading.Tasks
         }
 
         /// <summary>
-        /// Creates a new container for a promise-style task which
+        /// Creates a new container for a promize-style task which
         /// auto-completes itself after the specified amount of time.
         /// </summary>
         public DelayTaskSource(TimeSpan completeAfter)

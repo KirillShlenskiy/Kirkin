@@ -16,7 +16,7 @@ namespace Kirkin.Text
         /// converted to lowercase if necessary.
         /// Does not work well for acronyms.
         /// </summary>
-        public static string CapitaliseFirstLetterOfEachWord(string text)
+        public static string CapitalizeFirstLetterOfEachWord(string text)
         {
             if (text == null) throw new ArgumentNullException("text");
             if (text.Length == 0) return text;
@@ -41,7 +41,7 @@ namespace Kirkin.Text
         /// Written by Jon Skeet for a Stack Overflow post, found here:
         /// http://stackoverflow.com/questions/841396/what-is-a-quick-way-to-force-crlf-in-c-sharp-net
         /// </remarks>
-        public static string NormaliseLineBreaks(string input)
+        public static string NormalizeLineBreaks(string input)
         {
             // Allow 10% as a rough guess of how much the string may grow.
             // If we're wrong we'll either waste space or have extra copies -

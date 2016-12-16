@@ -42,7 +42,7 @@ namespace Kirkin.Reflection
         public TProperty GetValue(TTarget instance)
         {
             // This code obviously has a race condition, but as long as _getter is not publicly
-            // visible, it doesn't really matter if it happens to be initialised multiple times.
+            // visible, it doesn't really matter if it happens to be initialized multiple times.
             if (_compiledGetter == null) {
                 _compiledGetter = CompileGetter(Property);
             }
@@ -56,7 +56,7 @@ namespace Kirkin.Reflection
         public void SetValue(TTarget instance, TProperty value)
         {
             // This code obviously has a race condition, but as long as _setter is not publicly
-            // visible, it doesn't really matter if it happens to be initialised multiple times.
+            // visible, it doesn't really matter if it happens to be initialized multiple times.
             if (_compiledSetter == null) {
                 _compiledSetter = CompileSetter(Property);
             }

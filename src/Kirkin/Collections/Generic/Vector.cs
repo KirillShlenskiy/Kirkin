@@ -198,7 +198,7 @@ namespace Kirkin.Collections.Generic
         {
             get
             {
-                // PERF: Not checking if initialised.
+                // PERF: Not checking if initialized.
                 return array.Length;
             }
         }
@@ -245,7 +245,7 @@ namespace Kirkin.Collections.Generic
         {
             get
             {
-                // PERF: Not checking if initialised.
+                // PERF: Not checking if initialized.
                 return array[index];
             }
         }
@@ -367,7 +367,7 @@ namespace Kirkin.Collections.Generic
 
         #endregion
 
-        #region Initialised checks
+        #region Initialized checks
 
         /// <summary>
         /// Throws a null reference exception if the array field is null.
@@ -393,7 +393,7 @@ namespace Kirkin.Collections.Generic
         private void ThrowInvalidOperationIfNotInitialized()
         {
             if (IsDefault) {
-                throw new InvalidOperationException($"{nameof(Vector)} uninitialised.");
+                throw new InvalidOperationException($"{nameof(Vector)} uninitialized.");
             }
         }
 

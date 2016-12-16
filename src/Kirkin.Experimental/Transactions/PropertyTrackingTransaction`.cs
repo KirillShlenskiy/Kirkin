@@ -42,7 +42,7 @@ namespace Kirkin.Transactions
         }
 
         /// <summary>
-        /// Rolls back the changes made since this transaction was initialised.
+        /// Rolls back the changes made since this transaction was initialized.
         /// </summary>
         protected override void Rollback()
         {

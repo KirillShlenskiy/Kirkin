@@ -15,7 +15,7 @@ namespace Kirkin.Transactions
 
         /// <summary>
         /// State of this instance.
-        /// Zero when uninitialised.
+        /// Zero when uninitialized.
         /// COMMITTED after the call to Commit but before Dispose.
         /// DISPOSED after call to Dispose.
         /// </summary>
@@ -27,7 +27,7 @@ namespace Kirkin.Transactions
         }
 
         /// <summary>
-        /// Commits the changes made since this transaction was initialised.
+        /// Commits the changes made since this transaction was initialized.
         /// </summary>
         public void Commit()
         {
@@ -38,12 +38,12 @@ namespace Kirkin.Transactions
         }
 
         /// <summary>
-        /// Rolls back the changes made since this transaction was initialised.
+        /// Rolls back the changes made since this transaction was initialized.
         /// </summary>
         protected abstract void Rollback();
 
         /// <summary>
-        /// Rolls back the changes made since this transaction was initialised, unless Commit was previously called.
+        /// Rolls back the changes made since this transaction was initialized, unless Commit was previously called.
         /// </summary>
         public void Dispose()
         {

@@ -9,14 +9,14 @@ namespace Kirkin.Diagnostics
     public class NoDebuggerAttachedException : InvalidOperationException
     {
         /// <summary>
-        /// Initialises a new instance.
+        /// Initializes a new instance.
         /// </summary>
         public NoDebuggerAttachedException()
         {
         }
 
         /// <summary>
-        /// Initialises a new instance with the specified message.
+        /// Initializes a new instance with the specified message.
         /// </summary>
         public NoDebuggerAttachedException(string message)
             : base(message)

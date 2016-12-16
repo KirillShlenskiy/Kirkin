@@ -1,7 +1,7 @@
 ﻿namespace Kirkin.Collections.Generic
 {
     /// <summary>
-    /// Small linked list-backed value type buffer which is optimised for
+    /// Small linked list-backed value type buffer which is optimized for
     /// building very small (10 items or less) arrays of unknown capacity.
     /// </summary>
     internal struct TinyBuffer<T>
@@ -39,7 +39,7 @@
         }
 
         /// <summary>
-        /// Materialises the array.
+        /// Materializes the array.
         /// </summary>
         public T[] ToArray()
         {
@@ -49,7 +49,7 @@
         }
 
         /// <summary>
-        /// Materialises the array.
+        /// Materializes the array.
         /// </summary>
         private T[] ToArraySlow()
         {

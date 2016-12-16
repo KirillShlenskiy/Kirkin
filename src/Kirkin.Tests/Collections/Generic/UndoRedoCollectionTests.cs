@@ -1,6 +1,6 @@
 ﻿using Xunit;
 
-using Kirkin.Collections.Specialised;
+using Kirkin.Collections.Specialized;
 
 namespace Kirkin.Tests.Collections.Generic
 {

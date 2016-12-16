@@ -10,10 +10,10 @@ namespace Kirkin.Collections.Generic
     public static class EnumerableUtil
     {
         /// <summary>
-        /// Copies the sequence to a new materialised collection
-        /// unless it is a known materialised collection type.
+        /// Copies the sequence to a new materialized collection
+        /// unless it is a known materialized collection type.
         /// </summary>
-        public static void EnsureMaterialised<T>(ref IEnumerable<T> collection)
+        public static void EnsureMaterialized<T>(ref IEnumerable<T> collection)
         {
             if (collection == null) throw new ArgumentNullException("collection");
             if (collection is ICollection<T>) return;

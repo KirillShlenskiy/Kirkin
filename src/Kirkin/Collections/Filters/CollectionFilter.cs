@@ -18,8 +18,8 @@ namespace Kirkin.Collections.Filters
         #region Public factory methods
 
         /// <summary>
-        /// Creates a filter optimised for processing large collections of objects.
-        /// Use for filters which are expensive to initialise (i.e. have joins).
+        /// Creates a filter optimized for processing large collections of objects.
+        /// Use for filters which are expensive to initialize (i.e. have joins).
         /// </summary>
         public static ICollectionFilter<T> Create<T>(Func<IEnumerable<T>, IEnumerable<T>> filterFunc)
         {
@@ -29,7 +29,7 @@ namespace Kirkin.Collections.Filters
         }
 
         /// <summary>
-        /// Creates a filter optimised for processing large collections of objects.
+        /// Creates a filter optimized for processing large collections of objects.
         /// Use for filters with minimal pre-processing required.
         /// </summary>
         public static ICollectionFilter<T> FromPredicate<T>(Func<T, bool> predicate)

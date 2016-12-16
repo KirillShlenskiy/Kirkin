@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Kirkin.Collections.Specialised
+namespace Kirkin.Collections.Specialized
 {
     /// <summary>
     /// High-performance collection which contains a single element.

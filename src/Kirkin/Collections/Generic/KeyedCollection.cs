@@ -27,7 +27,7 @@ namespace Kirkin.Collections.Generic
             {
                 if (_values == null)
                 {
-                    // PEFR: ToArray is optimised for ICollection,
+                    // PEFR: ToArray is optimized for ICollection,
                     // producing much better performance than ArrayBuilder.
                     _values = Items.Values.ToArray();
                 }

@@ -8,7 +8,7 @@ namespace Kirkin.Threading.Tasks
     /// <summary>
     /// Factory for promise-style tasks which auto-complete
     /// after the specified amount of time.
-    /// Designed for optimised timer reuse in scenarios
+    /// Designed for optimized timer reuse in scenarios
     /// with high incidence of delay task cancellation.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]

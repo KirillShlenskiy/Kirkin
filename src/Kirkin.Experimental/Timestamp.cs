@@ -37,7 +37,7 @@ namespace Kirkin
             if (bytes == null) throw new ArgumentNullException("bytes");
             if (bytes.Length > 8) throw new ArgumentException("Arrays longer than 8 bytes not supported.");
 
-            // Normalise bytes to an 8-byte array.
+            // Normalize bytes to an 8-byte array.
             if (bytes.Length < 8)
             {
                 byte[] newBytes = new byte[8];
