@@ -78,11 +78,20 @@ namespace Kirkin.Tests.Reflection
             }
         }
 
+        /// <summary>
+        /// Provides functionality similar to <see cref="System.Reflection.MethodInfo"/> Invoke method.
+        /// </summary>
         public sealed class FastMethodInvoker
         {
+            /// <summary>
+            /// Method invoked by this instance.
+            /// </summary>
             public MethodInfo MethodInfo { get; }
             private readonly Func<object, object[], object> CompiledDelegate;
 
+            /// <summary>
+            /// Creates a new <see cref="FastMethodInvoker"/> instance.
+            /// </summary>
             public FastMethodInvoker(MethodInfo methodInfo)
             {
                 if (methodInfo == null) throw new ArgumentNullException(nameof(methodInfo));
@@ -135,6 +144,9 @@ namespace Kirkin.Tests.Reflection
                 }
             }
 
+            /// <summary>
+            /// Invokes the target method on the given object instance (pass null if the method is static).
+            /// </summary>
             public object Invoke(object instance, params object[] arguments)
             {
                 return CompiledDelegate(instance, arguments);
