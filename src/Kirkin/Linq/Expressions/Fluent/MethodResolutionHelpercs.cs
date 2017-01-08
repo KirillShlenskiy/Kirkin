@@ -157,7 +157,7 @@ namespace Kirkin.Linq.Expressions.Fluent
                 throw new InvalidOperationException("Unable to resolve instance method with matching parameters.");
             }
 
-            return InstanceMemberExpressions.Method<TDelegate>(method);
+            return MemberExpressions.Method<TDelegate>(method);
         }
     }
 }

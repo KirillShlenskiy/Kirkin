@@ -16,7 +16,7 @@ namespace Kirkin.Linq.Expressions
     /// <summary>
     /// Member expression resolution utility.
     /// </summary>
-    public static class InstanceMemberExpressions
+    public static class MemberExpressions
     {
         #region Public API
 

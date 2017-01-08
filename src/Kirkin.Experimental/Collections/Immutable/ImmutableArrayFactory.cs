@@ -33,7 +33,7 @@ namespace Kirkin.Collections.Immutable
                     {
                         // It's a safe bet to assume that ImmutableArray<T> will always
                         // provide a non-public constructor wrapping a mutable array.
-                        _value = InstanceMemberExpressions
+                        _value = MemberExpressions
                             .Constructor<ImmutableArray<T>>()
                             .WithParameters<T[]>(nonPublic: true)
                             .Compile();

@@ -42,7 +42,7 @@ namespace Kirkin.Threading.Tasks
 
         static class CompletedTaskFactory
         {
-            public static readonly Func<bool, TaskCreationOptions, CancellationToken, Task> Factory = InstanceMemberExpressions
+            public static readonly Func<bool, TaskCreationOptions, CancellationToken, Task> Factory = MemberExpressions
                 .Constructor<Task>()
                 .WithParameters<bool, TaskCreationOptions, CancellationToken>(nonPublic: true)
                 .Compile();
@@ -50,7 +50,7 @@ namespace Kirkin.Threading.Tasks
 
         static class CompletedTaskFactory<TResult>
         {
-            public static readonly Func<bool, TResult, TaskCreationOptions, CancellationToken, Task<TResult>> Factory = InstanceMemberExpressions
+            public static readonly Func<bool, TResult, TaskCreationOptions, CancellationToken, Task<TResult>> Factory = MemberExpressions
                 .Constructor<Task<TResult>>()
                 .WithParameters<bool, TResult, TaskCreationOptions, CancellationToken>(nonPublic: true)
                 .Compile();
