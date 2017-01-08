@@ -36,17 +36,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\KeyedCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\Vector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Specialized\UndoRedoCollection.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Decisions\Decision.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Decisions\Extensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Decisions\IDecision.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Decisions\Internal\CompositePreference.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Decisions\Internal\ExponentialAdjustPreference.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Decisions\Internal\HigherIsBetterPreference.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Decisions\Internal\LowerIsBetterPreference.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Decisions\Internal\MultiplyPreference.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Decisions\Internal\ProjectPreference.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Decisions\IPreference.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Decisions\Preference.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dependencies\Container.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dependencies\DisposableRegistrationException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dependencies\ResolutionFailedException.cs" />
@@ -100,6 +89,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Properties\AssemblyInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reflection\IPropertyAccessor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reflection\MemberInfoEqualityComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Reflection\MethodInvoker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reflection\PropertyAccessor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reflection\PropertyAccessorFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reflection\PropertyAccessorFactory`1.cs" />
@@ -125,6 +115,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Validation\ValidatorBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\ValidatorExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\ValidatorProxy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ValueConversion\ValueConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ValueConversion\ValueConverterBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WeakEvents.cs" />
   </ItemGroup>
 </Project>

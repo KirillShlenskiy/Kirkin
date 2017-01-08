@@ -65,6 +65,17 @@
     <Compile Include="Data\SqlClient\SqlServerCommand.cs" />
     <Compile Include="Data\SqlClient\SqlServerConnectionFactory.cs" />
     <Compile Include="Data\SqlClient\SqlServerEngine.cs" />
+    <Compile Include="Decisions\Decision.cs" />
+    <Compile Include="Decisions\Extensions.cs" />
+    <Compile Include="Decisions\IDecision.cs" />
+    <Compile Include="Decisions\Internal\CompositePreference.cs" />
+    <Compile Include="Decisions\Internal\ExponentialAdjustPreference.cs" />
+    <Compile Include="Decisions\Internal\HigherIsBetterPreference.cs" />
+    <Compile Include="Decisions\Internal\LowerIsBetterPreference.cs" />
+    <Compile Include="Decisions\Internal\MultiplyPreference.cs" />
+    <Compile Include="Decisions\Internal\ProjectPreference.cs" />
+    <Compile Include="Decisions\IPreference.cs" />
+    <Compile Include="Decisions\Preference.cs" />
     <Compile Include="Diagnostics\Diag.cs" />
     <Compile Include="Diagnostics\NoDebuggerAttachedException.cs" />
     <Compile Include="Functional\Decorate.cs" />
@@ -88,7 +99,6 @@
     <Compile Include="ReferenceCounting\Borrowed.cs" />
     <Compile Include="ReferenceCounting\SharedResourceManager.cs" />
     <Compile Include="Reflection\Method.cs" />
-    <Compile Include="Reflection\MethodInvoker.cs" />
     <Compile Include="Refs\IRef.cs" />
     <Compile Include="Refs\ValueRef.cs" />
     <Compile Include="Serialization\Serializer.cs" />
@@ -112,8 +122,6 @@
     <Compile Include="Transactions\PropertyTrackingTransaction.cs" />
     <Compile Include="Transactions\PropertyTrackingTransaction`.cs" />
     <Compile Include="Utilities\MD5Hash.cs" />
-    <Compile Include="ValueConversion\ValueConverter.cs" />
-    <Compile Include="ValueConversion\ValueConverterBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Build\Kirkin-NET_45\Kirkin-NET_45.csproj">
