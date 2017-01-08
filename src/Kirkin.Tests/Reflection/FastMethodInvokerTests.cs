@@ -9,6 +9,15 @@ namespace Kirkin.Tests.Reflection
     public class FastMethodInvokerTests
     {
         [Fact]
+        public void MathMaxInvoke()
+        {
+            MethodInfo method = typeof(Math).GetMethod("Max", new[] { typeof(int), typeof(int) });
+            FastMethodInvoker invoker = new FastMethodInvoker(method);
+
+            Assert.Equal(2, invoker.Invoke(null, 1, 2));
+        }
+
+        [Fact]
         public void TestActionNoArgs()
         {
             FastMethodInvoker method = CreateFastMethodInfo("ActionNoArgs");
@@ -80,6 +89,7 @@ namespace Kirkin.Tests.Reflection
 
         /// <summary>
         /// Provides functionality similar to <see cref="System.Reflection.MethodInfo"/> Invoke method.
+        /// Leverages compiled expression trees to improve on reflection's performance while maintaining a similar API.
         /// </summary>
         public sealed class FastMethodInvoker
         {
@@ -127,18 +137,12 @@ namespace Kirkin.Tests.Reflection
                     );
                 }
 
-                ParameterExpression instanceExpression = null;
-                MethodCallExpression callExpression = null;
+                // Unfortunately needs to be allocated even for static method calls.
+                ParameterExpression instanceExpression = Expression.Parameter(typeof(object), "instance");
 
-                if (MethodInfo.IsStatic)
-                {
-                    callExpression = Expression.Call(null, MethodInfo, argumentExpressions);
-                }
-                else
-                {
-                    instanceExpression = Expression.Parameter(typeof(object), "instance");
-                    callExpression = Expression.Call(Expression.Convert(instanceExpression, MethodInfo.ReflectedType), MethodInfo, argumentExpressions);
-                }
+                MethodCallExpression callExpression = MethodInfo.IsStatic
+                    ? Expression.Call(null, MethodInfo, argumentExpressions)
+                    : Expression.Call(Expression.Convert(instanceExpression, MethodInfo.ReflectedType), MethodInfo, argumentExpressions);
 
                 if (MethodInfo.ReturnType == typeof(void))
                 {
