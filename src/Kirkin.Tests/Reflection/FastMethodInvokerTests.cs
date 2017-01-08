@@ -16,7 +16,7 @@ namespace Kirkin.Tests.Reflection
             Assert.Null(method.Invoke(new Dummy(), null));
             Assert.Null(method.Invoke(new Dummy(), new int[0]));
             Assert.ThrowsAny<Exception>(() => method.Invoke(null, null));
-            Assert.ThrowsAny<Exception>(() => method.Invoke(null, new object[] { 1 }));
+            Assert.ThrowsAny<Exception>(() => method.Invoke(null, 42));
         }
 
         [Fact]
@@ -24,7 +24,7 @@ namespace Kirkin.Tests.Reflection
         {
             FastMethodInvoker method = CreateFastMethodInfo("ActionOneArg");
 
-            Assert.Null(method.Invoke(new Dummy(), new object[] { 42 }));
+            Assert.Null(method.Invoke(new Dummy(), 42));
             Assert.ThrowsAny<Exception>(() => method.Invoke(null, null));
             Assert.ThrowsAny<Exception>(() => method.Invoke(null, new object[0]));
         }
@@ -37,7 +37,7 @@ namespace Kirkin.Tests.Reflection
             Assert.Equal(42, method.Invoke(new Dummy(), null));
             Assert.Equal(42, method.Invoke(new Dummy(), new int[0]));
             Assert.ThrowsAny<Exception>(() => method.Invoke(null, null));
-            Assert.ThrowsAny<Exception>(() => method.Invoke(null, new object[] { 1 }));
+            Assert.ThrowsAny<Exception>(() => method.Invoke(null, 42));
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace Kirkin.Tests.Reflection
         {
             FastMethodInvoker method = CreateFastMethodInfo("FuncOneArg");
 
-            Assert.Equal(42, method.Invoke(new Dummy(), new object[] { 42 }));
+            Assert.Equal(42, method.Invoke(new Dummy(), 42));
             Assert.ThrowsAny<Exception>(() => method.Invoke(null, null));
             Assert.ThrowsAny<Exception>(() => method.Invoke(null, new object[0]));
         }
@@ -83,11 +83,12 @@ namespace Kirkin.Tests.Reflection
         /// </summary>
         public sealed class FastMethodInvoker
         {
+            private Func<object, object[], object> CompiledDelegate;
+
             /// <summary>
             /// Method invoked by this instance.
             /// </summary>
             public MethodInfo MethodInfo { get; }
-            private readonly Func<object, object[], object> CompiledDelegate;
 
             /// <summary>
             /// Creates a new <see cref="FastMethodInvoker"/> instance.
@@ -97,9 +98,25 @@ namespace Kirkin.Tests.Reflection
                 if (methodInfo == null) throw new ArgumentNullException(nameof(methodInfo));
 
                 MethodInfo = methodInfo;
+            }
 
+            /// <summary>
+            /// Invokes the target method on the given object instance (pass null if the method is static).
+            /// </summary>
+            public object Invoke(object instance, params object[] arguments)
+            {
+                if (CompiledDelegate == null) {
+                    CompileDelegate();
+                }
+
+                return CompiledDelegate(instance, arguments);
+            }
+
+            // Expensive, so not calling it in constructor.
+            private void CompileDelegate()
+            {
                 ParameterExpression argumentsExpression = Expression.Parameter(typeof(object[]), "arguments");
-                ParameterInfo[] parameters = methodInfo.GetParameters();
+                ParameterInfo[] parameters = MethodInfo.GetParameters();
                 Expression[] argumentExpressions = new Expression[parameters.Length];
 
                 for (int i = 0; i < parameters.Length; ++i)
@@ -113,17 +130,17 @@ namespace Kirkin.Tests.Reflection
                 ParameterExpression instanceExpression = null;
                 MethodCallExpression callExpression = null;
 
-                if (methodInfo.IsStatic)
+                if (MethodInfo.IsStatic)
                 {
-                    callExpression = Expression.Call(null, methodInfo, argumentExpressions);
+                    callExpression = Expression.Call(null, MethodInfo, argumentExpressions);
                 }
                 else
                 {
                     instanceExpression = Expression.Parameter(typeof(object), "instance");
-                    callExpression = Expression.Call(Expression.Convert(instanceExpression, methodInfo.ReflectedType), methodInfo, argumentExpressions);
+                    callExpression = Expression.Call(Expression.Convert(instanceExpression, MethodInfo.ReflectedType), MethodInfo, argumentExpressions);
                 }
 
-                if (methodInfo.ReturnType == typeof(void))
+                if (MethodInfo.ReturnType == typeof(void))
                 {
                     Action<object, object[]> voidDelegate = Expression
                         .Lambda<Action<object, object[]>>(callExpression, instanceExpression, argumentsExpression)
@@ -142,14 +159,6 @@ namespace Kirkin.Tests.Reflection
                         .Lambda<Func<object, object[], object>>(Expression.Convert(callExpression, typeof(object)), instanceExpression, argumentsExpression)
                         .Compile();
                 }
-            }
-
-            /// <summary>
-            /// Invokes the target method on the given object instance (pass null if the method is static).
-            /// </summary>
-            public object Invoke(object instance, params object[] arguments)
-            {
-                return CompiledDelegate(instance, arguments);
             }
         }
     }
