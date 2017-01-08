@@ -12,7 +12,7 @@ namespace Kirkin.Tests.Refs
         public void PropertyRef()
         {
             Dummy dummy = new Dummy { ID = 123 };
-            ValueRef<int> id = ValueRef.Assignable(() => dummy.ID);
+            ValueRef<int> id = ValueRef.FromAssignableExpression(() => dummy.ID);
 
             Assert.Equal(123, id.Value);
 
@@ -34,7 +34,7 @@ namespace Kirkin.Tests.Refs
         public void LocalRef()
         {
             int value = 123;
-            ValueRef<int> valueRef = ValueRef.Assignable(() => value);
+            ValueRef<int> valueRef = ValueRef.FromAssignableExpression(() => value);
 
             Assert.Equal(123, valueRef.Value);
 
@@ -70,7 +70,7 @@ namespace Kirkin.Tests.Refs
             Dummy dummy = new Dummy();
 
             ValueRef<int> widthRef = ValueRef
-                .Assignable(() => dummy.Frame)
+                .FromAssignableExpression(() => dummy.Frame)
                 .Ref(f => f.Size)
                 .Ref(s => s.Width);
 
@@ -88,7 +88,7 @@ namespace Kirkin.Tests.Refs
             Dummy dummy = new Dummy();
 
             ValueRef<int> widthRef = ValueRef
-                .Assignable(() => dummy.Frame)
+                .FromAssignableExpression(() => dummy.Frame)
                 .Ref(f => f.Size)
                 .Ref(s => s.Width);
 

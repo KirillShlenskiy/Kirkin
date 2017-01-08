@@ -15,7 +15,7 @@ namespace Kirkin.Refs
         /// Creates a <see cref="ValueRef{T}"/> from the given expression.
         /// Throws if the expression cannot act as LHS in an assignment operation.
         /// </summary>
-        public static ValueRef<T> Assignable<T>(Expression<Func<T>> expr)
+        public static ValueRef<T> FromAssignableExpression<T>(Expression<Func<T>> expr)
         {
             if (expr == null) throw new ArgumentNullException(nameof(expr));
 
