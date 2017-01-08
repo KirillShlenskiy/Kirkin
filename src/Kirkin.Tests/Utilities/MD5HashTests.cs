@@ -20,9 +20,7 @@ namespace Kirkin.Tests.Utilities
         [Fact]
         public void Simple()
         {
-            byte[] bytes = Encoding.UTF8.GetBytes("Hello world");
-            MemoryStream stream = new MemoryStream(bytes);
-            MD5Hash hash = MD5Hash.ComputeHash(stream);
+            MD5Hash hash = MD5Hash.ComputeHash("Hello world");
 
             Output.WriteLine($"Hex: {hash}.");
             Output.WriteLine($"Base64: {hash.ToBase64String()}.");

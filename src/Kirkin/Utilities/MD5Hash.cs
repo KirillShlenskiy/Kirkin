@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace Kirkin.Utilities
 {
@@ -29,6 +30,33 @@ namespace Kirkin.Utilities
             using (MD5 algorithm = MD5.Create())
             {
                 byte[] hashBytes = algorithm.ComputeHash(stream);
+
+                return new MD5Hash(hashBytes);
+            }
+        }
+
+        /// <summary>
+        /// Computes the hash value for the given string instance using UTF-8 encoding.
+        /// </summary>
+        public static MD5Hash ComputeHash(string input)
+        {
+            return ComputeHash(input, Encoding.UTF8);
+        }
+
+        /// <summary>
+        /// Computes the hash value for the given string instance using the given encoding.
+        /// </summary>
+        public static MD5Hash ComputeHash(string input, Encoding encoding)
+        {
+            if (input == null) throw new ArgumentNullException(nameof(input));
+
+            byte[] bytes = encoding.GetBytes(input);
+
+            // MD5 instances are not thread-safe,
+            // so we create a new one on every call.
+            using (MD5 algorithm = MD5.Create())
+            {
+                byte[] hashBytes = algorithm.ComputeHash(bytes);
 
                 return new MD5Hash(hashBytes);
             }
