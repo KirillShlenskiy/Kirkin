@@ -160,7 +160,7 @@
     <Compile Include="Mapping\MapperBenchmarks.cs" />
     <Compile Include="Mapping\MapperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reflection\FastMethodInvokerTests.cs" />
+    <Compile Include="Reflection\MethodInvokerTests.cs" />
     <Compile Include="Reflection\MemberInfoEqualityComparerTests.cs" />
     <Compile Include="Reflection\MethodTests.cs" />
     <Compile Include="Reflection\PropertyAccessorTests.cs" />
