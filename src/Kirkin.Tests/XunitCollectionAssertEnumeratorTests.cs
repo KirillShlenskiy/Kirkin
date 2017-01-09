@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+
 using Xunit;
 using Xunit.Sdk;
 
@@ -15,7 +16,7 @@ namespace Kirkin.Tests
             Enumerator<int> enumerator = new Enumerator<int>(Enumerable.Empty<int>());
 
             Assert.Empty(enumerator);
-            Assert.True(enumerator.IsDisposed);
+            Assert.True(enumerator.IsDisposed); // Fails.
         }
 
         [Fact]
@@ -24,7 +25,7 @@ namespace Kirkin.Tests
             Enumerator<int> enumerator = new Enumerator<int>(Enumerable.Range(0, 1));
 
             Assert.NotEmpty(enumerator);
-            Assert.True(enumerator.IsDisposed);
+            Assert.True(enumerator.IsDisposed); // Fails.
         }
 
         sealed class Enumerator<T> : IEnumerable<T>, IEnumerator<T>
@@ -51,7 +52,7 @@ namespace Kirkin.Tests
             {
                 get
                 {
-                    return _enumerator != null;
+                    return _enumerator == null;
                 }
             }
 
@@ -82,6 +83,7 @@ namespace Kirkin.Tests
 
             public void Dispose()
             {
+                _enumerator.Dispose();
                 _enumerator = null;
             }
         }
