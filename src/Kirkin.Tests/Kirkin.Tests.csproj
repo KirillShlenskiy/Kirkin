@@ -182,6 +182,7 @@
     <Compile Include="Utilities\MD5HashTests.cs" />
     <Compile Include="Validation\ValidatorTests.cs" />
     <Compile Include="ValueConversion\ValueConverterTests.cs" />
+    <Compile Include="XunitCollectionAssertEnumeratorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
