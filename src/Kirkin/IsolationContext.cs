@@ -9,7 +9,7 @@ namespace Kirkin
     /// be isolated from other, similar objects.
     /// </summary>
     public sealed class IsolationContext
-        : IDisposable
+        : /*MarshalByRefObject,*/ IDisposable
     {
         private AppDomain AppDomain; // Null if disposed.
 
@@ -21,7 +21,17 @@ namespace Kirkin
             AppDomain = AppDomain.CreateDomain(
                 $"Kirkin.{nameof(IsolationContext)}.{Guid.NewGuid()}", null, AppDomain.CurrentDomain.SetupInformation
             );
+
+            //AppDomain.DomainUnload += AppDomainUnloadHandler;
         }
+
+        ///// <summary>
+        ///// Handles AppDomain unload.
+        ///// </summary>
+        //private void AppDomainUnloadHandler(object sender, EventArgs e)
+        //{
+        //    Dispose();
+        //}
 
         /// <summary>
         /// Creates a new instance of the given type inside the isolated AppDomain.
@@ -56,6 +66,8 @@ namespace Kirkin
         {
             if (AppDomain != null)
             {
+                //AppDomain.DomainUnload -= AppDomainUnloadHandler;
+
                 AppDomain.Unload(AppDomain);
 
                 AppDomain = null;
