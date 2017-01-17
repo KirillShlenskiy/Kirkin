@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 namespace Kirkin
 {
@@ -34,6 +35,20 @@ namespace Kirkin
             }
 
             return (T)AppDomain.CreateInstanceAndUnwrap(typeof(T).Assembly.FullName, typeof(T).FullName);
+        }
+
+        /// <summary>
+        /// Creates a new instance of the given type inside the isolated domain.
+        /// Type T must have a constructor which matches the given arguments.
+        /// </summary>
+        internal T CreateInstance<T>(params object[] args)
+            where T : MarshalByRefObject
+        {
+            if (AppDomain == null) {
+                throw new ObjectDisposedException(GetType().Name);
+            }
+
+            return (T)AppDomain.CreateInstanceAndUnwrap(typeof(T).Assembly.FullName, typeof(T).FullName, false, default(BindingFlags), null, args, null, null);
         }
 
         /// <summary>

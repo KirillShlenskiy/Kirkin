@@ -25,6 +25,17 @@ namespace Kirkin.Tests
         }
 
         [Fact]
+        public void CreateInstanceWithArgs()
+        {
+            using (IsolationContext context = new IsolationContext())
+            {
+                Manipulator manipulator = context.CreateInstance<Manipulator>("aaa");
+
+                Assert.Equal("aaa", manipulator.Value);
+            }
+        }
+
+        [Fact]
         public void IsolationContextSetupAndTeardownBenchmark()
         {
             for (int i = 0; i < 250; i++)
@@ -48,6 +59,15 @@ namespace Kirkin.Tests
 
         sealed class Manipulator : MarshalByRefObject
         {
+            public Manipulator()
+            {
+            }
+
+            public Manipulator(string initialValue)
+            {
+                Value = initialValue;
+            }
+
             public string Value
             {
                 get
