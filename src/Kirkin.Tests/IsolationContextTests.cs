@@ -24,6 +24,28 @@ namespace Kirkin.Tests
             }
         }
 
+        [Fact]
+        public void IsolationContextSetupAndTeardownBenchmark()
+        {
+            for (int i = 0; i < 250; i++)
+            {
+                using (IsolationContext context = new IsolationContext())
+                {
+                }
+            }
+        }
+
+        [Fact]
+        public void IsolationContextCreateInstanceBenchmark()
+        {
+            using (IsolationContext context = new IsolationContext())
+            {
+                for (int i = 0; i < 250; i++) {
+                    context.CreateInstance<Manipulator>();
+                }
+            }
+        }
+
         sealed class Manipulator : MarshalByRefObject
         {
             public string Value
