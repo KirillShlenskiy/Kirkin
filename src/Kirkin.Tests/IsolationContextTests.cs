@@ -34,7 +34,7 @@ namespace Kirkin.Tests
                 }
                 set
                 {
-                    StaticState.Value = Value;
+                    StaticState.Value = value;
                 }
             }
         }
