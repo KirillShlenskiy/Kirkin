@@ -24,7 +24,7 @@ namespace Kirkin
         /// Creates a new instance of the given type inside the isolated domain.
         /// Type T must have a parameterless constructor.
         /// </summary>
-        public T CreateIsolatedInstance<T>()
+        public T CreateInstance<T>()
             where T : MarshalByRefObject
         {
             if (Domain == null) {
