@@ -3,21 +3,23 @@
 namespace Kirkin
 {
     /// <summary>
-    /// Represents an object instance which exists in its own isolated AppDomain.
+    /// Wraps and AppDomain and provides methods to execute code inside the domain.
     /// Useful when the object needs to access shared (static) state which should
     /// not leak to other similar objects.
     /// </summary>
-    public sealed class IsolatedInstanceFactory
+    public sealed class IsolationContext
         : IDisposable
     {
-        private AppDomain Domain; // Null if disposed.
+        private AppDomain AppDomain; // Null if disposed.
 
         /// <summary>
-        /// Creates a new instance of <see cref="IsolatedInstanceFactory"/>.
+        /// Creates a new instance of <see cref="IsolationContext"/>.
         /// </summary>
-        public IsolatedInstanceFactory()
+        public IsolationContext()
         {
-            Domain = AppDomain.CreateDomain($"Kirkin.IsolatedDomain.{Guid.NewGuid()}", null, AppDomain.CurrentDomain.SetupInformation);
+            AppDomain = AppDomain.CreateDomain(
+                $"Kirkin.{nameof(IsolationContext)}.{Guid.NewGuid()}", null, AppDomain.CurrentDomain.SetupInformation
+            );
         }
 
         /// <summary>
@@ -27,11 +29,11 @@ namespace Kirkin
         public T CreateInstance<T>()
             where T : MarshalByRefObject
         {
-            if (Domain == null) {
+            if (AppDomain == null) {
                 throw new ObjectDisposedException(GetType().Name);
             }
 
-            return (T)Domain.CreateInstanceAndUnwrap(typeof(T).Assembly.FullName, typeof(T).FullName);
+            return (T)AppDomain.CreateInstanceAndUnwrap(typeof(T).Assembly.FullName, typeof(T).FullName);
         }
 
         /// <summary>
@@ -39,11 +41,11 @@ namespace Kirkin
         /// </summary>
         public void Dispose()
         {
-            if (Domain != null)
+            if (AppDomain != null)
             {
-                AppDomain.Unload(Domain);
+                AppDomain.Unload(AppDomain);
 
-                Domain = null;
+                AppDomain = null;
             }
         }
     }
