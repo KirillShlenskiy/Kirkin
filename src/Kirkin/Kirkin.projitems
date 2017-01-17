@@ -43,6 +43,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Functional\Disposable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Functional\Retryable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\StreamUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IsolatedInstanceFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Linq\ArrayExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Linq\EnumerableExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Linq\Expressions\MemberExpressions.cs" />
