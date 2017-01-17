@@ -28,7 +28,7 @@ namespace Kirkin
         /// Type T must have a parameterless constructor.
         /// </summary>
         public T CreateInstance<T>()
-            where T : MarshalByRefObject
+            where T : MarshalByRefObject, new()
         {
             ThrowIfDisposed();
 
