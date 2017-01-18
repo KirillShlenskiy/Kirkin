@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading;
 
 namespace Kirkin
 {
@@ -10,6 +11,7 @@ namespace Kirkin
     /// </summary>
     public sealed class IsolationContext : IDisposable
     {
+        private static int s_id;
         private AppDomain AppDomain; // Null if disposed.
 
         /// <summary>
@@ -17,9 +19,9 @@ namespace Kirkin
         /// </summary>
         public IsolationContext()
         {
-            AppDomain = AppDomain.CreateDomain(
-                $"Kirkin.{nameof(IsolationContext)}.{Guid.NewGuid()}", null, AppDomain.CurrentDomain.SetupInformation
-            );
+            int id = Interlocked.Increment(ref s_id);
+
+            AppDomain = AppDomain.CreateDomain($"Kirkin.{nameof(IsolationContext)}.{id}", null, AppDomain.CurrentDomain.SetupInformation);
         }
 
         /// <summary>
