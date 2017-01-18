@@ -12,6 +12,9 @@ namespace Kirkin.ValueConversion
         /// </summary>
         public static ValueConverter Default { get; } = new ValueConverter();
 
+        /// <summary>
+        /// Creates a new <see cref="ValueConverter"/> instance.
+        /// </summary>
         protected ValueConverter()
         {
         }
