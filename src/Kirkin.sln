@@ -21,8 +21,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{8F172D15
 		..\nuget\Kirkin.Sources.nuspec = ..\nuget\Kirkin.Sources.nuspec
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirkin.Tail", "Kirkin.Tail\Kirkin.Tail.csproj", "{CE227D39-E17C-4A45-8698-32AFE80EA106}"
-EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Kirkin\Kirkin.projitems*{6801a431-743e-4a3c-ab29-3ca896808196}*SharedItemsImports = 13
@@ -50,10 +48,6 @@ Global
 		{3F7562A4-86CB-4172-A7D1-FB0C6E2545EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F7562A4-86CB-4172-A7D1-FB0C6E2545EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F7562A4-86CB-4172-A7D1-FB0C6E2545EF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CE227D39-E17C-4A45-8698-32AFE80EA106}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CE227D39-E17C-4A45-8698-32AFE80EA106}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CE227D39-E17C-4A45-8698-32AFE80EA106}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CE227D39-E17C-4A45-8698-32AFE80EA106}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
