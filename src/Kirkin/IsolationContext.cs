@@ -20,8 +20,9 @@ namespace Kirkin
         public IsolationContext()
         {
             int id = Interlocked.Increment(ref s_id);
+            string friendlyName = $"{typeof(IsolationContext).FullName}.{id}";
 
-            AppDomain = AppDomain.CreateDomain($"Kirkin.{nameof(IsolationContext)}.{id}", null, AppDomain.CurrentDomain.SetupInformation);
+            AppDomain = AppDomain.CreateDomain(friendlyName, null, AppDomain.CurrentDomain.SetupInformation);
         }
 
         /// <summary>
