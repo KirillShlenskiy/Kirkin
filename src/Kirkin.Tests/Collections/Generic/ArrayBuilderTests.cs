@@ -18,7 +18,7 @@ namespace Kirkin.Tests.Collections.Generic
         static ArrayBuilderTests()
         {
             new ArrayBuilder<int>().Add(1);
-            new ArrayBuilder<int>(1).UnsafeAdd(1);
+            new ArrayBuilder<int>(1).FastAdd(1);
             new List<int>().Add(1);
             ImmutableArray.Create(1);
         }
@@ -58,7 +58,7 @@ namespace Kirkin.Tests.Collections.Generic
 
             for (int i = 0; i < NumIterations; i++)
             {
-                builder.UnsafeAdd(i);
+                builder.FastAdd(i);
             }
 
             builder.ToArray();
@@ -137,7 +137,7 @@ namespace Kirkin.Tests.Collections.Generic
 
             foreach (var i in PreallocatedItems)
             {
-                builder.UnsafeAdd(i);
+                builder.FastAdd(i);
             }
 
             builder.ToArray();
@@ -198,7 +198,7 @@ namespace Kirkin.Tests.Collections.Generic
             {
                 var builder = new ArrayBuilder<int>(1);
 
-                builder.UnsafeAdd(i);
+                builder.FastAdd(i);
             }
         }
 

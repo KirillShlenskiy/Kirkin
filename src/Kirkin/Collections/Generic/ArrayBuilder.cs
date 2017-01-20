@@ -79,7 +79,7 @@ namespace Kirkin.Collections.Generic
         /// Throws if the underlying array is not
         /// initialized or its capacity exceeded.
         /// </summary>
-        public void UnsafeAdd(T item)
+        public void FastAdd(T item)
         {
             items[count++] = item;
         }
