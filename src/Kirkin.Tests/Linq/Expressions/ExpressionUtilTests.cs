@@ -3,101 +3,101 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Kirkin.Linq.Expressions;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Linq.Expressions
 {
     public class ExpressionUtilTests
     {
-        [Fact]
+        [Test]
         public void MemberClass()
         {
             var dummy = new Dummy();
             var value = typeof(Dummy).GetProperty("Value");
 
-            Assert.Equal(value, ExpressionUtil.Member<Dummy, string>(d => d.Value));
-            Assert.Equal(value, ExpressionUtil.Member<string>(() => dummy.Value));
-            Assert.Equal(value, ExpressionUtil.Member<Dummy>(d => d.Value));
+            Assert.AreEqual(value, ExpressionUtil.Member<Dummy, string>(d => d.Value));
+            Assert.AreEqual(value, ExpressionUtil.Member<string>(() => dummy.Value));
+            Assert.AreEqual(value, ExpressionUtil.Member<Dummy>(d => d.Value));
 
             Expression<Func<object>> expr = () => new Dummy().Value;
 
-            Assert.Equal(value, ExpressionUtil.Member(expr));
+            Assert.AreEqual(value, ExpressionUtil.Member(expr));
         }
 
-        [Fact]
+        [Test]
         public void MemberStruct()
         {
             var dummy = new Dummy();
             var id = typeof(Dummy).GetProperty("ID");
 
-            Assert.Equal(id, ExpressionUtil.Member<Dummy, int>(d => d.ID));
-            Assert.Equal(id, ExpressionUtil.Member<int>(() => dummy.ID));
-            Assert.Equal(id, ExpressionUtil.Member<Dummy>(d => d.ID));
+            Assert.AreEqual(id, ExpressionUtil.Member<Dummy, int>(d => d.ID));
+            Assert.AreEqual(id, ExpressionUtil.Member<int>(() => dummy.ID));
+            Assert.AreEqual(id, ExpressionUtil.Member<Dummy>(d => d.ID));
 
             Expression<Func<object>> expr = () => new Dummy().ID;
 
-            Assert.Equal(id, ExpressionUtil.Member(expr));
+            Assert.AreEqual(id, ExpressionUtil.Member(expr));
         }
 
-        [Fact]
+        [Test]
         public void MemberNameClass()
         {
             var dummy = new Dummy();
 
-            Assert.Equal("Value", ExpressionUtil.Member<Dummy, string>(d => d.Value).Name);
-            Assert.Equal("Value", ExpressionUtil.Member<string>(() => dummy.Value).Name);
-            Assert.Equal("Value", ExpressionUtil.Member<Dummy>(d => d.Value).Name);
+            Assert.AreEqual("Value", ExpressionUtil.Member<Dummy, string>(d => d.Value).Name);
+            Assert.AreEqual("Value", ExpressionUtil.Member<string>(() => dummy.Value).Name);
+            Assert.AreEqual("Value", ExpressionUtil.Member<Dummy>(d => d.Value).Name);
 
             Expression<Func<object>> expr = () => new Dummy().Value;
 
-            Assert.Equal("Value", ExpressionUtil.Member(expr).Name);
+            Assert.AreEqual("Value", ExpressionUtil.Member(expr).Name);
         }
 
-        [Fact]
+        [Test]
         public void MemberNameStruct()
         {
             var dummy = new Dummy();
 
-            Assert.Equal("ID", ExpressionUtil.Member<Dummy, int>(d => d.ID).Name);
-            Assert.Equal("ID", ExpressionUtil.Member<int>(() => dummy.ID).Name);
-            Assert.Equal("ID", ExpressionUtil.Member<Dummy>(d => d.ID).Name);
+            Assert.AreEqual("ID", ExpressionUtil.Member<Dummy, int>(d => d.ID).Name);
+            Assert.AreEqual("ID", ExpressionUtil.Member<int>(() => dummy.ID).Name);
+            Assert.AreEqual("ID", ExpressionUtil.Member<Dummy>(d => d.ID).Name);
 
             Expression<Func<object>> expr = () => new Dummy().ID;
 
-            Assert.Equal("ID", ExpressionUtil.Member(expr).Name);
+            Assert.AreEqual("ID", ExpressionUtil.Member(expr).Name);
         }
 
-        [Fact]
+        [Test]
         public void PropertyClass()
         {
             var dummy = new Dummy();
             var value = typeof(Dummy).GetProperty("Value");
 
-            Assert.Equal(value, ExpressionUtil.Property<Dummy, string>(d => d.Value));
-            Assert.Equal(value, ExpressionUtil.Property<string>(() => dummy.Value));
-            Assert.Equal(value, ExpressionUtil.Property<Dummy>(d => d.Value));
+            Assert.AreEqual(value, ExpressionUtil.Property<Dummy, string>(d => d.Value));
+            Assert.AreEqual(value, ExpressionUtil.Property<string>(() => dummy.Value));
+            Assert.AreEqual(value, ExpressionUtil.Property<Dummy>(d => d.Value));
 
             Expression<Func<object>> expr = () => new Dummy().Value;
 
-            Assert.Equal(value, ExpressionUtil.Property(expr));
+            Assert.AreEqual(value, ExpressionUtil.Property(expr));
         }
 
-        [Fact]
+        [Test]
         public void PropertyStruct()
         {
             var dummy = new Dummy();
             var id = typeof(Dummy).GetProperty("ID");
 
-            Assert.Equal(id, ExpressionUtil.Property<Dummy, int>(d => d.ID));
-            Assert.Equal(id, ExpressionUtil.Property<int>(() => dummy.ID));
-            Assert.Equal(id, ExpressionUtil.Property<Dummy>(d => d.ID));
+            Assert.AreEqual(id, ExpressionUtil.Property<Dummy, int>(d => d.ID));
+            Assert.AreEqual(id, ExpressionUtil.Property<int>(() => dummy.ID));
+            Assert.AreEqual(id, ExpressionUtil.Property<Dummy>(d => d.ID));
 
             Expression<Func<object>> expr = () => new Dummy().ID;
 
-            Assert.Equal(id, ExpressionUtil.Property(expr));
+            Assert.AreEqual(id, ExpressionUtil.Property(expr));
         }
 
-        [Fact]
+        [Test]
         public void MixedExpressionTypes()
         {
             Expression<Func<Dummy, object>> idExpr = d => d.ID;
@@ -112,7 +112,7 @@ namespace Kirkin.Tests.Linq.Expressions
             Assert.NotNull(ExpressionUtil.Property(valueExpr));
         }
 
-        [Fact]
+        [Test]
         public void MethodExpressions()
         {
             MethodInfo @void = typeof(Dummy).GetMethod("Void");
@@ -123,13 +123,13 @@ namespace Kirkin.Tests.Linq.Expressions
             Assert.NotNull(get42);
             Assert.NotNull(get);
 
-            Assert.Equal(@void, ExpressionUtil.InstanceMethod<Dummy>(d => d.Void()));
-            Assert.Equal(get42, ExpressionUtil.InstanceMethod<Dummy>(d => d.Get()));
-            Assert.Equal(get, ExpressionUtil.InstanceMethod<Dummy>(d => d.Get("zzz")));
+            Assert.AreEqual(@void, ExpressionUtil.InstanceMethod<Dummy>(d => d.Void()));
+            Assert.AreEqual(get42, ExpressionUtil.InstanceMethod<Dummy>(d => d.Get()));
+            Assert.AreEqual(get, ExpressionUtil.InstanceMethod<Dummy>(d => d.Get("zzz")));
 
             MethodInfo consoleWriteLine = typeof(Console).GetMethod("WriteLine", new[] { typeof(string) });
 
-            Assert.Equal(consoleWriteLine, ExpressionUtil.StaticMethod(() => Console.WriteLine((string)null)));
+            Assert.AreEqual(consoleWriteLine, ExpressionUtil.StaticMethod(() => Console.WriteLine((string)null)));
         }
 
         private class Dummy

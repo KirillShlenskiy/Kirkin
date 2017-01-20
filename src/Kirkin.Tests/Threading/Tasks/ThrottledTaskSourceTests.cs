@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 using Kirkin.Threading.Tasks;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Threading.Tasks
 {
     public class ThrottledTaskSourceTests
     {
-        //[Fact]
+        //[Test]
         public async Task MemDiagnostics()
         {
             var diffs = new List<long>();
@@ -36,7 +36,7 @@ namespace Kirkin.Tests.Threading.Tasks
             Debug.Print("Done.");
         }
 
-        [Fact]
+        [Test]
         public async Task SelfCancellation()
         {
             DelayTaskSource source = null;
@@ -68,10 +68,10 @@ namespace Kirkin.Tests.Threading.Tasks
                 // Expected.
             }
 
-            Assert.Equal(1, count);
+            Assert.AreEqual(1, count);
         }
 
-        [Fact]
+        [Test]
         public async Task SelfCancellation2()
         {
             var source = new DelayTaskFactory();
@@ -96,10 +96,10 @@ namespace Kirkin.Tests.Threading.Tasks
                 // Expected.
             }
 
-            Assert.Equal(1, count);
+            Assert.AreEqual(1, count);
         }
 
-        [Fact]
+        [Test]
         public async Task ParallelSelfCancellation()
         {
             DelayTaskSource source = null;
@@ -134,10 +134,10 @@ namespace Kirkin.Tests.Threading.Tasks
                 // Expected.
             }
 
-            Assert.Equal(1, count);
+            Assert.AreEqual(1, count);
         }
 
-        [Fact]
+        [Test]
         public async Task ParallelSelfCancellation2()
         {
             var source = new DelayTaskFactory(DelayTaskCancellationMode.SetTaskResultToFalse);
@@ -164,10 +164,10 @@ namespace Kirkin.Tests.Threading.Tasks
 
             await Task.WhenAll(tasks);
 
-            Assert.Equal(1, count);
+            Assert.AreEqual(1, count);
         }
 
-        [Fact]
+        [Test]
         public void StressTesting()
         {
             Task lastTask = null;
@@ -188,7 +188,7 @@ namespace Kirkin.Tests.Threading.Tasks
             lastTask.Wait();
         }
 
-        [Fact]
+        [Test]
         public void StressTesting2()
         {
             var source = new DelayTaskFactory();
@@ -202,7 +202,7 @@ namespace Kirkin.Tests.Threading.Tasks
             lastTask.Wait();
         }
 
-        [Fact]
+        [Test]
         public void StressTesting3()
         {
             var source = new DelayTaskFactory(DelayTaskCancellationMode.SetTaskResultToFalse);

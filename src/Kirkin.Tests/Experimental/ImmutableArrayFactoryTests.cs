@@ -2,42 +2,42 @@
 
 using Kirkin.Collections.Immutable;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Experimental
 {
     public class ImmutableArrayFactoryTests
     {
-        [Fact]
+        [Test]
         public void BasicApi()
         {
             int[] integers = { 1, 2, 3 };
             ImmutableArray<int> immutable = ImmutableArrayFactory.WrapArray(integers);
 
-            Assert.Equal(integers, immutable);
+            Assert.AreEqual(integers, immutable);
             Assert.False(immutable.IsDefault);
 
             ImmutableArray<int> def = new ImmutableArray<int>();
 
             Assert.True(def.IsDefault);
-            Assert.Equal(0, ImmutableArray.Create<int>().Length);
+            Assert.AreEqual(0, ImmutableArray.Create<int>().Length);
         }
 
-        [Fact]
+        [Test]
         public void NoCopy()
         {
             int[] integers = { 1, 2, 3 };
             ImmutableArray<int> immutable = ImmutableArrayFactory.WrapArray(integers);
 
-            Assert.Equal(integers, immutable);
+            Assert.AreEqual(integers, immutable);
 
             integers[0] = 123;
 
-            Assert.Equal(123, immutable[0]);
-            Assert.Equal(integers, immutable);
+            Assert.AreEqual(123, immutable[0]);
+            Assert.AreEqual(integers, immutable);
         }
 
-        [Fact]
+        [Test]
         public void WrapWithReflectionPerf()
         {
             int[] integers = { 1, 2, 3 };

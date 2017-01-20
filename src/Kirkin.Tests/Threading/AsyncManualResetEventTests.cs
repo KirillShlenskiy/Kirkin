@@ -2,13 +2,13 @@
 
 using Kirkin.Threading;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Threading
 {
     public class AsyncManualResetEventTests
     {
-        [Fact]
+        [Test]
         public async Task Benchmark()
         {
             var mre = new AsyncManualResetEvent();

@@ -6,13 +6,13 @@ using System.Threading;
 
 using Kirkin.Linq;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Linq
 {
     public class EnumerableExtensionsTests
     {
-        [Fact]
+        [Test]
         public void ChunkifyPerformance()
         {
             var arr = Enumerable.Range(0, 10).ToArray();
@@ -27,7 +27,7 @@ namespace Kirkin.Tests.Linq
             }
         }
 
-        [Fact]
+        [Test]
         public void Chunkify()
         {
             var arr = Enumerable.Range(0, 10).ToArray();
@@ -38,40 +38,40 @@ namespace Kirkin.Tests.Linq
 
         private void ValidateChunks(int[][] chunks)
         {
-            Assert.Equal(4, chunks.Length);
+            Assert.AreEqual(4, chunks.Length);
 
             // Chunk 1.
-            Assert.Equal(3, chunks[0].Length);
-            Assert.Equal(0, chunks[0][0]);
-            Assert.Equal(1, chunks[0][1]);
-            Assert.Equal(2, chunks[0][2]);
+            Assert.AreEqual(3, chunks[0].Length);
+            Assert.AreEqual(0, chunks[0][0]);
+            Assert.AreEqual(1, chunks[0][1]);
+            Assert.AreEqual(2, chunks[0][2]);
 
             // Chunk 2.
-            Assert.Equal(3, chunks[1].Length);
-            Assert.Equal(3, chunks[1][0]);
-            Assert.Equal(4, chunks[1][1]);
-            Assert.Equal(5, chunks[1][2]);
+            Assert.AreEqual(3, chunks[1].Length);
+            Assert.AreEqual(3, chunks[1][0]);
+            Assert.AreEqual(4, chunks[1][1]);
+            Assert.AreEqual(5, chunks[1][2]);
 
             // Chunk 3.
-            Assert.Equal(3, chunks[2].Length);
-            Assert.Equal(6, chunks[2][0]);
-            Assert.Equal(7, chunks[2][1]);
-            Assert.Equal(8, chunks[2][2]);
+            Assert.AreEqual(3, chunks[2].Length);
+            Assert.AreEqual(6, chunks[2][0]);
+            Assert.AreEqual(7, chunks[2][1]);
+            Assert.AreEqual(8, chunks[2][2]);
 
             // Chunk 4.
-            Assert.Equal(1, chunks[3].Length);
-            Assert.Equal(9, chunks[3][0]);
+            Assert.AreEqual(1, chunks[3].Length);
+            Assert.AreEqual(9, chunks[3][0]);
         }
 
-        [Fact]
+        [Test]
         public void ChunkifyCorrectChunkNumber()
         {
-            Assert.Equal(0, Enumerable.Empty<int>().Chunkify(3).Count());
-            Assert.Equal(3, Enumerable.Range(0, 9).Chunkify(3).Count());
-            Assert.Equal(4, Enumerable.Range(0, 10).Chunkify(3).Count());
+            Assert.AreEqual(0, Enumerable.Empty<int>().Chunkify(3).Count());
+            Assert.AreEqual(3, Enumerable.Range(0, 9).Chunkify(3).Count());
+            Assert.AreEqual(4, Enumerable.Range(0, 10).Chunkify(3).Count());
         }
 
-        [Fact]
+        [Test]
         public void FlattenSimple()
         {
             var dummy = new NestedDummy
@@ -97,15 +97,15 @@ namespace Kirkin.Tests.Linq
                 .Flatten(d => d.Children)
                 .ToArray();
 
-            Assert.Equal(5, flattenedDummies.Length);
+            Assert.AreEqual(5, flattenedDummies.Length);
 
             for (int i = 0; i < flattenedDummies.Length; i++)
             {
-                Assert.Equal(i + 1, flattenedDummies[i].ID);
+                Assert.AreEqual(i + 1, flattenedDummies[i].ID);
             }
         }
 
-        [Fact]
+        [Test]
         public void FlattenCircular()
         {
             var troubleDummy = new NestedDummy { ID = 1 };
@@ -136,11 +136,11 @@ namespace Kirkin.Tests.Linq
                 .Flatten(d => d.Children)
                 .ToArray();
 
-            Assert.Equal(6, flattenedDummies.Length);
+            Assert.AreEqual(6, flattenedDummies.Length);
 
             for (int i = 0; i < flattenedDummies.Length; i++)
             {
-                Assert.Equal(i + 1, flattenedDummies[i].ID);
+                Assert.AreEqual(i + 1, flattenedDummies[i].ID);
             }
         }
 
@@ -150,47 +150,47 @@ namespace Kirkin.Tests.Linq
             public NestedDummy[] Children { get; set; }
         }
 
-        [Fact]
+        [Test]
         public void FirstOrDefaultWithMin()
         {
             var dummies = ThreeDummies();
 
-            Assert.Equal(1, dummies.FirstOrDefaultWithMin(d => d.ID).ID);
-            Assert.Equal(dummies.OrderBy(d => d.ID).FirstOrDefault(), dummies.FirstOrDefaultWithMin(d => d.ID));
-            Assert.Equal(dummies.FirstOrDefault(d => d.ID == dummies.Min(o => o.ID)), dummies.FirstOrDefaultWithMin(d => d.ID));
+            Assert.AreEqual(1, dummies.FirstOrDefaultWithMin(d => d.ID).ID);
+            Assert.AreEqual(dummies.OrderBy(d => d.ID).FirstOrDefault(), dummies.FirstOrDefaultWithMin(d => d.ID));
+            Assert.AreEqual(dummies.FirstOrDefault(d => d.ID == dummies.Min(o => o.ID)), dummies.FirstOrDefaultWithMin(d => d.ID));
         }
 
-        [Fact]
+        [Test]
         public void FirstOrDefaultWithMinCollision()
         {
             var dummies = ThreeDummiesWithCollisions();
 
-            Assert.Equal("First 1", dummies.FirstOrDefaultWithMin(d => d.ID).Value);
-            Assert.Equal(dummies.OrderBy(d => d.ID).FirstOrDefault(), dummies.FirstOrDefaultWithMin(d => d.ID));
-            Assert.Equal(dummies.FirstOrDefault(d => d.ID == dummies.Min(o => o.ID)), dummies.FirstOrDefaultWithMin(d => d.ID));
+            Assert.AreEqual("First 1", dummies.FirstOrDefaultWithMin(d => d.ID).Value);
+            Assert.AreEqual(dummies.OrderBy(d => d.ID).FirstOrDefault(), dummies.FirstOrDefaultWithMin(d => d.ID));
+            Assert.AreEqual(dummies.FirstOrDefault(d => d.ID == dummies.Min(o => o.ID)), dummies.FirstOrDefaultWithMin(d => d.ID));
         }
 
-        [Fact]
+        [Test]
         public void LastOrDefaultWithMax()
         {
             var dummies = ThreeDummies();
 
-            Assert.Equal(3, dummies.LastOrDefaultWithMax(d => d.ID).ID);
-            Assert.Equal(dummies.OrderBy(d => d.ID).LastOrDefault(), dummies.LastOrDefaultWithMax(d => d.ID));
-            Assert.Equal(dummies.LastOrDefault(d => d.ID == dummies.Max(o => o.ID)), dummies.LastOrDefaultWithMax(d => d.ID));
+            Assert.AreEqual(3, dummies.LastOrDefaultWithMax(d => d.ID).ID);
+            Assert.AreEqual(dummies.OrderBy(d => d.ID).LastOrDefault(), dummies.LastOrDefaultWithMax(d => d.ID));
+            Assert.AreEqual(dummies.LastOrDefault(d => d.ID == dummies.Max(o => o.ID)), dummies.LastOrDefaultWithMax(d => d.ID));
         }
 
-        [Fact]
+        [Test]
         public void LastOrDefaultWithMaxCollision()
         {
             var dummies = ThreeDummiesWithCollisions();
 
-            Assert.Equal("Third 2", dummies.LastOrDefaultWithMax(d => d.ID).Value);
-            Assert.Equal(dummies.OrderBy(d => d.ID).LastOrDefault(), dummies.LastOrDefaultWithMax(d => d.ID));
-            Assert.Equal(dummies.LastOrDefault(d => d.ID == dummies.Max(o => o.ID)), dummies.LastOrDefaultWithMax(d => d.ID));
+            Assert.AreEqual("Third 2", dummies.LastOrDefaultWithMax(d => d.ID).Value);
+            Assert.AreEqual(dummies.OrderBy(d => d.ID).LastOrDefault(), dummies.LastOrDefaultWithMax(d => d.ID));
+            Assert.AreEqual(dummies.LastOrDefault(d => d.ID == dummies.Max(o => o.ID)), dummies.LastOrDefaultWithMax(d => d.ID));
         }
 
-        [Fact]
+        [Test]
         public void PerfFirstOrDefaultWithMin()
         {
             var dummies = ThreeDummies();
@@ -201,7 +201,7 @@ namespace Kirkin.Tests.Linq
             }
         }
 
-        [Fact]
+        [Test]
         public void PerfOrderBy()
         {
             var dummies = ThreeDummies();
@@ -238,18 +238,18 @@ namespace Kirkin.Tests.Linq
             public string Value { get; set; }
         }
 
-        [Fact]
+        [Test]
         public void LookAhead()
         {
             for (int i = 0; i < 10000; i++)
             {
                 var collection = Enumerable.Range(0, 10);
 
-                Assert.Equal(collection, collection.LookAhead());
+                Assert.AreEqual(collection, collection.LookAhead());
             }
         }
 
-        [Fact]
+        [Test]
         public void LookAheadExceptionHandling()
         {
             int errorAfter = 3;
@@ -259,13 +259,13 @@ namespace Kirkin.Tests.Linq
                 Debug.Print("Seen {0}.", i);
             }
 
-            Assert.Equal(2, collection.LookAhead(1).Take(errorAfter - 1).Count());
-            Assert.Equal(1, collection.LookAhead(errorAfter - 1).Take(1).Count());
+            Assert.AreEqual(2, collection.LookAhead(1).Take(errorAfter - 1).Count());
+            Assert.AreEqual(1, collection.LookAhead(errorAfter - 1).Take(1).Count());
             Assert.Throws<InvalidOperationException>(() => collection.LookAhead(1).Take(errorAfter).ToArray());
             Assert.Throws<InvalidOperationException>(() => collection.LookAhead(errorAfter).Take(1).ToArray());
         }
 
-        [Fact]
+        [Test]
         public void LookAheadPredictableTimeComplexity()
         {
             int lastSeenNumber = -1;
@@ -281,7 +281,7 @@ namespace Kirkin.Tests.Linq
 
             collection.LookAhead().Take(1).ToArray();
 
-            Assert.Equal(2, lastSeenNumber);
+            Assert.AreEqual(2, lastSeenNumber);
 
             // In the below tests the consumer finishes too
             // quickly causing the producer to break out early,
@@ -300,13 +300,13 @@ namespace Kirkin.Tests.Linq
                 Thread.Sleep(20);
             }
 
-            Assert.Equal(5, lastSeenNumber);
+            Assert.AreEqual(5, lastSeenNumber);
 
             foreach (var _ in collection.LookAhead(3).Take(3)) {
                 Thread.Sleep(20);
             }
 
-            Assert.Equal(6, lastSeenNumber);
+            Assert.AreEqual(6, lastSeenNumber);
         }
 
         [DebuggerStepThrough]

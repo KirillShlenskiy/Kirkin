@@ -2,13 +2,14 @@
 
 using Kirkin.Validation;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Validation
 {
+    [TestFixture]
     public class ValidatorTests
     {
-        [Fact]
+        [Test]
         public void ArgumentValidation()
         {
             // Constructors.
@@ -24,7 +25,7 @@ namespace Kirkin.Tests.Validation
             Assert.Throws<ArgumentNullException>(() => Validator.Create(() => true).WithSideEffect((SideEffectDelegate)null));
         }
 
-        [Fact]
+        [Test]
         public void ManualValidator()
         {
             // Unspecified initial state.
@@ -33,29 +34,31 @@ namespace Kirkin.Tests.Validation
 
             validator.Validated += (s, e) => validateCount++;
 
-            Assert.Throws<InvalidOperationException>(() => validator.IsValid);
+            bool ignored;
+
+            Assert.Throws<InvalidOperationException>(() => ignored = validator.IsValid);
             Assert.Throws<InvalidOperationException>(() => validator.Validate());
 
             validator.IsValid = true; // Will raise.
 
             Assert.True(validator.IsValid);
-            Assert.Equal(1, validateCount);
+            Assert.AreEqual(1, validateCount);
 
             Assert.True(validator.Validate());
-            Assert.Equal(2, validateCount);
+            Assert.AreEqual(2, validateCount);
 
             validator.IsValid = false; // Will raise.
 
             Assert.False(validator.IsValid);
-            Assert.Equal(3, validateCount);
+            Assert.AreEqual(3, validateCount);
 
             validator.IsValid = false; // Will not raise.
 
             Assert.False(validator.IsValid);
-            Assert.Equal(3, validateCount);
+            Assert.AreEqual(3, validateCount);
 
             Assert.False(validator.Validate());
-            Assert.Equal(4, validateCount);
+            Assert.AreEqual(4, validateCount);
 
             // Specified initial state.
             validator = new ManualValidator(true);
@@ -66,10 +69,10 @@ namespace Kirkin.Tests.Validation
 
             validator.IsValid = true; // Will not raise.
 
-            Assert.Equal(4, validateCount);
+            Assert.AreEqual(4, validateCount);
         }
 
-        [Fact]
+        [Test]
         public void Multi()
         {
             var validator1 = Validator.Create(true);
@@ -99,37 +102,37 @@ namespace Kirkin.Tests.Validation
             // First Validate (via multi).
             Assert.True(multi.Validate());
             Assert.True(multiResult);
-            Assert.Equal(1, multiValidatedCount);
-            Assert.Equal(multiValidatedCount, validator1ValidatedCount);
-            Assert.Equal(multiValidatedCount, validator2ValidatedCount);
+            Assert.AreEqual(1, multiValidatedCount);
+            Assert.AreEqual(multiValidatedCount, validator1ValidatedCount);
+            Assert.AreEqual(multiValidatedCount, validator2ValidatedCount);
 
             // Second Validate (via validator1).
             Assert.True(validator1.Validate());
             Assert.True(multiResult);
-            Assert.Equal(2, multiValidatedCount);
-            Assert.Equal(multiValidatedCount, validator1ValidatedCount);
-            Assert.Equal(multiValidatedCount, validator2ValidatedCount);
+            Assert.AreEqual(2, multiValidatedCount);
+            Assert.AreEqual(multiValidatedCount, validator1ValidatedCount);
+            Assert.AreEqual(multiValidatedCount, validator2ValidatedCount);
 
             //// Third Validate (via validator1, validator2 result overridden).
             //validator2.Validating += (s, e) => e.IsValid = false; // Override.
 
             //Assert.True(validator1.Validate());
             //Assert.False(multiResult); // Due to validator2 isValid = false.
-            //Assert.Equal(3, multiValidatedCount);
-            //Assert.Equal(multiValidatedCount, validator1ValidatedCount);
-            //Assert.Equal(multiValidatedCount, validator2ValidatedCount);
+            //Assert.AreEqual(3, multiValidatedCount);
+            //Assert.AreEqual(multiValidatedCount, validator1ValidatedCount);
+            //Assert.AreEqual(multiValidatedCount, validator2ValidatedCount);
 
             //// Multi overriding.
             //multi.Validating += (s, e) => e.IsValid = true;
 
             //Assert.True(multi.Validate());
             //Assert.True(multiResult);
-            //Assert.Equal(4, multiValidatedCount);
-            //Assert.Equal(multiValidatedCount, validator1ValidatedCount);
-            //Assert.Equal(multiValidatedCount, validator2ValidatedCount);
+            //Assert.AreEqual(4, multiValidatedCount);
+            //Assert.AreEqual(multiValidatedCount, validator1ValidatedCount);
+            //Assert.AreEqual(multiValidatedCount, validator2ValidatedCount);
         }
 
-        [Fact]
+        [Test]
         public void ProxyEventForwardingOnByDefault()
         {
             IValidator validator = Validator.Create(() => true);
@@ -138,14 +141,14 @@ namespace Kirkin.Tests.Validation
             Assert.True(proxy.ForwardEvents);
         }
 
-        [Fact]
+        [Test]
         public void WithExtraValidation()
         {
             IValidator validator1 = Validator.Create(() => true);
             Assert.True(validator1.Validate());
 
             IValidator validator2 = validator1.WithExtraValidation(() => true);
-            Assert.NotSame(validator1, validator2); // Ensure no mutation.
+            Assert.AreNotSame(validator1, validator2); // Ensure no mutation.
             Assert.True(validator1.Validate());
             Assert.True(validator2.Validate());
 
@@ -155,7 +158,7 @@ namespace Kirkin.Tests.Validation
             Assert.False(validator3.Validate());
         }
 
-        [Fact]
+        [Test]
         public void WithExtraValidationAndSideEffectCascade()
         {
             int validateCount = 0;
@@ -163,7 +166,7 @@ namespace Kirkin.Tests.Validation
             var validator2 = (IValidatorProxy)validator1.WithExtraValidation(() => true).WithSideEffect(_ => validateCount++);
 
             validator1.Validate();
-            Assert.Equal(1, validateCount);
+            Assert.AreEqual(1, validateCount);
 
             IValidator validator3 = validator1.WithExtraValidation(() => true).WithSideEffect(new ApplyOnlyWhenValidSideEffect(() => validateCount++));
 
@@ -171,19 +174,19 @@ namespace Kirkin.Tests.Validation
             // will cause the Validated event on validator1, which will trigger Validated
             // on validator2, as well as the side effect on validator2.
             validator3.Validate();
-            Assert.Equal(3, validateCount); // Incremented by 2.
+            Assert.AreEqual(3, validateCount); // Incremented by 2.
 
             // Turn off validator2 side effect by disabling cascading validation.
             validator2.ForwardEvents = false;
 
             validator3.Validate();
-            Assert.Equal(4, validateCount); // Incremented by 1;
+            Assert.AreEqual(4, validateCount); // Incremented by 1;
 
             // Override.
             validator1.IsValid = false; // Raises Validated event.
 
             validator3.Validate();
-            Assert.Equal(4, validateCount); // Incremented by 0.
+            Assert.AreEqual(4, validateCount); // Incremented by 0.
         }
 
         sealed class ApplyOnlyWhenValidSideEffect : ISideEffect

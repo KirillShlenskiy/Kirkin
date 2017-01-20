@@ -3,28 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-using Xunit;
-using Xunit.Sdk;
+using NUnit.Framework;
 
 namespace Kirkin.Tests
 {
     public class XunitCollectionAssertEnumeratorTests
     {
-        [Fact]
+        [Test]
         public void EnumeratorDisposedOnAssertEmpty()
         {
             Enumerator<int> enumerator = new Enumerator<int>(Enumerable.Empty<int>());
 
-            Assert.Empty(enumerator);
+            Assert.IsEmpty(enumerator);
             Assert.True(enumerator.IsDisposed); // Fails.
         }
 
-        [Fact]
+        [Test]
         public void EnumeratorDisposedOnAssertNotEmpty()
         {
             Enumerator<int> enumerator = new Enumerator<int>(Enumerable.Range(0, 1));
 
-            Assert.NotEmpty(enumerator);
+            Assert.IsNotEmpty(enumerator);
             Assert.True(enumerator.IsDisposed); // Fails.
         }
 
@@ -88,52 +87,52 @@ namespace Kirkin.Tests
             }
         }
 
-        [Fact]
-        public void EnumeratorDisposedOnAssertEmptyFix()
-        {
-            Enumerator<int> enumerator = new Enumerator<int>(Enumerable.Empty<int>());
+        //[Test]
+        //public void EnumeratorDisposedOnAssertEmptyFix()
+        //{
+        //    Enumerator<int> enumerator = new Enumerator<int>(Enumerable.Empty<int>());
 
-            Empty(enumerator);
-            Assert.True(enumerator.IsDisposed);
-        }
+        //    Empty(enumerator);
+        //    Assert.True(enumerator.IsDisposed);
+        //}
 
-        [Fact]
-        public void EnumeratorDisposedOnAssertNotEmptyFix()
-        {
-            Enumerator<int> enumerator = new Enumerator<int>(Enumerable.Range(0, 1));
+        //[Test]
+        //public void EnumeratorDisposedOnAssertNotEmptyFix()
+        //{
+        //    Enumerator<int> enumerator = new Enumerator<int>(Enumerable.Range(0, 1));
 
-            NotEmpty(enumerator);
-            Assert.True(enumerator.IsDisposed);
-        }
+        //    NotEmpty(enumerator);
+        //    Assert.True(enumerator.IsDisposed);
+        //}
 
-        public static void Empty(IEnumerable collection)
-        {
-            IEnumerator enumerator = collection.GetEnumerator();
+        //public static void Empty(IEnumerable collection)
+        //{
+        //    IEnumerator enumerator = collection.GetEnumerator();
 
-            try
-            {
-                if (enumerator.MoveNext())
-                    throw new EmptyException();
-            }
-            finally
-            {
-                (enumerator as IDisposable)?.Dispose();
-            }
-        }
+        //    try
+        //    {
+        //        if (enumerator.MoveNext())
+        //            throw new EmptyException();
+        //    }
+        //    finally
+        //    {
+        //        (enumerator as IDisposable)?.Dispose();
+        //    }
+        //}
 
-        public static void NotEmpty(IEnumerable collection)
-        {
-            IEnumerator enumerator = collection.GetEnumerator();
+        //public static void NotEmpty(IEnumerable collection)
+        //{
+        //    IEnumerator enumerator = collection.GetEnumerator();
 
-            try
-            {
-                if (!enumerator.MoveNext())
-                    throw new NotEmptyException();
-            }
-            finally
-            {
-                (enumerator as IDisposable)?.Dispose();
-            }
-        }
+        //    try
+        //    {
+        //        if (!enumerator.MoveNext())
+        //            throw new NotEmptyException();
+        //    }
+        //    finally
+        //    {
+        //        (enumerator as IDisposable)?.Dispose();
+        //    }
+        //}
     }
 }

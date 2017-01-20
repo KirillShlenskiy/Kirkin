@@ -9,22 +9,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Kirkin.Logging;
-
-using Xunit;
-using Xunit.Abstractions;
+using NUnit.Framework;
 
 namespace Kirkin.Tests
 {
     public class Scratchpad
     {
-        private readonly Logger Output;
 
-        public Scratchpad(ITestOutputHelper output)
-        {
-            Output = Logger
-                .Create(output.WriteLine)
-                .WithFormatters(EntryFormatter.TimestampNonEmptyEntries());
-        }
     }
 }

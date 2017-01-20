@@ -3,21 +3,13 @@
 using Kirkin.Tests.Benchmarking;
 using Kirkin.Mapping;
 
-using Xunit;
-using Xunit.Abstractions;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Mapping
 {
     public sealed class ConcreteVsInterfaceMapperBenchmarks
     {
-        private readonly ITestOutputHelper Output;
-
-        public ConcreteVsInterfaceMapperBenchmarks(ITestOutputHelper output)
-        {
-            Output = output;
-        }
-
-        //[Fact]
+        //[Test]
         public void RunBenchmarks()
         {
             string report = Benchmarks.Run<MapperBenchmarks>();

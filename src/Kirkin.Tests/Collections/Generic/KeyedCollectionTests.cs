@@ -1,13 +1,13 @@
 ﻿using Kirkin.Collections.Concurrent;
 using Kirkin.Collections.Generic;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Collections.Generic
 {
     public class KeyedCollectionTests
     {
-        [Fact]
+        [Test]
         public void KeyedCollectionPerformance()
         {
             var table = new KeyedCollection<int, int>(i => i);
@@ -22,7 +22,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void ConcurrentKeyedCollectionPerformance()
         {
             var table = new ConcurrentKeyedCollection<int, int>(i => i);

@@ -3,13 +3,13 @@
 using Kirkin.ChangeTracking;
 using Kirkin.Reflection;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.ChangeTracking
 {
     public class ChangeTrackerTests
     {
-        [Fact]
+        [Test]
         public void DetectChanges()
         {
             Dummy dummy = new Dummy();
@@ -21,12 +21,12 @@ namespace Kirkin.Tests.ChangeTracking
 
             var changes = tracker.DetectChanges().ToList();
 
-            Assert.Equal(1, changes.Count);
-            Assert.Equal(0, changes[0].OriginalValue);
-            Assert.Equal(1, changes[0].CurrentValue);
+            Assert.AreEqual(1, changes.Count);
+            Assert.AreEqual(0, changes[0].OriginalValue);
+            Assert.AreEqual(1, changes[0].CurrentValue);
         }
 
-        [Fact]
+        [Test]
         public void Reset()
         {
             Dummy dummy = new Dummy();
@@ -36,19 +36,19 @@ namespace Kirkin.Tests.ChangeTracking
 
             dummy.ID = 1;
 
-            Assert.Equal(1, tracker.DetectChanges().Count());
+            Assert.AreEqual(1, tracker.DetectChanges().Count());
 
             tracker.Reset();
 
-            Assert.Equal(0, tracker.DetectChanges().Count());
+            Assert.AreEqual(0, tracker.DetectChanges().Count());
 
             dummy.ID = 0;
             dummy.Value = "Zzz";
 
-            Assert.Equal(2, tracker.DetectChanges().Count());
+            Assert.AreEqual(2, tracker.DetectChanges().Count());
         }
 
-        [Fact]
+        [Test]
         public void DetectChangesBenchmark()
         {
             Dummy dummy = new Dummy();
@@ -62,7 +62,7 @@ namespace Kirkin.Tests.ChangeTracking
             }
         }
 
-        [Fact]
+        [Test]
         public void ConstructorBenchmark()
         {
             Dummy dummy = new Dummy();
@@ -73,7 +73,7 @@ namespace Kirkin.Tests.ChangeTracking
             }
         }
 
-        [Fact]
+        [Test]
         public void CustomPropertyList()
         {
             Dummy dummy = new Dummy();
@@ -90,8 +90,8 @@ namespace Kirkin.Tests.ChangeTracking
 
             dummy.ID = 1;
 
-            Assert.Equal(1, tracker.DetectChanges().Count());
-            Assert.Equal("ID", tracker.DetectChanges().ElementAt(0).Property.Name);
+            Assert.AreEqual(1, tracker.DetectChanges().Count());
+            Assert.AreEqual("ID", tracker.DetectChanges().ElementAt(0).Property.Name);
         }
 
         private class Dummy

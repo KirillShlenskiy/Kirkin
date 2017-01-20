@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Decisions
 {
     public class BestMatchTests
     {
-        [Fact]
+        [Test]
         public void Matching()
         {
             string[] left = { "zzz", "abc", "def", "abf" };
@@ -29,7 +29,7 @@ namespace Kirkin.Tests.Decisions
                 })
                 .ToArray();
 
-            Assert.Equal(3, bestMatches.Length);
+            Assert.AreEqual(3, bestMatches.Length);
         }
 
         sealed class Match

@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 using Kirkin.Linq.Expressions;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Experimental
 {
@@ -20,7 +20,7 @@ namespace Kirkin.Tests.Experimental
 
         const int ITERATIONS = 1000000;
 
-        [Fact]
+        [Test]
         public void RawBenchmark()
         {
             for (int i = 0; i < ITERATIONS; i++)
@@ -29,7 +29,7 @@ namespace Kirkin.Tests.Experimental
             }
         }
 
-        [Fact]
+        [Test]
         public void ExpressionCacheGetOrAddBenchmark()
         {
             var cache = new ExpressionCache<Dummy>();
@@ -40,7 +40,7 @@ namespace Kirkin.Tests.Experimental
             }
         }
 
-        [Fact]
+        [Test]
         public void LocalCacheBenchmark()
         {
             Expression<Func<Dummy, int>> expr = d => d.ID;

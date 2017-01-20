@@ -2,7 +2,7 @@
 
 using Kirkin.Reflection;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Reflection
 {
@@ -15,7 +15,7 @@ namespace Kirkin.Tests.Reflection
                 .StaticMethod(() => ContainerType.Process(123))
                 .CreateDelegate<Func<string, string>>();
 
-            Assert.Equal("zzz", func("zzz"));
+            Assert.AreEqual("zzz", func("zzz"));
         }
 
         static class ContainerType

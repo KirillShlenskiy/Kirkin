@@ -2,13 +2,13 @@
 
 using Kirkin.Mapping;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Mapping
 {
     public class ExpressionMemberMappingTests
     {
-        [Fact]
+        [Test]
         public void GenericGetter()
         {
             Member<Dictionary<string, object>> idMember = new ExpressionMember<Dictionary<string, object>, int>("ID", dict => (int)dict["ID"]);
@@ -26,11 +26,11 @@ namespace Kirkin.Tests.Mapping
 
             Dummy d = mapper.Map(values);
 
-            Assert.Equal(123, d.ID);
-            Assert.Equal("Test", d.Value);
+            Assert.AreEqual(123, d.ID);
+            Assert.AreEqual("Test", d.Value);
         }
 
-        [Fact]
+        [Test]
         public void NonGenericGetter()
         {
             Member<Dictionary<string, object>> idMember = new ExpressionMember<Dictionary<string, object>>("ID", dict => (int)dict["ID"]);
@@ -48,11 +48,11 @@ namespace Kirkin.Tests.Mapping
 
             Dummy d = mapper.Map(values);
 
-            Assert.Equal(123, d.ID);
-            Assert.Equal("Test", d.Value);
+            Assert.AreEqual(123, d.ID);
+            Assert.AreEqual("Test", d.Value);
         }
 
-        [Fact]
+        [Test]
         public void DelegateMappingBenchmark()
         {
             Member<Dictionary<string, object>> idMember = DelegateMember.ReadOnly<Dictionary<string, object>, int>("ID", dict => (int)dict["ID"]);
@@ -75,7 +75,7 @@ namespace Kirkin.Tests.Mapping
             }
         }
 
-        [Fact]
+        [Test]
         public void GenericExpressionMappingBenchmark()
         {
             Member<Dictionary<string, object>> idMember = new ExpressionMember<Dictionary<string, object>, int>("ID", dict => (int)dict["ID"]);
@@ -98,7 +98,7 @@ namespace Kirkin.Tests.Mapping
             }
         }
 
-        [Fact]
+        [Test]
         public void NonGenericExpressionMappingBenchmark()
         {
             Member<Dictionary<string, object>> idMember = new ExpressionMember<Dictionary<string, object>>("ID", dict => (int)dict["ID"]);

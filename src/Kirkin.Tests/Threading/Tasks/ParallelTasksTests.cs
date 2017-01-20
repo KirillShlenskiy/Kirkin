@@ -5,25 +5,15 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Kirkin.Logging;
 using Kirkin.Threading.Tasks;
 
-using Xunit;
-using Xunit.Abstractions;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Threading.Tasks
 {
+    [TestFixture]
     public class ParallelTasksTests
     {
-        private readonly Logger Output;
-
-        public ParallelTasksTests(ITestOutputHelper output)
-        {
-            Output = Logger
-                .Create(output.WriteLine)
-                .WithFormatters(EntryFormatter.TimestampNonEmptyEntries("HH:mm:ss.fff"));
-        }
-
         private IEnumerable<Func<Task<TimeSpan>>> EnumerateFactories()
         {
             Output.Log("Yielding task 1 (100 ms).");
@@ -44,7 +34,7 @@ namespace Kirkin.Tests.Threading.Tasks
             return duration;
         }
 
-        [Fact]
+        [Test]
         public async Task ParallelInvokeVoid()
         {
             await ParallelTasks.InvokeAsync(EnumerateFactories().Cast<Func<Task>>(), 3).ConfigureAwait(false);
@@ -64,16 +54,16 @@ namespace Kirkin.Tests.Threading.Tasks
             }
         }
 
-        [Fact]
+        [Test]
         public async Task ParallelInvokeOrderedResults()
         {
             TimeSpan[] results = await ParallelTasks.InvokeAsync(EnumerateFactories(), 3).ConfigureAwait(false);
-            Assert.Equal(new[] { 100, 600, 300, 650 }, results.Select(r => (int)r.TotalMilliseconds));
+            Assert.AreEqual(new[] { 100, 600, 300, 650 }, results.Select(r => (int)r.TotalMilliseconds));
 
             Output.Log("Done.");
         }
 
-        [Fact]
+        [Test]
         public async Task ParallelForAsync()
         {
             List<TimeSpan> results = new List<TimeSpan>();
@@ -81,20 +71,20 @@ namespace Kirkin.Tests.Threading.Tasks
 
             await ParallelTasks.ForAsync(0, factories.Length, i => factories[i](), async completed => results.Add(await completed));
 
-            Assert.Equal(new[] { 100, 300, 600, 650 }, results.Select(r => (int)r.TotalMilliseconds));
+            Assert.AreEqual(new[] { 100, 300, 600, 650 }, results.Select(r => (int)r.TotalMilliseconds));
         }
 
-        [Fact]
+        [Test]
         public async Task ParallelForEachAsync()
         {
             List<TimeSpan> results = new List<TimeSpan>();
 
             await ParallelTasks.ForEachAsync(EnumerateFactories(), f => f(), async completed => results.Add(await completed));
 
-            Assert.Equal(new[] { 100, 300, 600, 650 }, results.Select(r => (int)r.TotalMilliseconds));
+            Assert.AreEqual(new[] { 100, 300, 600, 650 }, results.Select(r => (int)r.TotalMilliseconds));
         }
 
-        [Fact]
+        [Test]
         public async Task ParallelForEachAsyncLimited1()
         {
             List<TimeSpan> results = new List<TimeSpan>();
@@ -102,10 +92,10 @@ namespace Kirkin.Tests.Threading.Tasks
 
             await ParallelTasks.ForEachAsync(EnumerateFactories(), options, f => f(), async completed => results.Add(await completed));
 
-            Assert.Equal(new[] { 100, 600, 300, 650 }, results.Select(r => (int)r.TotalMilliseconds));
+            Assert.AreEqual(new[] { 100, 600, 300, 650 }, results.Select(r => (int)r.TotalMilliseconds));
         }
 
-        [Fact]
+        [Test]
         public async Task ParallelForEachAsyncLimited2()
         {
             List<TimeSpan> results = new List<TimeSpan>();
@@ -113,35 +103,35 @@ namespace Kirkin.Tests.Threading.Tasks
 
             await ParallelTasks.ForEachAsync(EnumerateFactories(), options, f => f(), async completed => results.Add(await completed));
 
-            Assert.Equal(new[] { 100, 300, 600, 650 }, results.Select(r => (int)r.TotalMilliseconds));
+            Assert.AreEqual(new[] { 100, 300, 600, 650 }, results.Select(r => (int)r.TotalMilliseconds));
         }
 
-        [Fact]
-        public async Task ParallelForEachAsyncCancellation()
+        [Test]
+        public void ParallelForEachAsyncCancellation()
         {
             List<TimeSpan> results = new List<TimeSpan>();
             ParallelTaskOptions options = new ParallelTaskOptions { CancellationToken = new CancellationTokenSource(0).Token };
 
-            await Assert.ThrowsAsync<OperationCanceledException>(() =>
+            Assert.ThrowsAsync<OperationCanceledException>(() =>
                 ParallelTasks.ForEachAsync(EnumerateFactories(), options, f => f(), async completed => results.Add(await completed))
             );
 
-            Assert.Equal(0, results.Count);
+            Assert.AreEqual(0, results.Count);
 
             options = new ParallelTaskOptions {
                 CancellationToken = new CancellationTokenSource(250).Token,
                 MaxDegreeOfParallelism = 2
             };
 
-            await Assert.ThrowsAsync<OperationCanceledException>(() =>
+            Assert.ThrowsAsync<OperationCanceledException>(() =>
                 ParallelTasks.ForEachAsync(EnumerateFactories(), options, f => f(), async completed => results.Add(await completed))
             );
 
-            Assert.Equal(new[] { 100, 300, 600 }, results.Select(r => (int)r.TotalMilliseconds));
+            Assert.AreEqual(new[] { 100, 300, 600 }, results.Select(r => (int)r.TotalMilliseconds));
         }
 
-        [Fact]
-        public async Task ParallelForEachFaultedWaitsUntilSafePoint()
+        [Test]
+        public void ParallelForEachFaultedWaitsUntilSafePoint()
         {
             int shortTasksStarted = 0;
             int longTasksStarted = 0;
@@ -165,13 +155,13 @@ namespace Kirkin.Tests.Threading.Tasks
             ParallelTaskOptions options = new ParallelTaskOptions { MaxDegreeOfParallelism = 2 };
             Stopwatch sw = Stopwatch.StartNew();
 
-            await Assert.ThrowsAsync<ShortException>(
+            Assert.ThrowsAsync<ShortException>(
                 () => ParallelTasks.ForEachAsync(new[] { startShort, startLong, startShort }, options, f => f())
             );
 
             Assert.True(sw.ElapsedMilliseconds >= 100, "1: Long expected to complete before throw.");
-            Assert.Equal(1, shortTasksStarted);
-            Assert.Equal(1, longTasksStarted);
+            Assert.AreEqual(1, shortTasksStarted);
+            Assert.AreEqual(1, longTasksStarted);
 
             Func<Task> throwSynchronously = () =>
             {
@@ -180,19 +170,19 @@ namespace Kirkin.Tests.Threading.Tasks
             };
 
             // Ensure tasks are not abandoned even on immediate (synchronous) exception in the factory delegate.
-            await Assert.ThrowsAsync<LongException>(
+            Assert.ThrowsAsync<LongException>(
                 () => ParallelTasks.ForEachAsync(new[] { startLong, throwSynchronously, startShort }, options, f => f())
             );
 
-            Assert.Equal(1, shortTasksStarted);
-            Assert.Equal(2, longTasksStarted);
-            Assert.Equal(1, synchronousTasksStarted);
+            Assert.AreEqual(1, shortTasksStarted);
+            Assert.AreEqual(2, longTasksStarted);
+            Assert.AreEqual(1, synchronousTasksStarted);
 
             // Ensure continuations fire after async exception in onCompleted.
             int onCompletedCount = 0;
             options = new ParallelTaskOptions { MaxDegreeOfParallelism = 4 };
 
-            await Assert.ThrowsAsync<ShortException>(
+            Assert.ThrowsAsync<ShortException>(
                 () => ParallelTasks.ForEachAsync(new[] { startShort, startLong, startLong, startLong, startShort }, options, f => f(), async completed =>
                 {
                     Interlocked.Increment(ref onCompletedCount);
@@ -201,12 +191,12 @@ namespace Kirkin.Tests.Threading.Tasks
                 })
             );
 
-            Assert.Equal(2, shortTasksStarted);
-            Assert.Equal(5, longTasksStarted);
-            Assert.Equal(4, onCompletedCount);
+            Assert.AreEqual(2, shortTasksStarted);
+            Assert.AreEqual(5, longTasksStarted);
+            Assert.AreEqual(4, onCompletedCount);
 
             // Ensure continuations fire even after synchronous exception in onCompleted.
-            await Assert.ThrowsAsync<ImmediateException>(
+            Assert.ThrowsAsync<ImmediateException>(
                 () => ParallelTasks.ForEachAsync(new[] { startShort, startLong, startLong, startLong, startShort }, options, f => f(), completed =>
                 {
                     Interlocked.Increment(ref onCompletedCount);
@@ -214,9 +204,9 @@ namespace Kirkin.Tests.Threading.Tasks
                 })
             );
 
-            Assert.Equal(3, shortTasksStarted);
-            Assert.Equal(8, longTasksStarted);
-            Assert.Equal(8, onCompletedCount);
+            Assert.AreEqual(3, shortTasksStarted);
+            Assert.AreEqual(8, longTasksStarted);
+            Assert.AreEqual(8, onCompletedCount);
         }
 
         sealed class ShortException : InvalidOperationException

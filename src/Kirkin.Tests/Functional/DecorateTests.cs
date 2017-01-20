@@ -2,13 +2,13 @@
 
 using Kirkin.Functional;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Functional
 {
     public class DecorateTests
     {
-        [Fact]
+        [Test]
         public void Api()
         {
             Func<int, int> get = i => i;

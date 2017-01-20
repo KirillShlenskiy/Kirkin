@@ -2,7 +2,7 @@
 
 using Kirkin.ValueConversion;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.ValueConversion
 {
@@ -13,14 +13,14 @@ namespace Kirkin.Tests.ValueConversion
             ValueConverter.Default.Convert<int>(null);
         }
 
-        [Fact]
+        [Test]
         public void BasicConversion()
         {
-            Assert.Equal(123, ValueConverter.Default.Convert<int>("123"));
-            Assert.Equal(123, ValueConverter.Default.Convert("123", typeof(int)));
+            Assert.AreEqual(123, ValueConverter.Default.Convert<int>("123"));
+            Assert.AreEqual(123, ValueConverter.Default.Convert("123", typeof(int)));
         }
 
-        [Fact]
+        [Test]
         public void PerfValue()
         {
             object value = 123;
@@ -30,7 +30,7 @@ namespace Kirkin.Tests.ValueConversion
             }
         }
 
-        [Fact]
+        [Test]
         public void PerfValueNonGeneric()
         {
             object value = 123;
@@ -40,7 +40,7 @@ namespace Kirkin.Tests.ValueConversion
             }
         }
 
-        [Fact]
+        [Test]
         public void PerfValueStatic()
         {
             object value = 123;
@@ -50,7 +50,7 @@ namespace Kirkin.Tests.ValueConversion
             }
         }
 
-        [Fact]
+        [Test]
         public void PerfNull()
         {
             object value = null;
@@ -60,7 +60,7 @@ namespace Kirkin.Tests.ValueConversion
             }
         }
 
-        [Fact]
+        [Test]
         public void PerfDbNull()
         {
             object value = DBNull.Value;

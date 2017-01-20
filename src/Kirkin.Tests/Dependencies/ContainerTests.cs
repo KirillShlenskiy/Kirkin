@@ -3,21 +3,21 @@
 using Kirkin.Dependencies;
 using Kirkin.Functional;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Dependencies
 {
     public class ContainerTests
     {
-        [Fact]
+        [Test]
         public void BasicResolution()
         {
             Container container = new Container();
 
             container.RegisterInstance(123);
 
-            Assert.Equal(123, container.Resolve<int>());
-            Assert.Equal(123, container.Resolve(typeof(int)));
+            Assert.AreEqual(123, container.Resolve<int>());
+            Assert.AreEqual(123, container.Resolve(typeof(int)));
 
             container.Deregister<int>();
 
@@ -31,9 +31,9 @@ namespace Kirkin.Tests.Dependencies
                 return 123;
             });
 
-            Assert.Equal(123, container.Resolve<int>());
-            Assert.Equal(123, container.Resolve(typeof(int)));
-            Assert.Equal(2, invokeCount);
+            Assert.AreEqual(123, container.Resolve<int>());
+            Assert.AreEqual(123, container.Resolve(typeof(int)));
+            Assert.AreEqual(2, invokeCount);
 
             invokeCount = 0;
 
@@ -43,9 +43,9 @@ namespace Kirkin.Tests.Dependencies
                 return 123;
             });
 
-            Assert.Equal(123, container.Resolve<int>());
-            Assert.Equal(123, container.Resolve(typeof(int)));
-            Assert.Equal(1, invokeCount);
+            Assert.AreEqual(123, container.Resolve<int>());
+            Assert.AreEqual(123, container.Resolve(typeof(int)));
+            Assert.AreEqual(1, invokeCount);
 
             Assert.Throws<ResolutionFailedException>(() => container.Resolve<IDisposable>());
             Assert.Throws<DisposableRegistrationException>(() => container.RegisterType<IDisposable, Dispo>());
@@ -67,7 +67,7 @@ namespace Kirkin.Tests.Dependencies
             }
         }
 
-        [Fact]
+        [Test]
         public void MultiResolve()
         {
             using (Container container = new Container())
@@ -81,8 +81,8 @@ namespace Kirkin.Tests.Dependencies
 
                 Dummy dummy = container.Resolve<Dummy>();
 
-                Assert.Equal(123, dummy.ID);
-                Assert.Equal("blah", dummy.Value);
+                Assert.AreEqual(123, dummy.ID);
+                Assert.AreEqual("blah", dummy.Value);
 
                 container.Deregister(typeof(Dummy));
 
@@ -92,12 +92,12 @@ namespace Kirkin.Tests.Dependencies
 
                 dummy = container.Resolve<Dummy>();
 
-                Assert.Equal(123, dummy.ID);
-                Assert.Equal("blah", dummy.Value);
+                Assert.AreEqual(123, dummy.ID);
+                Assert.AreEqual("blah", dummy.Value);
             }
         }
 
-        [Fact]
+        [Test]
         public void NestedScope()
         {
             bool disposed = false;
@@ -132,7 +132,7 @@ namespace Kirkin.Tests.Dependencies
             Assert.True(disposed);
         }
 
-        [Fact]
+        [Test]
         public void DisposeOnDeregistration()
         {
             bool disposed = false;
@@ -154,7 +154,7 @@ namespace Kirkin.Tests.Dependencies
             }
         }
 
-        [Fact]
+        [Test]
         public void DoNotResolveDerivedTypes()
         {
             using (Container container = new Container())

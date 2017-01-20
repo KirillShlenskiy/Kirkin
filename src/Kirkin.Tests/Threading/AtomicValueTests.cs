@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 using Kirkin.Threading;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Threading
 {
@@ -12,7 +12,7 @@ namespace Kirkin.Tests.Threading
         /// <summary>
         /// This is here to ensure our Version does not require overflow checks.
         /// </summary>
-        [Fact]
+        [Test]
         public void OverflowOddness()
         {
             Assert.True(int.MaxValue % 2 != 0); // Odd.
@@ -27,7 +27,7 @@ namespace Kirkin.Tests.Threading
 
             Assert.True(i % 2 != 0); // Odd.
             Assert.True(Interlocked.Increment(ref i) % 2 == 0); // Even.
-            Assert.Equal(0, i);
+            Assert.AreEqual(0, i);
         }
 
         // 96-bit struct ensures.
@@ -39,7 +39,7 @@ namespace Kirkin.Tests.Threading
             public int C;
         }
 
-        [Fact]
+        [Test]
         public void AtomicSucceeds()
         {
             Atomic<LargeStruct> atomic = new Atomic<LargeStruct>();
@@ -59,7 +59,7 @@ namespace Kirkin.Tests.Threading
             }
         }
 
-        [Fact]
+        [Test]
         public void NonAtomicFails()
         {
             NonAtomic<LargeStruct> nonAtomic = new NonAtomic<LargeStruct>();
@@ -83,7 +83,7 @@ namespace Kirkin.Tests.Threading
             Assert.True(false, "Got to the end without a torn read.");
         }
 
-        [Fact]
+        [Test]
         public void NonAtomicPerf()
         {
             NonAtomic<LargeStruct> nonAtomic = new NonAtomic<LargeStruct>();

@@ -1,30 +1,30 @@
 ﻿using System;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests
 {
     public class StringCompareBenchmarks
     {
-        [Fact]
+        [Test]
         public void ComparisonInvariantCulture()
         {
             Comparison(StringComparison.InvariantCulture);
         }
 
-        [Fact]
+        [Test]
         public void ComparisonInvariantCultureIgnoreCase()
         {
             Comparison(StringComparison.InvariantCultureIgnoreCase);
         }
 
-        [Fact]
+        [Test]
         public void ComparisonOrdinal()
         {
             Comparison(StringComparison.Ordinal);
         }
 
-        [Fact]
+        [Test]
         public void ComparisonOrdinalIgnoreCase()
         {
             Comparison(StringComparison.OrdinalIgnoreCase);
@@ -41,25 +41,25 @@ namespace Kirkin.Tests
             }
         }
 
-        [Fact]
+        [Test]
         public void ComparerInvariantCulture()
         {
             Comparer(StringComparer.InvariantCulture);
         }
 
-        [Fact]
+        [Test]
         public void ComparerInvariantCultureIgnoreCase()
         {
             Comparer(StringComparer.InvariantCultureIgnoreCase);
         }
 
-        [Fact]
+        [Test]
         public void ComparerOrdinal()
         {
             Comparer(StringComparer.Ordinal);
         }
 
-        [Fact]
+        [Test]
         public void ComparerOrdinalIgnoreCase()
         {
             Comparer(StringComparer.OrdinalIgnoreCase);

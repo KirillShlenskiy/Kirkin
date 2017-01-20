@@ -1,12 +1,12 @@
 ﻿using Kirkin.Functional;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Functional
 {
     public class HFuncTests
     {
-        [Fact]
+        [Test]
         public void AdvancedCurrying()
         {
             HFunc<object, object, string> concat = s1 => s2 => $"{s1}{s2}";
@@ -20,7 +20,7 @@ namespace Kirkin.Tests.Functional
 
             string res2 = withoutSuffix(res1)(321); // asd123qwe321.
 
-            Assert.Equal("asd123qwe321", res2);
+            Assert.AreEqual("asd123qwe321", res2);
         }
     }
 }

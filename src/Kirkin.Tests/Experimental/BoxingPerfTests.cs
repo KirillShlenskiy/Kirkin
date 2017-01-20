@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Experimental
 {
@@ -20,7 +20,7 @@ namespace Kirkin.Tests.Experimental
             }
         }
 
-        [Fact]
+        [Test]
         public void StructNoBoxing()
         {
             var disp = new MyDisposableStruct();
@@ -33,7 +33,7 @@ namespace Kirkin.Tests.Experimental
             }
         }
 
-        [Fact]
+        [Test]
         public void StructBoxing()
         {
             var disp = (IDisposable)new MyDisposableStruct();
@@ -46,7 +46,7 @@ namespace Kirkin.Tests.Experimental
             }
         }
 
-        [Fact]
+        [Test]
         public void ClassDirect()
         {
             var disp = new MyDisposableClass();
@@ -59,7 +59,7 @@ namespace Kirkin.Tests.Experimental
             }
         }
 
-        [Fact]
+        [Test]
         public void ClassViaInterface()
         {
             var disp = (IDisposable)new MyDisposableClass();

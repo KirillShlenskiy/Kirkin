@@ -2,13 +2,13 @@
 
 using Kirkin.Collections.Filters;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Collections.Filters
 {
     public class CollectionFilterTests
     {
-        [Fact]
+        [Test]
         public void FilterByProjection()
         {
             string[] input = { "1", "2", "3", "4", "5" };
@@ -18,7 +18,7 @@ namespace Kirkin.Tests.Collections.Filters
                 .FilterByProjection(input, i => int.Parse(i))
                 .ToArray();
 
-            Assert.Equal(new[] { "2", "4" }, result);
+            Assert.AreEqual(new[] { "2", "4" }, result);
         }
     }
 }

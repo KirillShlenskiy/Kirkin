@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Experimental
 {
@@ -11,12 +11,12 @@ namespace Kirkin.Tests.Experimental
         const int Iterations = 100000;
 
         [Theory]
-        [InlineData(4)]
-        [InlineData(10)]
-        [InlineData(50)]
-        [InlineData(100)]
-        [InlineData(500)]
-        [InlineData(1000)]
+        [TestCase(4)]
+        [TestCase(10)]
+        [TestCase(50)]
+        [TestCase(100)]
+        [TestCase(500)]
+        [TestCase(1000)]
         public void ArrayCopy(int count) // 2nd place.
         {
             int[] array = CreateArray(count);
@@ -32,12 +32,12 @@ namespace Kirkin.Tests.Experimental
         }
 
         [Theory]
-        [InlineData(4)]
-        [InlineData(10)]
-        [InlineData(50)]
-        [InlineData(100)]
-        [InlineData(500)]
-        [InlineData(1000)]
+        [TestCase(4)]
+        [TestCase(10)]
+        [TestCase(50)]
+        [TestCase(100)]
+        [TestCase(500)]
+        [TestCase(1000)]
         public void ArraySegment(int count) // Winner.
         {
             int[] array = CreateArray(count);
@@ -51,12 +51,12 @@ namespace Kirkin.Tests.Experimental
         }
 
         [Theory]
-        [InlineData(4)]
-        [InlineData(10)]
-        [InlineData(50)]
-        [InlineData(100)]
-        [InlineData(500)]
-        [InlineData(1000)]
+        [TestCase(4)]
+        [TestCase(10)]
+        [TestCase(50)]
+        [TestCase(100)]
+        [TestCase(500)]
+        [TestCase(1000)]
         public void LinqSkip(int count) // 3rd (last) place.
         {
             int[] array = CreateArray(count);

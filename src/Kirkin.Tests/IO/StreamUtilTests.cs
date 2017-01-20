@@ -4,43 +4,43 @@ using System.Threading.Tasks;
 
 using Kirkin.IO;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.IO
 {
     public class StreamUtilTests
     {
-        [Fact]
+        [Test]
         public Task ParallelCopyAsync1()
         {
             return ParallelCopyAsyncTest(1);
         }
 
-        [Fact]
+        [Test]
         public Task ParallelCopyAsync2()
         {
             return ParallelCopyAsyncTest(2);
         }
 
-        [Fact]
+        [Test]
         public Task ParallelCopyAsync3()
         {
             return ParallelCopyAsyncTest(3);
         }
 
-        [Fact]
+        [Test]
         public Task ParallelCopyAsync5()
         {
             return ParallelCopyAsyncTest(5);
         }
 
-        [Fact]
+        [Test]
         public Task ParallelCopyAsync8()
         {
             return ParallelCopyAsyncTest(8);
         }
 
-        [Fact]
+        [Test]
         public Task ParallelCopyAsync9()
         {
             return ParallelCopyAsyncTest(9);
@@ -55,7 +55,7 @@ namespace Kirkin.Tests.IO
             {
                 await StreamUtil.ParallelCopyAsync(source, target, bufferSize, CancellationToken.None);
 
-                Assert.Equal(bytes, target.ToArray());
+                Assert.AreEqual(bytes, target.ToArray());
             }
         }
     }

@@ -1,20 +1,12 @@
 ﻿using Kirkin.Utilities;
 
-using Xunit;
-using Xunit.Abstractions;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Utilities
 {
     public class MD5HashTests
     {
-        private ITestOutputHelper Output;
-
-        public MD5HashTests(ITestOutputHelper output)
-        {
-            Output = output;
-        }
-
-        [Fact]
+        [Test]
         public void Simple()
         {
             MD5Hash hash = MD5Hash.ComputeHash("Hello world");

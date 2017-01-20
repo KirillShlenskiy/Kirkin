@@ -3,7 +3,7 @@
 using Kirkin.Mapping;
 using Kirkin.Reflection;
 
-using Xunit;
+using NUnit.Framework;
 
 using Mapper = Kirkin.Mapping.Mapper;
 
@@ -11,7 +11,7 @@ namespace Kirkin.Tests.Mapping
 {
     public class MapperBenchmarks
     {
-        [Fact]
+        [Test]
         public void AutomapperClone()
         {
             MapperConfiguration config = new MapperConfiguration(c => c.CreateMap<Dummy, Dummy>());
@@ -23,7 +23,7 @@ namespace Kirkin.Tests.Mapping
             }
         }
 
-        [Fact]
+        [Test]
         public void KirkinMapperStaticClone()
         {
             Dummy source = new Dummy { ID = 1, Value = "Blah" };
@@ -33,7 +33,7 @@ namespace Kirkin.Tests.Mapping
             }
         }
 
-        [Fact]
+        [Test]
         public void KirkinMapperConfiguredAutomapClone()
         {
             Dummy source = new Dummy { ID = 1, Value = "Blah" };
@@ -44,7 +44,7 @@ namespace Kirkin.Tests.Mapping
             }
         }
 
-        [Fact]
+        [Test]
         public void KirkinMapperConfiguredPropertyListClone()
         {
             Dummy source = new Dummy { ID = 1, Value = "Blah" };

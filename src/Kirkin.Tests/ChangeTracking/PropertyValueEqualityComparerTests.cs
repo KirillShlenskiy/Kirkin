@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using Kirkin.ChangeTracking;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.ChangeTracking
 {
@@ -22,7 +22,7 @@ namespace Kirkin.Tests.ChangeTracking
 
     public class PropertyValueEqualityComparerTests
     {
-        [Fact]
+        [Test]
         public void EqualityComparerBenchmark()
         {
             IEqualityComparer<Dummy> comparer = PropertyValueEqualityComparer<Dummy>.Default;
@@ -48,7 +48,7 @@ namespace Kirkin.Tests.ChangeTracking
             }
         }
 
-        [Fact]
+        [Test]
         public void EqualsBenchmark()
         {
             var comparer = PropertyValueEqualityComparer<Dummy>.Default;
@@ -74,7 +74,7 @@ namespace Kirkin.Tests.ChangeTracking
             }
         }
 
-        [Fact]
+        [Test]
         public void EqualsNullity()
         {
             var comparer = PropertyValueEqualityComparer<Dummy>.Default;
@@ -87,7 +87,7 @@ namespace Kirkin.Tests.ChangeTracking
             Assert.False(comparer.Equals(null, dummy2));
         }
 
-        [Fact]
+        [Test]
         public void EqualsStringComparer()
         {
             var comparer = PropertyValueEqualityComparer<Dummy>.Default;
@@ -99,7 +99,7 @@ namespace Kirkin.Tests.ChangeTracking
             Assert.True(comparer.WithStringComparer(StringComparer.InvariantCultureIgnoreCase).Equals(dummy1, dummy2));
         }
 
-        [Fact]
+        [Test]
         [Obsolete("Suppressing GetHashCode warnings.")]
         public new void GetHashCode()
         {
@@ -108,30 +108,30 @@ namespace Kirkin.Tests.ChangeTracking
 
             dummy.ID = 1;
 
-            Assert.Equal((17 * 23 + dummy.ID.GetHashCode()) * 23, comparer.GetHashCode(dummy));
+            Assert.AreEqual((17 * 23 + dummy.ID.GetHashCode()) * 23, comparer.GetHashCode(dummy));
 
             dummy.Value = "Zzz";
 
-            Assert.Equal((17 * 23 + dummy.ID.GetHashCode()) * 23 + dummy.Value.GetHashCode(), comparer.GetHashCode(dummy));
+            Assert.AreEqual((17 * 23 + dummy.ID.GetHashCode()) * 23 + dummy.Value.GetHashCode(), comparer.GetHashCode(dummy));
 
             comparer = new PropertyValueEqualityComparer<Dummy>(comparer.PropertyList.Without(d => d.Value));
 
-            Assert.Equal(17 * 23 + dummy.ID.GetHashCode(), comparer.GetHashCode(dummy));
+            Assert.AreEqual(17 * 23 + dummy.ID.GetHashCode(), comparer.GetHashCode(dummy));
         }
 
-        [Fact]
+        [Test]
         public void GetHashCodeStringComparer()
         {
             var comparer = PropertyValueEqualityComparer<Dummy>.Default;
             var dummy1 = new Dummy { ID = 1, Value = "zzz" };
             var dummy2 = new Dummy { ID = 1, Value = "ZZZ" };
 
-            Assert.NotEqual(comparer.GetHashCode(dummy1), comparer.GetHashCode(dummy2));
-            Assert.NotEqual(comparer.WithStringComparer(StringComparer.InvariantCulture).GetHashCode(dummy1), comparer.WithStringComparer(StringComparer.InvariantCulture).GetHashCode(dummy2));
-            Assert.Equal(comparer.WithStringComparer(StringComparer.InvariantCultureIgnoreCase).GetHashCode(dummy1), comparer.WithStringComparer(StringComparer.InvariantCultureIgnoreCase).GetHashCode(dummy2));
+            Assert.AreNotEqual(comparer.GetHashCode(dummy1), comparer.GetHashCode(dummy2));
+            Assert.AreNotEqual(comparer.WithStringComparer(StringComparer.InvariantCulture).GetHashCode(dummy1), comparer.WithStringComparer(StringComparer.InvariantCulture).GetHashCode(dummy2));
+            Assert.AreEqual(comparer.WithStringComparer(StringComparer.InvariantCultureIgnoreCase).GetHashCode(dummy1), comparer.WithStringComparer(StringComparer.InvariantCultureIgnoreCase).GetHashCode(dummy2));
         }
 
-        [Fact]
+        [Test]
         public void SameGetHashCodeWhenEquals()
         {
             var comparer = PropertyValueEqualityComparer<Dummy>.Default;

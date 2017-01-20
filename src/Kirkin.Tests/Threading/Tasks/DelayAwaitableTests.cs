@@ -3,13 +3,13 @@ using System.Threading.Tasks;
 
 using Kirkin.Threading.Tasks;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Threading.Tasks
 {
     public class DelayAwaitableTests
     {
-        [Fact]
+        [Test]
         public async Task CompletionSource()
         {
             for (int i = 0; i < 100; i++)
@@ -30,11 +30,11 @@ namespace Kirkin.Tests.Threading.Tasks
                 await new DelayAwaitable(10);
 
                 Assert.True(t1.IsCompleted);
-                Assert.Equal(42, result);
+                Assert.AreEqual(42, result);
             }
         }
 
-        [Fact]
+        [Test]
         public async Task BasicNoDelay()
         {
             for (int i = 0; i < 10; i++)
@@ -43,7 +43,7 @@ namespace Kirkin.Tests.Threading.Tasks
             }
         }
 
-        [Fact]
+        [Test]
         public async Task BasicDelay()
         {
             for (int i = 0; i < 10; i++)

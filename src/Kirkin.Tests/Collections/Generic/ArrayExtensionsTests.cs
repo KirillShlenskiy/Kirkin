@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Collections.Generic
 {
@@ -8,7 +8,7 @@ namespace Kirkin.Tests.Collections.Generic
     {
         static readonly int[] Integers = new int[1000];
 
-        [Fact]
+        [Test]
         public void AggregatePerfSystemLinq()
         {
             int sum = 0;
@@ -19,7 +19,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void AggregatePerfArrayExtensions()
         {
             int sum = 0;
@@ -30,7 +30,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void FirstOrDefaultPerfSystemLinq()
         {
             for (int i = 0; i < 10000000; i++)
@@ -39,7 +39,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void FirstOrDefaultPerfArrayExtensions()
         {
             for (int i = 0; i < 10000000; i++)
@@ -48,7 +48,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void FirstOrDefaultWithPredicatePerfSystemLinq()
         {
             for (int i = 0; i < 100000; i++)
@@ -57,7 +57,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void FirstOrDefaultWithPredicatePerfArrayExtensions()
         {
             for (int i = 0; i < 100000; i++)
@@ -67,7 +67,7 @@ namespace Kirkin.Tests.Collections.Generic
         }
 
         // SelectMany was found to be faster in System.Linq.
-        //[Fact]
+        //[Test]
         //public void SelectManyPerfSystemLinq()
         //{
         //    for (int i = 0; i < 10; i++)
@@ -81,7 +81,7 @@ namespace Kirkin.Tests.Collections.Generic
         //    }
         //}
 
-        [Fact]
+        [Test]
         public void ToArrayPerfSystemLinq()
         {
             for (int i = 0; i < 100000; i++) {
@@ -89,7 +89,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void ToArrayPerfArrayExtensions()
         {
             for (int i = 0; i < 100000; i++) {

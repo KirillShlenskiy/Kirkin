@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 using Kirkin.Caching;
 using Kirkin.Caching.Internal;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Caching
 {
     public class KeyValueCacheTests
     {
-        [Fact]
+        [Test]
         public async Task ShortLivedVolatileCache()
         {
             int count = 0;
@@ -37,35 +37,35 @@ namespace Kirkin.Tests.Caching
             );
 
             Assert.False(cache.IsValid);
-            Assert.Equal(43, cache.Value);
+            Assert.AreEqual(43, cache.Value);
             Assert.True(cache.IsValid);
-            Assert.Equal(1, count);
-            Assert.Equal(43, cache.Value);
+            Assert.AreEqual(1, count);
+            Assert.AreEqual(43, cache.Value);
             Assert.True(cache.IsValid);
-            Assert.Equal(1, count);
+            Assert.AreEqual(1, count);
 
             await Task.Delay(200);
 
             Assert.False(cache.IsValid);
-            Assert.Equal(1, count);
-            Assert.Equal(43, cache.Value);
-            Assert.Equal(2, count);
+            Assert.AreEqual(1, count);
+            Assert.AreEqual(43, cache.Value);
+            Assert.AreEqual(2, count);
 
             //cache.Invalidate(41); // Miss.
 
             //Assert.True(cache.IsValid(42));
-            //Assert.Equal(43, cache.GetValue(42));
-            //Assert.Equal(2, count);
+            //Assert.AreEqual(43, cache.GetValue(42));
+            //Assert.AreEqual(2, count);
 
             cache.Invalidate(); // Hit.
 
             Assert.False(cache.IsValid);
-            Assert.Equal(43, cache.Value);
+            Assert.AreEqual(43, cache.Value);
             Assert.True(cache.IsValid);
-            Assert.Equal(3, count);
+            Assert.AreEqual(3, count);
         }
 
-        [Fact]
+        [Test]
         public async Task ShortLivedCache()
         {
             int count = 0;
@@ -90,32 +90,32 @@ namespace Kirkin.Tests.Caching
             });
 
             Assert.False(cache.IsValid(42));
-            Assert.Equal(43, cache.GetValue(42));
+            Assert.AreEqual(43, cache.GetValue(42));
             Assert.True(cache.IsValid(42));
-            Assert.Equal(1, count);
-            Assert.Equal(43, cache.GetValue(42));
+            Assert.AreEqual(1, count);
+            Assert.AreEqual(43, cache.GetValue(42));
             Assert.True(cache.IsValid(42));
-            Assert.Equal(1, count);
+            Assert.AreEqual(1, count);
 
             await Task.Delay(200);
 
             Assert.False(cache.IsValid(42));
-            Assert.Equal(1, count);
-            Assert.Equal(43, cache.GetValue(42));
-            Assert.Equal(2, count);
+            Assert.AreEqual(1, count);
+            Assert.AreEqual(43, cache.GetValue(42));
+            Assert.AreEqual(2, count);
 
             cache.Invalidate(41); // Miss.
 
             Assert.True(cache.IsValid(42));
-            Assert.Equal(43, cache.GetValue(42));
-            Assert.Equal(2, count);
+            Assert.AreEqual(43, cache.GetValue(42));
+            Assert.AreEqual(2, count);
 
             cache.Invalidate(42); // Hit.
 
             Assert.False(cache.IsValid(42));
-            Assert.Equal(43, cache.GetValue(42));
+            Assert.AreEqual(43, cache.GetValue(42));
             Assert.True(cache.IsValid(42));
-            Assert.Equal(3, count);
+            Assert.AreEqual(3, count);
         }
     }
 }

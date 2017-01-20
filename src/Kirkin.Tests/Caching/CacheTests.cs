@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using Kirkin.Caching;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Caching
 {
@@ -21,7 +21,7 @@ namespace Kirkin.Tests.Caching
 
         const int Iterations = 1000000;
 
-        [Fact]
+        [Test]
         public void ClosureBenchmarkFull()
         {
             int value = 0;
@@ -30,12 +30,12 @@ namespace Kirkin.Tests.Caching
             for (int i = 0; i < Iterations; i++)
             {
                 Assert.False(cache.IsValid);
-                Assert.Equal(1, cache.Value);
+                Assert.AreEqual(1, cache.Value);
                 cache.Invalidate();
             }
         }
 
-        //[Fact]
+        //[Test]
         //public void ClosureBenchmarkPublicationOnly()
         //{
         //    int value = 0;
@@ -44,12 +44,12 @@ namespace Kirkin.Tests.Caching
         //    for (int i = 0; i < Iterations; i++)
         //    {
         //        Assert.False(cache.IsValid);
-        //        Assert.Equal(1, cache.Value);
+        //        Assert.AreEqual(1, cache.Value);
         //        cache.Invalidate();
         //    }
         //}
 
-        [Fact]
+        [Test]
         public void ParametrisedBenchmark()
         {
             int value = 0;
@@ -58,7 +58,7 @@ namespace Kirkin.Tests.Caching
             for (int i = 0; i < Iterations; i++)
             {
                 Assert.False(cache.IsValid);
-                Assert.Equal(1, cache.Value);
+                Assert.AreEqual(1, cache.Value);
                 cache.Invalidate();
             }
         }
@@ -66,7 +66,7 @@ namespace Kirkin.Tests.Caching
 
     public class CacheTests
     {
-        [Fact]
+        [Test]
         public void Api()
         {
             ICache<int> cache;
@@ -80,19 +80,19 @@ namespace Kirkin.Tests.Caching
             cache.Invalidate();
         }
 
-        [Fact]
+        [Test]
         public void AutoExpireCacheBenchmarks()
         {
             var cache = new AutoExpireCache<int>(() => 42, Timeout.InfiniteTimeSpan);
 
             for (int i = 0; i < 100000; i++)
             {
-                Assert.Equal(42, cache.Value);
+                Assert.AreEqual(42, cache.Value);
                 cache.Invalidate();
             }
         }
 
-        [Fact]
+        [Test]
         public void LazyConcurrency()
         {
             for (var i = 0; i < 10; i++)
@@ -118,8 +118,8 @@ namespace Kirkin.Tests.Caching
                     () => v = cache.Value
                 );
 
-                Assert.Equal(1, valueFactoryCount);
-                Assert.Equal("1", v);
+                Assert.AreEqual(1, valueFactoryCount);
+                Assert.AreEqual("1", v);
 
                 cache.Invalidate();
 
@@ -142,16 +142,16 @@ namespace Kirkin.Tests.Caching
 
                 invalidateThread.Join();
 
-                Assert.Equal(4, values.Count);
+                Assert.AreEqual(4, values.Count);
 
                 foreach (var value in values)
                 {
-                    Assert.Equal("3", value);
+                    Assert.AreEqual("3", value);
                 }
             }
         }
 
-        //[Fact]
+        //[Test]
         //public void InterlockedConcurrency()
         //{
         //    for (var i = 0; i < 10; i++)
@@ -180,7 +180,7 @@ namespace Kirkin.Tests.Caching
         //            () => v = cache.Value
         //        );
 
-        //        Assert.Equal(5, valueFactoryCount);
+        //        Assert.AreEqual(5, valueFactoryCount);
         //        //Assert.AreEqual("5", v); - this number will be completely random.
 
         //        cache.Invalidate();
@@ -204,7 +204,7 @@ namespace Kirkin.Tests.Caching
 
         //        invalidateThread.Join();
 
-        //        Assert.Equal(4, values.Count);
+        //        Assert.AreEqual(4, values.Count);
 
         //        //foreach (var value in values)
         //        //{
@@ -213,7 +213,7 @@ namespace Kirkin.Tests.Caching
         //    }
         //}
 
-        [Fact]
+        [Test]
         public void AutoExpireCache()
         {
             int obj = 0;
@@ -231,14 +231,14 @@ namespace Kirkin.Tests.Caching
             );
 
             Assert.False(cache.IsValid);
-            Assert.Equal("1", cache.Value);
+            Assert.AreEqual("1", cache.Value);
             Assert.True(cache.IsValid);
             Assert.True(cache.IsValid);
 
             // Auto invalidation.
             Thread.Sleep(100);
             Assert.False(cache.IsValid);
-            Assert.Equal("2", cache.Value);
+            Assert.AreEqual("2", cache.Value);
             Assert.True(cache.IsValid);
 
             // Manual invalidation.
@@ -251,20 +251,20 @@ namespace Kirkin.Tests.Caching
             Thread.Sleep(10);
             cache.Invalidate();
 
-            Assert.Equal("4", skipOneTask.Result);
+            Assert.AreEqual("4", skipOneTask.Result);
         }
 
-        [Fact]
+        [Test]
         public void AutoExpiryCacheNoExpiry()
         {
             ICache<int> cache = new AutoExpireCache<int>(() => 0, Timeout.InfiniteTimeSpan);
 
-            //Assert.Equal(Timeout.InfiniteTimeSpan, cache.ExpireAfter);
+            //Assert.AreEqual(Timeout.InfiniteTimeSpan, cache.ExpireAfter);
 
             ICache<int> cacheShim = cache;
 
             Assert.False(cacheShim.IsValid);
-            Assert.Equal(0, cache.Value);
+            Assert.AreEqual(0, cache.Value);
             Assert.True(cacheShim.IsValid);
         }
     }

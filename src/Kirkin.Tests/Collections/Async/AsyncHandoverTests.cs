@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Xunit;
+using NUnit.Framework;
 
 using Kirkin.Collections.Async;
 
@@ -13,7 +13,7 @@ namespace Kirkin.Tests.Collections.Async
 {
     public class AsyncHandoverTests
     {
-        [Fact]
+        [Test]
         public void AddThrowsAfterCompleteAdding()
         {
             var handover = new AsyncHandover<int>();
@@ -26,38 +26,38 @@ namespace Kirkin.Tests.Collections.Async
         {
             var handover = new AsyncHandover<int>();
 
-            Assert.Equal(0, handover.Count);
+            Assert.AreEqual(0, handover.Count);
 
             handover.Add(1);
 
-            Assert.Equal(1, handover.Count);
+            Assert.AreEqual(1, handover.Count);
 
             handover.Add(2);
 
-            Assert.Equal(2, handover.Count);
-            Assert.Equal(0, handover.WaiterCount);
+            Assert.AreEqual(2, handover.Count);
+            Assert.AreEqual(0, handover.WaiterCount);
 
             TakeResult<int> result;
 
             Assert.True((result = await handover.TryTakeAsync()).Success);
-            Assert.Equal(1, result.Value);
+            Assert.AreEqual(1, result.Value);
             Assert.True((result = await handover.TryTakeAsync()).Success);
-            Assert.Equal(2, result.Value);
-            Assert.Equal(0, handover.Count);
+            Assert.AreEqual(2, result.Value);
+            Assert.AreEqual(0, handover.Count);
 
             var next = handover.TryTakeAsync();
 
-            Assert.Equal(1, handover.WaiterCount);
+            Assert.AreEqual(1, handover.WaiterCount);
 
             // Ensure that we haven't completed synchronously.
             Assert.False(next.IsCompleted);
 
             handover.Add(3);
 
-            Assert.Equal(0, handover.Count);
-            Assert.Equal(0, handover.WaiterCount); // Risky one.
+            Assert.AreEqual(0, handover.Count);
+            Assert.AreEqual(0, handover.WaiterCount); // Risky one.
             Assert.True((result = await next).Success);
-            Assert.Equal(3, result.Value);
+            Assert.AreEqual(3, result.Value);
 
             handover.CompleteAdding();
 
@@ -77,7 +77,7 @@ namespace Kirkin.Tests.Collections.Async
                 {
                     await Task.Delay(60);
 
-                    Assert.Equal(i, result.Value);
+                    Assert.AreEqual(i, result.Value);
 
                     i++;
                 }
@@ -105,7 +105,7 @@ namespace Kirkin.Tests.Collections.Async
             await Task.WhenAll(producer, consumer);
         }
 
-        [Fact]
+        [Test]
         public async Task ThreadSafety()
         {
             var queue = new BoundedCapacityAsyncHandover<int>(1);
@@ -172,11 +172,11 @@ namespace Kirkin.Tests.Collections.Async
 
             await Task.WhenAll(consumer1, consumer2);
 
-            Assert.Equal(20000, result.Count);
+            Assert.AreEqual(20000, result.Count);
             Assert.True(Enumerable.Range(0, 20000).SequenceEqual(result.OrderBy(i => i)));
         }
 
-        [Fact]
+        [Test]
         public async Task Cancellation()
         {
             var queue = new AsyncHandover<int>();
@@ -193,7 +193,7 @@ namespace Kirkin.Tests.Collections.Async
 
             var consumer = Task.Run(async () =>
             {
-                Assert.Equal(1, (await queue.TryTakeAsync().ConfigureAwait(false)).Value);
+                Assert.AreEqual(1, (await queue.TryTakeAsync().ConfigureAwait(false)).Value);
 
                 var prematureCancellation = new CancellationTokenSource(TimeSpan.FromMilliseconds(100));
                 var canceled = false;
@@ -215,13 +215,13 @@ namespace Kirkin.Tests.Collections.Async
                     throw new InvalidOperationException();
                 }
 
-                Assert.Equal(2, (await queue.TryTakeAsync().ConfigureAwait(false)).Value);
+                Assert.AreEqual(2, (await queue.TryTakeAsync().ConfigureAwait(false)).Value);
             });
 
             await Task.WhenAll(producer, consumer);
         }
 
-        [Fact]
+        [Test]
         public async Task BoundedCapacity()
         {
             var handover = new BoundedCapacityAsyncHandover<int>(2);

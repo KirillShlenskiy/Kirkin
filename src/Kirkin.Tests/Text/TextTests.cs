@@ -1,30 +1,30 @@
 ﻿using Kirkin.Text;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Text
 {
     public class TextTests
     {
-        [Fact]
+        [Test]
         public void CapitalizeFirstLetterOfEachWord()
         {
             for (var i = 0; i < 100000; i++)
             {
                 var text = "SOMEONE O'SOMEONE";
 
-                Assert.Equal("Someone O'Someone", TextUtil.CapitalizeFirstLetterOfEachWord(text));
+                Assert.AreEqual("Someone O'Someone", TextUtil.CapitalizeFirstLetterOfEachWord(text));
 
                 // The below never really worked to detect a mutated
                 // string because the literal itself was interned and
                 // therefore mutatad by CapitalizeFirstLetterOfEachWord.
-                //Assert.Equal("DANNY O'BRIEN", text);
+                //Assert.AreEqual("DANNY O'BRIEN", text);
 
                 // Misc cases.
-                Assert.Equal(string.Empty, TextUtil.CapitalizeFirstLetterOfEachWord(string.Empty));
-                Assert.Equal("A", TextUtil.CapitalizeFirstLetterOfEachWord("a"));
-                Assert.Equal("A", TextUtil.CapitalizeFirstLetterOfEachWord("A"));
-                Assert.Equal("Zzz", TextUtil.CapitalizeFirstLetterOfEachWord("zzZ"));
+                Assert.AreEqual(string.Empty, TextUtil.CapitalizeFirstLetterOfEachWord(string.Empty));
+                Assert.AreEqual("A", TextUtil.CapitalizeFirstLetterOfEachWord("a"));
+                Assert.AreEqual("A", TextUtil.CapitalizeFirstLetterOfEachWord("A"));
+                Assert.AreEqual("Zzz", TextUtil.CapitalizeFirstLetterOfEachWord("zzZ"));
             }
         }
     }

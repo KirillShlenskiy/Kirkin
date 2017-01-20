@@ -5,13 +5,13 @@ using System.Reflection;
 
 using Kirkin.Linq.Expressions;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Experimental
 {
     public class ExpressionTests
     {
-        [Fact]
+        [Test]
         public void MutateStruct()
         {
             var size = new Size { Width = 2, Height = 1 };
@@ -27,8 +27,8 @@ namespace Kirkin.Tests.Experimental
 
             size = lambda.Compile().Invoke(size);
 
-            Assert.Equal(3, size.Width);
-            Assert.Equal(1, size.Height);
+            Assert.AreEqual(3, size.Width);
+            Assert.AreEqual(1, size.Height);
         }
 
         //private void Mutate<TObj, TProperty>(TObj obj, Expression<Func<TObj, TProperty>> propertyExpr, Expression<Action<TProperty>> mutation)
@@ -64,7 +64,7 @@ namespace Kirkin.Tests.Experimental
             public int Height { get; set; }
         }
 
-        [Fact]
+        [Test]
         public void FuncExecute()
         {
             Func<string, int> func = input => int.Parse(input);
@@ -78,10 +78,10 @@ namespace Kirkin.Tests.Experimental
 
             Func<string, int> funcRebuilt = lambda.Compile();
 
-            Assert.Equal(5, funcRebuilt("5"));
+            Assert.AreEqual(5, funcRebuilt("5"));
         }
 
-        [Fact]
+        [Test]
         public void Basic()
         {
             Expression<Func<Dummy, int>> expr = d => d.ID;
@@ -91,7 +91,7 @@ namespace Kirkin.Tests.Experimental
             Debug.Print(res);
         }
 
-        [Fact]
+        [Test]
         public void ManuallyCreate()
         {
             Expression<Func<Dummy, int>> expected = d => d.ID;
@@ -103,7 +103,7 @@ namespace Kirkin.Tests.Experimental
             Debug.Print(expected.ToString());
         }
 
-        [Fact]
+        [Test]
         public void Coalesce()
         {
             Expression<Func<int?, int>> expr = i => i ?? default(int);

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Kirkin.Mapping;
 using Kirkin.Mapping.Data;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Mapping
 {
@@ -20,7 +20,7 @@ namespace Kirkin.Tests.Mapping
             IntegratedSecurity = true
         }.ToString();
 
-        [Fact]
+        [Test]
         public void PersonTest()
         {
             if (!Environment.MachineName.Equals("BABUSHKA", StringComparison.OrdinalIgnoreCase)) {
@@ -37,14 +37,14 @@ namespace Kirkin.Tests.Mapping
                     .ToArray();
             }
 
-            Assert.NotEmpty(stubs);
+            Assert.IsNotEmpty(stubs);
             Assert.True(stubs.All(s => !string.IsNullOrEmpty(s.DisplayName)), "All DisplayNames expected to be non-empty.");
             Assert.True(stubs.All(s => s.personID != 0), "All personIDs expected to be non-zero.");
 
             Debug.Print("Done.");
         }
 
-        [Fact]
+        [Test]
         public void SubstituteDBNull()
         {
             if (!Environment.MachineName.Equals("BABUSHKA", StringComparison.OrdinalIgnoreCase)) {
@@ -86,15 +86,15 @@ namespace Kirkin.Tests.Mapping
                 }
             }
 
-            Assert.NotEmpty(nonNullableStubs);
-            Assert.NotEmpty(nullableStubs);
+            Assert.IsNotEmpty(nonNullableStubs);
+            Assert.IsNotEmpty(nullableStubs);
             Assert.True(nonNullableStubs.All(s => s.personID == 0), "All personIDs expected to be zero.");
             Assert.True(nullableStubs.All(s => !s.PersonID.HasValue), "All PersonIDs expected to be NULL.");
 
             Debug.Print("Done.");
         }
 
-        [Fact]
+        [Test]
         public async Task MapDefaultOfTToNullableT()
         {
             if (!Environment.MachineName.Equals("BABUSHKA", StringComparison.OrdinalIgnoreCase)) {
@@ -108,7 +108,7 @@ namespace Kirkin.Tests.Mapping
                 stubs = await cmd.ExecuteEntitiesAsync<NullablePersonStub>();
             }
 
-            Assert.NotEmpty(stubs);
+            Assert.IsNotEmpty(stubs);
             Assert.True(stubs.All(s => s.PersonID.HasValue && s.PersonID.Value == 0), "All PersonIDs expected to be zero.");
 
             Debug.Print("Done.");

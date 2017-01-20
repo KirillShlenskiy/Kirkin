@@ -4,13 +4,13 @@ using System.Diagnostics;
 using Kirkin.Reflection;
 using Kirkin.Transactions;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Transactions
 {
     public class PropertyTrackingTransactionTests
     {
-        [Fact]
+        [Test]
         public void Commit()
         {
             var dummy = new Dummy(1) { Value = "1" };
@@ -21,14 +21,14 @@ namespace Kirkin.Tests.Transactions
                 dummy.Value = "2";
 
                 tran.Commit();
-                Assert.Same(dummy, tran.ChangeTracker.TrackedObject);
+                Assert.AreSame(dummy, tran.ChangeTracker.TrackedObject);
             }
 
-            Assert.Equal(2, dummy.ID);
-            Assert.Equal("2", dummy.Value);
+            Assert.AreEqual(2, dummy.ID);
+            Assert.AreEqual("2", dummy.Value);
         }
 
-        [Fact]
+        [Test]
         public void Rollback()
         {
             var dummy = new Dummy(1) { Value = "1" };
@@ -38,14 +38,14 @@ namespace Kirkin.Tests.Transactions
                 dummy.ID = 2;
                 dummy.Value = "2";
 
-                Assert.Same(dummy, tran.ChangeTracker.TrackedObject);
+                Assert.AreSame(dummy, tran.ChangeTracker.TrackedObject);
             }
 
-            Assert.Equal(1, dummy.ID);
-            Assert.Equal("1", dummy.Value);
+            Assert.AreEqual(1, dummy.ID);
+            Assert.AreEqual("1", dummy.Value);
         }
 
-        [Fact]
+        [Test]
         public void RollbackPartial()
         {
             var dummy = new Dummy(1) { Value = "1" };
@@ -55,14 +55,14 @@ namespace Kirkin.Tests.Transactions
                 dummy.ID = 2;
                 dummy.Value = "2";
 
-                Assert.Same(dummy, tran.ChangeTracker.TrackedObject);
+                Assert.AreSame(dummy, tran.ChangeTracker.TrackedObject);
             }
 
-            Assert.Equal(1, dummy.ID); // Rolled back.
-            Assert.Equal("2", dummy.Value); // *NOT* rolled back.
+            Assert.AreEqual(1, dummy.ID); // Rolled back.
+            Assert.AreEqual("2", dummy.Value); // *NOT* rolled back.
         }
 
-        [Fact]
+        [Test]
         public void EarlyCommit()
         {
             var dummy = new Dummy(1) { Value = "1" };
@@ -74,14 +74,14 @@ namespace Kirkin.Tests.Transactions
                 dummy.ID = 2;
                 dummy.Value = "2";
 
-                Assert.Same(dummy, tran.ChangeTracker.TrackedObject);
+                Assert.AreSame(dummy, tran.ChangeTracker.TrackedObject);
             }
 
-            Assert.Equal(2, dummy.ID);
-            Assert.Equal("2", dummy.Value);
+            Assert.AreEqual(2, dummy.ID);
+            Assert.AreEqual("2", dummy.Value);
         }
 
-        [Fact]
+        [Test]
         public void ThrowsAfterDispose()
         {
             var dummy = new Dummy(1);
@@ -96,7 +96,7 @@ namespace Kirkin.Tests.Transactions
             tran.Dispose();
         }
 
-        [Fact]
+        [Test]
         public void ThrowsAfterCommitThenDispose()
         {
             var dummy = new Dummy(1);
@@ -112,7 +112,7 @@ namespace Kirkin.Tests.Transactions
             tran.Dispose();
         }
 
-        [Fact]
+        [Test]
         public void ThrowsOnSecondCommit()
         {
             var dummy = new Dummy(1);
@@ -124,7 +124,7 @@ namespace Kirkin.Tests.Transactions
             }
         }
 
-        [Fact]
+        [Test]
         public void CommitBenchmark()
         {
             var dummy = new Dummy(1);
@@ -139,10 +139,10 @@ namespace Kirkin.Tests.Transactions
                 }
             }
 
-            Assert.NotEqual(1, dummy.ID);
+            Assert.AreNotEqual(1, dummy.ID);
         }
 
-        [Fact]
+        [Test]
         public void MemoryUsage()
         {
             long memStart = GC.GetTotalMemory(true);
@@ -160,7 +160,7 @@ namespace Kirkin.Tests.Transactions
             Debug.Print("Done.");
         }
 
-        [Fact]
+        [Test]
         public void RollbackBenchmark()
         {
             var dummy = new Dummy(1);
@@ -175,7 +175,7 @@ namespace Kirkin.Tests.Transactions
                 }
             }
 
-            Assert.Equal(1, dummy.ID);
+            Assert.AreEqual(1, dummy.ID);
         }
 
         sealed class Dummy

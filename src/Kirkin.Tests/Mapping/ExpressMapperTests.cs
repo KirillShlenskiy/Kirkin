@@ -1,11 +1,11 @@
 ﻿
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Mapping
 {
     public class ExpressMapperTests
     {
-        [Fact]
+        [Test]
         public void Config()
         {
             //var m = new MemberConfiguration<PropertyList, PropertyList>().

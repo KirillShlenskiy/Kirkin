@@ -4,31 +4,31 @@ using System.Threading.Tasks;
 
 using Kirkin.Functional;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Functional
 {
     public class ExecutableTests
     {
-        [Fact]
+        [Test]
         public void ExecuteWithRetrySucceeds()
         {
             var i = 0;
 
             Executable.Create(() => i++).Execute();
-            Assert.Equal(1, i);
+            Assert.AreEqual(1, i);
         }
 
-        [Fact]
+        [Test]
         public void ExecuteWithRetryViaFuncUtil()
         {
             var i = 0;
             Func<int> func = () => ++i;
 
-            Assert.Equal(1, func.AsRetryable().OnException(3).Invoke());
+            Assert.AreEqual(1, func.AsRetryable().OnException(3).Invoke());
         }
 
-        [Fact]
+        [Test]
         public async Task ExecuteWithRetryAsyncViaFuncUtil()
         {
             var i = 0;
@@ -43,7 +43,7 @@ namespace Kirkin.Tests.Functional
                 .Invoke();
         }
 
-        [Fact]
+        [Test]
         public async Task ExecuteAsyncWithRetrySucceeds()
         {
             var i = 0;
@@ -63,7 +63,7 @@ namespace Kirkin.Tests.Functional
                 .ExecuteAsync();
         }
 
-        [Fact]
+        [Test]
         public void ExecuteWithRetrySucceedsOnLastRetry()
         {
             var i = 0;
@@ -78,10 +78,10 @@ namespace Kirkin.Tests.Functional
                 .RetryOnException<InvalidOperationException>(2)
                 .Execute();
 
-            Assert.Equal(3, i);
+            Assert.AreEqual(3, i);
         }
 
-        [Fact]
+        [Test]
         public async Task ExecuteAsyncWithRetrySucceedsOnLastRetry()
         {
             var i = 0;
@@ -99,10 +99,10 @@ namespace Kirkin.Tests.Functional
                 .RetryOnException<InvalidOperationException>(2)
                 .ExecuteAsync();
 
-            Assert.Equal(3, i);
+            Assert.AreEqual(3, i);
         }
 
-        [Fact]
+        [Test]
         public void ExecuteWithRetryFailsWhenRetryCountReached()
         {
             var i = 0;
@@ -125,10 +125,10 @@ namespace Kirkin.Tests.Functional
             }
 
             Assert.True(errored);
-            Assert.Equal(3, i);
+            Assert.AreEqual(3, i);
         }
 
-        [Fact]
+        [Test]
         public async Task ExecuteAsyncWithRetryFailsWhenRetryCountReached()
         {
             var i = 0;
@@ -154,7 +154,7 @@ namespace Kirkin.Tests.Functional
             }
 
             Assert.True(errored);
-            Assert.Equal(3, i);
+            Assert.AreEqual(3, i);
         }
     }
 }

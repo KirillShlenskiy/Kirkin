@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
-using Xunit;
+using NUnit.Framework;
 
 using Kirkin.Collections.Async;
 
@@ -50,7 +50,7 @@ namespace Kirkin.Tests.Collections.Async
             }
         }
 
-        [Fact]
+        [Test]
         public async Task SlowProducerAsyncHandoverBenchmark()
         {
             var queue = new AsyncHandover<int>();
@@ -84,7 +84,7 @@ namespace Kirkin.Tests.Collections.Async
             await Task.WhenAll(producer, consumer).ConfigureAwait(false);
         }
 
-        [Fact]
+        [Test]
         public async Task SlowProducerBlockingCollectionBenchmark()
         {
             var queue = new BlockingCollection<int>();
@@ -117,7 +117,7 @@ namespace Kirkin.Tests.Collections.Async
             await Task.WhenAll(producer, consumer).ConfigureAwait(false);
         }
 
-        [Fact]
+        [Test]
         public async Task SlowProducerBufferBlockBenchmark()
         {
             var queue = new BufferBlock<int>();
@@ -152,7 +152,7 @@ namespace Kirkin.Tests.Collections.Async
             await Task.WhenAll(producer, consumer).ConfigureAwait(false);
         }
 
-        [Fact]
+        [Test]
         public async Task SlowConsumerAsyncHandoverBenchmark()
         {
             var queue = new AsyncHandover<int>();
@@ -187,7 +187,7 @@ namespace Kirkin.Tests.Collections.Async
             await Task.WhenAll(producer, consumer).ConfigureAwait(false);
         }
 
-        [Fact]
+        [Test]
         public async Task SlowConsumerBlockingCollectionBenchmark()
         {
             var queue = new BlockingCollection<int>();
@@ -220,7 +220,7 @@ namespace Kirkin.Tests.Collections.Async
             await Task.WhenAll(producer, consumer).ConfigureAwait(false);
         }
 
-        [Fact]
+        [Test]
         public async Task SlowConsumerBufferBlockBenchmark()
         {
             var queue = new BufferBlock<int>();
@@ -255,7 +255,7 @@ namespace Kirkin.Tests.Collections.Async
             await Task.WhenAll(producer, queue.Completion).ConfigureAwait(false);
         }
 
-        [Fact]
+        [Test]
         public async Task LargeNumberOfItemsHandoverBenchmark()
         {
             var collection = new AsyncHandover<int>(new ConcurrentQueue<int>(Enumerable.Range(1, 3000000)));

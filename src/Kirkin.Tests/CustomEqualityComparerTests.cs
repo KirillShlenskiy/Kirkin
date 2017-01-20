@@ -1,12 +1,12 @@
 ﻿using System;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests
 {
     public class CustomEqualityComparerTests
     {
-        [Fact]
+        [Test]
         public void Equals()
         {
             var comparer = new CustomEqualityComparer<int>((x, y) => true);
@@ -14,7 +14,7 @@ namespace Kirkin.Tests
             Assert.True(comparer.Equals(1, 2));
         }
 
-        [Fact]
+        [Test]
         public void EqualsAndGetHashCode()
         {
             var comparer = new CustomEqualityComparer<int>((x, y) => true, i => 321);
@@ -24,7 +24,7 @@ namespace Kirkin.Tests
             Assert.True(comparer.GetHashCode(123) == 321);
         }
 
-        [Fact]
+        [Test]
         public void NoGetHashCode()
         {
             var comparer = new CustomEqualityComparer<int>((x, y) => true);

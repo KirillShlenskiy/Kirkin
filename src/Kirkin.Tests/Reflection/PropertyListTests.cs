@@ -2,13 +2,13 @@
 using Kirkin.Mapping;
 using Kirkin.Reflection;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Reflection
 {
     public class PropertyListTests
     {
-        [Fact]
+        [Test]
         public void CopyBenchmarkLarge()
         {
             var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
@@ -26,7 +26,7 @@ namespace Kirkin.Tests.Reflection
             }
         }
 
-        [Fact]
+        [Test]
         public void CopyBenchmarkMedium()
         {
             var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
@@ -44,7 +44,7 @@ namespace Kirkin.Tests.Reflection
             }
         }
 
-        [Fact]
+        [Test]
         public void CopyBenchmarkSmall()
         {
             var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
@@ -62,7 +62,7 @@ namespace Kirkin.Tests.Reflection
             }
         }
 
-        [Fact]
+        [Test]
         public void CopyBenchmarkMapperLarge()
         {
             var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
@@ -81,7 +81,7 @@ namespace Kirkin.Tests.Reflection
             }
         }
 
-        [Fact]
+        [Test]
         public void CopyBenchmarkMapperMedium()
         {
             var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
@@ -100,7 +100,7 @@ namespace Kirkin.Tests.Reflection
             }
         }
 
-        [Fact]
+        [Test]
         public void CopyBenchmarkAutoMapperLargeDefaultMapper()
         {
             AutoMapper.Mapper.Initialize(config => config.CreateMap<Dummy, Dummy>());
@@ -120,7 +120,7 @@ namespace Kirkin.Tests.Reflection
             }
         }
 
-        [Fact]
+        [Test]
         public void CopyBenchmarkMapperLargeDefaultMapper()
         {
             var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
@@ -138,7 +138,7 @@ namespace Kirkin.Tests.Reflection
             }
         }
 
-        [Fact]
+        [Test]
         public void CopyBenchmarkMapperSmall()
         {
             var comparer = new PropertyValueEqualityComparer<Dummy>(PropertyList<Dummy>.Default);
@@ -157,7 +157,7 @@ namespace Kirkin.Tests.Reflection
             }
         }
 
-        [Fact]
+        [Test]
         public new void ToString()
         {
             var propertyList = PropertyList<Dummy>.Default;
@@ -168,34 +168,34 @@ namespace Kirkin.Tests.Reflection
             };
 
             for (int i = 0; i < 100000; i++) {
-                Assert.Equal("Dummy { ID = 1, Value = Text }", propertyList.ToString(dummy));
+                Assert.AreEqual("Dummy { ID = 1, Value = Text }", propertyList.ToString(dummy));
             }
         }
 
-        [Fact]
+        [Test]
         public void MultiExclude()
         {
             var propertyList = PropertyList<MultiDummy>.Default
                 .Without(d => d.ID)
                 .Without(d => d.Ignored2);
 
-            Assert.Equal(2, propertyList.PropertyAccessors.Length);
+            Assert.AreEqual(2, propertyList.PropertyAccessors.Length);
         }
 
-        [Fact]
+        [Test]
         public void ExcludeAndReInclude()
         {
             var propertyList = PropertyList<MultiDummy>.Default.Without(d => d.ID);
 
-            Assert.Equal(3, propertyList.PropertyAccessors.Length);
+            Assert.AreEqual(3, propertyList.PropertyAccessors.Length);
 
             propertyList = propertyList.Including(d => d.ID);
 
-            Assert.Equal(4, propertyList.PropertyAccessors.Length);
+            Assert.AreEqual(4, propertyList.PropertyAccessors.Length);
 
             propertyList = propertyList.Including(d => d.ID);
 
-            Assert.Equal(4, propertyList.PropertyAccessors.Length);
+            Assert.AreEqual(4, propertyList.PropertyAccessors.Length);
         }
 
         private class Dummy

@@ -4,13 +4,13 @@ using Kirkin.Mapping;
 using Kirkin.Mapping.Engine.Compilers;
 using Kirkin.Reflection;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Mapping
 {
     public class MapperTests
     {
-        [Fact]
+        [Test]
         public void MemberMapEquality()
         {
             MapperBuilder<Dummy, LowercaseDummy> builder1 = new MapperBuilder<Dummy, LowercaseDummy> {
@@ -37,7 +37,7 @@ namespace Kirkin.Tests.Mapping
             );
         }
 
-        [Fact]
+        [Test]
         public void CustomMemberMappingExpression()
         {
             var source = new Dummy { ID = 5, Value = "Test" };
@@ -53,11 +53,11 @@ namespace Kirkin.Tests.Mapping
 
             builder.BuildMapper().Map(source, target);
 
-            Assert.Equal(source.ID + 1, target.id);
-            Assert.Equal("TEZD", target.value);
+            Assert.AreEqual(source.ID + 1, target.id);
+            Assert.AreEqual("TEZD", target.value);
         }
 
-        [Fact]
+        [Test]
         public void CustomMemberMappingDelegate()
         {
             var source = new Dummy { ID = 5, Value = "Test" };
@@ -73,11 +73,11 @@ namespace Kirkin.Tests.Mapping
 
             builder.BuildMapper().Map(source, target);
 
-            Assert.Equal(source.ID + 1, target.id);
-            Assert.Equal("TEZD", target.value);
+            Assert.AreEqual(source.ID + 1, target.id);
+            Assert.AreEqual("TEZD", target.value);
         }
 
-        [Fact]
+        [Test]
         public void CustomUnmappedMemberMapping()
         {
             var builder = new MapperBuilder<Dummy, LowercaseDummy> {
@@ -85,18 +85,18 @@ namespace Kirkin.Tests.Mapping
                 AllowUnmappedTargetMembers = true
             };
 
-            Assert.Equal(0, builder.ProduceValidMemberMappings().Length);
+            Assert.AreEqual(0, builder.ProduceValidMemberMappings().Length);
 
             builder.TargetMember(d => d.id).MapTo(d => d.ID);
 
-            Assert.Equal(1, builder.ProduceValidMemberMappings().Length);
+            Assert.AreEqual(1, builder.ProduceValidMemberMappings().Length);
 
             var target = builder.BuildMapper().Map(new Dummy { ID = 123 });
 
-            Assert.Equal(123, target.id);
+            Assert.AreEqual(123, target.id);
         }
 
-        [Fact]
+        [Test]
         public void ExecuteEmptyMapping()
         {
             var builder = new MapperBuilder<Dummy, LowercaseDummy> {
@@ -104,11 +104,11 @@ namespace Kirkin.Tests.Mapping
                 AllowUnmappedTargetMembers = true
             };
 
-            Assert.Equal(0, builder.ProduceValidMemberMappings().Length);
+            Assert.AreEqual(0, builder.ProduceValidMemberMappings().Length);
             builder.BuildMapper().Map(new Dummy());
         }
 
-        [Fact]
+        [Test]
         public void IgnoreMember()
         {
             var source = new Dummy { ID = 5, Value = "Test" };
@@ -122,11 +122,11 @@ namespace Kirkin.Tests.Mapping
 
             var target = builder.BuildMapper().Map(source);
 
-            Assert.Equal(5, target.ID);
+            Assert.AreEqual(5, target.ID);
             Assert.Null(target.Value);
         }
 
-        [Fact]
+        [Test]
         public void IgnoreUnmappedMemberDoesNotThrow()
         {
             var builder = new MapperBuilder<Dummy, LowercaseDummy> {
@@ -147,7 +147,7 @@ namespace Kirkin.Tests.Mapping
             builder.ValidateMapping();
         }
 
-        [Fact]
+        [Test]
         public void ManualMapping()
         {
             var memberMappings = new MapperBuilder<Dummy, LowercaseDummy> { MemberNameComparer = StringComparer.OrdinalIgnoreCase }
@@ -160,11 +160,11 @@ namespace Kirkin.Tests.Mapping
 
             mappingDelegate(source, target);
 
-            Assert.Equal(source.ID, target.id);
-            Assert.Equal(source.Value, target.value);
+            Assert.AreEqual(source.ID, target.id);
+            Assert.AreEqual(source.Value, target.value);
         }
 
-        [Fact]
+        [Test]
         public void CompileMapBenchmark()
         {
             var mappings = new MapperBuilder<ExtendedDummy, Dummy> { AllowUnmappedSourceMembers = true }
@@ -177,7 +177,7 @@ namespace Kirkin.Tests.Mapping
             }
         }
 
-        [Fact]
+        [Test]
         public void CompileMapBenchmarkCached()
         {
             var mappings = new MapperBuilder<ExtendedDummy, Dummy>() { AllowUnmappedSourceMembers = true }
@@ -190,17 +190,17 @@ namespace Kirkin.Tests.Mapping
             }
         }
 
-        [Fact]
+        [Test]
         public void MapSameType()
         {
             var dummy1 = new Dummy { ID = 1, Value = "Test" };
             var dummy2 = Mapper.MapStrict<Dummy, Dummy>(dummy1);
 
-            Assert.Equal(dummy1.ID, dummy2.ID);
-            Assert.Equal(dummy1.Value, dummy2.Value);
+            Assert.AreEqual(dummy1.ID, dummy2.ID);
+            Assert.AreEqual(dummy1.Value, dummy2.Value);
         }
 
-        [Fact]
+        [Test]
         public void MapDerivedType()
         {
             var dummy1 = new Dummy { ID = 1, Value = "Test" };
@@ -208,11 +208,11 @@ namespace Kirkin.Tests.Mapping
 
             Mapper.Map(dummy1, dummy2);
 
-            Assert.Equal(dummy1.ID, dummy2.ID);
-            Assert.Equal(dummy1.Value, dummy2.Value);
+            Assert.AreEqual(dummy1.ID, dummy2.ID);
+            Assert.AreEqual(dummy1.Value, dummy2.Value);
         }
 
-        [Fact]
+        [Test]
         public void MapDerivedTypeDynamic()
         {
             var dummy1 = new Dummy { ID = 1, Value = "Test" };
@@ -220,11 +220,11 @@ namespace Kirkin.Tests.Mapping
 
             Mapper.MapStrict<Dummy, Dummy>(dummy1, dummy2);
 
-            Assert.Equal(dummy1.ID, dummy2.ID);
-            Assert.Equal(dummy1.Value, dummy2.Value);
+            Assert.AreEqual(dummy1.ID, dummy2.ID);
+            Assert.AreEqual(dummy1.Value, dummy2.Value);
         }
 
-        [Fact]
+        [Test]
         public void MapperStrictByDefault()
         {
             var dummy1 = new Dummy { ID = 1, Value = "Test" };
@@ -233,7 +233,7 @@ namespace Kirkin.Tests.Mapping
             Assert.Throws<MappingException>(() => Mapper.MapStrict(dummy1, dummy2));
         }
 
-        [Fact]
+        [Test]
         public void MapperCaseSensitiveByDefault()
         {
             var dummy1 = new Dummy { ID = 1, Value = "Test" };
@@ -242,7 +242,7 @@ namespace Kirkin.Tests.Mapping
             Assert.Throws<MappingException>(() => Mapper.MapStrict(dummy1, dummy2));
         }
 
-        [Fact]
+        [Test]
         public void MapDifferentTypes()
         {
             var dummy1 = new Dummy { ID = 1, Value = "Test" };
@@ -251,27 +251,27 @@ namespace Kirkin.Tests.Mapping
                 .BuildMapper()
                 .Map(dummy1);
 
-            Assert.Equal(dummy1.ID, dummy2.id);
-            Assert.Equal(dummy1.Value, dummy2.value);
+            Assert.AreEqual(dummy1.ID, dummy2.id);
+            Assert.AreEqual(dummy1.Value, dummy2.value);
         }
 
-        [Fact]
+        [Test]
         public void ArgumentValidation()
         {
             Assert.Throws<ArgumentNullException>(() => Mapper.MapStrict<object, object>(null, null));
         }
 
-        [Fact]
+        [Test]
         public void NullableToNonNullableMapping()
         {
             var dummy1 = new NullableDummy();
             var dummy2 = new Dummy { ID = 1 };
 
             Mapper.MapStrict(dummy1, dummy2);
-            Assert.Equal(0, dummy2.ID);
+            Assert.AreEqual(0, dummy2.ID);
         }
 
-        [Fact]
+        [Test]
         public void NonNullableToNullableMapping()
         {
             var dummy1 = new Dummy();
@@ -281,7 +281,7 @@ namespace Kirkin.Tests.Mapping
             Assert.Null(dummy2.ID);
         }
 
-        [Fact]
+        [Test]
         public void NonNullableToNullableMappingDoNotSubstituteDefault()
         {
             var dummy1 = new Dummy();
@@ -294,10 +294,10 @@ namespace Kirkin.Tests.Mapping
             };
 
             builder.BuildMapper().Map(dummy1, dummy2);
-            Assert.Equal(0, dummy2.ID);
+            Assert.AreEqual(0, dummy2.ID);
         }
 
-        [Fact]
+        [Test]
         public void NonNullableToNullableMappingError()
         {
             var dummy1 = new Dummy();
@@ -307,7 +307,7 @@ namespace Kirkin.Tests.Mapping
             Assert.Throws<MappingException>(() => mapper.Map(dummy1, dummy2));
         }
 
-        [Fact]
+        [Test]
         public void MappingSucceeds()
         {
             var dummy = new Dummy { ID = 1, Value = "Test" };
@@ -319,13 +319,13 @@ namespace Kirkin.Tests.Mapping
             .BuildMapper()
             .Map(dummy);
 
-            Assert.Equal(dummy.ID, extendedDummy.ID);
-            Assert.Equal(dummy.Value, extendedDummy.Value);
+            Assert.AreEqual(dummy.ID, extendedDummy.ID);
+            Assert.AreEqual(dummy.Value, extendedDummy.Value);
 
             extendedDummy = Mapper.MapRelaxed<Dummy, ExtendedDummy>(dummy);
 
-            Assert.Equal(dummy.ID, extendedDummy.ID);
-            Assert.Equal(dummy.Value, extendedDummy.Value);
+            Assert.AreEqual(dummy.ID, extendedDummy.ID);
+            Assert.AreEqual(dummy.Value, extendedDummy.Value);
 
             new MapperBuilder<Dummy, ExtendedDummy> { AllowUnmappedTargetMembers = true }.BuildMapper().Map(dummy, extendedDummy);
             Mapper.MapAllSourceMembers(dummy, extendedDummy);
@@ -333,7 +333,7 @@ namespace Kirkin.Tests.Mapping
             Mapper.MapAllTargetMembers(extendedDummy, dummy);
         }
 
-        [Fact]
+        [Test]
         public void MappingThrows()
         {
             var dummy = new Dummy();
@@ -358,22 +358,22 @@ namespace Kirkin.Tests.Mapping
             Assert.Throws<MappingException>(() => Mapper.MapAllSourceMembers(new ExtendedDummy(), new Dummy()));
         }
 
-        [Fact]
+        [Test]
         public void ConvertibleSupport()
         {
             var dummy = new Dummy { ID = 5 };
             var target = Mapper.MapStrict(dummy, new ConvertibleDummy());
 
-            Assert.Equal(5m, target.ID);
+            Assert.AreEqual(5m, target.ID);
         }
 
-        [Fact]
+        [Test]
         public void NullableConvertibleSupport()
         {
             var dummy = new Dummy { ID = 5 };
             var target = Mapper.MapStrict(dummy, new NullableConvertibleDummy());
 
-            Assert.Equal(5m, target.ID);
+            Assert.AreEqual(5m, target.ID);
 
             dummy.ID = 0;
 
@@ -385,109 +385,109 @@ namespace Kirkin.Tests.Mapping
                 .BuildMapper()
                 .Map(dummy, target);
 
-            Assert.Equal(0, target.ID);
+            Assert.AreEqual(0, target.ID);
         }
 
-        [Fact]
+        [Test]
         public void StringToEnum()
         {
-            Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new Dummy { Value = "TEST" }, new EnumDummy()).Value);
-            Assert.Equal(ValueEnum.None, Mapper.MapStrict(new Dummy { Value = null }, new EnumDummy()).Value);
+            Assert.AreEqual(ValueEnum.Test, Mapper.MapStrict(new Dummy { Value = "TEST" }, new EnumDummy()).Value);
+            Assert.AreEqual(ValueEnum.None, Mapper.MapStrict(new Dummy { Value = null }, new EnumDummy()).Value);
             Assert.Throws<ArgumentException>(() => Mapper.MapStrict(new Dummy { Value = "" }, new EnumDummy()));
         }
             
-        [Fact]
+        [Test]
         public void StringToNullableEnum()
         {
-            Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new Dummy { Value = "TEST" }, new NullableEnumDummy()).Value);
+            Assert.AreEqual(ValueEnum.Test, Mapper.MapStrict(new Dummy { Value = "TEST" }, new NullableEnumDummy()).Value);
             Assert.Null(Mapper.MapStrict(new Dummy { Value = null }, new NullableEnumDummy()).Value);
             Assert.Throws<ArgumentException>(() => Mapper.MapStrict(new Dummy { Value = "" }, new NullableEnumDummy()));
         }
 
-        [Fact]
+        [Test]
         public void EnumToString()
         {
-            Assert.Equal("Test", Mapper.MapStrict(new EnumDummy { Value = ValueEnum.Test }, new Dummy()).Value);
-            Assert.Equal("None", Mapper.MapStrict(new EnumDummy(), new Dummy()).Value);
+            Assert.AreEqual("Test", Mapper.MapStrict(new EnumDummy { Value = ValueEnum.Test }, new Dummy()).Value);
+            Assert.AreEqual("None", Mapper.MapStrict(new EnumDummy(), new Dummy()).Value);
         }
 
-        [Fact]
+        [Test]
         public void NullableEnumToString()
         {
-            Assert.Equal("Test", Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.Test }, new Dummy()).Value);
-            Assert.Equal("None", Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.None }, new Dummy()).Value);
+            Assert.AreEqual("Test", Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.Test }, new Dummy()).Value);
+            Assert.AreEqual("None", Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.None }, new Dummy()).Value);
             Assert.Null(Mapper.MapStrict(new NullableEnumDummy { Value = null }, new Dummy()).Value);
         }
 
-        [Fact]
+        [Test]
         public void IntToEnum()
         {
-            Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new IntValueDummy { Value = 1 }, new EnumDummy()).Value);
-            Assert.Equal(ValueEnum.None, Mapper.MapStrict(new IntValueDummy { Value = 0 }, new EnumDummy()).Value);
+            Assert.AreEqual(ValueEnum.Test, Mapper.MapStrict(new IntValueDummy { Value = 1 }, new EnumDummy()).Value);
+            Assert.AreEqual(ValueEnum.None, Mapper.MapStrict(new IntValueDummy { Value = 0 }, new EnumDummy()).Value);
         }
 
-        [Fact]
+        [Test]
         public void IntToNullableEnum()
         {
-            Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new IntValueDummy { Value = 1 }, new NullableEnumDummy()).Value);
+            Assert.AreEqual(ValueEnum.Test, Mapper.MapStrict(new IntValueDummy { Value = 1 }, new NullableEnumDummy()).Value);
             Assert.Null(Mapper.MapStrict(new IntValueDummy { Value = 0 }, new NullableEnumDummy()).Value);
         }
 
-        [Fact]
+        [Test]
         public void NullableIntToEnum()
         {
-            Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new NullableIntValueDummy { Value = 1 }, new EnumDummy()).Value);
-            Assert.Equal(ValueEnum.None, Mapper.MapStrict(new NullableIntValueDummy { Value = 0 }, new EnumDummy()).Value);
-            Assert.Equal(ValueEnum.None, Mapper.MapStrict(new NullableIntValueDummy { Value = null }, new EnumDummy()).Value);
+            Assert.AreEqual(ValueEnum.Test, Mapper.MapStrict(new NullableIntValueDummy { Value = 1 }, new EnumDummy()).Value);
+            Assert.AreEqual(ValueEnum.None, Mapper.MapStrict(new NullableIntValueDummy { Value = 0 }, new EnumDummy()).Value);
+            Assert.AreEqual(ValueEnum.None, Mapper.MapStrict(new NullableIntValueDummy { Value = null }, new EnumDummy()).Value);
         }
 
-        [Fact]
+        [Test]
         public void NullableIntToNullableEnum()
         {
-            Assert.Equal(ValueEnum.Test, Mapper.MapStrict(new NullableIntValueDummy { Value = 1 }, new NullableEnumDummy()).Value);
-            Assert.Equal(ValueEnum.None, Mapper.MapStrict(new NullableIntValueDummy { Value = 0 }, new NullableEnumDummy()).Value);
+            Assert.AreEqual(ValueEnum.Test, Mapper.MapStrict(new NullableIntValueDummy { Value = 1 }, new NullableEnumDummy()).Value);
+            Assert.AreEqual(ValueEnum.None, Mapper.MapStrict(new NullableIntValueDummy { Value = 0 }, new NullableEnumDummy()).Value);
             Assert.Null(Mapper.MapStrict(new NullableIntValueDummy { Value = null }, new NullableEnumDummy()).Value);
         }
 
-        [Fact]
+        [Test]
         public void EnumToInt()
         {
-            Assert.Equal(1, Mapper.MapStrict(new EnumDummy { Value = ValueEnum.Test }, new IntValueDummy()).Value);
-            Assert.Equal(0, Mapper.MapStrict(new EnumDummy { Value = ValueEnum.None }, new IntValueDummy()).Value);
+            Assert.AreEqual(1, Mapper.MapStrict(new EnumDummy { Value = ValueEnum.Test }, new IntValueDummy()).Value);
+            Assert.AreEqual(0, Mapper.MapStrict(new EnumDummy { Value = ValueEnum.None }, new IntValueDummy()).Value);
         }
 
-        [Fact]
+        [Test]
         public void EnumToNullableInt()
         {
-            Assert.Equal(1, Mapper.MapStrict(new EnumDummy { Value = ValueEnum.Test }, new NullableIntValueDummy()).Value);
+            Assert.AreEqual(1, Mapper.MapStrict(new EnumDummy { Value = ValueEnum.Test }, new NullableIntValueDummy()).Value);
             Assert.Null(Mapper.MapStrict(new EnumDummy { Value = ValueEnum.None }, new NullableIntValueDummy()).Value);
         }
 
-        [Fact]
+        [Test]
         public void NullableEnumToInt()
         {
-            Assert.Equal(1, Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.Test }, new IntValueDummy()).Value);
-            Assert.Equal(0, Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.None }, new IntValueDummy()).Value);
-            Assert.Equal(0, Mapper.MapStrict(new NullableEnumDummy { Value = null }, new IntValueDummy()).Value);
+            Assert.AreEqual(1, Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.Test }, new IntValueDummy()).Value);
+            Assert.AreEqual(0, Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.None }, new IntValueDummy()).Value);
+            Assert.AreEqual(0, Mapper.MapStrict(new NullableEnumDummy { Value = null }, new IntValueDummy()).Value);
         }
 
-        [Fact]
+        [Test]
         public void NullableEnumToNullableInt()
         {
-            Assert.Equal(1, Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.Test }, new NullableIntValueDummy()).Value);
-            Assert.Equal(0, Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.None }, new NullableIntValueDummy()).Value);
+            Assert.AreEqual(1, Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.Test }, new NullableIntValueDummy()).Value);
+            Assert.AreEqual(0, Mapper.MapStrict(new NullableEnumDummy { Value = ValueEnum.None }, new NullableIntValueDummy()).Value);
             Assert.Null(Mapper.MapStrict(new NullableEnumDummy { Value = null }, new NullableIntValueDummy()).Value);
         }
 
-        [Fact]
+        [Test]
         public void IntToString()
         {
-            Assert.Equal("0", Mapper.MapStrict(new IntValueDummy { Value = 0 }, new Dummy()).Value);
-            Assert.Equal("0", Mapper.MapStrict(new NullableIntValueDummy { Value = 0 }, new Dummy()).Value);
+            Assert.AreEqual("0", Mapper.MapStrict(new IntValueDummy { Value = 0 }, new Dummy()).Value);
+            Assert.AreEqual("0", Mapper.MapStrict(new NullableIntValueDummy { Value = 0 }, new Dummy()).Value);
             Assert.Null(Mapper.MapStrict(new NullableIntValueDummy { Value = null }, new Dummy()).Value);
         }
 
-        [Fact]
+        [Test]
         public void NullStringToNullableInt()
         {
             // Strict mapping: even though we could technically execute it
@@ -496,17 +496,17 @@ namespace Kirkin.Tests.Mapping
             Assert.Throws<InvalidOperationException>(() => Mapper.MapStrict(new Dummy { Value = null }, new NullableIntValueDummy()));
         }
 
-        [Fact]
+        [Test]
         public void StructMapping()
         {
             var source = new Size { Width = 2, Height = 4 };
             var target = Mapper.MapStrict(source, new Size());
 
-            Assert.Equal(2, target.Width);
-            Assert.Equal(4, target.Height);
+            Assert.AreEqual(2, target.Width);
+            Assert.AreEqual(4, target.Height);
         }
 
-        [Fact]
+        [Test]
         public void SourceMemberIgnore()
         {
             var builder = new MapperBuilder<ExtendedDummy, Dummy>();
@@ -518,11 +518,11 @@ namespace Kirkin.Tests.Mapping
 
             var dummy = builder.BuildMapper().Map(extendedDummy);
 
-            Assert.Equal(123, dummy.ID);
-            Assert.Equal("Blah", dummy.Value);
+            Assert.AreEqual(123, dummy.ID);
+            Assert.AreEqual("Blah", dummy.Value);
         }
 
-        [Fact]
+        [Test]
         public void IgnorePreviouslyMappedMemberCausesValidationError()
         {
             var builder = new MapperBuilder<Dummy, Dummy>();
@@ -535,16 +535,16 @@ namespace Kirkin.Tests.Mapping
 
             builder.ValidateMapping();
 
-            Assert.Equal(2, builder.ProduceValidMemberMappings().Length);
+            Assert.AreEqual(2, builder.ProduceValidMemberMappings().Length);
 
             builder.TargetMember(d => d.ID).Ignore(ignoreMatchingSource: true);
 
-            Assert.Equal(1, builder.ProduceValidMemberMappings().Length);
+            Assert.AreEqual(1, builder.ProduceValidMemberMappings().Length);
 
             builder.ValidateMapping();
         }
 
-        [Fact]
+        [Test]
         public void TotalRemapWithStrictValidationByExpression()
         {
             var builder = new MapperBuilder<Dummy, Dummyz>();
@@ -560,7 +560,7 @@ namespace Kirkin.Tests.Mapping
             builder.ValidateMapping();
         }
 
-        [Fact]
+        [Test]
         public void TotalRemapWithStrictValidationByName()
         {
             var builder = new MapperBuilder<Dummy, Dummyz>();
@@ -576,7 +576,7 @@ namespace Kirkin.Tests.Mapping
             builder.ValidateMapping();
         }
 
-        [Fact]
+        [Test]
         public void MemberAccessHonoursConfigsNameComparer()
         {
             var builder = new MapperBuilder<Dummy, Dummyz>();
@@ -592,7 +592,7 @@ namespace Kirkin.Tests.Mapping
             builder.TargetMember("IDz").MapTo("id");
         }
 
-        [Fact]
+        [Test]
         public void CustomMappingsHonourConfigsNullableBehaviour()
         {
             var builder = new MapperBuilder<Dummy, NullableDummy>();
@@ -612,7 +612,7 @@ namespace Kirkin.Tests.Mapping
             Assert.Null(result.ID);
         }
 
-        [Fact]
+        [Test]
         public void MapperFromTypeMapping()
         {
             Dummy d1 = new Dummy { ID = 123, Value = "Zzz" };
@@ -623,7 +623,7 @@ namespace Kirkin.Tests.Mapping
                 .BuildMapper()
                 .Map(d1);
 
-            Assert.Equal(123, d2.ID);
+            Assert.AreEqual(123, d2.ID);
             Assert.Null(d2.Value);
         }
 

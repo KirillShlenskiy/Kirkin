@@ -5,7 +5,7 @@ using System.Linq;
 
 using Kirkin.Collections.Generic;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Collections.Generic
 {
@@ -23,7 +23,7 @@ namespace Kirkin.Tests.Collections.Generic
             ImmutableArray.Create(1);
         }
 
-        [Fact]
+        [Test]
         public void AddManyBenchmarkArray()
         {
             var builder = new int[NumIterations];
@@ -38,7 +38,7 @@ namespace Kirkin.Tests.Collections.Generic
             Array.Resize(ref builder, count);
         }
 
-        [Fact]
+        [Test]
         public void AddManyBenchmarkArrayBuilder()
         {
             var builder = new ArrayBuilder<int>();
@@ -51,7 +51,7 @@ namespace Kirkin.Tests.Collections.Generic
             builder.ToArray();
         }
 
-        [Fact]
+        [Test]
         public void AddManyBenchmarkArrayBuilderWithCapacity()
         {
             var builder = new ArrayBuilder<int>(NumIterations);
@@ -64,7 +64,7 @@ namespace Kirkin.Tests.Collections.Generic
             builder.ToArray();
         }
 
-        [Fact]
+        [Test]
         public void AddManyBenchmarkImmutableBuilder()
         {
             var builder = ImmutableArray.CreateBuilder<int>(NumIterations);
@@ -77,25 +77,25 @@ namespace Kirkin.Tests.Collections.Generic
             builder.ToImmutable();
         }
 
-        [Fact]
+        [Test]
         public void AddManyBenchmarkLinqToArray()
         {
             EnumerableItems.ToArray();
         }
 
-        [Fact]
+        [Test]
         public void AddManyBenchmarkLinqToArrayPreallocated()
         {
             PreallocatedItems.ToArray();
         }
 
-        [Fact]
+        [Test]
         public void AddManyBenchmarkLinqToImmutableArray()
         {
             EnumerableItems.ToImmutableArray();
         }
 
-        [Fact]
+        [Test]
         public void AddManyBenchmarkLinqToImmutableArrayPreallocated()
         {
             // Perf: ToImmutableArray is optimized for cases
@@ -105,19 +105,19 @@ namespace Kirkin.Tests.Collections.Generic
             PreallocatedItems.ToImmutableArray();
         }
 
-        [Fact]
+        [Test]
         public void AddManyBenchmarkLinqToList()
         {
             EnumerableItems.ToList();
         }
 
-        [Fact]
+        [Test]
         public void AddManyBenchmarkLinqToListPreallocated()
         {
             PreallocatedItems.ToList();
         }
 
-        [Fact]
+        [Test]
         public void AddManyBenchmarkLinqViaBuilderAdd()
         {
             var builder = new ArrayBuilder<int>();
@@ -130,7 +130,7 @@ namespace Kirkin.Tests.Collections.Generic
             builder.ToArray();
         }
 
-        [Fact]
+        [Test]
         public void AddManyBenchmarkLinqViaBuilderAddWithCapacity()
         {
             var builder = new ArrayBuilder<int>(NumIterations);
@@ -143,7 +143,7 @@ namespace Kirkin.Tests.Collections.Generic
             builder.ToArray();
         }
 
-        [Fact]
+        [Test]
         public void AddManyBenchmarkList()
         {
             var builder = new List<int>();
@@ -156,7 +156,7 @@ namespace Kirkin.Tests.Collections.Generic
             builder.ToArray();
         }
 
-        [Fact]
+        [Test]
         public void AddManyBenchmarkListWithCapacity()
         {
             var builder = new List<int>(NumIterations);
@@ -169,7 +169,7 @@ namespace Kirkin.Tests.Collections.Generic
             builder.ToArray();
         }
 
-        [Fact]
+        [Test]
         public void AddOneBenchmarkArray()
         {
             for (int i = 0; i < NumIterations; i++)
@@ -180,7 +180,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void AddOneBenchmarkArrayBuilder()
         {
             for (int i = 0; i < NumIterations; i++)
@@ -191,7 +191,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void AddOneBenchmarkArrayBuilderWithCapacity()
         {
             for (int i = 0; i < NumIterations; i++)
@@ -202,7 +202,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void AddOneBenchmarkList()
         {
             for (int i = 0; i < NumIterations; i++)
@@ -213,7 +213,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void AddOneBenchmarkListWithCapacity()
         {
             for (int i = 0; i < NumIterations; i++)

@@ -10,7 +10,7 @@ using Kirkin.Collections.Generic;
 using Kirkin.Linq.Expressions;
 using Kirkin.Mapping;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Experimental
 {
@@ -25,19 +25,19 @@ namespace Kirkin.Tests.Experimental
             AutoMapper.Mapper.AssertConfigurationIsValid();
         }
 
-        [Fact]
+        [Test]
         public void InterlockedWrap()
         {
             var i = int.MaxValue;
 
             checked {
-                Assert.Equal(int.MinValue, Interlocked.Increment(ref i));
+                Assert.AreEqual(int.MinValue, Interlocked.Increment(ref i));
             }
 
             Assert.True((uint)int.MaxValue < unchecked((uint)int.MinValue));
         }
 
-        [Fact]
+        [Test]
         public void StructByValTest()
         {
             var builder = new ArrayBuilder<int>(1);
@@ -50,7 +50,7 @@ namespace Kirkin.Tests.Experimental
             }
         }
 
-        [Fact]
+        [Test]
         public void StructByRefTest()
         {
             var builder = new ArrayBuilder<int>(1);
@@ -75,7 +75,7 @@ namespace Kirkin.Tests.Experimental
             return builder.ToArray();
         }
 
-        [Fact]
+        [Test]
         public void AutomapperTest()
         {
             var dummy = new Dummy { ID = 1 };
@@ -86,10 +86,10 @@ namespace Kirkin.Tests.Experimental
                 AutoMapper.Mapper.Map(databaseDummy, dummy);
             }
 
-            Assert.Equal(0, dummy.ID);
+            Assert.AreEqual(0, dummy.ID);
         }
 
-        [Fact]
+        [Test]
         public void MappingTest()
         {
             var d1 = new Dummy { ID = 1 };
@@ -100,10 +100,10 @@ namespace Kirkin.Tests.Experimental
                 Mapper.Map(d1, d2);
             }
 
-            Assert.Equal(1, d2.ID);
+            Assert.AreEqual(1, d2.ID);
         }
 
-        [Fact]
+        [Test]
         public void CartesianProductWithAggregate()
         {
             var r1 = Mash(
@@ -174,16 +174,16 @@ namespace Kirkin.Tests.Experimental
                 .Max();
         }
 
-        [Fact]
+        [Test]
         public void ApertureTest()
         {
-            Assert.Equal(2, Aperture(9));   // 1001,       Segments: 0, 2, 0
-            Assert.Equal(4, Aperture(529)); // 1000010001, Segments: 0, 4, 3, 0
-            Assert.Equal(1, Aperture(20));  // 10100,      Segments: 0, 1, 2
-            Assert.Equal(0, Aperture(15));  // 1111,       Segments: 0, 0, 0, 0
+            Assert.AreEqual(2, Aperture(9));   // 1001,       Segments: 0, 2, 0
+            Assert.AreEqual(4, Aperture(529)); // 1000010001, Segments: 0, 4, 3, 0
+            Assert.AreEqual(1, Aperture(20));  // 10100,      Segments: 0, 1, 2
+            Assert.AreEqual(0, Aperture(15));  // 1111,       Segments: 0, 0, 0, 0
         }
 
-        [Fact]
+        [Test]
         public void NullDelegateCapture()
         {
             var anon = new { Collection = Enumerable.Range(0, 1) };
@@ -194,7 +194,7 @@ namespace Kirkin.Tests.Experimental
             var lazy2 = Assert.Throws<NullReferenceException>(() => new Lazy<int[]>(anon.Collection.ToArray));
         }
 
-        [Fact]
+        [Test]
         public void SemaphoreSlimNonReentrant()
         {
             var semaphore = new SemaphoreSlim(1, 1);
@@ -206,7 +206,7 @@ namespace Kirkin.Tests.Experimental
         /// <summary>
         /// This concept is taken from Roslyn's ByteArrayUnion.
         /// </summary>
-        [Fact]
+        [Test]
         public void StripPrivateFieldFromStruct()
         {
             // NonNullableString only contains one field of type System.String.
@@ -214,11 +214,11 @@ namespace Kirkin.Tests.Experimental
                 NonNullableString = new NonNullableString("Zzz")
             };
 
-            Assert.Equal("Zzz", union.String);
+            Assert.AreEqual("Zzz", union.String);
 
             union = new StringUnion { String = "Uuu" };
 
-            Assert.Equal(new NonNullableString("Uuu"), union.NonNullableString);
+            Assert.AreEqual(new NonNullableString("Uuu"), union.NonNullableString);
         }
 
         [StructLayout(LayoutKind.Explicit)]
@@ -231,7 +231,7 @@ namespace Kirkin.Tests.Experimental
             public NonNullableString NonNullableString;
         }
 
-        [Fact]
+        [Test]
         public void PropertyInfoEq()
         {
             var p1 = typeof(Dummyz).GetProperties()[0];

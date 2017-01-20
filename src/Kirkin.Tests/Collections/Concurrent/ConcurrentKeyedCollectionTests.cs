@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Kirkin.Collections.Concurrent;
 using Kirkin.Collections.Generic;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Collections.Concurrent
 {
@@ -15,16 +15,16 @@ namespace Kirkin.Tests.Collections.Concurrent
         const int COUNT = 10000;
 
         // May not always fail.
-        //[Fact]
+        //[Test]
         //public void KeyedCollectionFails()
         //{
         //    var collection = new KeyedCollection<int, int>(i => i);
         //    var tester = new KeyedCollectionTester<int, int>(collection);
 
-        //    Assert.ThrowsAny<Exception>(() => RunParallelTests(tester, COUNT));
+        //    Assert.Throws<Exception>(() => RunParallelTests(tester, COUNT));
         //}
 
-        [Fact]
+        [Test]
         public void ConcurrentKeyedCollectionSucceeds()
         {
             var collection = new ConcurrentKeyedCollection<int, int>(i => i);

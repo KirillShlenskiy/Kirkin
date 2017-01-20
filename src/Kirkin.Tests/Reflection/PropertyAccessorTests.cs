@@ -3,7 +3,7 @@ using System.Reflection;
 
 using Kirkin.Reflection;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Reflection
 {
@@ -11,7 +11,7 @@ namespace Kirkin.Tests.Reflection
     {
         private const int BENCHMARK_ITERATIONS = 1000000;
 
-        [Fact]
+        [Test]
         public void PropertyAccessorBenchmark()
         {
             var fastValue = new PropertyAccessor<Dummy, string>(typeof(Dummy).GetProperty("Value"));
@@ -24,12 +24,12 @@ namespace Kirkin.Tests.Reflection
 
                 fastValue.SetValue(dummy, "Whatever");
 
-                Assert.Equal("Whatever", fastValue.GetValue(dummy));
-                Assert.Equal("Whatever", dummy.Value);
+                Assert.AreEqual("Whatever", fastValue.GetValue(dummy));
+                Assert.AreEqual("Whatever", dummy.Value);
             }
         }
 
-        [Fact]
+        [Test]
         public void DowncastGenericPropertyAccessorBenchmark()
         {
             var fastValue = (IPropertyAccessor)new PropertyAccessor<Dummy, string>(typeof(Dummy).GetProperty("Value"));
@@ -42,8 +42,8 @@ namespace Kirkin.Tests.Reflection
 
                 fastValue.SetValue(dummy, "Whatever");
 
-                Assert.Equal("Whatever", fastValue.GetValue(dummy));
-                Assert.Equal("Whatever", dummy.Value);
+                Assert.AreEqual("Whatever", fastValue.GetValue(dummy));
+                Assert.AreEqual("Whatever", dummy.Value);
             }
         }
 
@@ -59,12 +59,12 @@ namespace Kirkin.Tests.Reflection
 
                 fastValue.SetValue(dummy, "Whatever");
 
-                Assert.Equal("Whatever", fastValue.GetValue(dummy));
-                Assert.Equal("Whatever", dummy.Value);
+                Assert.AreEqual("Whatever", fastValue.GetValue(dummy));
+                Assert.AreEqual("Whatever", dummy.Value);
             }
         }
 
-        [Fact]
+        [Test]
         public void DirectAccessBenchmark()
         {
             for (var i = 0; i < BENCHMARK_ITERATIONS; i++)
@@ -75,12 +75,12 @@ namespace Kirkin.Tests.Reflection
 
                 dummy.Value = "Whatever";
 
-                Assert.Equal("Whatever", dummy.Value);
-                Assert.Equal("Whatever", dummy.Value);
+                Assert.AreEqual("Whatever", dummy.Value);
+                Assert.AreEqual("Whatever", dummy.Value);
             }
         }
 
-        [Fact]
+        [Test]
         public void ReflectionBenchmark()
         {
             var valueProperty = typeof(Dummy).GetProperty("Value");
@@ -93,12 +93,12 @@ namespace Kirkin.Tests.Reflection
 
                 valueProperty.SetValue(dummy, "Whatever", null);
 
-                Assert.Equal("Whatever", valueProperty.GetValue(dummy, null));
-                Assert.Equal("Whatever", dummy.Value);
+                Assert.AreEqual("Whatever", valueProperty.GetValue(dummy, null));
+                Assert.AreEqual("Whatever", dummy.Value);
             }
         }
 
-        [Fact]
+        [Test]
         public void PublicPropertyTest()
         {
             var id = new PropertyAccessor<Dummy, int>(typeof(Dummy).GetProperty("ID"));
@@ -106,10 +106,10 @@ namespace Kirkin.Tests.Reflection
 
             id.SetValue(dummy, 42);
 
-            Assert.Equal(42, id.GetValue(dummy));
+            Assert.AreEqual(42, id.GetValue(dummy));
         }
 
-        [Fact]
+        [Test]
         public void PrivatePropertyTest()
         {
             var prop = new PropertyAccessor<Dummy, int>(
@@ -120,10 +120,10 @@ namespace Kirkin.Tests.Reflection
 
             prop.SetValue(dummy, 42);
 
-            Assert.Equal(42, prop.GetValue(dummy));
+            Assert.AreEqual(42, prop.GetValue(dummy));
         }
 
-        [Fact]
+        [Test]
         public void PrivateSetterPropertyTest()
         {
             var prop = new PropertyAccessor<Dummy, int>(typeof(Dummy).GetProperty("PrivateSetterProp"));
@@ -139,7 +139,7 @@ namespace Kirkin.Tests.Reflection
 
             prop.SetValue(dummy, 42);
 
-            Assert.Equal(42, prop.GetValue(dummy));
+            Assert.AreEqual(42, prop.GetValue(dummy));
         }
 
         private class Dummy
@@ -154,7 +154,7 @@ namespace Kirkin.Tests.Reflection
             public static int StaticValue { get; set; }
         }
 
-        [Fact]
+        [Test]
         public void IsStaticBenchmark()
         {
             var idProperty = typeof(Dummy).GetProperty("ID");

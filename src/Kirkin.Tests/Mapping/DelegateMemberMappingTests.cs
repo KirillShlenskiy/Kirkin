@@ -3,13 +3,13 @@ using System.Linq;
 
 using Kirkin.Mapping;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Mapping
 {
     public class DelegateMemberMappingTests
     {
-        [Fact]
+        [Test]
         public void Getter()
         {
             // Getter only.
@@ -32,11 +32,11 @@ namespace Kirkin.Tests.Mapping
 
             Dummy d = mapper.Map(values);
 
-            Assert.Equal(123, d.ID);
-            Assert.Equal("Test", d.Value);
+            Assert.AreEqual(123, d.ID);
+            Assert.AreEqual("Test", d.Value);
         }
 
-        [Fact]
+        [Test]
         public void Setter()
         {
             // Setter only.
@@ -60,18 +60,18 @@ namespace Kirkin.Tests.Mapping
             // Default Dictionary constructor will be used.
             Dictionary<string, object> values = mapper.Map(d);
 
-            Assert.Equal(2, values.Count);
-            Assert.Equal(123, values["ID"]);
-            Assert.Equal("Test", values["Value"]);
+            Assert.AreEqual(2, values.Count);
+            Assert.AreEqual(123, values["ID"]);
+            Assert.AreEqual("Test", values["Value"]);
 
             d.ID = 321;
             d.Value = "tseT";
 
             mapper.Map(d, values);
 
-            Assert.Equal(2, values.Count);
-            Assert.Equal(321, values["ID"]);
-            Assert.Equal("tseT", values["Value"]);
+            Assert.AreEqual(2, values.Count);
+            Assert.AreEqual(321, values["ID"]);
+            Assert.AreEqual("tseT", values["Value"]);
         }
 
         sealed class Dummy
@@ -80,7 +80,7 @@ namespace Kirkin.Tests.Mapping
             public string Value { get; set; }
         }
 
-        [Fact]
+        [Test]
         public void NonGenericGetterAndSetter()
         {
             Member<Dummy>[] members = {
@@ -97,12 +97,12 @@ namespace Kirkin.Tests.Mapping
 
             Dummy dummy2 = mapper.Map(dummy1);
 
-            Assert.NotSame(dummy1, dummy2);
-            Assert.Equal(123, dummy2.ID);
-            Assert.Equal("Zzz", dummy2.Value);
+            Assert.AreNotSame(dummy1, dummy2);
+            Assert.AreEqual(123, dummy2.ID);
+            Assert.AreEqual("Zzz", dummy2.Value);
         }
 
-        [Fact]
+        [Test]
         public void SimulateTypeMappingMapAndCountChanges()
         {
             int changeCount = 0;
@@ -142,25 +142,25 @@ namespace Kirkin.Tests.Mapping
 
             mapper.Map(dummy1, dummy2);
 
-            Assert.Equal(0, changeCount);
+            Assert.AreEqual(0, changeCount);
 
             dummy1.ID = 123;
             dummy1.Value = "Zzz";
 
             mapper.Map(dummy1, dummy2);
 
-            Assert.Equal(123, dummy2.ID);
-            Assert.Equal("Zzz", dummy2.Value);
-            Assert.Equal(2, changeCount);
+            Assert.AreEqual(123, dummy2.ID);
+            Assert.AreEqual("Zzz", dummy2.Value);
+            Assert.AreEqual(2, changeCount);
 
             dummy2 = new Dummy();
 
             mapper.Map(dummy1, dummy2);
 
-            Assert.Equal(4, changeCount); // No reset.
+            Assert.AreEqual(4, changeCount); // No reset.
         }
 
-        [Fact]
+        [Test]
         public void SimulateTypeMappingMapAndCountChangesWithCustomWrapperType()
         {
             int changeCount = 0;
@@ -200,22 +200,22 @@ namespace Kirkin.Tests.Mapping
 
             changeCount = mapper.Map(dummy1, new ChangeCounter<Dummy>(dummy2)).ChangeCount;
 
-            Assert.Equal(0, changeCount);
+            Assert.AreEqual(0, changeCount);
 
             dummy1.ID = 123;
             dummy1.Value = "Zzz";
 
             changeCount = mapper.Map(dummy1, new ChangeCounter<Dummy>(dummy2)).ChangeCount;
 
-            Assert.Equal(123, dummy2.ID);
-            Assert.Equal("Zzz", dummy2.Value);
-            Assert.Equal(2, changeCount);
+            Assert.AreEqual(123, dummy2.ID);
+            Assert.AreEqual("Zzz", dummy2.Value);
+            Assert.AreEqual(2, changeCount);
 
             dummy2 = new Dummy();
 
             changeCount = mapper.Map(dummy1, new ChangeCounter<Dummy>(dummy2)).ChangeCount;
 
-            Assert.Equal(2, changeCount); // No reset.
+            Assert.AreEqual(2, changeCount); // No reset.
         }
 
         class ChangeCounter<T>

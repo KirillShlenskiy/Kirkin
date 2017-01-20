@@ -4,13 +4,13 @@ using System.Reflection;
 
 using Kirkin.Linq.Expressions;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Linq.Expressions
 {
     public class InstanceMemberExpressionsTests
     {
-        [Fact] // 155
+        [Test] // 155
         public void Perf()
         {
             FieldInfo id = typeof(Dummy).GetField("_id", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -20,26 +20,26 @@ namespace Kirkin.Tests.Linq.Expressions
             }
         }
 
-        [Fact]
+        [Test]
         public void FieldGetter()
         {
             Dummy dummy = new Dummy { ID = 123 };
             FieldInfo id = typeof(Dummy).GetField("_id", BindingFlags.Instance | BindingFlags.NonPublic);
             Expression<Func<Dummy, int>> getter = MemberExpressions.FieldOrProperty<Dummy>().Getter<int>(id);
 
-            Assert.Equal(123, getter.Compile().Invoke(dummy));
+            Assert.AreEqual(123, getter.Compile().Invoke(dummy));
         }
 
-        [Fact]
+        [Test]
         public void FieldGetterByName()
         {
             Dummy dummy = new Dummy { ID = 123 };
             Expression<Func<Dummy, int>> getter = MemberExpressions.FieldOrProperty<Dummy>().Getter<int>("_id", nonPublic: true);
 
-            Assert.Equal(123, getter.Compile().Invoke(dummy));
+            Assert.AreEqual(123, getter.Compile().Invoke(dummy));
         }
 
-        [Fact]
+        [Test]
         public void FieldSetter()
         {
             Dummy dummy = new Dummy { ID = 0 };
@@ -48,10 +48,10 @@ namespace Kirkin.Tests.Linq.Expressions
 
             setter.Compile().Invoke(dummy, 123);
 
-            Assert.Equal(123, dummy.ID);
+            Assert.AreEqual(123, dummy.ID);
         }
 
-        [Fact]
+        [Test]
         public void FieldSetterByName()
         {
             Dummy dummy = new Dummy { ID = 0 };
@@ -59,38 +59,38 @@ namespace Kirkin.Tests.Linq.Expressions
 
             setter.Compile().Invoke(dummy, 123);
 
-            Assert.Equal(123, dummy.ID);
+            Assert.AreEqual(123, dummy.ID);
         }
 
-        [Fact]
+        [Test]
         public void PropertyGetter()
         {
             Dummy dummy = new Dummy { ID = 123 };
             PropertyInfo id = typeof(Dummy).GetProperty("ID");
             Expression<Func<Dummy, int>> getter = MemberExpressions.FieldOrProperty<Dummy>().Getter<int>(id);
 
-            Assert.Equal(123, getter.Compile().Invoke(dummy));
+            Assert.AreEqual(123, getter.Compile().Invoke(dummy));
         }
 
-        [Fact]
+        [Test]
         public void PropertyGetterByNameCaseInsensitive()
         {
             Dummy dummy = new Dummy { ID = 123 };
             Expression<Func<Dummy, int>> getter = MemberExpressions.FieldOrProperty<Dummy>().Getter<int>("id", ignoreCase: true);
 
-            Assert.Equal(123, getter.Compile().Invoke(dummy));
+            Assert.AreEqual(123, getter.Compile().Invoke(dummy));
         }
 
-        [Fact]
+        [Test]
         public void PropertyGetterFromExpression()
         {
             Dummy dummy = new Dummy { ID = 123 };
             Expression<Func<Dummy, int>> getter = MemberExpressions.FieldOrProperty<Dummy>().Getter(d => d.ID);
 
-            Assert.Equal(123, getter.Compile().Invoke(dummy));
+            Assert.AreEqual(123, getter.Compile().Invoke(dummy));
         }
 
-        [Fact]
+        [Test]
         public void PropertySetter()
         {
             Dummy dummy = new Dummy { ID = 0 };
@@ -99,10 +99,10 @@ namespace Kirkin.Tests.Linq.Expressions
 
             setter.Compile().Invoke(dummy, 123);
 
-            Assert.Equal(123, dummy.ID);
+            Assert.AreEqual(123, dummy.ID);
         }
 
-        [Fact]
+        [Test]
         public void PropertySetterByName()
         {
             Dummy dummy = new Dummy { ID = 0 };
@@ -110,10 +110,10 @@ namespace Kirkin.Tests.Linq.Expressions
 
             setter.Compile().Invoke(dummy, 123);
 
-            Assert.Equal(123, dummy.ID);
+            Assert.AreEqual(123, dummy.ID);
         }
 
-        [Fact]
+        [Test]
         public void PropertySetterFromExpression()
         {
             Dummy dummy = new Dummy { ID = 0 };
@@ -121,7 +121,7 @@ namespace Kirkin.Tests.Linq.Expressions
 
             setter.Compile().Invoke(dummy, 123);
 
-            Assert.Equal(123, dummy.ID);
+            Assert.AreEqual(123, dummy.ID);
         }
 
         sealed class Dummy
@@ -151,7 +151,7 @@ namespace Kirkin.Tests.Linq.Expressions
             }
         }
 
-        [Fact]
+        [Test]
         public void InstanceMethodParameterless()
         {
             Dummy dummy = new Dummy { ID = 123 };
@@ -161,10 +161,10 @@ namespace Kirkin.Tests.Linq.Expressions
                 .Func<string>("ToString")
                 .Compile();
 
-            Assert.Equal("123", func(dummy));
+            Assert.AreEqual("123", func(dummy));
         }
 
-        [Fact]
+        [Test]
         public void InstanceMethodParameterlessCaseInsensitive()
         {
             Dummy dummy = new Dummy { ID = 123 };
@@ -174,10 +174,10 @@ namespace Kirkin.Tests.Linq.Expressions
                 .Func<string>("tostring", ignoreCase: true)
                 .Compile();
 
-            Assert.Equal("123", func(dummy));
+            Assert.AreEqual("123", func(dummy));
         }
 
-        [Fact]
+        [Test]
         public void InstanceMethodWithOneParameter()
         {
             Dummy dummy = new Dummy { ID = 123 };
@@ -187,7 +187,7 @@ namespace Kirkin.Tests.Linq.Expressions
                 .Func<int, int>("AddOne", nonPublic: true)
                 .Compile();
 
-            Assert.Equal(43, func(dummy, 42));
+            Assert.AreEqual(43, func(dummy, 42));
         }
     }
 }

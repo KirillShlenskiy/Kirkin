@@ -3,61 +3,61 @@ using System.Reflection;
 
 using Kirkin.Reflection;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Reflection
 {
     public class MethodInvokerTests
     {
-        [Fact]
+        [Test]
         public void MathMaxInvoke()
         {
             MethodInfo method = typeof(Math).GetMethod("Max", new[] { typeof(int), typeof(int) });
             MethodInvoker invoker = new MethodInvoker(method);
 
-            Assert.Equal(2, invoker.Invoke(null, 1, 2));
+            Assert.AreEqual(2, invoker.Invoke(null, 1, 2));
         }
 
-        [Fact]
+        [Test]
         public void TestActionNoArgs()
         {
             MethodInvoker invoker = CreateFastMethodInfo("ActionNoArgs");
 
             Assert.Null(invoker.Invoke(new Dummy(), null));
             Assert.Null(invoker.Invoke(new Dummy(), new int[0]));
-            Assert.ThrowsAny<Exception>(() => invoker.Invoke(null, null));
-            Assert.ThrowsAny<Exception>(() => invoker.Invoke(null, 42));
+            Assert.Throws<Exception>(() => invoker.Invoke(null, null));
+            Assert.Throws<Exception>(() => invoker.Invoke(null, 42));
         }
 
-        [Fact]
+        [Test]
         public void TestActionOneArg()
         {
             MethodInvoker invoker = CreateFastMethodInfo("ActionOneArg");
 
             Assert.Null(invoker.Invoke(new Dummy(), 42));
-            Assert.ThrowsAny<Exception>(() => invoker.Invoke(null, null));
-            Assert.ThrowsAny<Exception>(() => invoker.Invoke(null, new object[0]));
+            Assert.Throws<Exception>(() => invoker.Invoke(null, null));
+            Assert.Throws<Exception>(() => invoker.Invoke(null, new object[0]));
         }
 
-        [Fact]
+        [Test]
         public void TestFuncNoArgs()
         {
             MethodInvoker invoker = CreateFastMethodInfo("FuncNoArgs");
 
-            Assert.Equal(42, invoker.Invoke(new Dummy(), null));
-            Assert.Equal(42, invoker.Invoke(new Dummy(), new int[0]));
-            Assert.ThrowsAny<Exception>(() => invoker.Invoke(null, null));
-            Assert.ThrowsAny<Exception>(() => invoker.Invoke(null, 42));
+            Assert.AreEqual(42, invoker.Invoke(new Dummy(), null));
+            Assert.AreEqual(42, invoker.Invoke(new Dummy(), new int[0]));
+            Assert.Throws<Exception>(() => invoker.Invoke(null, null));
+            Assert.Throws<Exception>(() => invoker.Invoke(null, 42));
         }
 
-        [Fact]
+        [Test]
         public void TestFuncOneArg()
         {
             MethodInvoker invoker = CreateFastMethodInfo("FuncOneArg");
 
-            Assert.Equal(42, invoker.Invoke(new Dummy(), 42));
-            Assert.ThrowsAny<Exception>(() => invoker.Invoke(null, null));
-            Assert.ThrowsAny<Exception>(() => invoker.Invoke(null, new object[0]));
+            Assert.AreEqual(42, invoker.Invoke(new Dummy(), 42));
+            Assert.Throws<Exception>(() => invoker.Invoke(null, null));
+            Assert.Throws<Exception>(() => invoker.Invoke(null, new object[0]));
         }
 
         private static MethodInvoker CreateFastMethodInfo(string methodName)

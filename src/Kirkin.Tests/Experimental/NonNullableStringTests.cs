@@ -1,13 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Experimental
 {
     public class NonNullableStringTests
     {
-        [Fact]
+        [Test]
         public void ImplicitConversions()
         {
             NonNullableString s = "hey!";
@@ -16,7 +16,7 @@ namespace Kirkin.Tests.Experimental
             Assert.True(default(NonNullableString) == "");
         }
 
-        [Fact]
+        [Test]
         public void TornRead()
         {
             // See if we can tear the struct with an in-place update

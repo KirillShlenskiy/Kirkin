@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Collections.Generic
 {
@@ -11,7 +11,7 @@ namespace Kirkin.Tests.Collections.Generic
         static readonly ImmutableArray<Dummy> ImmutableArr = CreateImmutableArray();
         static readonly List<Dummy> List = CreateList();
 
-        [Fact]
+        [Test]
         public void ArrayIterationPerf()
         {
             for (int i = 0; i < 1000; i++)
@@ -23,7 +23,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void ImmutableArrayIterationPerf()
         {
             for (int i = 0; i < 1000; i++)
@@ -35,7 +35,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void ListIterationPerf()
         {
             for (int i = 0; i < 1000; i++)

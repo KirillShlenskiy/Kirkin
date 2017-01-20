@@ -2,25 +2,25 @@
 
 using Kirkin.Text;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Text
 {
     public class UrlUtilTests
     {
-        [Fact]
+        [Test]
         public void EmptySegments()
         {
             var segment1 = "http://www.google.com.au";
             var segment2 = "q?=stuff";
             var correct = segment1 + "/" + segment2;
 
-            Assert.Equal(correct, UrlUtil.Combine(string.Empty, segment1, segment2));
-            Assert.Equal(correct, UrlUtil.Combine(segment1, string.Empty, segment2));
-            Assert.Equal(correct, UrlUtil.Combine(segment1, segment2, string.Empty));
+            Assert.AreEqual(correct, UrlUtil.Combine(string.Empty, segment1, segment2));
+            Assert.AreEqual(correct, UrlUtil.Combine(segment1, string.Empty, segment2));
+            Assert.AreEqual(correct, UrlUtil.Combine(segment1, segment2, string.Empty));
         }
 
-        [Fact]
+        [Test]
         public void InvalidInput()
         {
             var segment1 = "http://www.google.com.au";
@@ -32,20 +32,20 @@ namespace Kirkin.Tests.Text
             Assert.Throws<ArgumentException>(() => UrlUtil.Combine(segment1 + "//", "//" + segment2)); // Double delimiters prohibited.
         }
 
-        [Fact]
+        [Test]
         public void TwoParamOverload()
         {
             var segment1 = "http://www.google.com.au";
             var segment2 = "q?=stuff";
             var correct = segment1 + "/" + segment2;
 
-            Assert.Equal(correct, UrlUtil.Combine(segment1, segment2));
-            Assert.Equal(correct, UrlUtil.Combine(segment1 + "/", segment2));
-            Assert.Equal(correct, UrlUtil.Combine(segment1, "/" + segment2));
-            Assert.Equal(correct, UrlUtil.Combine(segment1 + "/", "/" + segment2));
+            Assert.AreEqual(correct, UrlUtil.Combine(segment1, segment2));
+            Assert.AreEqual(correct, UrlUtil.Combine(segment1 + "/", segment2));
+            Assert.AreEqual(correct, UrlUtil.Combine(segment1, "/" + segment2));
+            Assert.AreEqual(correct, UrlUtil.Combine(segment1 + "/", "/" + segment2));
         }
 
-        [Fact]
+        [Test]
         public void ThreeParamOverload()
         {
             var segment1 = "http://www.google.com.au";
@@ -53,20 +53,20 @@ namespace Kirkin.Tests.Text
             var segment3 = "test";
             var correct = segment1 + "/" + segment2 + "/" + segment3;
 
-            Assert.Equal(correct, UrlUtil.Combine(segment1, segment2, segment3));
-            Assert.Equal(correct, UrlUtil.Combine(segment1 + "/", segment2, segment3));
-            Assert.Equal(correct, UrlUtil.Combine(segment1, "/" + segment2, segment3));
-            Assert.Equal(correct, UrlUtil.Combine(segment1, segment2 + "/", segment3));
-            Assert.Equal(correct, UrlUtil.Combine(segment1, segment2, "/" + segment3));
-            Assert.Equal(correct, UrlUtil.Combine(segment1 + "/", segment2 + "/", segment3));
-            Assert.Equal(correct, UrlUtil.Combine(segment1, "/" + segment2, "/" + segment3));
-            Assert.Equal(correct, UrlUtil.Combine(segment1 + "/", "/" + segment2 + "/", "/" + segment3));
+            Assert.AreEqual(correct, UrlUtil.Combine(segment1, segment2, segment3));
+            Assert.AreEqual(correct, UrlUtil.Combine(segment1 + "/", segment2, segment3));
+            Assert.AreEqual(correct, UrlUtil.Combine(segment1, "/" + segment2, segment3));
+            Assert.AreEqual(correct, UrlUtil.Combine(segment1, segment2 + "/", segment3));
+            Assert.AreEqual(correct, UrlUtil.Combine(segment1, segment2, "/" + segment3));
+            Assert.AreEqual(correct, UrlUtil.Combine(segment1 + "/", segment2 + "/", segment3));
+            Assert.AreEqual(correct, UrlUtil.Combine(segment1, "/" + segment2, "/" + segment3));
+            Assert.AreEqual(correct, UrlUtil.Combine(segment1 + "/", "/" + segment2 + "/", "/" + segment3));
         }
 
-        [Fact]
+        [Test]
         public void DoubleSlashInSchemaAllowed()
         {
-            Assert.Equal("http://www.google.com", UrlUtil.Combine("http://", "www.google.com"));
+            Assert.AreEqual("http://www.google.com", UrlUtil.Combine("http://", "www.google.com"));
         }
     }
 }

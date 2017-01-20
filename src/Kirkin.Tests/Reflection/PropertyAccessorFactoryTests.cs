@@ -5,13 +5,13 @@ using System.Linq;
 using Kirkin.Reflection;
 using Kirkin.Utilities;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Reflection
 {
     public class PropertyAccessorFactoryTests
     {
-        [Fact]
+        [Test]
         public void PropertyResolutionBenchmark()
         {
             var id = typeof(Dummy).GetProperty("ID");
@@ -21,7 +21,7 @@ namespace Kirkin.Tests.Reflection
             }
         }
 
-        [Fact]
+        [Test]
         public void PropertyByExpression()
         {
             for (var i = 0; i < 100000; i++)
@@ -31,12 +31,12 @@ namespace Kirkin.Tests.Reflection
 
                 idProp.SetValue(dummy, 100);
 
-                Assert.Equal(100, idProp.GetValue(dummy));
-                Assert.Equal(100, dummy.ID);
+                Assert.AreEqual(100, idProp.GetValue(dummy));
+                Assert.AreEqual(100, dummy.ID);
             }
         }
 
-        [Fact]
+        [Test]
         public void PropertyByName()
         {
             for (var i = 0; i < 100000; i++)
@@ -46,12 +46,12 @@ namespace Kirkin.Tests.Reflection
 
                 idProp.SetValue(dummy, 100);
 
-                Assert.Equal(100, idProp.GetValue(dummy));
-                Assert.Equal(100, dummy.ID);
+                Assert.AreEqual(100, idProp.GetValue(dummy));
+                Assert.AreEqual(100, dummy.ID);
             }
         }
 
-        [Fact]
+        [Test]
         public void NonGenericPropertyByName()
         {
             for (var i = 0; i < 100000; i++)
@@ -61,12 +61,12 @@ namespace Kirkin.Tests.Reflection
 
                 idProp.SetValue(dummy, 100);
 
-                Assert.Equal(100, idProp.GetValue(dummy));
-                Assert.Equal(100, dummy.ID);
+                Assert.AreEqual(100, idProp.GetValue(dummy));
+                Assert.AreEqual(100, dummy.ID);
             }
         }
 
-        [Fact]
+        [Test]
         public void NonGenericPropertyByExpression()
         {
             for (var i = 0; i < 100000; i++)
@@ -76,12 +76,12 @@ namespace Kirkin.Tests.Reflection
 
                 idProp.SetValue(dummy, 100);
 
-                Assert.Equal(100, idProp.GetValue(dummy));
-                Assert.Equal(100, dummy.ID);
+                Assert.AreEqual(100, idProp.GetValue(dummy));
+                Assert.AreEqual(100, dummy.ID);
             }
         }
 
-        [Fact]
+        [Test]
         public void NonGenericPropertyAccessorFactoryNonGenericPropertyByName()
         {
             for (var i = 0; i < 100000; i++)
@@ -91,12 +91,12 @@ namespace Kirkin.Tests.Reflection
 
                 idProp.SetValue(dummy, 100);
 
-                Assert.Equal(100, idProp.GetValue(dummy));
-                Assert.Equal(100, dummy.ID);
+                Assert.AreEqual(100, idProp.GetValue(dummy));
+                Assert.AreEqual(100, dummy.ID);
             }
         }
 
-        [Fact]
+        [Test]
         public void NonGenericPropertyViaProperties()
         {
             for (var i = 0; i < 100000; i++)
@@ -107,12 +107,12 @@ namespace Kirkin.Tests.Reflection
 
                 idProp.SetValue(dummy, 100);
 
-                Assert.Equal(100, idProp.GetValue(dummy));
-                Assert.Equal(100, dummy.ID);
+                Assert.AreEqual(100, idProp.GetValue(dummy));
+                Assert.AreEqual(100, dummy.ID);
             }
         }
 
-        [Fact]
+        [Test]
         public void NonGenericPropertyViaNonGenericProperties()
         {
             for (var i = 0; i < 100000; i++)
@@ -123,8 +123,8 @@ namespace Kirkin.Tests.Reflection
 
                 idProp.SetValue(dummy, 100);
 
-                Assert.Equal(100, idProp.GetValue(dummy));
-                Assert.Equal(100, dummy.ID);
+                Assert.AreEqual(100, idProp.GetValue(dummy));
+                Assert.AreEqual(100, dummy.ID);
             }
         }
 
@@ -154,7 +154,7 @@ namespace Kirkin.Tests.Reflection
             }
         }
 
-        [Fact]
+        [Test]
         public void AssignableFrom()
         {
             Assert.True(typeof(DateTime?).IsAssignableFrom(typeof(DateTime)));
@@ -174,7 +174,7 @@ namespace Kirkin.Tests.Reflection
 
         }
 
-        [Fact]
+        [Test]
         public void RepetitivePropDirect()
         {
             var dummy = new Dummy();
@@ -185,7 +185,7 @@ namespace Kirkin.Tests.Reflection
             }
         }
 
-        [Fact]
+        [Test]
         public void RepetitivePropResolveTestWithLambda()
         {
             var dummy = new Dummy();
@@ -199,7 +199,7 @@ namespace Kirkin.Tests.Reflection
             }
         }
 
-        [Fact]
+        [Test]
         public void RepetitivePropResolveTestWithName()
         {
             var dummy = new Dummy();
@@ -212,7 +212,7 @@ namespace Kirkin.Tests.Reflection
             }
         }
 
-        [Fact]
+        [Test]
         public void RepetitivePropResolveTestNonGeneric()
         {
             var dummy = new Dummy();
@@ -225,12 +225,12 @@ namespace Kirkin.Tests.Reflection
             }
         }
 
-        [Fact]
+        [Test]
         public void TypeNames()
         {
-            Assert.Equal("Int32", TypeName.NameIncludingGenericArguments(typeof(int)));
-            Assert.Equal("Nullable<Int32>", TypeName.NameIncludingGenericArguments(typeof(int?)));
-            Assert.Equal("Dictionary<Int32, String>", TypeName.NameIncludingGenericArguments(typeof(Dictionary<int, string>)));
+            Assert.AreEqual("Int32", TypeName.NameIncludingGenericArguments(typeof(int)));
+            Assert.AreEqual("Nullable<Int32>", TypeName.NameIncludingGenericArguments(typeof(int?)));
+            Assert.AreEqual("Dictionary<Int32, String>", TypeName.NameIncludingGenericArguments(typeof(Dictionary<int, string>)));
         }
     }
 }

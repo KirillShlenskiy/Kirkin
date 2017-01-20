@@ -2,57 +2,57 @@
 
 using Kirkin.Refs;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Refs
 {
     public class RefTests
     {
-        [Fact]
+        [Test]
         public void PropertyRef()
         {
             Dummy dummy = new Dummy { ID = 123 };
             ValueRef<int> id = ValueRef.FromAssignableExpression(() => dummy.ID);
 
-            Assert.Equal(123, id.Value);
+            Assert.AreEqual(123, id.Value);
 
             id.Value = 321;
 
-            Assert.Equal(321, dummy.ID);
+            Assert.AreEqual(321, dummy.ID);
 
             IRef weakID = id;
 
-            Assert.Equal(321, weakID.Value);
+            Assert.AreEqual(321, weakID.Value);
 
             weakID.Value = 111;
 
-            Assert.Equal(111, dummy.ID);
-            Assert.ThrowsAny<Exception>(() => weakID.Value = "222");
+            Assert.AreEqual(111, dummy.ID);
+            Assert.Throws<Exception>(() => weakID.Value = "222");
         }
 
-        [Fact]
+        [Test]
         public void LocalRef()
         {
             int value = 123;
             ValueRef<int> valueRef = ValueRef.FromAssignableExpression(() => value);
 
-            Assert.Equal(123, valueRef.Value);
+            Assert.AreEqual(123, valueRef.Value);
 
             valueRef.Value = 321;
 
-            Assert.Equal(321, value);
+            Assert.AreEqual(321, value);
 
             IRef weakID = valueRef;
 
-            Assert.Equal(321, weakID.Value);
+            Assert.AreEqual(321, weakID.Value);
 
             weakID.Value = 111;
 
-            Assert.Equal(111, value);
-            Assert.ThrowsAny<Exception>(() => weakID.Value = "222");
+            Assert.AreEqual(111, value);
+            Assert.Throws<Exception>(() => weakID.Value = "222");
         }
 
-        //[Fact]
+        //[Test]
         //public void AdjustStructProperty()
         //{
         //    Dummy dummy = new Dummy();
@@ -61,10 +61,10 @@ namespace Kirkin.Tests.Refs
         //        .Capture(() => dummy.Frame)
         //        .Adjust(v => { v.Size.Width = 123; return v; });
 
-        //    Assert.Equal(123, dummy.Size.Width);
+        //    Assert.AreEqual(123, dummy.Size.Width);
         //}
 
-        [Fact]
+        [Test]
         public void MultilevelStructRef()
         {
             Dummy dummy = new Dummy();
@@ -74,15 +74,15 @@ namespace Kirkin.Tests.Refs
                 .Ref(f => f.Size)
                 .Ref(s => s.Width);
 
-            Assert.Equal(0, widthRef.Value);
+            Assert.AreEqual(0, widthRef.Value);
 
             widthRef.Value = 123;
 
-            Assert.Equal(123, dummy.Frame.Size.Width);
-            Assert.Equal(123, widthRef.Value);
+            Assert.AreEqual(123, dummy.Frame.Size.Width);
+            Assert.AreEqual(123, widthRef.Value);
         }
 
-        [Fact]
+        [Test]
         public void MultilevelStructSwap()
         {
             Dummy dummy = new Dummy();
@@ -92,23 +92,23 @@ namespace Kirkin.Tests.Refs
                 .Ref(f => f.Size)
                 .Ref(s => s.Width);
 
-            Assert.Equal(0, widthRef.Value);
+            Assert.AreEqual(0, widthRef.Value);
 
             dummy.Frame = new Frame { Size = new Size { Width = 123 } };
 
-            Assert.Equal(123, widthRef.Value);
+            Assert.AreEqual(123, widthRef.Value);
 
             dummy = new Dummy();
 
-            Assert.Equal(0, widthRef.Value);
+            Assert.AreEqual(0, widthRef.Value);
 
             widthRef.Value = 321;
 
-            Assert.Equal(321, dummy.Frame.Size.Width);
-            Assert.Equal(321, widthRef.Value);
+            Assert.AreEqual(321, dummy.Frame.Size.Width);
+            Assert.AreEqual(321, widthRef.Value);
         }
 
-        //[Fact]
+        //[Test]
         //public void Api()
         //{
         //    Dummy dummy = new Dummy();

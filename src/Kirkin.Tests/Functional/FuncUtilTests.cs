@@ -2,7 +2,7 @@
 {
     public class FuncUtilTests
     {
-        //[Fact]
+        //[Test]
         //public void ExecuteWithRetrySucceeds()
         //{
         //    var i = 0;
@@ -13,11 +13,11 @@
         //        return 42;
         //    });
 
-        //    Assert.Equal(1, i);
-        //    Assert.Equal(42, a);
+        //    Assert.AreEqual(1, i);
+        //    Assert.AreEqual(42, a);
         //}
 
-        //[Fact]
+        //[Test]
         //public void ExecuteWithRetrySucceedsOnLastRetry()
         //{
         //    var i = 0;
@@ -29,11 +29,11 @@
         //        return 42;
         //    });
 
-        //    Assert.Equal(3, i);
-        //    Assert.Equal(42, a);
+        //    Assert.AreEqual(3, i);
+        //    Assert.AreEqual(42, a);
         //}
 
-        //[Fact]
+        //[Test]
         //public void ExecuteWithRetryFailsWhenRetryCountReached()
         //{
         //    var i = 0;
@@ -56,7 +56,7 @@
         //    }
 
         //    Assert.True(errored);
-        //    Assert.Equal(3, i);
+        //    Assert.AreEqual(3, i);
         //}
     }
 }

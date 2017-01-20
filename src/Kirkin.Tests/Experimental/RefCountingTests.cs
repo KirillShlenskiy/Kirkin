@@ -3,13 +3,13 @@
 using Kirkin.Functional;
 using Kirkin.ReferenceCounting;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Experimental
 {
     public class RefCountingTests
     {
-        [Fact]
+        [Test]
         public void BasicRefCounting()
         {
             bool created = false;
@@ -22,27 +22,30 @@ namespace Kirkin.Tests.Experimental
                 return Disposable.Create(() => disposed = true);
             });
 
-            Assert.Equal(0, manager.ReferenceCount);
+            Assert.AreEqual(0, manager.ReferenceCount);
             Assert.False(created);
             Assert.False(disposed);
 
             Borrowed<IDisposable> ref1 = manager.Borrow();
 
-            Assert.Equal(1, manager.ReferenceCount);
+            Assert.AreEqual(1, manager.ReferenceCount);
             Assert.False(created); // Lazy creation.
             Assert.False(disposed);
 
             ref1.Dispose();
             ref1.Dispose();
 
-            Assert.Equal(0, manager.ReferenceCount);
+            Assert.AreEqual(0, manager.ReferenceCount);
             Assert.False(created);
             Assert.False(disposed);
-            Assert.Throws<ObjectDisposedException>(() => ref1.Value);
+
+            IDisposable ignored;
+
+            Assert.Throws<ObjectDisposedException>(() => ignored = ref1.Value);
 
             ref1 = manager.Borrow();
 
-            Assert.Equal(1, manager.ReferenceCount);
+            Assert.AreEqual(1, manager.ReferenceCount);
 
             IDisposable resource = ref1.Value;
 
@@ -51,27 +54,27 @@ namespace Kirkin.Tests.Experimental
 
             Borrowed<IDisposable> ref2 = manager.Borrow();
 
-            Assert.Equal(2, manager.ReferenceCount);
-            Assert.Same(ref1.Value, ref2.Value);
+            Assert.AreEqual(2, manager.ReferenceCount);
+            Assert.AreSame(ref1.Value, ref2.Value);
             Assert.True(created);
             Assert.False(disposed);
 
             ref1.Dispose();
             ref1.Dispose();
 
-            Assert.Equal(1, manager.ReferenceCount);
+            Assert.AreEqual(1, manager.ReferenceCount);
             Assert.True(created);
             Assert.False(disposed);
 
             ref2.Dispose();
             ref2.Dispose();
 
-            Assert.Equal(0, manager.ReferenceCount);
+            Assert.AreEqual(0, manager.ReferenceCount);
             Assert.True(created);
             Assert.True(disposed);
         }
 
-        [Fact]
+        [Test]
         public void AllowResurrect()
         {
             SharedResourceManager<IDisposable> counter = new SharedResourceManager<IDisposable>(
@@ -89,16 +92,16 @@ namespace Kirkin.Tests.Experimental
                 resource2 = ref2.Value;
             }
 
-            Assert.Same(resource1, resource2);
+            Assert.AreSame(resource1, resource2);
 
             using (Borrowed<IDisposable> ref2 = counter.Borrow()) {
                 resource2 = ref2.Value;
             }
 
-            Assert.NotSame(resource1, resource2);
+            Assert.AreNotSame(resource1, resource2);
         }
 
-        [Fact]
+        [Test]
         public void DisallowResurrect()
         {
             SharedResourceManager<IDisposable> counter = new SharedResourceManager<IDisposable>(

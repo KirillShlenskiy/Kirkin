@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using Castle.DynamicProxy;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Experimental
 {
@@ -18,7 +18,7 @@ namespace Kirkin.Tests.Experimental
 
     public class CastleCodegenTests
     {
-        [Fact]
+        [Test]
         public void DynamicInterface()
         {
             ProxyGenerator generator = new ProxyGenerator();

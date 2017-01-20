@@ -2,13 +2,13 @@
 
 using Kirkin.Logging;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Logging
 {
     public class LogEntryBlockTests
     {
-        [Fact]
+        [Test]
         public void EntryBlockPerf()
         {
             Logger logger = Logger.Null;
@@ -21,7 +21,7 @@ namespace Kirkin.Tests.Logging
             }
         }
 
-        [Fact]
+        [Test]
         public void BasicEntryBlockStartingWithNull()
         {
             var logger = new ListLogger();
@@ -32,10 +32,10 @@ namespace Kirkin.Tests.Logging
                 logger.Log("b");
             }
 
-            Assert.Equal(new[] { "a", "b", "" }, logger.Entries);
+            Assert.AreEqual(new[] { "a", "b", "" }, logger.Entries);
         }
 
-        [Fact]
+        [Test]
         public void BasicEntryBlockStartingWithEmpty()
         {
             var logger = new ListLogger();
@@ -48,10 +48,10 @@ namespace Kirkin.Tests.Logging
                 logger.Log("b");
             }
 
-            Assert.Equal(new[] { "", "a", "b", "" }, logger.Entries);
+            Assert.AreEqual(new[] { "", "a", "b", "" }, logger.Entries);
         }
 
-        [Fact]
+        [Test]
         public void BasicEntryBlockStartingWithNonEmpty()
         {
             var logger = new ListLogger();
@@ -64,10 +64,10 @@ namespace Kirkin.Tests.Logging
                 logger.Log("b");
             }
 
-            Assert.Equal(new[] { "z", "", "a", "b", "" }, logger.Entries);
+            Assert.AreEqual(new[] { "z", "", "a", "b", "" }, logger.Entries);
         }
 
-        [Fact]
+        [Test]
         public void CompleteOnlyCreatesOneEmptyEntry()
         {
             var logger = new ListLogger();
@@ -79,10 +79,10 @@ namespace Kirkin.Tests.Logging
                 block.Complete();
             }
 
-            Assert.Equal(new[] { "a", "" }, logger.Entries);
+            Assert.AreEqual(new[] { "a", "" }, logger.Entries);
         }
 
-        [Fact]
+        [Test]
         public void CompleteWorksAgainAfternNonEmptyEntry()
         {
             var logger = new ListLogger();
@@ -95,10 +95,10 @@ namespace Kirkin.Tests.Logging
                 block.Complete();
             }
 
-            Assert.Equal(new[] { "a", "", "a", "" }, logger.Entries);
+            Assert.AreEqual(new[] { "a", "", "a", "" }, logger.Entries);
         }
 
-        [Fact]
+        [Test]
         public void EmptyBlockProducesSingleEmptyEntry()
         {
             var logger = new ListLogger();
@@ -111,7 +111,7 @@ namespace Kirkin.Tests.Logging
 
             logger.Log("a");
 
-            Assert.Equal(new[] { "a", "", "a" }, logger.Entries);
+            Assert.AreEqual(new[] { "a", "", "a" }, logger.Entries);
         }
 
         sealed class ListLogger : Logger

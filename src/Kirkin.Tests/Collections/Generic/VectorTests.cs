@@ -5,13 +5,13 @@ using System.Linq;
 
 using Kirkin.Collections.Generic;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Collections.Generic
 {
     public class VectorTests
     {
-        [Fact]
+        [Test]
         public void IterationPerfArray()
         {
             var items = new[] { 1, 2, 3 };
@@ -24,7 +24,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void IterationPerfArraySegment()
         {
             var items = new ArraySegment<int>(new[] { 1, 2, 3 });
@@ -37,7 +37,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void IterationPerfArraySlice()
         {
             var items = new ArraySlice<int>(new[] { 1, 2, 3 }, 0, 3);
@@ -50,7 +50,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void IterationPerfArrayViaIndexer()
         {
             var items = new[] { 1, 2, 3 };
@@ -64,7 +64,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void IterationPerfVector()
         {
             var items = Vector.Create(1, 2, 3);
@@ -77,7 +77,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void IterationPerfVectorViaIndexer()
         {
             var items = Vector.Create(1, 2, 3);
@@ -91,7 +91,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void IterationPerfVectorViaInterface()
         {
             IEnumerable<int> items = Vector.Create(1, 2, 3);
@@ -104,7 +104,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void IterationPerfGenericList()
         {
             var items = new List<int> { 1, 2, 3 };
@@ -117,7 +117,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void IterationPerfGenericListViaIndexer()
         {
             var items = new List<int> { 1, 2, 3 };
@@ -133,7 +133,7 @@ namespace Kirkin.Tests.Collections.Generic
 
         static readonly int[] Integers = new int[1000];
 
-        [Fact]
+        [Test]
         public void ToListPerf()
         {
             for (int i = 0; i < 10000; i++) {
@@ -141,7 +141,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void ToArrayPerf()
         {
             for (int i = 0; i < 10000; i++) {
@@ -149,7 +149,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void ToImmutableArrayPerf()
         {
             for (int i = 0; i < 10000; i++) {
@@ -157,7 +157,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void ToVectorPerf()
         {
             for (int i = 0; i < 10000; i++) {
@@ -165,7 +165,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void ToVectorEnumerablePerf()
         {
             for (int i = 0; i < 10000; i++) {
@@ -173,7 +173,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void Empty()
         {
             var vector = Vector<int>.Empty;
@@ -182,7 +182,7 @@ namespace Kirkin.Tests.Collections.Generic
             Assert.True(vector != null);
         }
 
-        [Fact]
+        [Test]
         public void IsDefaultOrEmpty()
         {
             Assert.True(default(Vector<int>).IsDefaultOrEmpty);
@@ -190,7 +190,7 @@ namespace Kirkin.Tests.Collections.Generic
             Assert.False(Vector.Create(1).IsDefaultOrEmpty);
         }
 
-        [Fact]
+        [Test]
         public void EqualityCheckActsLikeRef()
         {
             var vec1 = Vector.Create(1, 2, 3);
@@ -199,7 +199,7 @@ namespace Kirkin.Tests.Collections.Generic
             Assert.False(vec1 == vec2);
         }
 
-        [Fact]
+        [Test]
         public void UninitializedEquatesToNull()
         {
             var vec = default(Vector<int>);
@@ -207,7 +207,7 @@ namespace Kirkin.Tests.Collections.Generic
             Assert.True(vec == null);
         }
 
-        [Fact]
+        [Test]
         public void GetEnumeratorThrowsIfDefault()
         {
             var vec = default(Vector<int>);
@@ -217,7 +217,7 @@ namespace Kirkin.Tests.Collections.Generic
             Assert.Throws<InvalidOperationException>(() => ((IEnumerable<int>)vec).GetEnumerator());
         }
 
-        [Fact]
+        [Test]
         public void LinqMethodsThrowNullRefOnDefault()
         {
             var vec = default(Vector<int>);
@@ -254,7 +254,7 @@ namespace Kirkin.Tests.Collections.Generic
             Assert.Throws<InvalidOperationException>(() => vec.ToList());
         }
 
-        [Fact]
+        [Test]
         public void ArrayCopyPerf()
         {
             for (int i = 0; i < 1000000; i++)
@@ -265,7 +265,7 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void ArrayClonePerf()
         {
             for (int i = 0; i < 1000000; i++) {
@@ -273,15 +273,15 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void InterlockedBasic()
         {
             Vector<int> vec = Vector.Create(1);
             Vector<int> copy = vec;
 
-            Assert.Equal(vec, copy);
-            Assert.Equal(new[] { 1, 2 }, Vector.InterlockedAdd(ref vec, 2));
-            Assert.NotEqual(vec, copy);
+            Assert.AreEqual(vec, copy);
+            Assert.AreEqual(new[] { 1, 2 }, Vector.InterlockedAdd(ref vec, 2));
+            Assert.AreNotEqual(vec, copy);
         }
     }
 }

@@ -6,20 +6,12 @@ using System.Threading.Tasks;
 
 using Kirkin.Decisions;
 
-using Xunit;
-using Xunit.Abstractions;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Decisions
 {
     public class DecisionTests
     {
-        private readonly ITestOutputHelper Output;
-
-        public DecisionTests(ITestOutputHelper output)
-        {
-            Output = output;
-        }
-
         sealed class EvenPreference : IPreference<int>
         {
             public Decision<int> EstimateFitness(int input)
@@ -33,7 +25,7 @@ namespace Kirkin.Tests.Decisions
             }
         }
 
-        [Fact]
+        [Test]
         public void DecideSomething()
         {
             IPreference<int> makeItBig = Preference.HigherIsBetter(0, 10).WithInputConversion((int i) => i);

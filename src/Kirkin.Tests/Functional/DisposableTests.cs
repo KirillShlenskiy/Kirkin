@@ -3,13 +3,13 @@ using System.Linq;
 
 using Kirkin.Functional;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Functional
 {
     public class DisposableTests
     {
-        [Fact]
+        [Test]
         public void Create()
         {
             var i = 0;
@@ -19,10 +19,10 @@ namespace Kirkin.Tests.Functional
             d.Dispose();
             d.Dispose();
 
-            Assert.Equal(1, i);
+            Assert.AreEqual(1, i);
         }
 
-        [Fact]
+        [Test]
         public void Combine()
         {
             var i = 0;
@@ -33,10 +33,10 @@ namespace Kirkin.Tests.Functional
             disposable.Dispose();
             disposable.Dispose();
 
-            Assert.Equal(count, i);
+            Assert.AreEqual(count, i);
         }
 
-        [Fact]
+        [Test]
         public void CombinePartialDispose()
         {
             var i = 0;
@@ -58,10 +58,10 @@ namespace Kirkin.Tests.Functional
             }
 
             Assert.True(errored);
-            Assert.Equal(5, i);
+            Assert.AreEqual(5, i);
         }
 
-        [Fact]
+        [Test]
         public void ParametrizedCreate1()
         {
             var i = 0;
@@ -71,10 +71,10 @@ namespace Kirkin.Tests.Functional
             d.Dispose();
             d.Dispose();
 
-            Assert.Equal(1, i);
+            Assert.AreEqual(1, i);
         }
 
-        [Fact]
+        [Test]
         public void ParametrizedCreate2()
         {
             var i = 1;
@@ -84,10 +84,10 @@ namespace Kirkin.Tests.Functional
             d.Dispose();
             d.Dispose();
 
-            Assert.Equal(2, i);
+            Assert.AreEqual(2, i);
         }
 
-        [Fact]
+        [Test]
         public void Empty()
         {
             var d = Disposable.Empty;

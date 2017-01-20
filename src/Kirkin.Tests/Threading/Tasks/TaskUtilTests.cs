@@ -2,18 +2,18 @@
 
 using Kirkin.Threading.Tasks;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Threading.Tasks
 {
     public class TaskUtilTests
     {
-        [Fact]
+        [Test]
         public void CompletedVoidTask()
         {
             Task task = TaskUtil.CompletedTask;
 
-            Assert.Equal(TaskStatus.RanToCompletion, task.Status);
+            Assert.AreEqual(TaskStatus.RanToCompletion, task.Status);
         }
     }
 }

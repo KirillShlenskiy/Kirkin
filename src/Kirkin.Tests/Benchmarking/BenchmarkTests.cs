@@ -5,21 +5,13 @@ using Kirkin.Collections.Generic;
 
 using BenchmarkDotNet.Attributes;
 
-using Xunit;
-using Xunit.Abstractions;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Benchmarking
 {
     public class BenchmarkTests
     {
-        private readonly ITestOutputHelper Output;
-
-        public BenchmarkTests(ITestOutputHelper output)
-        {
-            Output = output;
-        }
-
-        //[Fact]
+        //[Test]
         public void Collections()
         {
             string report = Benchmarks.Run<CollectionPerf>();
@@ -62,7 +54,7 @@ namespace Kirkin.Tests.Benchmarking
             }
         }
 
-        //[Fact]
+        //[Test]
         public void ForVsForEachOverArray()
         {
             string report = Benchmarks.Run<ForVsForEachOverArrayPerf>();

@@ -4,54 +4,54 @@ using System.Collections.Immutable;
 
 using Kirkin.Collections.Generic;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Collections.Generic
 {
     public class TinyBufferTests
     {
-        [Fact]
+        [Test]
         public void BasicToArray()
         {
             var buffer = new TinyBuffer<int>();
 
-            Assert.Equal(0, buffer.Count);
+            Assert.AreEqual(0, buffer.Count);
 
             buffer.Add(1);
             buffer.Add(2);
             buffer.Add(3);
 
-            Assert.Equal(3, buffer.Count);
-            Assert.Equal(new[] { 1, 2, 3 }, buffer.ToArray());
+            Assert.AreEqual(3, buffer.Count);
+            Assert.AreEqual(new[] { 1, 2, 3 }, buffer.ToArray());
         }
 
         const int ITERATIONS8 = 1000000;
 
-        [Fact]
+        [Test]
         public void PerfArray1()
         {
             PerfArray(1);
         }
 
-        [Fact]
+        [Test]
         public void PerfArray7()
         {
             PerfArray(7);
         }
 
-        [Fact]
+        [Test]
         public void PerfArray8()
         {
             PerfArray(8);
         }
 
-        [Fact]
+        [Test]
         public void PerfArray15()
         {
             PerfArray(15);
         }
 
-        [Fact]
+        [Test]
         public void PerfArray100()
         {
             PerfArray(100);
@@ -78,31 +78,31 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void PerfTinyBuffer1()
         {
             PerfTinyBuffer(1);
         }
 
-        [Fact]
+        [Test]
         public void PerfTinyBuffer7()
         {
             PerfTinyBuffer(7);
         }
 
-        [Fact]
+        [Test]
         public void PerfTinyBuffer8()
         {
             PerfTinyBuffer(8);
         }
 
-        [Fact]
+        [Test]
         public void PerfTinyBuffer15()
         {
             PerfTinyBuffer(15);
         }
 
-        [Fact]
+        [Test]
         public void PerfTinyBuffer100()
         {
             PerfTinyBuffer(100);
@@ -122,31 +122,31 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void PerfArrayBuilder1()
         {
             PerfArrayBuilder(1);
         }
 
-        [Fact]
+        [Test]
         public void PerfArrayBuilder7()
         {
             PerfArrayBuilder(7);
         }
 
-        [Fact]
+        [Test]
         public void PerfArrayBuilder8()
         {
             PerfArrayBuilder(8);
         }
 
-        [Fact]
+        [Test]
         public void PerfArrayBuilder15()
         {
             PerfArrayBuilder(15);
         }
 
-        [Fact]
+        [Test]
         public void PerfArrayBuilder100()
         {
             PerfArrayBuilder(100);
@@ -166,31 +166,31 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void PerfPooledArrayBuilder1()
         {
             PerfPooledArrayBuilder(1);
         }
 
-        [Fact]
+        [Test]
         public void PerfPooledArrayBuilder7()
         {
             PerfPooledArrayBuilder(7);
         }
 
-        [Fact]
+        [Test]
         public void PerfPooledArrayBuilder8()
         {
             PerfPooledArrayBuilder(8);
         }
 
-        [Fact]
+        [Test]
         public void PerfPooledArrayBuilder15()
         {
             PerfPooledArrayBuilder(15);
         }
 
-        [Fact]
+        [Test]
         public void PerfPooledArrayBuilder100()
         {
             PerfPooledArrayBuilder(100);
@@ -210,31 +210,31 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void PerfImmutableBuilder1()
         {
             PerfImmutableBuilder(1);
         }
 
-        [Fact]
+        [Test]
         public void PerfImmutableBuilder7()
         {
             PerfImmutableBuilder(7);
         }
 
-        [Fact]
+        [Test]
         public void PerfImmutableBuilder8()
         {
             PerfImmutableBuilder(8);
         }
 
-        [Fact]
+        [Test]
         public void PerfImmutableBuilder15()
         {
             PerfImmutableBuilder(15);
         }
 
-        [Fact]
+        [Test]
         public void PerfImmutableBuilder100()
         {
             PerfImmutableBuilder(100);
@@ -254,31 +254,31 @@ namespace Kirkin.Tests.Collections.Generic
             }
         }
 
-        [Fact]
+        [Test]
         public void PerfList1()
         {
             PerfList(1);
         }
 
-        [Fact]
+        [Test]
         public void PerfList7()
         {
             PerfList(7);
         }
 
-        [Fact]
+        [Test]
         public void PerfList8()
         {
             PerfList(8);
         }
 
-        [Fact]
+        [Test]
         public void PerfList15()
         {
             PerfList(15);
         }
 
-        [Fact]
+        [Test]
         public void PerfList100()
         {
             PerfList(100);

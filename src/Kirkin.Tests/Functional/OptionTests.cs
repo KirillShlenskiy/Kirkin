@@ -1,4 +1,4 @@
-﻿using Xunit;
+﻿using NUnit.Framework;
 
 using Kirkin.Functional;
 
@@ -6,56 +6,56 @@ namespace Kirkin.Tests.Functional
 {
     public class OptionTests
     {
-        [Fact]
+        [Test]
         public void Projections()
         {
             Option<string> str = null; // "zzz";
 
             var a = str.Select(_ => "ignored") || null || "ooo";
 
-            Assert.Equal("ooo", a.Value);
+            Assert.AreEqual("ooo", a.Value);
 
             var i = str.Select(_ => 1);
 
             Assert.False(i.HasValue);
         }
 
-        [Fact]
+        [Test]
         public void Equals()
         {
             var o1 = new Option<int>(123);
             var o2 = new Option<int>(321);
 
-            Assert.NotEqual(o1, o2);
+            Assert.AreNotEqual(o1, o2);
 
             o2 = new Option<int>(123);
 
-            Assert.Equal(o1, o2);
-            Assert.Equal(123, o1);
+            Assert.AreEqual(o1, o2);
+            Assert.AreEqual(123, o1);
 
             // Null checking.
             Assert.NotNull(o1);
             Assert.True(new Option<int>().Equals(null));
 
             // Need to work out why this is failing.
-            //Assert.Equal(null, default(Option<int>));
+            //Assert.AreEqual(null, default(Option<int>));
         }
 
-        [Fact]
+        [Test]
         public void GetHashCodeT()
         {
-            Assert.Equal(1, new Option<int>(1).GetHashCode());
-            Assert.Equal(0, new Option<int>().GetHashCode());
+            Assert.AreEqual(1, new Option<int>(1).GetHashCode());
+            Assert.AreEqual(0, new Option<int>().GetHashCode());
         }
 
-        [Fact]
+        [Test]
         public void HasValueMustBeTrue()
         {
             Option<string> op0 = "";
             Assert.True(op0.HasValue, "HasValue must be true after implicit conversion from a valid non-null value.");
         }
 
-        [Fact]
+        [Test]
         public void HasValueMustBeFalse()
         {
             Option<string> op0 = Option<string>.None;
@@ -69,21 +69,21 @@ namespace Kirkin.Tests.Functional
             Assert.False(op2.HasValue, "HasValue must be true after implicit conversion from a null reference.");
         }
 
-        [Fact]
+        [Test]
         public void NullCoalescingOperatos()
         {
             var i = new Option<int>();
 
-            Assert.Equal(1, i | 1);
-            Assert.Equal(2, i || 2);
-            Assert.Equal(3, i % 3);
+            Assert.AreEqual(1, i | 1);
+            Assert.AreEqual(2, i || 2);
+            Assert.AreEqual(3, i % 3);
 
-            Assert.NotEqual(0, i | 1);
-            Assert.NotEqual(0, i || 2);
-            Assert.NotEqual(0, i % 3);
+            Assert.AreNotEqual(0, i | 1);
+            Assert.AreNotEqual(0, i || 2);
+            Assert.AreNotEqual(0, i % 3);
         }
 
-        [Fact]
+        [Test]
         public void ValueTypes()
         {
             Option<int> z = 0;

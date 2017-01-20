@@ -7,21 +7,13 @@ using System.Threading;
 
 using Kirkin.Logging;
 
-using Xunit;
-using Xunit.Abstractions;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Logging
 {
     public class LoggerTests
     {
-        private readonly Logger Output;
-
-        public LoggerTests(ITestOutputHelper output)
-        {
-            Output = Logger.Create(output.WriteLine);
-        }
-
-        [Fact]
+        [Test]
         public void BuilderApi()
         {
             Logger logger = new LoggerBuilder()
@@ -31,7 +23,7 @@ namespace Kirkin.Tests.Logging
                 .BuildLogger();
         }
 
-        [Fact]
+        [Test]
         public void Formatters()
         {
             string output = "";
@@ -48,7 +40,7 @@ namespace Kirkin.Tests.Logging
 
             logger.Log("Blah");
 
-            Assert.Equal("123Blah321" + Environment.NewLine, output);
+            Assert.AreEqual("123Blah321" + Environment.NewLine, output);
 
             // Test ordered transform.
             output = "";
@@ -61,10 +53,10 @@ namespace Kirkin.Tests.Logging
 
             logger.Log("This" + Environment.NewLine + "is" + Environment.NewLine + "awesome");
 
-            Assert.Equal("zzz This" + Environment.NewLine + "zzz is" + Environment.NewLine + "zzz awesome" + Environment.NewLine, output);
+            Assert.AreEqual("zzz This" + Environment.NewLine + "zzz is" + Environment.NewLine + "zzz awesome" + Environment.NewLine, output);
         }
 
-        [Fact]
+        [Test]
         public void CombineTest()
         {
             var entries = new List<string>();
@@ -77,12 +69,12 @@ namespace Kirkin.Tests.Logging
 
             logger.Log("123");
 
-            Assert.Equal(2, entries.Count);
-            Assert.Equal("123", entries[0]);
-            Assert.Equal("321", entries[1]);
+            Assert.AreEqual(2, entries.Count);
+            Assert.AreEqual("123", entries[0]);
+            Assert.AreEqual("321", entries[1]);
         }
 
-        [Fact]
+        [Test]
         public void CustomLoggerTest()
         {
             var entries = new List<string>();
@@ -92,16 +84,16 @@ namespace Kirkin.Tests.Logging
 
             logger.Log("Entry 1");
 
-            Assert.Equal(1, entries.Count);
-            Assert.Equal("Entry 1", entries.Last());
+            Assert.AreEqual(1, entries.Count);
+            Assert.AreEqual("Entry 1", entries.Last());
 
             logger.Log("Entry 2");
 
-            Assert.Equal(2, entries.Count);
-            Assert.Equal("Entry 2", entries.Last());
+            Assert.AreEqual(2, entries.Count);
+            Assert.AreEqual("Entry 2", entries.Last());
         }
 
-        [Fact]
+        [Test]
         public void LogTimeBetweenEntriesCustomFormat()
         {
             var lines = new List<string>();
@@ -111,12 +103,12 @@ namespace Kirkin.Tests.Logging
             Thread.Sleep(200);
             logger.Log("200 ms later."); // Produces 2 lines.
 
-            Assert.Equal("1", lines[0]);
-            Assert.Equal("0", lines[1]);
-            Assert.Equal("200 ms later.", lines[2]);
+            Assert.AreEqual("1", lines[0]);
+            Assert.AreEqual("0", lines[1]);
+            Assert.AreEqual("200 ms later.", lines[2]);
         }
 
-        [Fact]
+        [Test]
         public void LogTimeBetweenEntriesDefaultFormat()
         {
             var lines = new List<string>();
@@ -126,12 +118,12 @@ namespace Kirkin.Tests.Logging
             Thread.Sleep(200);
             logger.Log("200 ms later."); // Produces 2 lines.
 
-            Assert.Equal("1", lines[0]);
+            Assert.AreEqual("1", lines[0]);
             Assert.True(Regex.IsMatch(lines[1], @"\[Time elapsed: [0-9.]{5} s\.\]"));
-            Assert.Equal("200 ms later.", lines[2]);
+            Assert.AreEqual("200 ms later.", lines[2]);
         }
 
-        [Fact]
+        [Test]
         public void SplitLinesLoggerTest()
         {
             var entries = new List<string>();
@@ -139,13 +131,13 @@ namespace Kirkin.Tests.Logging
 
             logger.Log("Line 1" + Environment.NewLine + "Line 2" + Environment.NewLine + "Line 3");
 
-            Assert.Equal(3, entries.Count);
-            Assert.Equal("Line 1", entries[0]);
-            Assert.Equal("Line 2", entries[1]);
-            Assert.Equal("Line 3", entries[2]);
+            Assert.AreEqual(3, entries.Count);
+            Assert.AreEqual("Line 1", entries[0]);
+            Assert.AreEqual("Line 2", entries[1]);
+            Assert.AreEqual("Line 3", entries[2]);
         }
 
-        [Fact]
+        [Test]
         public void TimestampedLoggerTest()
         {
             var entry = default(string);
@@ -158,7 +150,7 @@ namespace Kirkin.Tests.Logging
             DateTime.ParseExact(datePortion, "HH:mm:ss", null);
         }
 
-        [Fact]
+        [Test]
         public void WithOptionsTest()
         {
             var lines = new List<string>();
@@ -173,7 +165,7 @@ namespace Kirkin.Tests.Logging
             logger.Log("This should be timed"); // Produces 2 lines because of time logging.
 
             Debug.Print(string.Join(Environment.NewLine, lines));
-            Assert.Equal(4, lines.Count);
+            Assert.AreEqual(4, lines.Count);
 
             string timeFormat = "HH:mm:ss";
 
@@ -196,7 +188,7 @@ namespace Kirkin.Tests.Logging
             Assert.True(startsWithTime(lines[3]));
         }
 
-        [Fact]
+        [Test]
         public void WithTransformationTest1()
         {
             // Reimplement timestamp logger.
@@ -210,7 +202,7 @@ namespace Kirkin.Tests.Logging
             DateTime.ParseExact(datePortion, "HH:mm:ss", null);
         }
 
-        [Fact]
+        [Test]
         public void WithTransformationTest2()
         {
             // Reimplement split line logger.
@@ -222,13 +214,13 @@ namespace Kirkin.Tests.Logging
 
             logger.Log("Line 1" + Environment.NewLine + "Line 2" + Environment.NewLine + "Line 3");
 
-            Assert.Equal(3, buffer.Count);
-            Assert.Equal("Line 1", buffer[0]);
-            Assert.Equal("Line 2", buffer[1]);
-            Assert.Equal("Line 3", buffer[2]);
+            Assert.AreEqual(3, buffer.Count);
+            Assert.AreEqual("Line 1", buffer[0]);
+            Assert.AreEqual("Line 2", buffer[1]);
+            Assert.AreEqual("Line 3", buffer[2]);
         }
 
-        [Fact]
+        [Test]
         public void WithTransformationTest3()
         {
             // Reimplement timestamp logger.
@@ -241,7 +233,7 @@ namespace Kirkin.Tests.Logging
 
             logger.Log("BOOM");
 
-            Assert.Equal("123BOOM", entry);
+            Assert.AreEqual("123BOOM", entry);
         }
     }
 }

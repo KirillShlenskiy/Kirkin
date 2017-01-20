@@ -2,13 +2,13 @@
 
 using Kirkin.Collections.Specialized;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Collections.Specialized
 {
     public class SingleElementReadOnlyListTests
     {
-        [Fact]
+        [Test]
         public void EnumerationDirect()
         {
             SingleElementReadOnlyList<int> collection = new SingleElementReadOnlyList<int>(123);
@@ -16,15 +16,15 @@ namespace Kirkin.Tests.Collections.Specialized
 
             foreach (int item in collection)
             {
-                Assert.Equal(123, item);
+                Assert.AreEqual(123, item);
 
                 i++;
             }
 
-            Assert.Equal(1, i);
+            Assert.AreEqual(1, i);
         }
 
-        [Fact]
+        [Test]
         public void EnumerationViaInterface()
         {
             IEnumerable<int> collection = new SingleElementReadOnlyList<int>(123);
@@ -32,15 +32,15 @@ namespace Kirkin.Tests.Collections.Specialized
 
             foreach (int item in collection)
             {
-                Assert.Equal(123, item);
+                Assert.AreEqual(123, item);
 
                 i++;
             }
 
-            Assert.Equal(1, i);
+            Assert.AreEqual(1, i);
         }
 
-        [Fact]
+        [Test]
         public void PerfDirect()
         {
             SingleElementReadOnlyList<int> collection = new SingleElementReadOnlyList<int>(123);
@@ -53,7 +53,7 @@ namespace Kirkin.Tests.Collections.Specialized
             }
         }
 
-        [Fact]
+        [Test]
         public void PerfInterface()
         {
             IEnumerable<int> collection = new SingleElementReadOnlyList<int>(123);

@@ -1,12 +1,12 @@
 ﻿using Kirkin.Refs;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Refs
 {
     public class ObservableRefTests
     {
-        [Fact]
+        [Test]
         public void ValueSetAndValueChanged()
         {
             ObservableRef<int> strongRef = new ObservableRef<int>(123);
@@ -19,18 +19,18 @@ namespace Kirkin.Tests.Refs
 
             strongRef.Value = 321;
 
-            Assert.Equal(1, valueSetCount);
-            Assert.Equal(1, valueChangedCount);
+            Assert.AreEqual(1, valueSetCount);
+            Assert.AreEqual(1, valueChangedCount);
 
             strongRef.Value = 321;
 
-            Assert.Equal(2, valueSetCount);
-            Assert.Equal(1, valueChangedCount);
+            Assert.AreEqual(2, valueSetCount);
+            Assert.AreEqual(1, valueChangedCount);
 
             strongRef.Value++;
 
-            Assert.Equal(3, valueSetCount);
-            Assert.Equal(2, valueChangedCount);
+            Assert.AreEqual(3, valueSetCount);
+            Assert.AreEqual(2, valueChangedCount);
         }
     }
 }

@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Net;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests
 {
     public class IsolationContextTests
     {
-        [Fact]
+        [Test]
         public void ServicePointManagerTest()
         {
-            Assert.NotEqual(100, ServicePointManager.DefaultConnectionLimit);
-            Assert.NotEqual(200, ServicePointManager.DefaultConnectionLimit);
+            Assert.AreNotEqual(100, ServicePointManager.DefaultConnectionLimit);
+            Assert.AreNotEqual(200, ServicePointManager.DefaultConnectionLimit);
 
             int initialConnectionLimit = ServicePointManager.DefaultConnectionLimit;
 
@@ -23,26 +23,26 @@ namespace Kirkin.Tests
                 ServicePointManagerProxy proxy1 = isolated1.CreateInstance<ServicePointManagerProxy>();
                 ServicePointManagerProxy proxy2 = isolated2.CreateInstance<ServicePointManagerProxy>();
 
-                Assert.Equal(native.DefaultConnectionLimit, proxy1.DefaultConnectionLimit);
-                Assert.Equal(native.DefaultConnectionLimit, proxy2.DefaultConnectionLimit);
+                Assert.AreEqual(native.DefaultConnectionLimit, proxy1.DefaultConnectionLimit);
+                Assert.AreEqual(native.DefaultConnectionLimit, proxy2.DefaultConnectionLimit);
 
                 proxy1.DefaultConnectionLimit = 100;
 
-                Assert.Equal(100, proxy1.DefaultConnectionLimit);
-                Assert.Equal(initialConnectionLimit, proxy2.DefaultConnectionLimit);
-                Assert.Equal(initialConnectionLimit, native.DefaultConnectionLimit);
+                Assert.AreEqual(100, proxy1.DefaultConnectionLimit);
+                Assert.AreEqual(initialConnectionLimit, proxy2.DefaultConnectionLimit);
+                Assert.AreEqual(initialConnectionLimit, native.DefaultConnectionLimit);
 
                 proxy2.DefaultConnectionLimit = 200;
 
-                Assert.Equal(100, proxy1.DefaultConnectionLimit);
-                Assert.Equal(200, proxy2.DefaultConnectionLimit);
-                Assert.Equal(initialConnectionLimit, native.DefaultConnectionLimit);
+                Assert.AreEqual(100, proxy1.DefaultConnectionLimit);
+                Assert.AreEqual(200, proxy2.DefaultConnectionLimit);
+                Assert.AreEqual(initialConnectionLimit, native.DefaultConnectionLimit);
             }
 
-            Assert.Equal(initialConnectionLimit, ServicePointManager.DefaultConnectionLimit);
+            Assert.AreEqual(initialConnectionLimit, ServicePointManager.DefaultConnectionLimit);
         }
 
-        [Fact]
+        [Test]
         public void ServicePointManagerUnloading()
         {
             ServicePointManagerProxy proxy;
@@ -53,7 +53,9 @@ namespace Kirkin.Tests
                 proxy.DefaultConnectionLimit = 10;
             }
 
-            Assert.Throws<AppDomainUnloadedException>(() => proxy.DefaultConnectionLimit);
+            int limit;
+
+            Assert.Throws<AppDomainUnloadedException>(() => limit = proxy.DefaultConnectionLimit);
             Assert.Throws<AppDomainUnloadedException>(() => proxy.DefaultConnectionLimit = 20);
         }
 
@@ -72,7 +74,7 @@ namespace Kirkin.Tests
             }
         }
 
-        [Fact]
+        [Test]
         public void BasicIsolation()
         {
             StaticState.Value = "zzz";
@@ -85,23 +87,23 @@ namespace Kirkin.Tests
 
                 manipulator.Value = "123";
 
-                Assert.Equal("123", manipulator.Value);
-                Assert.Equal("zzz", StaticState.Value);
+                Assert.AreEqual("123", manipulator.Value);
+                Assert.AreEqual("zzz", StaticState.Value);
             }
         }
 
-        [Fact]
+        [Test]
         public void CreateInstanceWithArgs()
         {
             using (IsolationContext isolated = new IsolationContext())
             {
                 Manipulator manipulator = isolated.CreateInstance<Manipulator>("aaa");
 
-                Assert.Equal("aaa", manipulator.Value);
+                Assert.AreEqual("aaa", manipulator.Value);
             }
         }
 
-        [Fact]
+        [Test]
         public void IsolationContextSetupAndTeardownBenchmark()
         {
             for (int i = 0; i < 250; i++)
@@ -112,7 +114,7 @@ namespace Kirkin.Tests
             }
         }
 
-        [Fact]
+        [Test]
         public void IsolationContextCreateInstanceBenchmark()
         {
             using (IsolationContext isolated = new IsolationContext())

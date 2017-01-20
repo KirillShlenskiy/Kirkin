@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 using Kirkin.Data.SqlClient;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Data.SqlClient
 {
     public class SqlServerEngineTests
     {
-        [Fact]
+        [Test]
         public void BasicApi()
         {
             //using (SqlServerEngine engine = new SqlServerEngine(""))

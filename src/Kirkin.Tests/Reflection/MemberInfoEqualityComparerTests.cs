@@ -2,13 +2,13 @@
 
 using Kirkin.Reflection;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Reflection
 {
     public class MemberInfoEqualityComparerTests
     {
-        [Fact]
+        [Test]
         public void FieldEquals()
         {
             FieldInfo f1 = typeof(BaseDummy).GetField("_id", BindingFlags.Instance | BindingFlags.NonPublic);

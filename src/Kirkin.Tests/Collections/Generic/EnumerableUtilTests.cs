@@ -2,13 +2,13 @@
 using System.Linq;
 
 using Kirkin.Collections.Generic;
-using Xunit;
+using NUnit.Framework;
 
 namespace Kirkin.Tests.Collections.Generic
 {
     public class EnumerableUtilTests
     {
-        [Fact]
+        [Test]
         public void Arrays()
         {
             var col1 = (IEnumerable<int>)new[] { 1, 2, 3 };
@@ -16,10 +16,10 @@ namespace Kirkin.Tests.Collections.Generic
 
             EnumerableUtil.EnsureMaterialized(ref col2);
 
-            Assert.Same(col1, col2);
+            Assert.AreSame(col1, col2);
         }
 
-        [Fact]
+        [Test]
         public void Lists()
         {
             var col1 = (IEnumerable<int>)new List<int>(new[] { 1, 2, 3 });
@@ -27,10 +27,10 @@ namespace Kirkin.Tests.Collections.Generic
 
             EnumerableUtil.EnsureMaterialized(ref col2);
 
-            Assert.Same(col1, col2);
+            Assert.AreSame(col1, col2);
         }
 
-        [Fact]
+        [Test]
         public void Materialize()
         {
             var col1 = Enumerable.Range(1, 3);
@@ -38,7 +38,7 @@ namespace Kirkin.Tests.Collections.Generic
 
             EnumerableUtil.EnsureMaterialized(ref col2);
 
-            Assert.NotSame(col1, col2);
+            Assert.AreNotSame(col1, col2);
         }
     }
 }
