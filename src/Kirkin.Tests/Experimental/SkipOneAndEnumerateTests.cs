@@ -10,7 +10,6 @@ namespace Kirkin.Tests.Experimental
     {
         const int Iterations = 100000;
 
-        [Theory]
         [TestCase(4)]
         [TestCase(10)]
         [TestCase(50)]
@@ -31,7 +30,6 @@ namespace Kirkin.Tests.Experimental
             }
         }
 
-        [Theory]
         [TestCase(4)]
         [TestCase(10)]
         [TestCase(50)]
@@ -50,7 +48,6 @@ namespace Kirkin.Tests.Experimental
             }
         }
 
-        [Theory]
         [TestCase(4)]
         [TestCase(10)]
         [TestCase(50)]

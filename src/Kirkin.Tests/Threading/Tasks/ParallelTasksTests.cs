@@ -11,7 +11,6 @@ using NUnit.Framework;
 
 namespace Kirkin.Tests.Threading.Tasks
 {
-    [TestFixture]
     public class ParallelTasksTests
     {
         private IEnumerable<Func<Task<TimeSpan>>> EnumerateFactories()
@@ -112,7 +111,7 @@ namespace Kirkin.Tests.Threading.Tasks
             List<TimeSpan> results = new List<TimeSpan>();
             ParallelTaskOptions options = new ParallelTaskOptions { CancellationToken = new CancellationTokenSource(0).Token };
 
-            Assert.ThrowsAsync<OperationCanceledException>(() =>
+            Assert.ThrowsAsync<TaskCanceledException>(() =>
                 ParallelTasks.ForEachAsync(EnumerateFactories(), options, f => f(), async completed => results.Add(await completed))
             );
 
@@ -123,7 +122,7 @@ namespace Kirkin.Tests.Threading.Tasks
                 MaxDegreeOfParallelism = 2
             };
 
-            Assert.ThrowsAsync<OperationCanceledException>(() =>
+            Assert.ThrowsAsync<TaskCanceledException>(() =>
                 ParallelTasks.ForEachAsync(EnumerateFactories(), options, f => f(), async completed => results.Add(await completed))
             );
 

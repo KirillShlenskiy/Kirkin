@@ -27,7 +27,7 @@ namespace Kirkin.Tests.Refs
             weakID.Value = 111;
 
             Assert.AreEqual(111, dummy.ID);
-            Assert.Throws<Exception>(() => weakID.Value = "222");
+            Assert.Throws<InvalidCastException>(() => weakID.Value = "222");
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace Kirkin.Tests.Refs
             weakID.Value = 111;
 
             Assert.AreEqual(111, value);
-            Assert.Throws<Exception>(() => weakID.Value = "222");
+            Assert.Throws<InvalidCastException>(() => weakID.Value = "222");
         }
 
         //[Test]

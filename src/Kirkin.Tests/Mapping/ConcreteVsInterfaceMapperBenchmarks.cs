@@ -3,8 +3,6 @@
 using Kirkin.Tests.Benchmarking;
 using Kirkin.Mapping;
 
-using NUnit.Framework;
-
 namespace Kirkin.Tests.Mapping
 {
     public sealed class ConcreteVsInterfaceMapperBenchmarks

@@ -6,7 +6,6 @@ using NUnit.Framework;
 
 namespace Kirkin.Tests.Validation
 {
-    [TestFixture]
     public class ValidatorTests
     {
         [Test]

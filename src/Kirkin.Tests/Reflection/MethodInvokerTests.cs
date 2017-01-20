@@ -25,8 +25,8 @@ namespace Kirkin.Tests.Reflection
 
             Assert.Null(invoker.Invoke(new Dummy(), null));
             Assert.Null(invoker.Invoke(new Dummy(), new int[0]));
-            Assert.Throws<Exception>(() => invoker.Invoke(null, null));
-            Assert.Throws<Exception>(() => invoker.Invoke(null, 42));
+            Assert.Throws<NullReferenceException>(() => invoker.Invoke(null, null));
+            Assert.Throws<NullReferenceException>(() => invoker.Invoke(null, 42));
         }
 
         [Test]
@@ -35,8 +35,8 @@ namespace Kirkin.Tests.Reflection
             MethodInvoker invoker = CreateFastMethodInfo("ActionOneArg");
 
             Assert.Null(invoker.Invoke(new Dummy(), 42));
-            Assert.Throws<Exception>(() => invoker.Invoke(null, null));
-            Assert.Throws<Exception>(() => invoker.Invoke(null, new object[0]));
+            Assert.Throws<NullReferenceException>(() => invoker.Invoke(null, null));
+            Assert.Throws<IndexOutOfRangeException>(() => invoker.Invoke(null, new object[0]));
         }
 
         [Test]
@@ -46,8 +46,8 @@ namespace Kirkin.Tests.Reflection
 
             Assert.AreEqual(42, invoker.Invoke(new Dummy(), null));
             Assert.AreEqual(42, invoker.Invoke(new Dummy(), new int[0]));
-            Assert.Throws<Exception>(() => invoker.Invoke(null, null));
-            Assert.Throws<Exception>(() => invoker.Invoke(null, 42));
+            Assert.Throws<NullReferenceException>(() => invoker.Invoke(null, null));
+            Assert.Throws<NullReferenceException>(() => invoker.Invoke(null, 42));
         }
 
         [Test]
@@ -56,8 +56,8 @@ namespace Kirkin.Tests.Reflection
             MethodInvoker invoker = CreateFastMethodInfo("FuncOneArg");
 
             Assert.AreEqual(42, invoker.Invoke(new Dummy(), 42));
-            Assert.Throws<Exception>(() => invoker.Invoke(null, null));
-            Assert.Throws<Exception>(() => invoker.Invoke(null, new object[0]));
+            Assert.Throws<NullReferenceException>(() => invoker.Invoke(null, null));
+            Assert.Throws<IndexOutOfRangeException>(() => invoker.Invoke(null, new object[0]));
         }
 
         private static MethodInvoker CreateFastMethodInfo(string methodName)

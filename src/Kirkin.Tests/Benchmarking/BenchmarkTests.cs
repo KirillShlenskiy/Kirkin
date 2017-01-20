@@ -5,8 +5,6 @@ using Kirkin.Collections.Generic;
 
 using BenchmarkDotNet.Attributes;
 
-using NUnit.Framework;
-
 namespace Kirkin.Tests.Benchmarking
 {
     public class BenchmarkTests
