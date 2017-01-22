@@ -12,11 +12,11 @@ namespace Kirkin.Collections.Immutable
     public static class ImmutableArrayFactory
     {
         /// <summary>
-        /// Creates an <see cref="ImmutableArray{T}"/> wrapper around the given array.
+        /// Creates an <see cref="ImmutableArray{T}"/> wrapper around the given mutable array.
         /// The resulting array won't be truly immutable, but the consumers will
         /// think it is and the performance will be better than copy can provide.
         /// </summary>
-        public static ImmutableArray<T> WrapArray<T>(T[] array)
+        public static ImmutableArray<T> WrapMutableArray<T>(T[] array)
         {
             return ImmutableArrayConstructor<T>.Value(array);
         }

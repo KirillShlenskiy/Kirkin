@@ -12,7 +12,7 @@ namespace Kirkin.Tests.Experimental
         public void BasicApi()
         {
             int[] integers = { 1, 2, 3 };
-            ImmutableArray<int> immutable = ImmutableArrayFactory.WrapArray(integers);
+            ImmutableArray<int> immutable = ImmutableArrayFactory.WrapMutableArray(integers);
 
             Assert.AreEqual(integers, immutable);
             Assert.False(immutable.IsDefault);
@@ -27,7 +27,7 @@ namespace Kirkin.Tests.Experimental
         public void NoCopy()
         {
             int[] integers = { 1, 2, 3 };
-            ImmutableArray<int> immutable = ImmutableArrayFactory.WrapArray(integers);
+            ImmutableArray<int> immutable = ImmutableArrayFactory.WrapMutableArray(integers);
 
             Assert.AreEqual(integers, immutable);
 
@@ -44,7 +44,7 @@ namespace Kirkin.Tests.Experimental
             ImmutableArray<int> immutable;
 
             for (int i = 0; i < 250000; i++) {
-                immutable = ImmutableArrayFactory.WrapArray(integers);
+                immutable = ImmutableArrayFactory.WrapMutableArray(integers);
             }
         }
     }
