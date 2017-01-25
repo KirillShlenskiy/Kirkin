@@ -53,7 +53,7 @@ namespace Kirkin.Data.SqlClient
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 connection.Open();
-                CreateTableFromDataTable(tableName, dataTable);
+                CreateSqlTableFromDataTableSchema(tableName, dataTable);
 
                 using (SqlBulkCopy bulkCopy = new SqlBulkCopy(connection))
                 {
@@ -64,16 +64,21 @@ namespace Kirkin.Data.SqlClient
             }
         }
 
-        private void CreateTableFromDataTable(string tableName, DataTable dataTable)
+        /// <summary>
+        /// Creates an SQL Server table with schema compatible with the given <see cref="DataTable"/>.
+        /// Drops the target table if it already exists.
+        /// </summary>
+        public void CreateSqlTableFromDataTableSchema(string tableName, DataTable dataTable)
         {
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 connection.Open();
-                CreateTableFromDataTable(tableName, dataTable, connection);
+
+                CreateSqlTableFromDataTableSchema(tableName, dataTable, connection);
             }
         }
 
-        private void CreateTableFromDataTable(string tableName, DataTable dataTable, SqlConnection connection)
+        private void CreateSqlTableFromDataTableSchema(string tableName, DataTable dataTable, SqlConnection connection)
         {
             string sql = GetCreateTableSql(tableName, dataTable);
 
