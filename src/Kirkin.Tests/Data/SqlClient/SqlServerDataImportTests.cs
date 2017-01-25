@@ -41,7 +41,7 @@ namespace Kirkin.Tests.Data.SqlClient
 
             SqlServerDataImport import = new SqlServerDataImport(ConnectionString);
 
-            import.CreateTableFromDataTable("TestTable", dt);
+            import.ImportDataTable(dt, "TestTable");
         }
     }
 }
