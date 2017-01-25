@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 
 namespace Kirkin.Data.SqlClient
@@ -18,6 +18,8 @@ namespace Kirkin.Data.SqlClient
         public void CreateTableFromDataTable(string tableName, DataTable dataTable)
         {
             string sql = GetCreateTableSql(tableName, dataTable);
+
+            sql = $"IF OBJECT_ID('{tableName}') IS NOT NULL DROP TABLE [{tableName}];" + Environment.NewLine + Environment.NewLine + sql;
 
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
@@ -38,19 +40,13 @@ namespace Kirkin.Data.SqlClient
 
             sql.AppendLine($"CREATE TABLE [{tableName}] (");
 
-            HashSet<DataColumn> keyColumns = new HashSet<DataColumn>(dataTable.PrimaryKey);
-
             for (int i = 0; i < dataTable.Columns.Count; i++)
             {
                 DataColumn column = dataTable.Columns[i];
 
                 sql.Append($"  [{column.ColumnName}] {SqlTypeFromColumn(column)}");
 
-                if (keyColumns.Contains(column)) {
-                    sql.Append(" PRIMARY KEY");
-                }
-
-                if (i == dataTable.Columns.Count - 1)
+                if (i == dataTable.Columns.Count - 1 && dataTable.PrimaryKey.Length == 0)
                 {
                     sql.AppendLine();
                 }
@@ -60,6 +56,13 @@ namespace Kirkin.Data.SqlClient
                 }
             }
 
+            if (dataTable.PrimaryKey.Length != 0)
+            {
+                sql.Append("  PRIMARY KEY (");
+                sql.Append(string.Join(", ", dataTable.PrimaryKey.Select(c => "[" + c.ColumnName + "]")));
+                sql.AppendLine(")");
+            }
+
             sql.AppendLine(");");
 
             return sql.ToString();
@@ -67,16 +70,45 @@ namespace Kirkin.Data.SqlClient
 
         private static string SqlTypeFromColumn(DataColumn column)
         {
-            if (column.DataType == typeof(string))
-            {
-                // TODO: Better length resolution.
-                return "varchar(255) NULL";
-            }
-
             string nullOrNotNull = column.AllowDBNull ? "NULL" : "NOT NULL";
 
-            if (column.DataType == typeof(int)) return $"int {nullOrNotNull}";
-            if (column.DataType == typeof(decimal)) return $"money {nullOrNotNull}";
+            if (column.DataType == typeof(string))
+            {
+                int maxLength = 0;
+
+                foreach (DataRow row in column.Table.Rows)
+                {
+                    string value = row[column] as string;
+
+                    if (value != null && value.Length > maxLength) {
+                        maxLength = value.Length;
+                    }
+                }
+
+                string length = "255";
+
+                if (maxLength > 4000)
+                {
+                    length = "MAX";
+                }
+                else if (maxLength > 2000)
+                {
+                    length = "4000";
+                }
+                else if (maxLength > 1000)
+                {
+                    length = "2000";
+                }
+                else if (maxLength > 255)
+                {
+                    length = "1000";
+                }
+
+                return $"varchar({length}) {nullOrNotNull}";
+            }
+
+            if (column.DataType == typeof(int)) return "int " + nullOrNotNull;
+            if (column.DataType == typeof(decimal)) return "money " + nullOrNotNull;
 
             throw new NotSupportedException($"Unsupported data type for column '{column.ColumnName}'.");
         }
