@@ -26,7 +26,13 @@ namespace Kirkin.Data.SqlClient
             { typeof(decimal), "decimal(29, 4)" },
             { typeof(float), "real" },
             { typeof(double), "float" },
-            { typeof(char), "nchar(1)" }
+            { typeof(char), "nchar(1)" },
+            { typeof(DateTime), "datetime" },
+            { typeof(DateTimeOffset), "datetimeoffset" },
+            { typeof(TimeSpan), "time" },
+            { typeof(byte[]), "varbinary(MAX)" },
+            { typeof(Guid), "uniqueidentifier" },
+            { typeof(object), "sql_variant" }
         };
 
         /// <summary>
