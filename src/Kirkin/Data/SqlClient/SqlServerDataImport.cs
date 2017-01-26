@@ -53,11 +53,14 @@ namespace Kirkin.Data.SqlClient
                     command.ExecuteNonQuery();
                 }
 
-                using (SqlBulkCopy bulkCopy = new SqlBulkCopy(connection))
+                if (dataTable.Rows.Count != 0)
                 {
-                    bulkCopy.DestinationTableName = tableName;
+                    using (SqlBulkCopy bulkCopy = new SqlBulkCopy(connection))
+                    {
+                        bulkCopy.DestinationTableName = tableName;
 
-                    bulkCopy.WriteToServer(dataTable);
+                        bulkCopy.WriteToServer(dataTable);
+                    }
                 }
             }
         }
