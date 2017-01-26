@@ -96,23 +96,28 @@ namespace Kirkin.Data.SqlClient
 
         private static string ComputeVarcharColumnLength(DataColumn column)
         {
-            int maxLength = 0;
+            if (column.MaxLength == -1) return "4000"; // Same as Entity Framework.
+            if (column.MaxLength > 8000) return "MAX";
 
-            foreach (DataRow row in column.Table.Rows)
-            {
-                string value = row[column] as string;
+            return column.MaxLength.ToString();
 
-                if (value != null && value.Length > maxLength) {
-                    maxLength = value.Length;
-                }
-            }
+            //int maxLength = 0;
 
-            if (maxLength > 4000) return "MAX";
-            if (maxLength > 2000) return "4000";
-            if (maxLength > 1000) return "2000";
-            if (maxLength > 255) return "1000";
+            //foreach (DataRow row in column.Table.Rows)
+            //{
+            //    string value = row[column] as string;
 
-            return "255";
+            //    if (value != null && value.Length > maxLength) {
+            //        maxLength = value.Length;
+            //    }
+            //}
+
+            //if (maxLength > 4000) return "MAX";
+            //if (maxLength > 2000) return "4000";
+            //if (maxLength > 1000) return "2000";
+            //if (maxLength > 255) return "1000";
+
+            //return "255";
         }
     }
 }
