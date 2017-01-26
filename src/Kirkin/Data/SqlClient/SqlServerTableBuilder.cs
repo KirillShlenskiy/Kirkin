@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 
@@ -38,66 +37,10 @@ namespace Kirkin.Data.SqlClient
         };
 
         /// <summary>
-        /// Connection specified when this instance was created.
-        /// </summary>
-        public SqlConnection Connection { get; }
-
-        /// <summary>
-        /// Creates a new instance of <see cref="SqlServerTableBuilder"/>.
-        /// </summary>
-        public SqlServerTableBuilder(SqlConnection connection)
-        {
-            if (connection == null) throw new ArgumentNullException(nameof(connection));
-
-            Connection = connection;
-        }
-
-        /// <summary>
-        /// Creates an SQL Server table with schema compatible with the given <see cref="DataTable"/>.
-        /// Drops the target table if it already exists.
-        /// </summary>
-        public void DropAndReCreateSqlTable(string tableName, DataTable dataTable)
-        {
-            string sql = GetCreateTableSql(tableName, dataTable);
-
-            sql = $"IF OBJECT_ID('{tableName}') IS NOT NULL DROP TABLE [{tableName}];" + Environment.NewLine + Environment.NewLine + sql;
-
-            if (Connection.State != ConnectionState.Open) {
-                Connection.Open();
-            }
-
-            using (SqlCommand command = new SqlCommand(sql, Connection))
-            {
-                command.CommandType = CommandType.Text;
-
-                command.ExecuteNonQuery();
-            }
-        }
-
-        /// <summary>
-        /// Creates an SQL Server table with schema compatible with the given <see cref="DataTable"/>.
-        /// </summary>
-        public void CreateSqlTable(string tableName, DataTable dataTable)
-        {
-            string sql = GetCreateTableSql(tableName, dataTable);
-
-            if (Connection.State != ConnectionState.Open) {
-                Connection.Open();
-            }
-
-            using (SqlCommand command = new SqlCommand(sql, Connection))
-            {
-                command.CommandType = CommandType.Text;
-
-                command.ExecuteNonQuery();
-            }
-        }
-
-        /// <summary>
         /// Produces the SQL statement used to create the table with the given
         /// name and schema compatible with the given <see cref="DataTable"/>.
         /// </summary>
-        protected virtual string GetCreateTableSql(string tableName, DataTable dataTable)
+        public virtual string GetCreateTableSql(string tableName, DataTable dataTable)
         {
             StringBuilder sql = new StringBuilder();
 

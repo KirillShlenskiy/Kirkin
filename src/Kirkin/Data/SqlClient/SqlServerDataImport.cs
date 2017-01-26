@@ -3,6 +3,7 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text;
 
 namespace Kirkin.Data.SqlClient
 {
@@ -11,6 +12,8 @@ namespace Kirkin.Data.SqlClient
     /// </summary>
     public class SqlServerDataImport
     {
+        private static readonly SqlServerTableBuilder DefaultSqlServerTableBuilder = new SqlServerTableBuilder();
+
         /// <summary>
         /// Connection string specified when this instance was created.
         /// </summary>
@@ -38,9 +41,17 @@ namespace Kirkin.Data.SqlClient
             {
                 connection.Open();
 
-                SqlServerTableBuilder tableBuilder = ResolveTableBuilder(connection);
+                SqlServerTableBuilder tableBuilder = ResolveTableBuilder();
+                string createTableSql = tableBuilder.GetCreateTableSql(tableName, dataTable);
+                StringBuilder sql = new StringBuilder();
 
-                tableBuilder.DropAndReCreateSqlTable(tableName, dataTable);
+                sql.AppendLine($"IF OBJECT_ID('{tableName}') IS NOT NULL DROP TABLE [{tableName}];");
+                sql.AppendLine();
+                sql.Append(createTableSql);
+
+                using (SqlCommand command = new SqlCommand(sql.ToString(), connection)) {
+                    command.ExecuteNonQuery();
+                }
 
                 using (SqlBulkCopy bulkCopy = new SqlBulkCopy(connection))
                 {
@@ -54,9 +65,9 @@ namespace Kirkin.Data.SqlClient
         /// <summary>
         /// Produces the <see cref="SqlServerTableBuilder"/> instance to be used for the import.
         /// </summary>
-        protected virtual SqlServerTableBuilder ResolveTableBuilder(SqlConnection connection)
+        protected virtual SqlServerTableBuilder ResolveTableBuilder()
         {
-            return new SqlServerTableBuilder(connection);
+            return DefaultSqlServerTableBuilder;
         }
     }
 }
