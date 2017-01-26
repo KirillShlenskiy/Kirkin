@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !__MOBILE__
+
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -171,3 +173,5 @@ namespace Kirkin.Data.SqlClient
         }
     }
 }
+
+#endif
