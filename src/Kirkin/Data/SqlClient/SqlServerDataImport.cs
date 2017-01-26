@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace Kirkin.Data.SqlClient
@@ -6,7 +7,7 @@ namespace Kirkin.Data.SqlClient
     /// <summary>
     /// SQL Server data import utility type.
     /// </summary>
-    public sealed class SqlServerDataImport
+    public class SqlServerDataImport
     {
         /// <summary>
         /// Connection string specified when this instance was created.
@@ -18,6 +19,8 @@ namespace Kirkin.Data.SqlClient
         /// </summary>
         public SqlServerDataImport(string connectionString)
         {
+            if (string.IsNullOrEmpty(connectionString)) throw new ArgumentException("Connection string cannot be null or empty.");
+
             ConnectionString = connectionString;
         }
 
@@ -31,7 +34,11 @@ namespace Kirkin.Data.SqlClient
         {
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
-                new SqlServerTableBuilder(connection).CreateSqlTable(tableName, dataTable);
+                connection.Open();
+
+                SqlServerTableBuilder tableBuilder = ResolveTableBuilder(connection);
+
+                tableBuilder.DropAndReCreateSqlTable(tableName, dataTable);
 
                 using (SqlBulkCopy bulkCopy = new SqlBulkCopy(connection))
                 {
@@ -40,6 +47,14 @@ namespace Kirkin.Data.SqlClient
                     bulkCopy.WriteToServer(dataTable);
                 }
             }
+        }
+
+        /// <summary>
+        /// Produces the <see cref="SqlServerTableBuilder"/> instance to be used for the import.
+        /// </summary>
+        protected virtual SqlServerTableBuilder ResolveTableBuilder(SqlConnection connection)
+        {
+            return new SqlServerTableBuilder(connection);
         }
     }
 }

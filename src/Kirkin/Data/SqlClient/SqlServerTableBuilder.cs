@@ -7,7 +7,10 @@ using System.Text;
 
 namespace Kirkin.Data.SqlClient
 {
-    internal class SqlServerTableBuilder
+    /// <summary>
+    /// Auto-creates SQL Server tables that model CLR objects (i.e. <see cref="DataTable"/>).
+    /// </summary>
+    public class SqlServerTableBuilder
     {
         // Reference: https://msdn.microsoft.com/en-us/library/bb386947(v=vs.110).aspx
         private static readonly Dictionary<Type, string> ClrSqlTypeMappings = new Dictionary<Type, string> {
@@ -37,6 +40,9 @@ namespace Kirkin.Data.SqlClient
         /// </summary>
         public SqlConnection Connection { get; }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="SqlServerTableBuilder"/>.
+        /// </summary>
         public SqlServerTableBuilder(SqlConnection connection)
         {
             if (connection == null) throw new ArgumentNullException(nameof(connection));
@@ -48,7 +54,7 @@ namespace Kirkin.Data.SqlClient
         /// Creates an SQL Server table with schema compatible with the given <see cref="DataTable"/>.
         /// Drops the target table if it already exists.
         /// </summary>
-        public void CreateSqlTable(string tableName, DataTable dataTable)
+        public void DropAndReCreateSqlTable(string tableName, DataTable dataTable)
         {
             string sql = GetCreateTableSql(tableName, dataTable);
 
@@ -66,7 +72,30 @@ namespace Kirkin.Data.SqlClient
             }
         }
 
-        private string GetCreateTableSql(string tableName, DataTable dataTable)
+        /// <summary>
+        /// Creates an SQL Server table with schema compatible with the given <see cref="DataTable"/>.
+        /// </summary>
+        public void CreateSqlTable(string tableName, DataTable dataTable)
+        {
+            string sql = GetCreateTableSql(tableName, dataTable);
+
+            if (Connection.State != ConnectionState.Open) {
+                Connection.Open();
+            }
+
+            using (SqlCommand command = new SqlCommand(sql, Connection))
+            {
+                command.CommandType = CommandType.Text;
+
+                command.ExecuteNonQuery();
+            }
+        }
+
+        /// <summary>
+        /// Produces the SQL statement used to create the table with the given
+        /// name and schema compatible with the given <see cref="DataTable"/>.
+        /// </summary>
+        protected virtual string GetCreateTableSql(string tableName, DataTable dataTable)
         {
             StringBuilder sql = new StringBuilder();
 
@@ -100,35 +129,15 @@ namespace Kirkin.Data.SqlClient
             return sql.ToString();
         }
 
+        /// <summary>
+        /// Resolves the SQL Server type appropriate for the given <see cref="DataColumn"/> (i.e. int, varchar(255) etc).
+        /// </summary>
         protected virtual string SqlTypeForColumn(DataColumn column)
         {
             string nullOrNotNull = column.AllowDBNull ? "NULL" : "NOT NULL";
 
-            if (column.DataType == typeof(string))
-            {
-                int maxLength = 0;
-
-                foreach (DataRow row in column.Table.Rows)
-                {
-                    string value = row[column] as string;
-
-                    if (value != null && value.Length > maxLength) {
-                        maxLength = value.Length;
-                    }
-                }
-
-                string length = "255";
-
-                if (maxLength > 4000)
-                    length = "MAX";
-                else if (maxLength > 2000)
-                    length = "4000";
-                else if (maxLength > 1000)
-                    length = "2000";
-                else if (maxLength > 255)
-                    length = "1000";
-
-                return $"nvarchar({length}) {nullOrNotNull}";
+            if (column.DataType == typeof(string)) {
+                return $"nvarchar({ComputeVarcharColumnLength(column)}) {nullOrNotNull}";
             }
 
             string sqlType;
@@ -138,6 +147,27 @@ namespace Kirkin.Data.SqlClient
             }
 
             throw new NotSupportedException($"Unsupported data type for column '{column.ColumnName}'.");
+        }
+
+        private static string ComputeVarcharColumnLength(DataColumn column)
+        {
+            int maxLength = 0;
+
+            foreach (DataRow row in column.Table.Rows)
+            {
+                string value = row[column] as string;
+
+                if (value != null && value.Length > maxLength) {
+                    maxLength = value.Length;
+                }
+            }
+
+            if (maxLength > 4000) return "MAX";
+            if (maxLength > 2000) return "4000";
+            if (maxLength > 1000) return "2000";
+            if (maxLength > 255) return "1000";
+
+            return "255";
         }
     }
 }
