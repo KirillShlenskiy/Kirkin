@@ -31,17 +31,25 @@ namespace Kirkin.Data.SqlClient
 
         /// <summary>
         /// Imports the given <see cref="DataTable"/> to SQL Server (both schema and data).
-        /// Drops and re-creates the target table in the process.
         /// </summary>
         /// <param name="dataTable">DataTable to import.</param>
         /// <param name="tableName">Target SQL server table. Will be dropped and re-created.</param>
-        public void ImportDataTable(DataTable dataTable, string tableName)
+        /// <param name="dropAndReCreateTable">Determines whether the table will be dropped and re-created if it already exists.</param>
+        public void ImportDataTable(DataTable dataTable, string tableName, bool dropAndReCreateTable = false)
         {
             SqlServerTableBuilder tableBuilder = ResolveTableBuilder();
             string createTableSql = tableBuilder.GetCreateTableSql(tableName, dataTable);
             StringBuilder sql = new StringBuilder();
 
-            sql.AppendLine($"IF OBJECT_ID('{tableName}') IS NOT NULL DROP TABLE [{tableName}];");
+            if (dropAndReCreateTable)
+            {
+                sql.AppendLine($"IF OBJECT_ID('{tableName}') IS NOT NULL DROP TABLE [{tableName}];");
+            }
+            else
+            {
+                sql.AppendLine($"IF OBJECT_ID('{tableName}') IS NOT NULL RETURN;");
+            }
+
             sql.AppendLine();
             sql.Append(createTableSql);
 
