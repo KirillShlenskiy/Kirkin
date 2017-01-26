@@ -37,17 +37,17 @@ namespace Kirkin.Data.SqlClient
         /// <param name="tableName">Target SQL server table. Will be dropped and re-created.</param>
         public void ImportDataTable(DataTable dataTable, string tableName)
         {
+            SqlServerTableBuilder tableBuilder = ResolveTableBuilder();
+            string createTableSql = tableBuilder.GetCreateTableSql(tableName, dataTable);
+            StringBuilder sql = new StringBuilder();
+
+            sql.AppendLine($"IF OBJECT_ID('{tableName}') IS NOT NULL DROP TABLE [{tableName}];");
+            sql.AppendLine();
+            sql.Append(createTableSql);
+
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 connection.Open();
-
-                SqlServerTableBuilder tableBuilder = ResolveTableBuilder();
-                string createTableSql = tableBuilder.GetCreateTableSql(tableName, dataTable);
-                StringBuilder sql = new StringBuilder();
-
-                sql.AppendLine($"IF OBJECT_ID('{tableName}') IS NOT NULL DROP TABLE [{tableName}];");
-                sql.AppendLine();
-                sql.Append(createTableSql);
 
                 using (SqlCommand command = new SqlCommand(sql.ToString(), connection)) {
                     command.ExecuteNonQuery();
