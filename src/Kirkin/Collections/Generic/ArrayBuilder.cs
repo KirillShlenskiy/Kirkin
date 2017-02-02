@@ -85,12 +85,37 @@ namespace Kirkin.Collections.Generic
         }
 
         /// <summary>
-        /// Materializes the array.
+        /// Resets the count without clearing or swapping out the underlying array.
+        /// Will corrupt arrays returned by previous calls to <see cref="ToArray"/>
+        /// that did not result in a full array copy.
+        /// </summary>
+        internal void FastClear()
+        {
+            count = 0;
+        }
+
+        /// <summary>
+        /// Materializes the array. Returns the underlying buffer
+        /// instance without copying if capacity = count.
         /// </summary>
         public T[] ToArray()
         {
             if (count == 0) return Array<T>.Empty;
+
+            // Returning underlying buffer. Be careful not
+            // to use in conjunction with FastClear().
             if (items.Length == count) return items;
+
+            return ToArraySlow();
+        }
+
+        /// <summary>
+        /// Materializes the array. Creates a copy of the underlying buffer in all cases
+        /// (excep when count = 0). Safe to use in conjunction with <see cref="FastClear()"/>.
+        /// </summary>
+        internal T[] ToArrayCopy()
+        {
+            if (count == 0) return Array<T>.Empty;
 
             return ToArraySlow();
         }
