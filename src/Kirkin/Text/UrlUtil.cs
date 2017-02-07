@@ -23,9 +23,9 @@ namespace Kirkin.Text
             }
 
             // Build URL.
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
-            foreach (var urlSegment in urlSegments)
+            foreach (string urlSegment in urlSegments)
             {
                 ValidateSegment(urlSegment);
 

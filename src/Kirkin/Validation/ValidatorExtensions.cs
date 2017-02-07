@@ -32,7 +32,7 @@ namespace Kirkin.Validation
         {
             if (sideEffect == null) throw new ArgumentNullException("sideEffect");
 
-            var proxy = Validator.Proxy(validator);
+            IValidatorProxy proxy = Validator.Proxy(validator);
 
             proxy.Validated += (s, e) => sideEffect.Apply(e.IsValid);
 
@@ -50,7 +50,7 @@ namespace Kirkin.Validation
         {
             if (sideEffect == null) throw new ArgumentNullException("sideEffect");
 
-            var proxy = Validator.Proxy(validator);
+            IValidatorProxy proxy = Validator.Proxy(validator);
 
             proxy.Validated += (s, e) => sideEffect(e.IsValid);
 

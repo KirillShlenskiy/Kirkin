@@ -44,7 +44,7 @@ namespace Kirkin.Validation
             ForwardEvents = true;
 
             // Wire events.
-            foreach (var validator in validators)
+            foreach (IValidator validator in validators)
             {
                 validator.Validated += (s, e) =>
                 {
@@ -83,7 +83,7 @@ namespace Kirkin.Validation
 
             try
             {
-                foreach (var validator in Validators)
+                foreach (IValidator validator in Validators)
                 {
                     if (validator == alreadyValidated.Validator)
                     {

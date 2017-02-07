@@ -26,11 +26,11 @@ namespace Kirkin.Functional
         {
             if (disposables == null) throw new ArgumentNullException("disposables");
 
-            var list = new List<TDisposable>();
+            List<TDisposable> list = new List<TDisposable>();
 
             try
             {
-                foreach (var disposable in disposables)
+                foreach (TDisposable disposable in disposables)
                 {
                     list.Add(disposable);
                 }
@@ -38,7 +38,7 @@ namespace Kirkin.Functional
             catch
             {
                 // Dispose items already in the list.
-                foreach (var disposable in list)
+                foreach (TDisposable disposable in list)
                 {
                     disposable.Dispose();
                 }
@@ -48,7 +48,7 @@ namespace Kirkin.Functional
 
             return Create(list, l =>
             {
-                foreach (var disposable in l)
+                foreach (TDisposable disposable in l)
                 {
                     disposable.Dispose();
                 }
@@ -132,7 +132,7 @@ namespace Kirkin.Functional
             /// </summary>
             public void Dispose()
             {
-                var action = Interlocked.Exchange(ref Action, null);
+                Action action = Interlocked.Exchange(ref Action, null);
 
                 if (action != null)
                 {
@@ -164,7 +164,7 @@ namespace Kirkin.Functional
             /// </summary>
             public void Dispose()
             {
-                var action = Interlocked.Exchange(ref Action, null);
+                Action<T> action = Interlocked.Exchange(ref Action, null);
 
                 if (action != null)
                 {

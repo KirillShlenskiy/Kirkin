@@ -21,11 +21,11 @@ namespace Kirkin.Text
             if (text == null) throw new ArgumentNullException("text");
             if (text.Length == 0) return text;
 
-            var prevChar = default(char);
-            var chars = new char[text.Length];
-            var i = 0;
+            char prevChar = default(char);
+            char[] chars = new char[text.Length];
+            int i = 0;
 
-            foreach (var c in text)
+            foreach (char c in text)
             {
                 chars[i++] = char.IsLetter(prevChar) ? char.ToLowerInvariant(c) : char.ToUpperInvariant(c);
                 prevChar = c;
@@ -46,7 +46,7 @@ namespace Kirkin.Text
             // Allow 10% as a rough guess of how much the string may grow.
             // If we're wrong we'll either waste space or have extra copies -
             // it will still work.
-            var sb = new StringBuilder((int)(input.Length * 1.1));
+            StringBuilder sb = new StringBuilder((int)(input.Length * 1.1));
             bool lastWasCR = false;
 
             foreach (char c in input)
