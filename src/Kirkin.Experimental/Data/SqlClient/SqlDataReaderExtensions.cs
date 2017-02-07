@@ -27,23 +27,31 @@ namespace Kirkin.Data.SqlClient
         /// </summary>
         public static T GetValueOrDefault<T>(this SqlDataReader reader, int index)
         {
-            if (reader.IsDBNull(index)) {
-                return default(T);
-            }
+            return reader.IsDBNull(index)
+                ? default(T)
+                : GetValueDelegateResolver<T>.GetValueDelegate(reader, index);
+        }
 
-            Type fieldType = typeof(T);
+        // Per-type GetValue delegate cache.
+        static class GetValueDelegateResolver<T>
+        {
+            public static readonly Func<SqlDataReader, int, T> GetValueDelegate;
 
-            if (fieldType.IsPrimitive || fieldType == typeof(decimal))
+            static GetValueDelegateResolver()
             {
                 // Try to resolve a well-known delegate for this return type.
-                object func = WellKnownGetValueDelegates.Find(fieldType);
+                object wellKnownGetValueDelegate = WellKnownGetValueDelegates.Find(typeof(T));
 
-                if (func != null) {
-                    return ((Func<SqlDataReader, int, T>)func).Invoke(reader, index);
-                }
+                GetValueDelegate = wellKnownGetValueDelegate == null
+                    ? GetValueDefault
+                    : (Func<SqlDataReader, int, T>)wellKnownGetValueDelegate;
             }
 
-            return (T)reader.GetValue(index);
+            // Default GetValue implementation.
+            private static T GetValueDefault(SqlDataReader reader, int index)
+            {
+                return (T)reader.GetValue(index);
+            }
         }
 
         static class WellKnownGetValueDelegates
