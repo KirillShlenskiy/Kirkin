@@ -1,26 +1,31 @@
-﻿using System;
+﻿#if !__MOBILE__
+
+using System;
 using System.Data.SqlClient;
 
 namespace Kirkin.Data.SqlClient
 {
+    /// <summary>
+    /// <see cref="SqlDataReader"/> extension methods.
+    /// </summary>
     public static class SqlDataReaderExtensions
     {
         /// <summary>
         /// Gets the value of the field at the specified index with
         /// minimal allocations at the expense of some CPU cycles.
         /// </summary>
-        public static T GetValueOrDefaultAlt<T>(this SqlDataReader reader, string name)
+        public static T GetValueOrDefault<T>(this SqlDataReader reader, string name)
         {
             int index = reader.GetOrdinal(name);
 
-            return reader.GetValueOrDefaultAlt<T>(index);
+            return reader.GetValueOrDefault<T>(index);
         }
 
         /// <summary>
         /// Gets the value of the field at the specified index with
         /// minimal allocations at the expense of some CPU cycles.
         /// </summary>
-        public static T GetValueOrDefaultAlt<T>(this SqlDataReader reader, int index)
+        public static T GetValueOrDefault<T>(this SqlDataReader reader, int index)
         {
             if (reader.IsDBNull(index)) {
                 return default(T);
@@ -30,7 +35,7 @@ namespace Kirkin.Data.SqlClient
 
             if (fieldType.IsValueType)
             {
-                // Try resolve well-known delegate for this return type.
+                // Try to resolve a well-known delegate for this return type.
                 object func = WellKnownGetValueDelegates.Find(fieldType);
 
                 if (func != null) {
@@ -43,6 +48,7 @@ namespace Kirkin.Data.SqlClient
 
         static class WellKnownGetValueDelegates
         {
+            // Caching to reduce allocations.
             private static readonly Func<SqlDataReader, int, bool> Boolean = (r, i) => r.GetBoolean(i);
             private static readonly Func<SqlDataReader, int, DateTime> DateTime = (r, i) => r.GetDateTime(i);
             private static readonly Func<SqlDataReader, int, decimal> Decimal = (r, i) => r.GetDecimal(i);
@@ -66,3 +72,5 @@ namespace Kirkin.Data.SqlClient
         }
     }
 }
+
+#endif

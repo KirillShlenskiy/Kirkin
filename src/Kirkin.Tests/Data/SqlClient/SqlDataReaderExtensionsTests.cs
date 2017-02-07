@@ -60,7 +60,7 @@ namespace Kirkin.Tests.Data.SqlClient
                         long result;
 
                         while (reader.Read()) {
-                            result = reader.GetValueOrDefaultAlt<long>(0);
+                            result = reader.GetValueOrDefault<long>(0);
                         }
                     }
                 }
