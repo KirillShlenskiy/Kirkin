@@ -9,20 +9,29 @@ namespace Kirkin.Tests.Data.SqlClient
 {
     public class SqlDataReaderExtensionsTests
     {
-        private const string ConnectionString = "Data Source=.; Initial Catalog=master; Integrated Security=True;";
         private const string SqlRowNum = "SELECT ROW_NUMBER() OVER ( ORDER BY id ) FROM sysobjects";
         private const string SqlNull = "SELECT NULL FROM sysobjects";
         private const int Iterations = 1000;
+        private readonly string ConnectionString;
 
         public SqlDataReaderExtensionsTests()
         {
-            if (!Environment.MachineName.Equals("BABUSHKA", StringComparison.OrdinalIgnoreCase)) {
-                Assert.Ignore("");
+            if (Environment.MachineName.Equals("BABUSHKA", StringComparison.OrdinalIgnoreCase))
+            {
+                ConnectionString = @"Data Source=.; Initial Catalog=master; Integrated Security=True;";
+            }
+            else if (Environment.MachineName.Equals("KIRKINPUTER", StringComparison.OrdinalIgnoreCase))
+            {
+                ConnectionString = @"Data Source=.\SQL2008R2; Initial Catalog=master; Integrated Security=True;";
+            }
+            else
+            {
+                Assert.Ignore("No connection string defined.");
             }
         }
 
         [Test]
-        public static void Regular()
+        public void Regular()
         {
             GCCollectionCounter counter = GCCollectionCounter.StartNew();
 
@@ -52,7 +61,7 @@ namespace Kirkin.Tests.Data.SqlClient
         }
 
         [Test]
-        public static void Frugal()
+        public void Frugal()
         {
             GCCollectionCounter counter = GCCollectionCounter.StartNew();
 
@@ -82,7 +91,7 @@ namespace Kirkin.Tests.Data.SqlClient
         }
 
         [Test]
-        public static void DbNullBenchmarkRegular()
+        public void DbNullBenchmarkRegular()
         {
             GCCollectionCounter counter = GCCollectionCounter.StartNew();
 
@@ -112,7 +121,7 @@ namespace Kirkin.Tests.Data.SqlClient
         }
 
         [Test]
-        public static void DbNullBenchmarkIsNull()
+        public void DbNullBenchmarkIsNull()
         {
             GCCollectionCounter counter = GCCollectionCounter.StartNew();
 
@@ -142,7 +151,7 @@ namespace Kirkin.Tests.Data.SqlClient
         }
 
         [Test]
-        public static void DbNullBenchmarkOptimized()
+        public void DbNullBenchmarkOptimized()
         {
             GCCollectionCounter counter = GCCollectionCounter.StartNew();
 

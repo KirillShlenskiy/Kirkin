@@ -25,6 +25,17 @@ namespace Kirkin.Data.SqlClient
         /// Gets the value of the field at the specified index. Tuned to minimize the
         /// amount of boxing performed on well-known value types i.e. int, decimal etc.
         /// </summary>
+        public static T GetValueOrDefault<T>(this SqlDataReader reader, string name, T defaultValue)
+        {
+            int index = reader.GetOrdinal(name);
+
+            return reader.GetValueOrDefault(index, defaultValue);
+        }
+
+        /// <summary>
+        /// Gets the value of the field at the specified index. Tuned to minimize the
+        /// amount of boxing performed on well-known value types i.e. int, decimal etc.
+        /// </summary>
         public static T GetValueOrDefault<T>(this SqlDataReader reader, int index)
         {
             return reader.IsDBNull(index)
@@ -32,25 +43,30 @@ namespace Kirkin.Data.SqlClient
                 : GetValueDelegateResolver<T>.GetValueDelegate(reader, index);
         }
 
+        /// <summary>
+        /// Gets the value of the field at the specified index. Tuned to minimize the
+        /// amount of boxing performed on well-known value types i.e. int, decimal etc.
+        /// </summary>
+        public static T GetValueOrDefault<T>(this SqlDataReader reader, int index, T defaultValue)
+        {
+            return reader.IsDBNull(index)
+                ? defaultValue
+                : GetValueDelegateResolver<T>.GetValueDelegate(reader, index);
+        }
+
         // Per-type GetValue delegate cache.
         static class GetValueDelegateResolver<T>
         {
-            public static readonly Func<SqlDataReader, int, T> GetValueDelegate;
+            public static readonly Func<SqlDataReader, int, T> GetValueDelegate = CreateDelegate();
 
-            static GetValueDelegateResolver()
+            private static Func<SqlDataReader, int, T> CreateDelegate()
             {
                 // Try to resolve a well-known delegate for this return type.
-                object wellKnownGetValueDelegate = WellKnownGetValueDelegates.Find(typeof(T));
+                object wellKnownGetValueDelegate = WellKnownGetValueDelegates.ForFieldType(typeof(T));
 
-                GetValueDelegate = wellKnownGetValueDelegate == null
-                    ? GetValueDefault
-                    : (Func<SqlDataReader, int, T>)wellKnownGetValueDelegate;
-            }
-
-            // Default GetValue implementation.
-            private static T GetValueDefault(SqlDataReader reader, int index)
-            {
-                return (T)reader.GetValue(index);
+                return (wellKnownGetValueDelegate != null)
+                    ? (Func<SqlDataReader, int, T>)wellKnownGetValueDelegate
+                    : (reader, index) => (T)reader.GetValue(index); // Default GetValue implementation.
             }
         }
 
@@ -65,7 +81,7 @@ namespace Kirkin.Data.SqlClient
             private static readonly Func<SqlDataReader, int, int> Int32 = (r, i) => r.GetInt32(i);
             private static readonly Func<SqlDataReader, int, long> Int64 = (r, i) => r.GetInt64(i);
 
-            public static object Find(Type fieldType)
+            public static object ForFieldType(Type fieldType)
             {
                 if (fieldType == typeof(int)) return Int32;
                 if (fieldType == typeof(bool)) return Boolean;
