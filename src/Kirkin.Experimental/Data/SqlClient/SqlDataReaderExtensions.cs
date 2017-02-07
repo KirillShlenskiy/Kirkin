@@ -11,8 +11,8 @@ namespace Kirkin.Data.SqlClient
     public static class SqlDataReaderExtensions
     {
         /// <summary>
-        /// Gets the value of the field at the specified index with
-        /// minimal allocations at the expense of some CPU cycles.
+        /// Gets the value of the field at the specified index. Tuned to minimize the
+        /// amount of boxing performed on well-known value types i.e. int, decimal etc.
         /// </summary>
         public static T GetValueOrDefault<T>(this SqlDataReader reader, string name)
         {
