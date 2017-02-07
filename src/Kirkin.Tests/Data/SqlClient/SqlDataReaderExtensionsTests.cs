@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+
 using Kirkin.Data.SqlClient;
 
 using NUnit.Framework;
@@ -10,11 +11,13 @@ namespace Kirkin.Tests.Data.SqlClient
     {
         private const string ConnectionString = "Data Source=.; Initial Catalog=master; Integrated Security=True;";
         private const string SQL = "SELECT ROW_NUMBER() OVER ( ORDER BY id ) FROM sysobjects";
-        private const int Iterations = 1000;
+        private const int Iterations = 2000;
 
         [Test]
         public static void Regular()
         {
+            GCCollectionCounter counter = GCCollectionCounter.StartNew();
+
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 connection.Open();
@@ -36,13 +39,15 @@ namespace Kirkin.Tests.Data.SqlClient
             Console.WriteLine("Collection counts:");
 
             for (int i = 0; i < 3; i++) {
-                Console.WriteLine($"Gen {i}: {GC.CollectionCount(i)}.");
+                Console.WriteLine($"Gen {i}: {counter.CollectionCount(i)}.");
             }
         }
 
         [Test]
         public static void Frugal()
         {
+            GCCollectionCounter counter = GCCollectionCounter.StartNew();
+
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 connection.Open();
@@ -61,27 +66,46 @@ namespace Kirkin.Tests.Data.SqlClient
                 }
             }
 
+            Console.WriteLine("Collection counts:");
+
             for (int i = 0; i < 3; i++) {
-                Console.WriteLine($"Gen {i}: {GC.CollectionCount(i)}.");
+                Console.WriteLine($"Gen {i}: {counter.CollectionCount(i)}.");
             }
         }
 
-        public static class MemoryAnalysis
+        private sealed class GCCollectionCounter
         {
-            public static long AveragedApproximateSize<T>(Func<T> rootGenerator) where T : class
+            public static GCCollectionCounter StartNew()
             {
-                const int iters = 1000000;
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
 
-                var items = new object[iters];
-                long start = GC.GetTotalMemory(true);
+                return new GCCollectionCounter(
+                    GC.CollectionCount(0),
+                    GC.CollectionCount(1),
+                    GC.CollectionCount(2)
+                );
+            }
 
-                for (int i = 0; i < items.Length; i++)
-                    items[i] = rootGenerator();
+            private int Gen0;
+            private int Gen1;
+            private int Gen2;
 
-                long end = GC.GetTotalMemory(true);
-                GC.KeepAlive(items);
+            private GCCollectionCounter(int gen0, int gen1, int gen2)
+            {
+                Gen0 = gen0;
+                Gen1 = gen1;
+                Gen2 = gen2;
+            }
 
-                return (long)Math.Round((end - start) / (double)iters);
+            public int CollectionCount(int generation)
+            {
+                if (generation == 0) return GC.CollectionCount(0) - Gen0;
+                if (generation == 1) return GC.CollectionCount(1) - Gen1;
+                if (generation == 2) return GC.CollectionCount(2) - Gen2;
+
+                throw new ArgumentOutOfRangeException(nameof(generation));
             }
         }
     }

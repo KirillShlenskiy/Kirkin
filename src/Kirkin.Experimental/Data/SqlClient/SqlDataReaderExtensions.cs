@@ -1,20 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 
 namespace Kirkin.Data.SqlClient
 {
     public static class SqlDataReaderExtensions
     {
-        // Key = field type.
-        // Value = resolve value at index delegate (Func<SqlDataReader, int, T>).
-        private static readonly Dictionary<Type, object> Delegates = new Dictionary<Type, object> {
-            { typeof(bool), new Func<SqlDataReader, int, bool>((r, i) => r.GetBoolean(i)) },
-            { typeof(int), new Func<SqlDataReader, int, int>((r, i) => r.GetInt32(i)) },
-            { typeof(long), new Func<SqlDataReader, int, long>((r, i) => r.GetInt64(i)) },
-            { typeof(decimal), new Func<SqlDataReader, int, decimal>((r, i) => r.GetDecimal(i)) },
-        };
-
         /// <summary>
         /// Gets the value of the field at the specified index with
         /// minimal allocations at the expense of some CPU cycles.
@@ -32,19 +22,38 @@ namespace Kirkin.Data.SqlClient
         /// </summary>
         public static T GetValueOrDefaultAlt<T>(this SqlDataReader reader, int index)
         {
-            if (reader.IsDBNull(index)) {
-                return default(T);
-            }
-
             Type fieldType = reader.GetFieldType(index);
-            object delegateObj;
 
-            // Lookup + cast may seem slow but it's better than boxing / GC pressure.
-            if (Delegates.TryGetValue(fieldType, out delegateObj)) {
-                return ((Func<SqlDataReader, int, T>)delegateObj).Invoke(reader, index);
+            if (fieldType.IsValueType)
+            {
+                // Try get well-known type.
+                if (reader.IsDBNull(index)) {
+                    return default(T);
+                }
+
+                object delegateObj = GetValueOrDefaultDelegate(fieldType);
+
+                if (delegateObj != null) {
+                    return ((Func<SqlDataReader, int, T>)delegateObj).Invoke(reader, index);
+                }
             }
 
-            return (T)reader[index];
+            return DefaultIfDbNull<T>(reader.GetValue(index));
+        }
+
+        private static T DefaultIfDbNull<T>(object value)
+        {
+            return value is DBNull ? default(T) : (T)value;
+        }
+
+        private static object GetValueOrDefaultDelegate(Type fieldType)
+        {
+            if (fieldType == typeof(int)) return new Func<SqlDataReader, int, int>((r, i) => r.GetInt32(i));
+            if (fieldType == typeof(bool)) return new Func<SqlDataReader, int, bool>((r, i) => r.GetBoolean(i));
+            if (fieldType == typeof(decimal)) return new Func<SqlDataReader, int, decimal>((r, i) => r.GetDecimal(i));
+            if (fieldType == typeof(long)) return new Func<SqlDataReader, int, long>((r, i) => r.GetInt64(i));
+
+            return null;
         }
     }
 }
