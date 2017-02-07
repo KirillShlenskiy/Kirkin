@@ -36,7 +36,7 @@ namespace Kirkin.Threading.Tasks
             Timer = new Timer(
                 state =>
                 {
-                    var self = (DelayTaskSource)state;
+                    DelayTaskSource self = (DelayTaskSource)state;
 
                     self.TaskCompletionSource.TrySetResult(true);
                     self.Dispose(); // Dispose of the Timer.
@@ -56,7 +56,7 @@ namespace Kirkin.Threading.Tasks
         {
             TaskCompletionSource.TrySetCanceled();
 
-            var timer = Interlocked.Exchange(ref Timer, null);
+            Timer timer = Interlocked.Exchange(ref Timer, null);
 
             if (timer != null) {
                 timer.Dispose();

@@ -114,7 +114,7 @@ namespace Kirkin.Threading.Tasks
                 Timer = new Timer(
                     state =>
                     {
-                        var self = (DelayTaskFactory)state;
+                        DelayTaskFactory self = (DelayTaskFactory)state;
 
                         lock (self.Lock)
                         {

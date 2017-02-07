@@ -52,7 +52,7 @@ namespace Kirkin.Threading
                     return CompletedTask;
                 }
 
-                var tcs = new TaskCompletionSource<bool>();
+                TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
 
                 Waits.Enqueue(tcs);
 

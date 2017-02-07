@@ -12,9 +12,9 @@ namespace Kirkin.Text
     {
         public static string Encode(string url, params UrlArg[] args)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
-            foreach (var arg in args)
+            foreach (UrlArg arg in args)
             {
                 // Skip empty values.
                 if (!string.IsNullOrEmpty(arg.Value))

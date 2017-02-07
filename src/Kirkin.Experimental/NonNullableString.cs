@@ -37,7 +37,7 @@ namespace Kirkin
                 // struct is reassigned during execution, causing the wrong
                 // OriginalValue to be seen on second access, and ultimately
                 // allowing null to be returned.
-                var value = OriginalValue;
+                string value = OriginalValue;
 
                 return value ?? string.Empty;
             }
@@ -76,7 +76,7 @@ namespace Kirkin
         public override bool Equals(object obj)
         {
             // Thread safety: prevent torn reads.
-            var self = this;
+            NonNullableString self = this;
 
             if (obj is NonNullableString) {
                 return self.Equals((NonNullableString)obj);

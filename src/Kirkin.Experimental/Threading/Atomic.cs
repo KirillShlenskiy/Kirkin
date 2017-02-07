@@ -125,7 +125,7 @@ namespace Kirkin.Threading
         public static bool TryTransform<T, TArgument>(ref T target, TArgument argument, Func<T, TArgument, T> transformation, out T desiredVal)
             where T : class
         {
-            var startVal = target;
+            T startVal = target;
 
             desiredVal = transformation(startVal, argument);
 
@@ -154,7 +154,7 @@ namespace Kirkin.Threading
             // SpinWait is a tiny value type (1 int field),
             // so it doesn't hurt to allocate a spinner
             // even if we don't get to use it.
-            var spinner = new SpinWait();
+            SpinWait spinner = new SpinWait();
 
             do
             {
@@ -203,7 +203,7 @@ namespace Kirkin.Threading
         public static bool TryTransform<T>(ref T target, Func<T, T> transformation, out T desiredVal)
             where T : class
         {
-            var startVal = target;
+            T startVal = target;
 
             desiredVal = transformation(startVal);
 
@@ -234,7 +234,7 @@ namespace Kirkin.Threading
             // SpinWait is a tiny value type (1 int field),
             // so it doesn't hurt to allocate a spinner
             // even if we don't get to use it.
-            var spinner = new SpinWait();
+            SpinWait spinner = new SpinWait();
 
             do
             {
