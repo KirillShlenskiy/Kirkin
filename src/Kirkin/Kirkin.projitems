@@ -38,6 +38,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\Vector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Specialized\UndoRedoCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\SqlClient\SqlCommandExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\SqlClient\SqlDataReaderExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\SqlClient\SqlServerDataImport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\SqlClient\SqlServerTableBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dependencies\Container.cs" />

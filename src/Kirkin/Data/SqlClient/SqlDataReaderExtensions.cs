@@ -8,7 +8,7 @@ namespace Kirkin.Data.SqlClient
     /// <summary>
     /// <see cref="SqlDataReader"/> extension methods.
     /// </summary>
-    public static class SqlDataReaderExtensions
+    internal static class SqlDataReaderExtensions
     {
         /// <summary>
         /// Returns the value of the field with the given name, or default value

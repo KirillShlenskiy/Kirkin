@@ -11,7 +11,7 @@ namespace Kirkin.Tests.Data.SqlClient
     {
         private const string SqlRowNum = "SELECT ROW_NUMBER() OVER ( ORDER BY id ) FROM sysobjects";
         private const string SqlNull = "SELECT NULL FROM sysobjects";
-        private const int Iterations = 50000;
+        private const int Iterations = 1000;
         private readonly string ConnectionString;
 
         public SqlDataReaderExtensionsTests()
