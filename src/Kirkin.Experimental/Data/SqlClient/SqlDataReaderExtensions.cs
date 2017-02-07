@@ -40,7 +40,7 @@ namespace Kirkin.Data.SqlClient
         {
             return reader.IsDBNull(index)
                 ? default(T)
-                : GetValueDelegateResolver<T>.GetValueDelegate(reader, index);
+                : GetValueDelegateResolver<T>.Func(reader, index);
         }
 
         /// <summary>
@@ -51,48 +51,33 @@ namespace Kirkin.Data.SqlClient
         {
             return reader.IsDBNull(index)
                 ? defaultValue
-                : GetValueDelegateResolver<T>.GetValueDelegate(reader, index);
+                : GetValueDelegateResolver<T>.Func(reader, index);
         }
 
-        // Per-type GetValue delegate cache.
         static class GetValueDelegateResolver<T>
         {
-            public static readonly Func<SqlDataReader, int, T> GetValueDelegate = CreateDelegate();
+            // Per-type GetValue delegate cache.
+            public static readonly Func<SqlDataReader, int, T> Func
+                = (Func<SqlDataReader, int, T>)WellKnownDelegateForFieldType(typeof(T)) ?? GetValueDefault;
 
-            private static Func<SqlDataReader, int, T> CreateDelegate()
+            private static T GetValueDefault(SqlDataReader reader, int index)
             {
-                // Try to resolve a well-known delegate for this return type.
-                object wellKnownGetValueDelegate = WellKnownGetValueDelegates.ForFieldType(typeof(T));
-
-                return (wellKnownGetValueDelegate != null)
-                    ? (Func<SqlDataReader, int, T>)wellKnownGetValueDelegate
-                    : (reader, index) => (T)reader.GetValue(index); // Default GetValue implementation.
+                return (T)reader.GetValue(index);
             }
         }
 
-        static class WellKnownGetValueDelegates
+        static object WellKnownDelegateForFieldType(Type fieldType)
         {
-            // Caching to reduce allocations.
-            private static readonly Func<SqlDataReader, int, bool> Boolean = (r, i) => r.GetBoolean(i);
-            private static readonly Func<SqlDataReader, int, DateTime> DateTime = (r, i) => r.GetDateTime(i);
-            private static readonly Func<SqlDataReader, int, decimal> Decimal = (r, i) => r.GetDecimal(i);
-            private static readonly Func<SqlDataReader, int, double> Double = (r, i) => r.GetDouble(i);
-            private static readonly Func<SqlDataReader, int, float> Float = (r, i) => r.GetFloat(i);
-            private static readonly Func<SqlDataReader, int, int> Int32 = (r, i) => r.GetInt32(i);
-            private static readonly Func<SqlDataReader, int, long> Int64 = (r, i) => r.GetInt64(i);
+            // Well-known GetValue delegates.
+            if (fieldType == typeof(int)) return new Func<SqlDataReader, int, int>((r, i) => r.GetInt32(i));
+            if (fieldType == typeof(bool)) return new Func<SqlDataReader, int, bool>((r, i) => r.GetBoolean(i));
+            if (fieldType == typeof(decimal)) return new Func<SqlDataReader, int, decimal>((r, i) => r.GetDecimal(i));
+            if (fieldType == typeof(DateTime)) return new Func<SqlDataReader, int, DateTime>((r, i) => r.GetDateTime(i));
+            if (fieldType == typeof(long)) return new Func<SqlDataReader, int, long>((r, i) => r.GetInt64(i));
+            if (fieldType == typeof(double)) return new Func<SqlDataReader, int, double>((r, i) => r.GetDouble(i));
+            if (fieldType == typeof(float)) return new Func<SqlDataReader, int, float>((r, i) => r.GetFloat(i));
 
-            public static object ForFieldType(Type fieldType)
-            {
-                if (fieldType == typeof(int)) return Int32;
-                if (fieldType == typeof(bool)) return Boolean;
-                if (fieldType == typeof(decimal)) return Decimal;
-                if (fieldType == typeof(DateTime)) return DateTime;
-                if (fieldType == typeof(long)) return Int64;
-                if (fieldType == typeof(double)) return Double;
-                if (fieldType == typeof(float)) return Float;
-
-                return null;
-            }
+            return null;
         }
     }
 }
