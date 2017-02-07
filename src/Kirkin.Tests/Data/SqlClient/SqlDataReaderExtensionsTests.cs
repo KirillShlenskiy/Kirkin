@@ -8,7 +8,7 @@ namespace Kirkin.Tests.Data.SqlClient
 {
     public class SqlDataReaderExtensionsTests
     {
-        private const string ConnectionString = "Data Source=MENZIES; Initial Catalog=master; Integrated Security=True;";
+        private const string ConnectionString = "Data Source=.; Initial Catalog=master; Integrated Security=True;";
         private const string SQL = "SELECT ROW_NUMBER() OVER ( ORDER BY id ) FROM sysobjects";
         private const int Iterations = 1000;
 
