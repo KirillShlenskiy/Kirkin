@@ -11,7 +11,8 @@ namespace Kirkin.Data.SqlClient
     public static class SqlDataReaderExtensions
     {
         /// <summary>
-        /// Gets the value of the field at the specified index. Tuned to minimize the
+        /// Returns the value of the field with the given name, or default value
+        /// of type <typeparam name="T" /> if the field is null. Tuned to minimize the
         /// amount of boxing performed on well-known value types i.e. int, decimal etc.
         /// </summary>
         public static T GetValueOrDefault<T>(this SqlDataReader reader, string name)
@@ -22,7 +23,8 @@ namespace Kirkin.Data.SqlClient
         }
 
         /// <summary>
-        /// Gets the value of the field at the specified index. Tuned to minimize the
+        /// Returns the value of the field with the given name, or the
+        /// given default value if the field is null. Tuned to minimize the
         /// amount of boxing performed on well-known value types i.e. int, decimal etc.
         /// </summary>
         public static T GetValueOrDefault<T>(this SqlDataReader reader, string name, T defaultValue)
@@ -33,31 +35,33 @@ namespace Kirkin.Data.SqlClient
         }
 
         /// <summary>
-        /// Gets the value of the field at the specified index. Tuned to minimize the
+        /// Returns the value of the field at the specified index, or default value
+        /// of type <typeparam name="T" /> if the field is null. Tuned to minimize the
         /// amount of boxing performed on well-known value types i.e. int, decimal etc.
         /// </summary>
         public static T GetValueOrDefault<T>(this SqlDataReader reader, int index)
         {
             return reader.IsDBNull(index)
                 ? default(T)
-                : GetValueDelegateResolver<T>.Func(reader, index);
+                : GetValueDelegateVariant<T>.Func(reader, index);
         }
 
         /// <summary>
-        /// Gets the value of the field at the specified index. Tuned to minimize the
+        /// Returns the value of the field at the specified index, or the
+        /// given default value if the field is null. Tuned to minimize the
         /// amount of boxing performed on well-known value types i.e. int, decimal etc.
         /// </summary>
         public static T GetValueOrDefault<T>(this SqlDataReader reader, int index, T defaultValue)
         {
             return reader.IsDBNull(index)
                 ? defaultValue
-                : GetValueDelegateResolver<T>.Func(reader, index);
+                : GetValueDelegateVariant<T>.Func(reader, index);
         }
 
-        static class GetValueDelegateResolver<T>
+        static class GetValueDelegateVariant<T>
         {
             // Per-type GetValue delegate cache.
-            public static readonly Func<SqlDataReader, int, T> Func
+            internal static readonly Func<SqlDataReader, int, T> Func
                 = (Func<SqlDataReader, int, T>)WellKnownDelegateForFieldType(typeof(T)) ?? GetValueDefault;
 
             private static T GetValueDefault(SqlDataReader reader, int index)
