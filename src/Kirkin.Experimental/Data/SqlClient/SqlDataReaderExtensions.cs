@@ -22,8 +22,8 @@ namespace Kirkin.Data.SqlClient
         }
 
         /// <summary>
-        /// Gets the value of the field at the specified index with
-        /// minimal allocations at the expense of some CPU cycles.
+        /// Gets the value of the field at the specified index. Tuned to minimize the
+        /// amount of boxing performed on well-known value types i.e. int, decimal etc.
         /// </summary>
         public static T GetValueOrDefault<T>(this SqlDataReader reader, int index)
         {
@@ -33,7 +33,7 @@ namespace Kirkin.Data.SqlClient
 
             Type fieldType = typeof(T);
 
-            if (fieldType.IsValueType)
+            if (fieldType.IsPrimitive || fieldType == typeof(decimal))
             {
                 // Try to resolve a well-known delegate for this return type.
                 object func = WellKnownGetValueDelegates.Find(fieldType);
