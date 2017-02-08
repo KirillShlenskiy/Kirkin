@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Data.SqlClient;
 
-using Kirkin.Data.SqlClient;
+using Kirkin.Data;
 
 using NUnit.Framework;
 
-namespace Kirkin.Tests.Data.SqlClient
+namespace Kirkin.Tests.Data
 {
-    public class SqlDataReaderExtensionsTests
+    public class DataRecordExtensionsTests
     {
         private const string SqlRowNum = "SELECT ROW_NUMBER() OVER ( ORDER BY id ) FROM sysobjects";
         private const string SqlNull = "SELECT NULL FROM sysobjects";
         private const int Iterations = 1000;
         private readonly string ConnectionString;
 
-        public SqlDataReaderExtensionsTests()
+        public DataRecordExtensionsTests()
         {
             if (Environment.MachineName.Equals("BABUSHKA", StringComparison.OrdinalIgnoreCase))
             {
@@ -54,7 +54,7 @@ namespace Kirkin.Tests.Data.SqlClient
                 }
             }
 
-            counter.Dump();
+            counter.PrintCounts();
         }
 
         [Test]
@@ -81,7 +81,7 @@ namespace Kirkin.Tests.Data.SqlClient
                 }
             }
 
-            counter.Dump();
+            counter.PrintCounts();
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace Kirkin.Tests.Data.SqlClient
                 }
             }
 
-            counter.Dump();
+            counter.PrintCounts();
         }
 
         [Test]
@@ -135,7 +135,7 @@ namespace Kirkin.Tests.Data.SqlClient
                 }
             }
 
-            counter.Dump();
+            counter.PrintCounts();
         }
 
         [Test]
@@ -162,7 +162,7 @@ namespace Kirkin.Tests.Data.SqlClient
                 }
             }
 
-            counter.Dump();
+            counter.PrintCounts();
         }
 
         private sealed class GCCollectionCounter
@@ -208,8 +208,10 @@ namespace Kirkin.Tests.Data.SqlClient
                 return GC.GetTotalMemory(false) - StartMemory;
             }
 
-            public void Dump()
+            public void PrintCounts()
             {
+
+
                 Console.WriteLine("Collection counts:");
 
                 for (int i = 0; i < 3; i++) {
