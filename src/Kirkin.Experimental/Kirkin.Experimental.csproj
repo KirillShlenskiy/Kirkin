@@ -122,6 +122,7 @@
     <Compile Include="Timestamp.cs" />
     <Compile Include="Transactions\PropertyTrackingTransaction.cs" />
     <Compile Include="Transactions\PropertyTrackingTransaction`.cs" />
+    <Compile Include="Variant.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Build\Kirkin-NET_45\Kirkin-NET_45.csproj">
