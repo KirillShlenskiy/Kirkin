@@ -4,12 +4,13 @@ using System.Runtime.InteropServices;
 namespace Kirkin
 {
     /// <summary>
-    /// General-purpose 128-bit variant value container.
+    /// General-purpose 64-bit variant value container.
     /// Avoids boxing for common value types.
     /// </summary>
     [StructLayout(LayoutKind.Explicit)]
     public struct Variant
     {
+        // Used to encode System.Type values.
         private class ClrType<T> { };
 
         // Stores the Type of the value if the value is of a
@@ -20,19 +21,58 @@ namespace Kirkin
         // Variant storage.
         [FieldOffset(4)] public int Int32;
         [FieldOffset(4)] public long Int64;
+        [FieldOffset(4)] public float Float;
+        [FieldOffset(4)] public double Double;
+        [FieldOffset(4)] public DateTime DateTime;
 
         public Variant(int value)
         {
-            Int64 = 0;
             TypeOrBoxedValue = typeof(int);
+            Int64 = 0;
+            Float = 0;
+            Double = 0;
+            DateTime = default(DateTime);
             Int32 = value;
         }
 
         public Variant(long value)
         {
-            Int32 = 0;
             TypeOrBoxedValue = typeof(long);
+            Int32 = 0;
+            Float = 0;
+            Double = 0;
+            DateTime = default(DateTime);
             Int64 = value;
+        }
+
+        public Variant(float value)
+        {
+            TypeOrBoxedValue = typeof(float);
+            Int32 = 0;
+            Int64 = 0;
+            Double = 0;
+            DateTime = default(DateTime);
+            Float = value;
+        }
+
+        public Variant(double value)
+        {
+            TypeOrBoxedValue = typeof(double);
+            Int32 = 0;
+            Int64 = 0;
+            Float = 0;
+            DateTime = default(DateTime);
+            Double = value;
+        }
+
+        public Variant(DateTime value)
+        {
+            TypeOrBoxedValue = typeof(DateTime);
+            Int32 = 0;
+            Int64 = 0;
+            Float = 0;
+            Double = 0;
+            DateTime = value;
         }
 
         /// <summary>
@@ -40,9 +80,6 @@ namespace Kirkin
         /// </summary>
         public Variant(object value)
         {
-            Int32 = 0;
-            Int64 = 0;
-
             if (value != null && value is Type)
             {
                 // Special case.
@@ -52,6 +89,12 @@ namespace Kirkin
             {
                 TypeOrBoxedValue = value;
             }
+
+            Int32 = 0;
+            Int64 = 0;
+            Float = 0;
+            Double = 0;
+            DateTime = default(DateTime);
         }
 
         ///// <summary>
@@ -97,6 +140,9 @@ namespace Kirkin
 
                 if (type == typeof(int)) return new Func<Variant, int>(v => v.Int32);
                 if (type == typeof(long)) return new Func<Variant, long>(v => v.Int64);
+                if (type == typeof(float)) return new Func<Variant, float>(v => v.Float);
+                if (type == typeof(double)) return new Func<Variant, double>(v => v.Double);
+                if (type == typeof(DateTime)) return new Func<Variant, DateTime>(v => v.DateTime);
 
                 throw new InvalidOperationException($"Unknown type: {type}.");
             }
