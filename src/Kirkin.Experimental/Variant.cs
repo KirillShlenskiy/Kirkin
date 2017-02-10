@@ -10,13 +10,14 @@ namespace Kirkin
     [StructLayout(LayoutKind.Explicit)]
     public struct Variant
     {
-        // Storage.
-        [FieldOffset(0)] public int Int32;
-        [FieldOffset(0)] public long Int64;
-
         // Stores the Type of the value if the value is of a
         // known primitive type, or the value itself otherwise.
-        [FieldOffset(1)] public object TypeOrBoxedValue;
+        [FieldOffset(0)]
+        public object TypeOrBoxedValue;
+
+        // Variant storage.
+        [FieldOffset(4)] public int Int32;
+        [FieldOffset(4)] public long Int64;
 
         public Variant(int value)
         {
@@ -28,7 +29,7 @@ namespace Kirkin
         public Variant(long value)
         {
             Int32 = 0;
-            TypeOrBoxedValue = typeof(int);
+            TypeOrBoxedValue = typeof(long);
             Int64 = value;
         }
 
@@ -37,10 +38,20 @@ namespace Kirkin
         /// </summary>
         public Variant(object value)
         {
+            if (value != null && value.GetType() == typeof(Type)) throw new ArgumentException("Type values not supported.");
+
             Int32 = 0;
             Int64 = 0;
             TypeOrBoxedValue = value;
         }
+
+        ///// <summary>
+        ///// Gets the underlying value boxing it if necessary.
+        ///// </summary>
+        //public object GetValue()
+        //{
+
+        //}
 
         /// <summary>
         /// Gets the underlying value or throws if it's not of the given type.
@@ -49,26 +60,29 @@ namespace Kirkin
         {
             Type type = TypeOrBoxedValue as Type;
 
-            if (type != null && type != typeof(T)) {
+            if (type == null) {
+                return (T)TypeOrBoxedValue;
+            }
+
+            if (typeof(T) != type) {
                 throw new InvalidCastException();
             }
 
-            return ValueResolver<T>.Func(this); // ref?
+            return ValueResolver<T>.Func(this);
         }
 
         static class ValueResolver<T>
         {
-            internal static readonly Func<Variant, T> Func = (Func<Variant, T>)CreateDelegate()
-                ?? new Func<Variant, T>(v => (T)v.TypeOrBoxedValue);
+            internal static readonly Func<Variant, T> Func = (Func<Variant, T>)WellKnownValueTypeDelegate();
 
-            private static object CreateDelegate()
+            private static object WellKnownValueTypeDelegate()
             {
                 Type type = typeof(T);
 
                 if (type == typeof(int)) return new Func<Variant, int>(v => v.Int32);
                 if (type == typeof(long)) return new Func<Variant, long>(v => v.Int64);
 
-                return null;
+                throw new InvalidOperationException($"Unknown type: {type}.");
             }
         }
     }
