@@ -16,14 +16,36 @@ namespace Kirkin
         // Stores the Type of the value if the value is of a
         // known primitive type, or the value itself otherwise.
         [FieldOffset(0)]
-        public object TypeOrBoxedValue;
+        private readonly object TypeOrBoxedValue;
 
         // Variant storage.
-        [FieldOffset(4)] public int Int32;
-        [FieldOffset(4)] public long Int64;
-        [FieldOffset(4)] public float Float;
-        [FieldOffset(4)] public double Double;
-        [FieldOffset(4)] public DateTime DateTime;
+        [FieldOffset(4)] private readonly int Int32;
+        [FieldOffset(4)] private readonly long Int64;
+        [FieldOffset(4)] private readonly float Float;
+        [FieldOffset(4)] private readonly double Double;
+        [FieldOffset(4)] private readonly DateTime DateTime;
+
+        /// <summary>
+        /// Gets the type of the underlying value.
+        /// </summary>
+        public Type ValueType
+        {
+            get
+            {
+                Type type = TypeOrBoxedValue as Type;
+
+                if (type != null)
+                {
+                    return (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ClrType<>))
+                        ? typeof(Type) // Special case.
+                        : type;
+                }
+
+                return TypeOrBoxedValue == null
+                    ? typeof(object)
+                    : TypeOrBoxedValue.GetType();
+            }
+        }
 
         public Variant(int value)
         {
@@ -110,6 +132,15 @@ namespace Kirkin
         /// </summary>
         public T GetValue<T>()
         {
+            if (ReferenceEquals(typeof(T), TypeOrBoxedValue) && ValueResolver<T>.Func != null) {
+                return ValueResolver<T>.Func(this);
+            }
+
+            return GetValueSlow<T>();
+        }
+
+        private T GetValueSlow<T>()
+        {
             Type type = TypeOrBoxedValue as Type;
 
             if (type == null) {
@@ -123,11 +154,9 @@ namespace Kirkin
                     // Special case.
                     return (T)(object)type.GenericTypeArguments[0];
                 }
-
-                throw new InvalidCastException();
             }
 
-            return ValueResolver<T>.Func(this);
+            throw new InvalidCastException();
         }
 
         static class ValueResolver<T>
@@ -144,7 +173,7 @@ namespace Kirkin
                 if (type == typeof(double)) return new Func<Variant, double>(v => v.Double);
                 if (type == typeof(DateTime)) return new Func<Variant, DateTime>(v => v.DateTime);
 
-                throw new InvalidOperationException($"Unknown type: {type}.");
+                return null;
             }
         }
     }
