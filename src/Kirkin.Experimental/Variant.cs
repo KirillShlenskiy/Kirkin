@@ -10,6 +10,8 @@ namespace Kirkin
     [StructLayout(LayoutKind.Explicit)]
     public struct Variant
     {
+        private class ClrType<T> { };
+
         // Stores the Type of the value if the value is of a
         // known primitive type, or the value itself otherwise.
         [FieldOffset(0)]
@@ -38,11 +40,18 @@ namespace Kirkin
         /// </summary>
         public Variant(object value)
         {
-            if (value != null && value.GetType() == typeof(Type)) throw new ArgumentException("Type values not supported.");
-
             Int32 = 0;
             Int64 = 0;
-            TypeOrBoxedValue = value;
+
+            if (value != null && value is Type)
+            {
+                // Special case.
+                TypeOrBoxedValue = typeof(ClrType<>).MakeGenericType((Type)value);
+            }
+            else
+            {
+                TypeOrBoxedValue = value;
+            }
         }
 
         ///// <summary>
@@ -64,7 +73,14 @@ namespace Kirkin
                 return (T)TypeOrBoxedValue;
             }
 
-            if (typeof(T) != type) {
+            if (typeof(T) != type)
+            {
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ClrType<>))
+                {
+                    // Special case.
+                    return (T)(object)type.GenericTypeArguments[0];
+                }
+
                 throw new InvalidCastException();
             }
 

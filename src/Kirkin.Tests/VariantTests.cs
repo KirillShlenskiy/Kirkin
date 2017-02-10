@@ -37,5 +37,17 @@ namespace Kirkin.Tests
             // TODO: should this throw?
             //Assert.Throws<InvalidCastException>(() => v.GetValue<object>());
         }
+
+        [Test]
+        public void ClrType()
+        {
+            Variant v = new Variant(typeof(int));
+
+            Assert.AreEqual(typeof(int), v.GetValue<Type>());
+            Assert.Throws<InvalidCastException>(() => v.GetValue<int>());
+
+            // TODO: should this throw?
+            //Assert.Throws<InvalidCastException>(() => v.GetValue<object>());
+        }
     }
 }
