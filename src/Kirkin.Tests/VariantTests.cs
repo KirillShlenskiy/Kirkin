@@ -114,12 +114,38 @@ namespace Kirkin.Tests
         }
 
         [Test]
+        public void Int32_Bechnchmark_Boxing2()
+        {
+            int num;
+
+            for (int i = 0; i < 10000000; i++)
+            {
+                object variant = 123;
+
+                num = (int)variant;
+            }
+        }
+
+        [Test]
         public void Int32_Bechnchmark_Variant()
         {
             Variant variant = new Variant(123);
             int num;
 
             for (int i = 0; i < 10000000; i++) {
+                num = variant.GetValue<int>();
+            }
+        }
+
+        [Test]
+        public void Int32_Bechnchmark_Variant2()
+        {
+            int num;
+
+            for (int i = 0; i < 10000000; i++)
+            {
+                Variant variant = new Variant(123);
+
                 num = variant.GetValue<int>();
             }
         }
