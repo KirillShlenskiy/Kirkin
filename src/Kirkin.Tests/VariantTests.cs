@@ -150,20 +150,20 @@ namespace Kirkin.Tests
             }
         }
 
-        [Test]
-        public unsafe void Variant2WithTypeRef()
-        {
-            int value = 123;
-            TypedReference typeRef = __makeref(value);
-            void* address = &value;
+        //[Test]
+        //public unsafe void Variant2WithTypeRef()
+        //{
+        //    int value = 123;
+        //    TypedReference typeRef = __makeref(value);
+        //    void* address = &value;
 
-            int copy = *(int*)address;
+        //    int copy = *(int*)address;
 
-            *((long*)address) = 321;
+        //    *((long*)address) = 321;
 
-            //__refvalue(typeRef, int) = 321;
+        //    //__refvalue(typeRef, int) = 321;
 
-            Assert.AreEqual(321, value);
-        }
+        //    Assert.AreEqual(321, value);
+        //}
     }
 }

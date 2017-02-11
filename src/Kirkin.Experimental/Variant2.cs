@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Kirkin
 {
@@ -7,14 +8,19 @@ namespace Kirkin
     /// General-purpose 64-bit variant value container.
     /// Avoids boxing for common value types.
     /// </summary>
+    [StructLayout(LayoutKind.Explicit)]
     public unsafe struct Variant2
     {
+        private static readonly object s_useStore = new object();
+
         // Used to encode System.Type values.
         private class ClrType<T> { };
 
         // Variant storage.
-        private IntPtr FastStore;
+        [FieldOffset(0)]
+        private long Store;
 
+        [FieldOffset(8)]
         private object BoxedValue;
 
         /// <summary>
@@ -24,48 +30,84 @@ namespace Kirkin
         {
             get
             {
-                return __reftype(__makeref(FastStore));
+                throw new NotImplementedException();
+            }
+        }
+
+        internal int Int32
+        {
+            get
+            {
+                return GetValue<int>();
+            }
+        }
+
+        internal long Int64
+        {
+            get
+            {
+                return GetValue<long>();
+            }
+        }
+
+        internal float Single
+        {
+            get
+            {
+                return GetValue<float>();
+            }
+        }
+
+        internal double Double
+        {
+            get
+            {
+                return GetValue<double>();
             }
         }
 
         public Variant2(int value)
         {
-            TypedReference tr = __makeref(value);
+            BoxedValue = s_useStore;
 
-            FastStore = (IntPtr)(&tr);
-            BoxedValue = null;
+            fixed (long* store = &Store)
+            {
+                int* myBytes = (int*)store;
+
+                *(myBytes) = value;
+            }
         }
 
-        public Variant2(long value)
-        {
-            FastStore = (IntPtr)(&value);
-            BoxedValue = null;
-        }
+        //public Variant2(long value)
+        //{
+        //    FastStore = (IntPtr)(&value);
+        //    BoxedValue = null;
+        //}
 
-        public Variant2(float value)
-        {
-            FastStore = (IntPtr)(&value);
-            BoxedValue = null;
-        }
+        //public Variant2(float value)
+        //{
+        //    FastStore = (IntPtr)(&value);
+        //    BoxedValue = null;
+        //}
 
-        public Variant2(double value)
-        {
-            FastStore = (IntPtr)(&value);
-            BoxedValue = null;
-        }
+        //public Variant2(double value)
+        //{
+        //    FastStore = (IntPtr)(&value);
+        //    BoxedValue = null;
+        //}
 
-        public Variant2(DateTime value)
-        {
-            FastStore = *(IntPtr*)&value;
-            BoxedValue = null;
-        }
+        //public Variant2(DateTime value)
+        //{
+        //    FastStore = *(IntPtr*)&value;
+        //    BoxedValue = null;
+        //}
 
         /// <summary>
         /// Boxing constructor.
         /// </summary>
         public Variant2(object value)
         {
-            FastStore = IntPtr.Zero;
+            Store = 0;
             BoxedValue = value;
         }
 
@@ -82,8 +124,21 @@ namespace Kirkin
         /// </summary>
         public T GetValue<T>()
         {
-            if (FastStore != IntPtr.Zero) {
-                return ReadGenericFromPtr<T>(FastStore, sizeof(int));
+            if (BoxedValue == s_useStore)
+            {
+                fixed (long* store = &Store)
+                {
+                    byte* bytePtr = (byte*)store;
+                    T result = default(T);
+                    TypedReference resultRef = __makeref(result);
+                    byte* resultPtr = (byte*)*((IntPtr*)&resultRef);
+
+                    for (int i = 0; i < sizeof(long); ++i) {
+                        resultPtr[i] = bytePtr[i];
+                    }
+
+                    return result;
+                }
             }
 
             return (T)BoxedValue;
