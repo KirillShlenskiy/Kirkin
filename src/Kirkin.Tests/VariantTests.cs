@@ -4,13 +4,12 @@ using NUnit.Framework;
 
 namespace Kirkin.Tests
 {
-    [Ignore("Needs fixing")]
-    public class Variant2Tests
+    public class VariantTests
     {
         [Test]
         public void Int32()
         {
-            Variant2 v = new Variant2(123);
+            Variant v = new Variant(123);
 
             //Assert.AreEqual(typeof(int), v.ValueType);
             Assert.AreEqual(123, v.GetValue<int>());
@@ -21,7 +20,7 @@ namespace Kirkin.Tests
         [Test]
         public void Int64()
         {
-            Variant2 v = new Variant2(123L);
+            Variant v = new Variant(123L);
 
             //Assert.AreEqual(typeof(long), v.ValueType);
             Assert.AreEqual(123L, v.GetValue<long>());
@@ -32,7 +31,7 @@ namespace Kirkin.Tests
         [Test]
         public void Float()
         {
-            Variant2 v = new Variant2(123f);
+            Variant v = new Variant(123f);
 
             //Assert.AreEqual(typeof(float), v.ValueType);
             Assert.AreEqual(123f, v.GetValue<float>());
@@ -45,7 +44,7 @@ namespace Kirkin.Tests
         [Test]
         public void Double()
         {
-            Variant2 v = new Variant2(123.0);
+            Variant v = new Variant(123.0);
 
             //Assert.AreEqual(typeof(double), v.ValueType);
             Assert.AreEqual(123.0, v.GetValue<double>());
@@ -58,7 +57,7 @@ namespace Kirkin.Tests
         [Test]
         public void DateTime()
         {
-            Variant2 v = new Variant2(new DateTime(2017, 01, 01));
+            Variant v = new Variant(new DateTime(2017, 01, 01));
 
             Assert.AreEqual(typeof(DateTime), v.ValueType);
             Assert.AreEqual(new DateTime(2017, 01, 01), v.GetValue<DateTime>());
@@ -71,7 +70,7 @@ namespace Kirkin.Tests
         [Test]
         public void String()
         {
-            Variant2 v = new Variant2("Hello");
+            Variant v = new Variant("Hello");
 
             Assert.AreEqual(typeof(string), v.ValueType);
             Assert.AreEqual("Hello", v.GetValue<string>());
@@ -84,7 +83,7 @@ namespace Kirkin.Tests
         [Test]
         public void ClrType()
         {
-            Variant2 v = new Variant2(typeof(int));
+            Variant v = new Variant(typeof(int));
 
             Assert.AreEqual(typeof(Type), v.ValueType);
             Assert.AreEqual(typeof(int), v.GetValue<Type>());
@@ -97,7 +96,7 @@ namespace Kirkin.Tests
         [Test]
         public void Null()
         {
-            Variant2 v = new Variant2(null);
+            Variant v = new Variant(null);
 
             Assert.AreEqual(typeof(object), v.ValueType);
             Assert.IsNull(v.GetValue<object>());
@@ -106,11 +105,11 @@ namespace Kirkin.Tests
         [Test]
         public void Int32_Bechnchmark_Boxing()
         {
-            object Variant2 = 123;
+            object Variant = 123;
             int num;
 
             for (int i = 0; i < 10000000; i++) {
-                num = (int)Variant2;
+                num = (int)Variant;
             }
         }
 
@@ -121,50 +120,69 @@ namespace Kirkin.Tests
 
             for (int i = 0; i < 10000000; i++)
             {
-                object Variant2 = 123;
+                object Variant = 123;
 
-                num = (int)Variant2;
+                num = (int)Variant;
+            }
+        }
+
+        [Test]
+        public void Int32_Bechnchmark_Variant()
+        {
+            Variant Variant = new Variant(123);
+            int num;
+
+            for (int i = 0; i < 10000000; i++) {
+                num = Variant.GetValue<int>();
             }
         }
 
         [Test]
         public void Int32_Bechnchmark_Variant2()
         {
-            Variant2 Variant2 = new Variant2(123);
-            int num;
-
-            for (int i = 0; i < 10000000; i++) {
-                num = Variant2.GetValue<int>();
-            }
-        }
-
-        [Test]
-        public void Int32_Bechnchmark_Variant22()
-        {
             int num;
 
             for (int i = 0; i < 10000000; i++)
             {
-                Variant2 Variant2 = new Variant2(123);
+                Variant Variant = new Variant(123);
 
-                num = Variant2.GetValue<int>();
+                num = Variant.GetValue<int>();
             }
         }
 
-        //[Test]
-        //public unsafe void Variant2WithTypeRef()
-        //{
-        //    int value = 123;
-        //    TypedReference typeRef = __makeref(value);
-        //    void* address = &value;
+        [Test]
+        public unsafe void CopyViaPointer()
+        {
+            int value = 123;
+            TypedReference typeRef = __makeref(value);
+            void* address = &value;
+            int copy = *(int*)address;
 
-        //    int copy = *(int*)address;
+            *((int*)address) = 321;
 
-        //    *((long*)address) = 321;
+            Assert.AreEqual(321, value);
+        }
 
-        //    //__refvalue(typeRef, int) = 321;
+        [Test]
+        public unsafe void CopyViaTypeRef()
+        {
+            Container<int> container = new Container<int>();
 
-        //    Assert.AreEqual(321, value);
-        //}
+            Assert.AreEqual(0, container.Value);
+
+            TypedReference containerRef = __makeref(container);
+
+            // The first field of TypedReference is an IntPtr value pointer.
+            int* containerPtr = (int*)*((IntPtr*)&containerRef);
+
+            *containerPtr = 123;
+
+            Assert.AreEqual(123, container.Value);
+        }
+
+        struct Container<T>
+        {
+            internal T Value;
+        }
     }
 }
