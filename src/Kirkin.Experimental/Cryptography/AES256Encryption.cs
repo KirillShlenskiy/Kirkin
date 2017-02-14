@@ -27,7 +27,7 @@ namespace Kirkin.Cryptography
         public Encoding Encoding { get; }
 
         /// <summary>
-        /// Creates a new instance of <see cref="AES256Encryption"/> with the default character encoding (UTF-8).
+        /// Creates a new instance of <see cref="AES256Encryption"/> with the default character encoding (UTF-8 no BOM).
         /// </summary>
         public AES256Encryption()
             : this(SafeUTF8)
