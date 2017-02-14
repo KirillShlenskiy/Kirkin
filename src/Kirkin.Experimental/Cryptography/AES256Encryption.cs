@@ -6,7 +6,7 @@ using System.Text;
 namespace Kirkin.Cryptography
 {
     /// <summary>
-    /// AesManaged wrapper with a misuse-resistant API.
+    /// Simple AesManaged wrapper.
     /// </summary>
     /// <remarks>
     /// Originally based on Encryptamajig (MIT license - https://github.com/jbubriski/Encryptamajig).
@@ -37,7 +37,7 @@ namespace Kirkin.Cryptography
         /// <summary>
         /// Creates a new instance of <see cref="AES256Encryption"/> with the given character encoding.
         /// </summary>
-        public AES256Encryption(Encoding encoding)
+        internal AES256Encryption(Encoding encoding)
         {
             if (encoding == null) throw new ArgumentNullException(nameof(encoding));
 
