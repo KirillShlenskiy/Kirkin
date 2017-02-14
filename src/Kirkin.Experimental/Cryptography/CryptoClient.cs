@@ -4,9 +4,9 @@ namespace Kirkin.Cryptography
 {
     /// <summary>
     /// Provides convenient string-based wrappers around
-    /// <see cref="ICryptoKernel"/> functionla
+    /// <see cref="ICryptoKernel"/> functionality.
     /// </summary>
-    public sealed class CryptoClient
+    internal sealed class CryptoClient
     {
         public ICryptoKernel Kernel { get; }
 

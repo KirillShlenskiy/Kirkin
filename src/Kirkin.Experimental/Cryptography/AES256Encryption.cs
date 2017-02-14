@@ -11,7 +11,7 @@ namespace Kirkin.Cryptography
     /// <remarks>
     /// Originally based on Encryptamajig (MIT license - https://github.com/jbubriski/Encryptamajig).
     /// </remarks>
-    public sealed class AES256Encryption
+    public sealed class AES256Encryption : ICryptoKernel
     {
         private static readonly Encoding SafeUTF8
             = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
@@ -52,6 +52,14 @@ namespace Kirkin.Cryptography
             if (string.IsNullOrEmpty(plainText)) throw new ArgumentException(nameof(plainText));
             if (string.IsNullOrEmpty(secret)) throw new ArgumentException(nameof(secret));
 
+            ICryptoKernel kernel = this;
+
+            return Convert.ToBase64String(kernel.Encrypt(plainText, secret));
+        }
+
+        byte[] ICryptoKernel.Encrypt(string plainText, string secret)
+        {
+            // Rfc2898DeriveBytes always uses UTF8 no BOM.
             using (Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(secret, SaltBitSize / 8, Iterations))
             {
                 byte[] saltBytes = keyDerivationFunction.Salt;
@@ -79,7 +87,7 @@ namespace Kirkin.Cryptography
                         Array.Copy(ivBytes, 0, result, saltBytes.Length, ivBytes.Length);
                         Array.Copy(encryptedTextBytes, 0, result, saltBytes.Length + ivBytes.Length, encryptedTextBytes.Length);
 
-                        return Convert.ToBase64String(result);
+                        return result;
                     }
                 }
             }
@@ -93,16 +101,22 @@ namespace Kirkin.Cryptography
             if (string.IsNullOrEmpty(encryptedText)) throw new ArgumentException(nameof(encryptedText));
             if (string.IsNullOrEmpty(secret)) throw new ArgumentException(nameof(secret));
 
-            byte[] allBytes = Convert.FromBase64String(encryptedText);
+            byte[] encryptedBytes = Convert.FromBase64String(encryptedText);
+            ICryptoKernel kernel = this;
 
+            return kernel.Decrypt(encryptedBytes, secret);
+        }
+
+        string ICryptoKernel.Decrypt(byte[] encryptedBytes, string secret)
+        {
             // Result format: 128 bits of salt, 128 bits of IV, 128 bits of encrypted text.
             byte[] saltBytes = new byte[SaltBitSize / 8];
             byte[] ivBytes = new byte[BlockBitSize / 8];
-            byte[] encryptedTextBytes = new byte[allBytes.Length - saltBytes.Length - ivBytes.Length];
+            byte[] encryptedTextBytes = new byte[encryptedBytes.Length - saltBytes.Length - ivBytes.Length];
 
-            Array.Copy(allBytes, 0, saltBytes, 0, saltBytes.Length);
-            Array.Copy(allBytes, saltBytes.Length, ivBytes, 0, ivBytes.Length);
-            Array.Copy(allBytes, saltBytes.Length + ivBytes.Length, encryptedTextBytes, 0, encryptedTextBytes.Length);
+            Array.Copy(encryptedBytes, 0, saltBytes, 0, saltBytes.Length);
+            Array.Copy(encryptedBytes, saltBytes.Length, ivBytes, 0, ivBytes.Length);
+            Array.Copy(encryptedBytes, saltBytes.Length + ivBytes.Length, encryptedTextBytes, 0, encryptedTextBytes.Length);
 
             using (Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(secret, saltBytes, Iterations))
             {
