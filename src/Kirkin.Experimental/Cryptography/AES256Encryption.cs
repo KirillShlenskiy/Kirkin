@@ -24,7 +24,7 @@ namespace Kirkin.Cryptography
         /// <summary>
         /// Character encoding used by this instance.
         /// </summary>
-        public Encoding Encoding { get; }
+        internal Encoding Encoding { get; }
 
         /// <summary>
         /// Creates a new instance of <see cref="AES256Encryption"/> with the default character encoding (UTF-8 no BOM).
@@ -47,18 +47,11 @@ namespace Kirkin.Cryptography
         /// <summary>
         /// Encrypts the plain text input using the given secret.
         /// </summary>
-        public string Encrypt(string plainText, string secret)
+        public byte[] Encrypt(string plainText, string secret)
         {
-            if (string.IsNullOrEmpty(plainText)) throw new ArgumentException(nameof(plainText));
-            if (string.IsNullOrEmpty(secret)) throw new ArgumentException(nameof(secret));
+            if (plainText == null) throw new ArgumentNullException(nameof(plainText));
+            if (secret == null) throw new ArgumentNullException(nameof(secret));
 
-            ICryptoKernel kernel = this;
-
-            return Convert.ToBase64String(kernel.Encrypt(plainText, secret));
-        }
-
-        byte[] ICryptoKernel.Encrypt(string plainText, string secret)
-        {
             // Rfc2898DeriveBytes always uses UTF8 no BOM.
             using (Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(secret, SaltBitSize / 8, Iterations))
             {
@@ -80,7 +73,7 @@ namespace Kirkin.Cryptography
 
                         byte[] encryptedTextBytes = memoryStream.ToArray();
 
-                        // Result format: 128 bits of salt, 128 bits of IV, 128 bits of encrypted text.
+                        // Result format: 128 bits of salt, 128 bits of IV, 128 (or more) bits of encrypted text.
                         byte[] result = new byte[saltBytes.Length + ivBytes.Length + encryptedTextBytes.Length];
 
                         Array.Copy(saltBytes, 0, result, 0, saltBytes.Length);
@@ -94,22 +87,14 @@ namespace Kirkin.Cryptography
         }
 
         /// <summary>
-        /// Decrypts the encrypted text using the provided secret.
+        /// Decrypts the byte array using the provided secret.
         /// </summary>
-        public string Decrypt(string encryptedText, string secret)
+        public string Decrypt(byte[] encryptedBytes, string secret)
         {
-            if (string.IsNullOrEmpty(encryptedText)) throw new ArgumentException(nameof(encryptedText));
-            if (string.IsNullOrEmpty(secret)) throw new ArgumentException(nameof(secret));
+            if (encryptedBytes == null) throw new ArgumentNullException(nameof(encryptedBytes));
+            if (secret == null) throw new ArgumentNullException(nameof(secret));
 
-            byte[] encryptedBytes = Convert.FromBase64String(encryptedText);
-            ICryptoKernel kernel = this;
-
-            return kernel.Decrypt(encryptedBytes, secret);
-        }
-
-        string ICryptoKernel.Decrypt(byte[] encryptedBytes, string secret)
-        {
-            // Result format: 128 bits of salt, 128 bits of IV, 128 bits of encrypted text.
+            // Expected format: 128 bits of salt, 128 bits of IV, 128 (or more) bits of encrypted text.
             byte[] saltBytes = new byte[SaltBitSize / 8];
             byte[] ivBytes = new byte[BlockBitSize / 8];
             byte[] encryptedTextBytes = new byte[encryptedBytes.Length - saltBytes.Length - ivBytes.Length];
@@ -118,11 +103,11 @@ namespace Kirkin.Cryptography
             Array.Copy(encryptedBytes, saltBytes.Length, ivBytes, 0, ivBytes.Length);
             Array.Copy(encryptedBytes, saltBytes.Length + ivBytes.Length, encryptedTextBytes, 0, encryptedTextBytes.Length);
 
+            // Rfc2898DeriveBytes always uses UTF8 no BOM.
             using (Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(secret, saltBytes, Iterations))
             {
                 byte[] keyBytes = keyDerivationFunction.GetBytes(KeyBitSize / 8);
 
-                // The default Cipher Mode is CBC and the Padding is PKCS7 which are both good.
                 using (AesManaged aes = new AesManaged { KeySize = KeyBitSize, BlockSize = BlockBitSize })
                 using (ICryptoTransform decryptor = aes.CreateDecryptor(keyBytes, ivBytes))
                 using (MemoryStream memoryStream = new MemoryStream(encryptedTextBytes))
@@ -131,6 +116,33 @@ namespace Kirkin.Cryptography
                     return streamReader.ReadToEnd();
                 }
             }
+        }
+
+        /// <summary>
+        /// Encrypts the plain text input using the given secret.
+        /// </summary>
+        internal string EncryptBase64(string plainText, string secret)
+        {
+            if (string.IsNullOrEmpty(plainText)) throw new ArgumentException(nameof(plainText));
+            if (string.IsNullOrEmpty(secret)) throw new ArgumentException(nameof(secret));
+
+            ICryptoKernel kernel = this;
+
+            return Convert.ToBase64String(kernel.Encrypt(plainText, secret));
+        }
+
+        /// <summary>
+        /// Decrypts the encrypted text using the provided secret.
+        /// </summary>
+        internal string DecryptBase64(string encryptedText, string secret)
+        {
+            if (string.IsNullOrEmpty(encryptedText)) throw new ArgumentException(nameof(encryptedText));
+            if (string.IsNullOrEmpty(secret)) throw new ArgumentException(nameof(secret));
+
+            byte[] encryptedBytes = Convert.FromBase64String(encryptedText);
+            ICryptoKernel kernel = this;
+
+            return kernel.Decrypt(encryptedBytes, secret);
         }
     }
 }

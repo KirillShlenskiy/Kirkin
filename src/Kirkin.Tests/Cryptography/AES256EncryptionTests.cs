@@ -14,11 +14,11 @@ namespace Kirkin.Tests.Cryptography
             string text = "The quick brown fox jumps over the lazy dog";
             string secret = "Secret";
             AES256Encryption aes = new AES256Encryption();
-            string encrypted = aes.Encrypt(text, secret);
+            string encrypted = aes.EncryptBase64(text, secret);
 
             Assert.AreNotEqual(text, encrypted);
 
-            string decrypted = aes.Decrypt(encrypted, secret);
+            string decrypted = aes.DecryptBase64(encrypted, secret);
 
             Assert.AreEqual(text, decrypted); // Roundtrip.
         }
@@ -29,8 +29,8 @@ namespace Kirkin.Tests.Cryptography
             string text = "The quick brown fox jumps over the lazy dog";
             string secret = "Secret";
             AES256Encryption aes = new AES256Encryption();
-            string encrypted1 = aes.Encrypt(text, secret);
-            string encrypted2 = aes.Encrypt(text, secret);
+            string encrypted1 = aes.EncryptBase64(text, secret);
+            string encrypted2 = aes.EncryptBase64(text, secret);
 
             Assert.AreNotEqual(encrypted1, encrypted2); // Randomness.
         }
@@ -41,7 +41,7 @@ namespace Kirkin.Tests.Cryptography
             string text = "a";
             string secret = "a";
             AES256Encryption aes = new AES256Encryption();
-            string encrypted = aes.Encrypt(text, secret);
+            string encrypted = aes.EncryptBase64(text, secret);
             byte[] bytes = Convert.FromBase64String(encrypted);
 
             Assert.AreEqual(48, bytes.Length);
@@ -57,11 +57,11 @@ namespace Kirkin.Tests.Cryptography
             while (secret.Length < 8000) secret += secret;
 
             AES256Encryption aes = new AES256Encryption();
-            string encrypted = aes.Encrypt(text, secret);
+            string encrypted = aes.EncryptBase64(text, secret);
 
             Assert.AreNotEqual(text, encrypted);
 
-            string decrypted = aes.Decrypt(encrypted, secret);
+            string decrypted = aes.DecryptBase64(encrypted, secret);
 
             Assert.AreEqual(text, decrypted); // Roundtrip.
         }
@@ -70,9 +70,9 @@ namespace Kirkin.Tests.Cryptography
         public void TrickyCharacters()
         {
             AES256Encryption aes = new AES256Encryption();
-            string encrypted = aes.Encrypt("ヾ(｀⌒´メ)ノ″😋ъ", "zzz");
+            string encrypted = aes.EncryptBase64("ヾ(｀⌒´メ)ノ″😋ъ", "zzz");
 
-            Assert.AreEqual("ヾ(｀⌒´メ)ノ″😋ъ", aes.Decrypt(encrypted, "zzz"));
+            Assert.AreEqual("ヾ(｀⌒´メ)ノ″😋ъ", aes.DecryptBase64(encrypted, "zzz"));
         }
     }
 }
