@@ -70,9 +70,9 @@ namespace Kirkin.Tests.Cryptography
         public void TrickyCharacters()
         {
             AES256Encryption aes = new AES256Encryption();
-            string encrypted = aes.Encrypt("😋", "zzz");
+            string encrypted = aes.Encrypt("ヾ(｀⌒´メ)ノ″😋ъ", "zzz");
 
-            Assert.AreEqual("😋", aes.Decrypt(encrypted, "zzz"));
+            Assert.AreEqual("ヾ(｀⌒´メ)ノ″😋ъ", aes.Decrypt(encrypted, "zzz"));
         }
     }
 }
