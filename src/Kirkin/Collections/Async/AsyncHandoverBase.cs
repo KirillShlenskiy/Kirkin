@@ -14,7 +14,7 @@ namespace Kirkin.Collections.Async
     /// </summary>
     public abstract class AsyncHandoverBase<T>
     {
-#region Fields
+        #region Fields
 
         // Queue of items waiting to be handed
         // over at the next call to TryTakeAsync.
@@ -26,9 +26,9 @@ namespace Kirkin.Collections.Async
         private readonly Queue<TaskCompletionSource<TakeResult<T>>> Waiters
             = new Queue<TaskCompletionSource<TakeResult<T>>>();
 
-#endregion
+        #endregion
 
-#region Properties
+        #region Properties
 
         /// <summary>
         /// True if this collection allows adding.
@@ -64,9 +64,9 @@ namespace Kirkin.Collections.Async
             }
         }
 
-#endregion
+        #endregion
 
-#region Constructors
+        #region Constructors
 
         /// <summary>
         /// Creates a new instance of the async collection
@@ -89,9 +89,9 @@ namespace Kirkin.Collections.Async
             AllowsAdding = true;
         }
 
-#endregion
+        #endregion
 
-#region Add/TryAdd
+        #region Add/TryAdd
 
         /// <summary>
         /// Hands the item over to the waiters
@@ -143,9 +143,9 @@ namespace Kirkin.Collections.Async
             }
         }
 
-#endregion
+        #endregion
 
-#region TryTake
+        #region TryTake
 
         /// <summary>
         /// Attempts to immediately remove and return
@@ -220,9 +220,9 @@ namespace Kirkin.Collections.Async
             }
         }
 
-#endregion
+        #endregion
 
-#region CompleteAdding/Misc
+        #region CompleteAdding/Misc
 
         /// <summary>
         /// Sets the AllowsAdding flag to false
@@ -267,7 +267,7 @@ namespace Kirkin.Collections.Async
             }
         }
 
-#endregion
+        #endregion
     }
 }
 
