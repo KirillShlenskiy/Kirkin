@@ -26,6 +26,16 @@ namespace Kirkin.Tests.Experimental
         }
 
         [Test]
+        public void BlockCopy()
+        {
+            byte[] source = { 255, 255, 255, 255 }; // 32 bits.
+            int[] target = new int[1];
+
+            Buffer.BlockCopy(source, 0, target, 0, source.Length * sizeof(byte));
+            Assert.AreEqual(-1, target[0]);
+        }
+
+        [Test]
         public void InterlockedWrap()
         {
             var i = int.MaxValue;
