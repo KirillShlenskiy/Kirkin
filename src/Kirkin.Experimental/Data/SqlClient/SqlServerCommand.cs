@@ -21,7 +21,7 @@ namespace Kirkin.Data.SqlClient
         {
             get
             {
-                SqlServerConnectionFactory connectionFactory = ConnectionObj as SqlServerConnectionFactory;
+                SqlServerConnectionManager connectionFactory = ConnectionObj as SqlServerConnectionManager;
 
                 if (connectionFactory != null) {
                     return connectionFactory.ConnectionString;
@@ -42,7 +42,7 @@ namespace Kirkin.Data.SqlClient
             ConnectionObj = connectionString;
         }
 
-        public SqlServerCommand(SqlServerConnectionFactory connectionFactory)
+        public SqlServerCommand(SqlServerConnectionManager connectionFactory)
         {
             if (connectionFactory == null) throw new ArgumentNullException(nameof(connectionFactory));
 
@@ -145,18 +145,18 @@ namespace Kirkin.Data.SqlClient
 
         struct ConnectionManager : IDisposable
         {
-            private readonly SqlServerConnectionFactory ConnectionFactory;
+            private readonly SqlServerConnectionManager ConnectionFactory;
             private readonly bool NeedToDisposeFactory;
 
             internal ConnectionManager(object connectionObj)
             {
-                ConnectionFactory = connectionObj as SqlServerConnectionFactory;
+                ConnectionFactory = connectionObj as SqlServerConnectionManager;
 
                 if (ConnectionFactory == null)
                 {
                     string connectionString = (string)connectionObj;
 
-                    ConnectionFactory = new SqlServerConnectionFactory(connectionString);
+                    ConnectionFactory = new SqlServerConnectionManager(connectionString);
                     NeedToDisposeFactory = true;
                 }
                 else
@@ -167,7 +167,7 @@ namespace Kirkin.Data.SqlClient
 
             public SqlConnection GetOpenConnection()
             {
-                return ConnectionFactory.GetOpenConnection();
+                return ConnectionFactory.Connection;
             }
 
             public void Dispose()

@@ -67,7 +67,7 @@
     <Compile Include="DataAnalysis\Insight.cs" />
     <Compile Include="Data\SqlClient\SqlCommandParameterMapping.cs" />
     <Compile Include="Data\SqlClient\SqlServerCommand.cs" />
-    <Compile Include="Data\SqlClient\SqlServerConnectionFactory.cs" />
+    <Compile Include="Data\SqlClient\SqlServerConnectionManager.cs" />
     <Compile Include="Data\SqlClient\SqlServerEngine.cs" />
     <Compile Include="Decisions\Decision.cs" />
     <Compile Include="Decisions\Extensions.cs" />
