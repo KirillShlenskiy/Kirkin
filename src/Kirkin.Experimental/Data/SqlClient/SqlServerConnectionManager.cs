@@ -10,20 +10,23 @@ namespace Kirkin.Data.SqlClient
     /// </summary>
     public sealed class SqlServerConnectionManager : IDisposable
     {
+        // True if the underlying connection object
+        // is meant to be disposed by this instance.
+        private readonly bool OwnsConnection;
+
         // SqlConnection or string (connection string) or null (when disposed).
         private object _connectionObj;
-        private bool OwnsConnection;
 
         /// <summary>
         /// Gets the connection string of the connection managed by this instance.
         /// </summary>
-        public string ConnectionString
+        internal string ConnectionString
         {
             get
             {
                 ThrowIfDisposed();
 
-                return _connectionObj as string ?? ((SqlConnection)_connectionObj).ConnectionString;
+                return _connectionObj as string ?? (_connectionObj as SqlConnection)?.ConnectionString;
             }
         }
 
@@ -36,19 +39,7 @@ namespace Kirkin.Data.SqlClient
             {
                 ThrowIfDisposed();
 
-                object connectionObj = _connectionObj;
-                SqlConnection connection = connectionObj as SqlConnection;
-
-                if (connection == null)
-                {
-                    string connectionString = (string)connectionObj;
-
-                    connection = new SqlConnection(connectionString);
-
-                    if (Interlocked.CompareExchange(ref _connectionObj, connection, null) != null) {
-                        connection = (SqlConnection)_connectionObj;
-                    }
-                }
+                SqlConnection connection = (_connectionObj as SqlConnection) ?? CreateConnection();
 
                 if (connection.State != ConnectionState.Open) {
                     connection.Open();
@@ -66,14 +57,59 @@ namespace Kirkin.Data.SqlClient
             OwnsConnection = true;
         }
 
-        public SqlServerConnectionManager(SqlConnection connection, bool ownsConnection)
+        public SqlServerConnectionManager(SqlConnection connection)
         {
             if (connection == null) throw new ArgumentNullException(nameof(connection));
 
             _connectionObj = connection;
-            OwnsConnection = ownsConnection;
+            OwnsConnection = false;
         }
 
+        public SqlServerConnectionManager(Func<SqlConnection> connectionFactory)
+        {
+            if (connectionFactory == null) throw new ArgumentNullException(nameof(connectionFactory));
+
+            _connectionObj = connectionFactory;
+            OwnsConnection = true;
+        }
+
+        private SqlConnection CreateConnection()
+        {
+            object connectionObj = _connectionObj;
+            SqlConnection connection = connectionObj as SqlConnection;
+
+            if (connection == null)
+            {
+                Func<SqlConnection> factory = connectionObj as Func<SqlConnection>;
+
+                if (factory != null)
+                {
+                    connection = factory();
+                }
+                else
+                {
+                    string connectionString = (string)connectionObj;
+
+                    connection = new SqlConnection(connectionString);
+                }
+
+                connectionObj = Interlocked.CompareExchange(ref _connectionObj, connection, null);
+
+                if (connectionObj != null)
+                {
+                    // Someone raced us and won.
+                    connection.Dispose();
+
+                    connection = (SqlConnection)connectionObj;
+                }
+            }
+
+            return connection;
+        }
+
+        /// <summary>
+        /// Release all resources used by this instance.
+        /// </summary>
         public void Dispose()
         {
             object connectionObj = Interlocked.Exchange(ref _connectionObj, null);
@@ -83,6 +119,9 @@ namespace Kirkin.Data.SqlClient
             }
         }
 
+        /// <summary>
+        /// Throws an <see cref="ObjectDisposedException"/> if this instance is marked as disposed.
+        /// </summary>
         private void ThrowIfDisposed()
         {
             if (_connectionObj == null) {
