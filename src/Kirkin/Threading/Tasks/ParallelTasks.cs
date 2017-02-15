@@ -289,7 +289,7 @@ namespace Kirkin.Threading.Tasks
             }
         }
 
-        struct ConsumingQueue<T> : IDisposable
+        class ConsumingQueue<T> : IDisposable
         {
             private IEnumerator<T> enumerator;
             private Box _next;
