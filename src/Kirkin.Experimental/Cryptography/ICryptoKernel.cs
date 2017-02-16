@@ -3,7 +3,7 @@
     /// <summary>
     /// Core encryptor/decryptor contract.
     /// </summary>
-    public interface ICryptoKernel
+    internal interface ICryptoKernel
     {
         /// <summary>
         /// Encrypts the given byte array using the specified secret.

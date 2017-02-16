@@ -61,6 +61,7 @@
     <Compile Include="Collections\Specialized\SingleElementReadOnlyList.cs" />
     <Compile Include="Cryptography\AES256Encryption.cs" />
     <Compile Include="Cryptography\CryptoClient.cs" />
+    <Compile Include="Cryptography\CryptoKernelExtensions.cs" />
     <Compile Include="Cryptography\ICryptoKernel.cs" />
     <Compile Include="CustomEqualityComparer.cs" />
     <Compile Include="DataAnalysis\IDataAnalyzer.cs" />

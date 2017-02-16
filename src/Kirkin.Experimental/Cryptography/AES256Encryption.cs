@@ -19,6 +19,10 @@ namespace Kirkin.Cryptography
         private const int BlockBitSize = 128;
         private const int KeyBitSize = 256; // AES 256.
         private const int SaltBitSize = 128;
+
+        /// <summary>
+        /// SHA-1 iterations used when hashing secret.
+        /// </summary>
         private const int Iterations = 10000;
 
         /// <summary>
@@ -116,33 +120,6 @@ namespace Kirkin.Cryptography
                     return streamReader.ReadToEnd();
                 }
             }
-        }
-
-        /// <summary>
-        /// Encrypts the plain text input using the given secret.
-        /// </summary>
-        internal string EncryptBase64(string plainText, string secret)
-        {
-            if (string.IsNullOrEmpty(plainText)) throw new ArgumentException(nameof(plainText));
-            if (string.IsNullOrEmpty(secret)) throw new ArgumentException(nameof(secret));
-
-            ICryptoKernel kernel = this;
-
-            return Convert.ToBase64String(kernel.Encrypt(plainText, secret));
-        }
-
-        /// <summary>
-        /// Decrypts the encrypted text using the provided secret.
-        /// </summary>
-        internal string DecryptBase64(string encryptedText, string secret)
-        {
-            if (string.IsNullOrEmpty(encryptedText)) throw new ArgumentException(nameof(encryptedText));
-            if (string.IsNullOrEmpty(secret)) throw new ArgumentException(nameof(secret));
-
-            byte[] encryptedBytes = Convert.FromBase64String(encryptedText);
-            ICryptoKernel kernel = this;
-
-            return kernel.Decrypt(encryptedBytes, secret);
         }
     }
 }
