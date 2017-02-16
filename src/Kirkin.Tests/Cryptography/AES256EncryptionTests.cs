@@ -90,5 +90,53 @@ namespace Kirkin.Tests.Cryptography
                 Assert.AreEqual(text, aes.Decrypt(encrypted, secret));
             }
         }
+
+        [Test]
+        public void ReadWriteInt32()
+        {
+            int value = 123;
+            byte[] bytes = new byte[4];
+
+            Bits.WriteInt32(bytes, 0, value);
+
+            Assert.AreEqual((byte)value, bytes[3]); // Check most significant byte first.
+
+            int roundtrip = Bits.ReadInt32(bytes, 0);
+
+            Assert.AreEqual(value, roundtrip);
+        }
+
+        static class Bits
+        {
+            static Bits()
+            {
+                if (!BitConverter.IsLittleEndian) {
+                    throw new NotSupportedException("Big endian architecture not supported.");
+                }
+            }
+
+            /// <summary>
+            /// Reads 4 bytes at the given offset as an Int32 (most significant byte first).
+            /// </summary>
+            internal static int ReadInt32(byte[] bytes, int startIndex)
+            {
+                return
+                    bytes[startIndex] << 24 |
+                    bytes[startIndex + 1] << 16 |
+                    bytes[startIndex + 2] << 8 |
+                    bytes[startIndex + 3];
+            }
+
+            /// <summary>
+            /// Writes the given Int32 value as 4 bytes at the given offset (most significant byte first).
+            /// </summary>
+            internal static void WriteInt32(byte[] bytes, int startIndex, int value)
+            {
+                bytes[startIndex] = (byte)(value >> 24);
+                bytes[startIndex + 1] = (byte)(value >> 16);
+                bytes[startIndex + 2] = (byte)(value >> 8);
+                bytes[startIndex + 3] = (byte)value;
+            }
+        }
     }
 }
