@@ -53,8 +53,8 @@ namespace Kirkin.Cryptography
             if (plainText == null) throw new ArgumentNullException(nameof(plainText));
             if (secret == null) throw new ArgumentNullException(nameof(secret));
 
-            const int blockBitSize = 128;
             const int keyBitSize = 256; // AES 256.
+            const int blockBitSize = 128;
             const int saltBitSize = 128;
 
             // Rfc2898DeriveBytes always uses UTF8 no BOM.
@@ -78,12 +78,12 @@ namespace Kirkin.Cryptography
 
                         byte[] encryptedTextBytes = memoryStream.ToArray();
 
-                        // Result format: 32 bits of block bit size, 32 bits of key bit size,
+                        // Result format: 32 bits of key bit size,32 bits of block bit size,
                         // 32 bits of salt bit size, 32 bits of SHA1 iteration count, 128 bits
                         // of salt, 128 bits of IV, 128 (or more) bits of encrypted text.
                         byte[][] resultSlices = {
-                            BitConverter.GetBytes(blockBitSize),
                             BitConverter.GetBytes(keyBitSize),
+                            BitConverter.GetBytes(blockBitSize),
                             BitConverter.GetBytes(saltBitSize),
                             BitConverter.GetBytes(hashIterations),
                             saltBytes,
@@ -108,8 +108,8 @@ namespace Kirkin.Cryptography
             // Input format: 32 bits of block bit size, 32 bits of key bit size,
             // 32 bits of salt bit size, 32 bits of SHA1 iteration count, 128 bits
             // of salt, 128 bits of IV, 128 (or more) bits of encrypted text.
-            int blockBitSize = BitConverter.ToInt32(encryptedBytes, 0);
-            int keyBitSize = BitConverter.ToInt32(encryptedBytes, 4);
+            int keyBitSize = BitConverter.ToInt32(encryptedBytes, 0);
+            int blockBitSize = BitConverter.ToInt32(encryptedBytes, 4);
             int saltBitSize = BitConverter.ToInt32(encryptedBytes, 8);
             int hashIterations = BitConverter.ToInt32(encryptedBytes, 12);
 

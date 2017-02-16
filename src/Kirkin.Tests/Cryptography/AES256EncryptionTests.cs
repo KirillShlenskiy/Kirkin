@@ -39,7 +39,7 @@ namespace Kirkin.Tests.Cryptography
         [Test]
         public void DecryptOnlyPerf()
         {
-            string encrypted = "gAAAAAABAACAAAAAECcAAJv6Dc0YQ2J3S0n1XGdPDNtOz+9IAoitTT7BCWQGcS76rlr+vJkOivz2ko9z5jU9IrfAY5BpXRydpGhbCG/uepJriYKBz+YZwpq5bInnyqLP";
+            string encrypted = "AAEAAIAAAACAAAAAECcAADUvSCsCCAVN6WlJmrIGMtPZyZ2pCaikeH8ORCXDaREBVZ3JYVFyXIiePlN5mxA73jyObC1XK2W2jwNkWKrtDi+L7mR8OLjnoH+OkA2/FL+W";
             AES256Encryption aes = new AES256Encryption();
 
             Assert.AreEqual("The quick brown fox jumps over the lazy dog", aes.DecryptBase64(encrypted, "Secret"));
