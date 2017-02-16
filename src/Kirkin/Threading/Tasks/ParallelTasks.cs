@@ -184,13 +184,15 @@ namespace Kirkin.Threading.Tasks
             }
 
             // Key is index, Value is task factory.
-            IEnumerable<KeyValuePair<int, Func<Task<T>>>> indexedTaskFactories = taskFactories.Select((f, i) => new KeyValuePair<int, Func<Task<T>>>(i, f));
+            IEnumerable<KeyValuePair<int, Func<Task<T>>>> indexedTaskFactories
+                = taskFactories.Select((f, i) => new KeyValuePair<int, Func<Task<T>>>(i, f));
+
             T[] results = new T[factories.Length];
 
             await ForEachAsyncWorker(
                 indexedTaskFactories,
                 new ParallelTaskOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism },
-                async indexedTaskFactory => results[indexedTaskFactory.Key] = await indexedTaskFactory.Value().ConfigureAwait(false), // Thread-safe as each Task writes to its own index.
+                async indexedTaskFactory => results[indexedTaskFactory.Key] = await indexedTaskFactory.Value.Invoke().ConfigureAwait(false), // Thread-safe as each Task writes to its own index.
                 null
             ).ConfigureAwait(false);
 
@@ -203,7 +205,11 @@ namespace Kirkin.Threading.Tasks
 
         private static readonly Task s_completedTask = Task.FromResult(true);
 
-        private static Task ForAsyncWorker<TTask>(int fromInclusive, int toExclusive, ParallelTaskOptions parallelOptions, Func<int, TTask> body, Func<TTask, Task> onCompleted)
+        private static Task ForAsyncWorker<TTask>(int fromInclusive,
+                                                  int toExclusive,
+                                                  ParallelTaskOptions parallelOptions,
+                                                  Func<int, TTask> body,
+                                                  Func<TTask, Task> onCompleted)
             where TTask : Task
         {
             return fromInclusive >= toExclusive
@@ -215,7 +221,10 @@ namespace Kirkin.Threading.Tasks
         // the source, but this would require the allocation of a potentially significant number
         // of TTask-producing delegates. Instead, I'm using IEnumerable<T> and a single Func<T, TTask>
         // factory. This leads to better resource usage at the expense of a less friendly signature.
-        private static async Task ForEachAsyncWorker<T, TTask>(IEnumerable<T> source, ParallelTaskOptions parallelOptions, Func<T, TTask> body, Func<TTask, Task> onCompleted)
+        private static async Task ForEachAsyncWorker<T, TTask>(IEnumerable<T> source,
+                                                               ParallelTaskOptions parallelOptions,
+                                                               Func<T, TTask> body,
+                                                               Func<TTask, Task> onCompleted)
             where TTask : Task
         {
             parallelOptions.CancellationToken.ThrowIfCancellationRequested();
