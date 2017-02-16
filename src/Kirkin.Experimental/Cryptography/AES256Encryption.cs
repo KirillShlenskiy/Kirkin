@@ -33,7 +33,7 @@ namespace Kirkin.Cryptography
             if (plainText == null) throw new ArgumentNullException(nameof(plainText));
             if (secret == null) throw new ArgumentNullException(nameof(secret));
 
-            const int saltBitSize = 128; // May change in future.
+            const int saltBitSize = 256; // May change in future.
 
             // Rfc2898DeriveBytes always uses UTF8 no BOM.
             using (Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(secret, saltBitSize / 8, hashIterations))
@@ -57,7 +57,7 @@ namespace Kirkin.Cryptography
                         byte[] encryptedTextBytes = memoryStream.ToArray();
 
                         // Result format: 32 bits of salt bit size, 32 bits of SHA1 iteration count,
-                        // 128 bits of salt, 128 bits of IV, 128 (or more) bits of encrypted text.
+                        // 256 bits of salt, 128 bits of IV, 128 (or more) bits of encrypted text.
                         byte[][] resultSlices = {
                             BitConverter.GetBytes(saltBitSize),
                             BitConverter.GetBytes(hashIterations),
@@ -81,7 +81,7 @@ namespace Kirkin.Cryptography
             if (secret == null) throw new ArgumentNullException(nameof(secret));
 
             // Input format: 32 bits of salt bit size, 32 bits of SHA1 iteration count,
-            // 128 bits of salt, 128 bits of IV, 128 (or more) bits of encrypted text.
+            // N bits of salt, 128 bits of IV, 128 (or more) bits of encrypted text.
             int saltBitSize = BitConverter.ToInt32(encryptedBytes, 0);
             int hashIterations = BitConverter.ToInt32(encryptedBytes, 4);
 

@@ -46,7 +46,7 @@ namespace Kirkin.Tests.Cryptography
         }
 
         [Test]
-        public void MinResultLength56Bytes()
+        public void MinResultLength72Bytes()
         {
             string text = "a";
             string secret = "a";
@@ -54,7 +54,7 @@ namespace Kirkin.Tests.Cryptography
             string encrypted = aes.EncryptBase64(text, secret);
             byte[] bytes = Convert.FromBase64String(encrypted);
 
-            Assert.AreEqual(56, bytes.Length);
+            Assert.AreEqual(72, bytes.Length);
         }
 
         [Test]
