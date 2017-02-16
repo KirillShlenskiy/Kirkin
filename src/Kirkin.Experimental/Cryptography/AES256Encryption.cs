@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -16,10 +15,6 @@ namespace Kirkin.Cryptography
     {
         private static readonly Encoding SafeUTF8
             = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
-
-        private const int BlockBitSize = 128;
-        private const int KeyBitSize = 256; // AES 256.
-        private const int SaltBitSize = 128;
 
         /// <summary>
         /// Character encoding used by this instance.
@@ -58,14 +53,18 @@ namespace Kirkin.Cryptography
             if (plainText == null) throw new ArgumentNullException(nameof(plainText));
             if (secret == null) throw new ArgumentNullException(nameof(secret));
 
+            const int blockBitSize = 128;
+            const int keyBitSize = 256; // AES 256.
+            const int saltBitSize = 128;
+
             // Rfc2898DeriveBytes always uses UTF8 no BOM.
-            using (Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(secret, SaltBitSize / 8, hashIterations))
+            using (Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(secret, saltBitSize / 8, hashIterations))
             {
                 byte[] saltBytes = keyDerivationFunction.Salt;
-                byte[] keyBytes = keyDerivationFunction.GetBytes(KeyBitSize / 8);
+                byte[] keyBytes = keyDerivationFunction.GetBytes(keyBitSize / 8);
 
                 // The default Cipher Mode is CBC and the Padding is PKCS7 which are both good.
-                using (AesManaged aes = new AesManaged { KeySize = KeyBitSize, BlockSize = BlockBitSize })
+                using (AesManaged aes = new AesManaged { KeySize = keyBitSize, BlockSize = blockBitSize })
                 {
                     byte[] ivBytes = aes.IV;
 
@@ -79,17 +78,19 @@ namespace Kirkin.Cryptography
 
                         byte[] encryptedTextBytes = memoryStream.ToArray();
 
-                        // Result format: 32 bits of SHA1 iteration count, 128 bits of salt,
-                        // 128 bits of IV, 128 (or more) bits of encrypted text.
-                        byte[] result = new byte[sizeof(int) + saltBytes.Length + ivBytes.Length + encryptedTextBytes.Length];
-                        byte[] iterationCountBytes = BitConverter.GetBytes(hashIterations);
+                        // Result format: 32 bits of block bit size, 32 bits of key bit size,
+                        // 32 bits of salt bit size, 32 bits of SHA1 iteration count, 128 bits
+                        // of salt, 128 bits of IV, 128 (or more) bits of encrypted text.
+                        byte[] result = new byte[16 + saltBytes.Length + ivBytes.Length + encryptedTextBytes.Length];
 
-                        Debug.Assert(iterationCountBytes.Length == 4, "Iteration bytes expected to be a 32-bit value.");
+                        Bits.WriteInt32(result, 0, blockBitSize);
+                        Bits.WriteInt32(result, 4, keyBitSize);
+                        Bits.WriteInt32(result, 8, saltBitSize);
+                        Bits.WriteInt32(result, 12, hashIterations);
 
-                        Array.Copy(iterationCountBytes, 0, result, 0, iterationCountBytes.Length);
-                        Array.Copy(saltBytes, 0, result, iterationCountBytes.Length, saltBytes.Length);
-                        Array.Copy(ivBytes, 0, result, iterationCountBytes.Length + saltBytes.Length, ivBytes.Length);
-                        Array.Copy(encryptedTextBytes, 0, result, iterationCountBytes.Length + saltBytes.Length + ivBytes.Length, encryptedTextBytes.Length);
+                        Array.Copy(saltBytes, 0, result, 16, saltBytes.Length);
+                        Array.Copy(ivBytes, 0, result, 16 + saltBytes.Length, ivBytes.Length);
+                        Array.Copy(encryptedTextBytes, 0, result, 16 + saltBytes.Length + ivBytes.Length, encryptedTextBytes.Length);
 
                         return result;
                     }
@@ -107,24 +108,25 @@ namespace Kirkin.Cryptography
 
             // Expected format: 32 bits of SHA1 iteration count, 128 bits of salt,
             // 128 bits of IV, 128 (or more) bits of encrypted text.
-            byte[] iterationCountBytes = new byte[sizeof(int)];
-            byte[] saltBytes = new byte[SaltBitSize / 8];
-            byte[] ivBytes = new byte[BlockBitSize / 8];
-            byte[] encryptedTextBytes = new byte[encryptedBytes.Length - iterationCountBytes.Length - saltBytes.Length - ivBytes.Length];
+            int blockBitSize = Bits.ReadInt32(encryptedBytes, 0);
+            int keyBitSize = Bits.ReadInt32(encryptedBytes, 4);
+            int saltBitSize = Bits.ReadInt32(encryptedBytes, 8);
+            int hashIterations = Bits.ReadInt32(encryptedBytes, 12);
 
-            Array.Copy(encryptedBytes, 0, iterationCountBytes, 0, iterationCountBytes.Length);
-            Array.Copy(encryptedBytes, iterationCountBytes.Length, saltBytes, 0, saltBytes.Length);
-            Array.Copy(encryptedBytes, iterationCountBytes.Length + saltBytes.Length, ivBytes, 0, ivBytes.Length);
-            Array.Copy(encryptedBytes, iterationCountBytes.Length + saltBytes.Length + ivBytes.Length, encryptedTextBytes, 0, encryptedTextBytes.Length);
+            byte[] saltBytes = new byte[saltBitSize / 8];
+            byte[] ivBytes = new byte[blockBitSize / 8];
+            byte[] encryptedTextBytes = new byte[encryptedBytes.Length - 16 - saltBytes.Length - ivBytes.Length];
 
-            int iterations = BitConverter.ToInt32(iterationCountBytes, 0);
+            Array.Copy(encryptedBytes, 16, saltBytes, 0, saltBytes.Length);
+            Array.Copy(encryptedBytes, 16 + saltBytes.Length, ivBytes, 0, ivBytes.Length);
+            Array.Copy(encryptedBytes, 16 + saltBytes.Length + ivBytes.Length, encryptedTextBytes, 0, encryptedTextBytes.Length);
 
             // Rfc2898DeriveBytes always uses UTF8 no BOM.
-            using (Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(secret, saltBytes, iterations))
+            using (Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(secret, saltBytes, hashIterations))
             {
-                byte[] keyBytes = keyDerivationFunction.GetBytes(KeyBitSize / 8);
+                byte[] keyBytes = keyDerivationFunction.GetBytes(keyBitSize / 8);
 
-                using (AesManaged aes = new AesManaged { KeySize = KeyBitSize, BlockSize = BlockBitSize })
+                using (AesManaged aes = new AesManaged { KeySize = keyBitSize, BlockSize = blockBitSize })
                 using (ICryptoTransform decryptor = aes.CreateDecryptor(keyBytes, ivBytes))
                 using (MemoryStream memoryStream = new MemoryStream(encryptedTextBytes))
                 using (CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
@@ -138,6 +140,39 @@ namespace Kirkin.Cryptography
         byte[] ICryptoKernel.Encrypt(string plainText, string secret)
         {
             return Encrypt(plainText, secret);
+        }
+
+        internal static class Bits // Internal for testing.
+        {
+            static Bits()
+            {
+                if (!BitConverter.IsLittleEndian) {
+                    throw new NotSupportedException("Big endian architecture not supported.");
+                }
+            }
+
+            /// <summary>
+            /// Reads 4 bytes at the given offset as an Int32 (most significant byte first).
+            /// </summary>
+            internal static int ReadInt32(byte[] bytes, int startIndex)
+            {
+                return
+                    bytes[startIndex] << 24 |
+                    bytes[startIndex + 1] << 16 |
+                    bytes[startIndex + 2] << 8 |
+                    bytes[startIndex + 3];
+            }
+
+            /// <summary>
+            /// Writes the given Int32 value as 4 bytes at the given offset (most significant byte first).
+            /// </summary>
+            internal static void WriteInt32(byte[] bytes, int startIndex, int value)
+            {
+                bytes[startIndex] = (byte)(value >> 24);
+                bytes[startIndex + 1] = (byte)(value >> 16);
+                bytes[startIndex + 2] = (byte)(value >> 8);
+                bytes[startIndex + 3] = (byte)value;
+            }
         }
     }
 }

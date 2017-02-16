@@ -4,6 +4,8 @@ using Kirkin.Cryptography;
 
 using NUnit.Framework;
 
+using Bits = Kirkin.Cryptography.AES256Encryption.Bits;
+
 namespace Kirkin.Tests.Cryptography
 {
     public class AES256EncryptionTests
@@ -37,7 +39,7 @@ namespace Kirkin.Tests.Cryptography
         }
 
         [Test]
-        public void MinResultLength52Bytes()
+        public void MinResultLength64Bytes()
         {
             string text = "a";
             string secret = "a";
@@ -45,7 +47,7 @@ namespace Kirkin.Tests.Cryptography
             string encrypted = aes.EncryptBase64(text, secret);
             byte[] bytes = Convert.FromBase64String(encrypted);
 
-            Assert.AreEqual(52, bytes.Length);
+            Assert.AreEqual(64, bytes.Length);
         }
 
         [Test]
@@ -104,39 +106,6 @@ namespace Kirkin.Tests.Cryptography
             int roundtrip = Bits.ReadInt32(bytes, 0);
 
             Assert.AreEqual(value, roundtrip);
-        }
-
-        static class Bits
-        {
-            static Bits()
-            {
-                if (!BitConverter.IsLittleEndian) {
-                    throw new NotSupportedException("Big endian architecture not supported.");
-                }
-            }
-
-            /// <summary>
-            /// Reads 4 bytes at the given offset as an Int32 (most significant byte first).
-            /// </summary>
-            internal static int ReadInt32(byte[] bytes, int startIndex)
-            {
-                return
-                    bytes[startIndex] << 24 |
-                    bytes[startIndex + 1] << 16 |
-                    bytes[startIndex + 2] << 8 |
-                    bytes[startIndex + 3];
-            }
-
-            /// <summary>
-            /// Writes the given Int32 value as 4 bytes at the given offset (most significant byte first).
-            /// </summary>
-            internal static void WriteInt32(byte[] bytes, int startIndex, int value)
-            {
-                bytes[startIndex] = (byte)(value >> 24);
-                bytes[startIndex + 1] = (byte)(value >> 16);
-                bytes[startIndex + 2] = (byte)(value >> 8);
-                bytes[startIndex + 3] = (byte)value;
-            }
         }
     }
 }
