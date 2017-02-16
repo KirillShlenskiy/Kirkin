@@ -81,18 +81,17 @@ namespace Kirkin.Cryptography
                         // Result format: 32 bits of block bit size, 32 bits of key bit size,
                         // 32 bits of salt bit size, 32 bits of SHA1 iteration count, 128 bits
                         // of salt, 128 bits of IV, 128 (or more) bits of encrypted text.
-                        byte[] result = new byte[16 + saltBytes.Length + ivBytes.Length + encryptedTextBytes.Length];
+                        byte[][] resultSlices = {
+                            BitConverter.GetBytes(blockBitSize),
+                            BitConverter.GetBytes(keyBitSize),
+                            BitConverter.GetBytes(saltBitSize),
+                            BitConverter.GetBytes(hashIterations),
+                            saltBytes,
+                            ivBytes,
+                            encryptedTextBytes
+                        };
 
-                        Bits.WriteInt32(result, 0, blockBitSize);
-                        Bits.WriteInt32(result, 4, keyBitSize);
-                        Bits.WriteInt32(result, 8, saltBitSize);
-                        Bits.WriteInt32(result, 12, hashIterations);
-
-                        Array.Copy(saltBytes, 0, result, 16, saltBytes.Length);
-                        Array.Copy(ivBytes, 0, result, 16 + saltBytes.Length, ivBytes.Length);
-                        Array.Copy(encryptedTextBytes, 0, result, 16 + saltBytes.Length + ivBytes.Length, encryptedTextBytes.Length);
-
-                        return result;
+                        return Concat(resultSlices);
                     }
                 }
             }
@@ -106,12 +105,13 @@ namespace Kirkin.Cryptography
             if (encryptedBytes == null) throw new ArgumentNullException(nameof(encryptedBytes));
             if (secret == null) throw new ArgumentNullException(nameof(secret));
 
-            // Expected format: 32 bits of SHA1 iteration count, 128 bits of salt,
-            // 128 bits of IV, 128 (or more) bits of encrypted text.
-            int blockBitSize = Bits.ReadInt32(encryptedBytes, 0);
-            int keyBitSize = Bits.ReadInt32(encryptedBytes, 4);
-            int saltBitSize = Bits.ReadInt32(encryptedBytes, 8);
-            int hashIterations = Bits.ReadInt32(encryptedBytes, 12);
+            // Input format: 32 bits of block bit size, 32 bits of key bit size,
+            // 32 bits of salt bit size, 32 bits of SHA1 iteration count, 128 bits
+            // of salt, 128 bits of IV, 128 (or more) bits of encrypted text.
+            int blockBitSize = BitConverter.ToInt32(encryptedBytes, 0);
+            int keyBitSize = BitConverter.ToInt32(encryptedBytes, 4);
+            int saltBitSize = BitConverter.ToInt32(encryptedBytes, 8);
+            int hashIterations = BitConverter.ToInt32(encryptedBytes, 12);
 
             byte[] saltBytes = new byte[saltBitSize / 8];
             byte[] ivBytes = new byte[blockBitSize / 8];
@@ -142,37 +142,28 @@ namespace Kirkin.Cryptography
             return Encrypt(plainText, secret);
         }
 
-        internal static class Bits // Internal for testing.
+        /// <summary>
+        /// Concatenates the given byte arrays.
+        /// </summary>
+        private static byte[] Concat(byte[][] arrays)
         {
-            static Bits()
-            {
-                if (!BitConverter.IsLittleEndian) {
-                    throw new NotSupportedException("Big endian architecture not supported.");
-                }
+            int length = 0;
+
+            foreach (byte[] array in arrays) {
+                length += array.Length;
             }
 
-            /// <summary>
-            /// Reads 4 bytes at the given offset as an Int32 (most significant byte first).
-            /// </summary>
-            internal static int ReadInt32(byte[] bytes, int startIndex)
+            byte[] result = new byte[length];
+            int offset = 0;
+
+            foreach (byte[] array in arrays)
             {
-                return
-                    bytes[startIndex] << 24 |
-                    bytes[startIndex + 1] << 16 |
-                    bytes[startIndex + 2] << 8 |
-                    bytes[startIndex + 3];
+                Array.Copy(array, 0, result, offset, array.Length);
+
+                offset += array.Length;
             }
 
-            /// <summary>
-            /// Writes the given Int32 value as 4 bytes at the given offset (most significant byte first).
-            /// </summary>
-            internal static void WriteInt32(byte[] bytes, int startIndex, int value)
-            {
-                bytes[startIndex] = (byte)(value >> 24);
-                bytes[startIndex + 1] = (byte)(value >> 16);
-                bytes[startIndex + 2] = (byte)(value >> 8);
-                bytes[startIndex + 3] = (byte)value;
-            }
+            return result;
         }
     }
 }

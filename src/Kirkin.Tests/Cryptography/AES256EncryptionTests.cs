@@ -4,8 +4,6 @@ using Kirkin.Cryptography;
 
 using NUnit.Framework;
 
-using Bits = Kirkin.Cryptography.AES256Encryption.Bits;
-
 namespace Kirkin.Tests.Cryptography
 {
     public class AES256EncryptionTests
@@ -36,6 +34,15 @@ namespace Kirkin.Tests.Cryptography
             string encrypted2 = aes.EncryptBase64(text, secret);
 
             Assert.AreNotEqual(encrypted1, encrypted2); // Randomness.
+        }
+
+        [Test]
+        public void DecryptOnlyPerf()
+        {
+            string encrypted = "gAAAAAABAACAAAAAECcAAJv6Dc0YQ2J3S0n1XGdPDNtOz+9IAoitTT7BCWQGcS76rlr+vJkOivz2ko9z5jU9IrfAY5BpXRydpGhbCG/uepJriYKBz+YZwpq5bInnyqLP";
+            AES256Encryption aes = new AES256Encryption();
+
+            Assert.AreEqual("The quick brown fox jumps over the lazy dog", aes.DecryptBase64(encrypted, "Secret"));
         }
 
         [Test]
@@ -91,21 +98,6 @@ namespace Kirkin.Tests.Cryptography
 
                 Assert.AreEqual(text, aes.Decrypt(encrypted, secret));
             }
-        }
-
-        [Test]
-        public void ReadWriteInt32()
-        {
-            int value = 123;
-            byte[] bytes = new byte[4];
-
-            Bits.WriteInt32(bytes, 0, value);
-
-            Assert.AreEqual((byte)value, bytes[3]); // Check most significant byte first.
-
-            int roundtrip = Bits.ReadInt32(bytes, 0);
-
-            Assert.AreEqual(value, roundtrip);
         }
     }
 }
