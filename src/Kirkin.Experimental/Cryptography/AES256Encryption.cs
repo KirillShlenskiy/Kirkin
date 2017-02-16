@@ -49,17 +49,17 @@ namespace Kirkin.Cryptography
         /// </summary>
         /// <param name="plainText">Plain text to be encrypted.</param>
         /// <param name="secret">Secret passphrase used to encrypt plain text.</param>
-        /// <param name="iterations">
+        /// <param name="hashIterations">
         /// Number of PBKDF2-HMAC-SHA1 iterations used when hashing the secret.
         /// The higher this number, the stronger the encryption.
         /// </param>
-        public byte[] Encrypt(string plainText, string secret, int iterations = 10000)
+        public byte[] Encrypt(string plainText, string secret, int hashIterations = 10000)
         {
             if (plainText == null) throw new ArgumentNullException(nameof(plainText));
             if (secret == null) throw new ArgumentNullException(nameof(secret));
 
             // Rfc2898DeriveBytes always uses UTF8 no BOM.
-            using (Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(secret, SaltBitSize / 8, iterations))
+            using (Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(secret, SaltBitSize / 8, hashIterations))
             {
                 byte[] saltBytes = keyDerivationFunction.Salt;
                 byte[] keyBytes = keyDerivationFunction.GetBytes(KeyBitSize / 8);
@@ -82,7 +82,7 @@ namespace Kirkin.Cryptography
                         // Result format: 32 bits of SHA1 iteration count, 128 bits of salt,
                         // 128 bits of IV, 128 (or more) bits of encrypted text.
                         byte[] result = new byte[sizeof(int) + saltBytes.Length + ivBytes.Length + encryptedTextBytes.Length];
-                        byte[] iterationCountBytes = BitConverter.GetBytes(iterations);
+                        byte[] iterationCountBytes = BitConverter.GetBytes(hashIterations);
 
                         Debug.Assert(iterationCountBytes.Length == 4, "Iteration bytes expected to be a 32-bit value.");
 
