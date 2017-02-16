@@ -211,6 +211,10 @@ namespace Kirkin.Threading.Tasks
                 : ForEachAsyncWorker(Enumerable.Range(fromInclusive, toExclusive - fromInclusive), parallelOptions, body, onCompleted);
         }
 
+        // Notes re method signature choice: I could have used IEnumerable<Func<TTask>> as
+        // the source, but this would require the allocation of a potentially significant number
+        // of TTask-producing delegates. Instead, I'm using IEnumerable<T> and a single Func<T, TTask>
+        // factory. This leads to better resource usage at the expense of a less friendly signature.
         private static async Task ForEachAsyncWorker<T, TTask>(IEnumerable<T> source, ParallelTaskOptions parallelOptions, Func<T, TTask> body, Func<TTask, Task> onCompleted)
             where TTask : Task
         {
