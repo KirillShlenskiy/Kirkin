@@ -226,7 +226,12 @@ namespace Kirkin.Threading.Tasks
                     return;
                 }
 
-                List<TTask> tasksInFlight = new List<TTask>(parallelOptions.MaxDegreeOfParallelism);
+                List<TTask> tasksInFlight = (parallelOptions.MaxDegreeOfParallelism < 1024)
+                    ? new List<TTask>(parallelOptions.MaxDegreeOfParallelism)
+                    // Avoid large array allocation if the user specifies an
+                    // unrealistic MaxDegreeOfParallelism (i.e. int.MaxValue).
+                    : new List<TTask>();
+
                 List<Task> faultedTasks = null;
 
                 try
@@ -257,7 +262,9 @@ namespace Kirkin.Threading.Tasks
                         }
                         catch
                         {
-                            if (faultedTasks == null) faultedTasks = new List<Task>();
+                            if (faultedTasks == null) {
+                                faultedTasks = new List<Task>();
+                            }
 
                             // Exception will be rethrown inside "finally" if necessary.
                             faultedTasks.Add(fullCompletion);
