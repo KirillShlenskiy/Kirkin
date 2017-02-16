@@ -22,11 +22,6 @@ namespace Kirkin.Cryptography
         private const int SaltBitSize = 128;
 
         /// <summary>
-        /// PBKDF2-HMAC-SHA1 iteration count used when hashing secret.
-        /// </summary>
-        private const int Iterations = 10000;
-
-        /// <summary>
         /// Character encoding used by this instance.
         /// </summary>
         internal Encoding Encoding { get; }
@@ -52,13 +47,19 @@ namespace Kirkin.Cryptography
         /// <summary>
         /// Encrypts the plain text input using the given secret.
         /// </summary>
-        public byte[] Encrypt(string plainText, string secret)
+        /// <param name="plainText">Plain text to be encrypted.</param>
+        /// <param name="secret">Secret passphrase used to encrypt plain text.</param>
+        /// <param name="iterations">
+        /// Number of PBKDF2-HMAC-SHA1 iterations used when hashing the secret.
+        /// The higher this number, the stronger the encryption.
+        /// </param>
+        public byte[] Encrypt(string plainText, string secret, int iterations = 10000)
         {
             if (plainText == null) throw new ArgumentNullException(nameof(plainText));
             if (secret == null) throw new ArgumentNullException(nameof(secret));
 
             // Rfc2898DeriveBytes always uses UTF8 no BOM.
-            using (Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(secret, SaltBitSize / 8, Iterations))
+            using (Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(secret, SaltBitSize / 8, iterations))
             {
                 byte[] saltBytes = keyDerivationFunction.Salt;
                 byte[] keyBytes = keyDerivationFunction.GetBytes(KeyBitSize / 8);
@@ -81,7 +82,7 @@ namespace Kirkin.Cryptography
                         // Result format: 32 bits of SHA1 iteration count, 128 bits of salt,
                         // 128 bits of IV, 128 (or more) bits of encrypted text.
                         byte[] result = new byte[sizeof(int) + saltBytes.Length + ivBytes.Length + encryptedTextBytes.Length];
-                        byte[] iterationCountBytes = BitConverter.GetBytes(Iterations);
+                        byte[] iterationCountBytes = BitConverter.GetBytes(iterations);
 
                         Debug.Assert(iterationCountBytes.Length == 4, "Iteration bytes expected to be a 32-bit value.");
 
@@ -131,6 +132,12 @@ namespace Kirkin.Cryptography
                     return streamReader.ReadToEnd();
                 }
             }
+        }
+
+        // Explicit interface implementation.
+        byte[] ICryptoKernel.Encrypt(string plainText, string secret)
+        {
+            return Encrypt(plainText, secret);
         }
     }
 }
