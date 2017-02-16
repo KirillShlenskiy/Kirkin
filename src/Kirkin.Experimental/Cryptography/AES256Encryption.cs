@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -21,7 +22,7 @@ namespace Kirkin.Cryptography
         private const int SaltBitSize = 128;
 
         /// <summary>
-        /// SHA-1 iterations used when hashing secret.
+        /// PBKDF2-HMAC-SHA1 iteration count used when hashing secret.
         /// </summary>
         private const int Iterations = 10000;
 
@@ -77,12 +78,17 @@ namespace Kirkin.Cryptography
 
                         byte[] encryptedTextBytes = memoryStream.ToArray();
 
-                        // Result format: 128 bits of salt, 128 bits of IV, 128 (or more) bits of encrypted text.
-                        byte[] result = new byte[saltBytes.Length + ivBytes.Length + encryptedTextBytes.Length];
+                        // Result format: 32 bits of SHA1 iteration count, 128 bits of salt,
+                        // 128 bits of IV, 128 (or more) bits of encrypted text.
+                        byte[] result = new byte[sizeof(int) + saltBytes.Length + ivBytes.Length + encryptedTextBytes.Length];
+                        byte[] iterationCountBytes = BitConverter.GetBytes(Iterations);
 
-                        Array.Copy(saltBytes, 0, result, 0, saltBytes.Length);
-                        Array.Copy(ivBytes, 0, result, saltBytes.Length, ivBytes.Length);
-                        Array.Copy(encryptedTextBytes, 0, result, saltBytes.Length + ivBytes.Length, encryptedTextBytes.Length);
+                        Debug.Assert(iterationCountBytes.Length == 4, "Iteration bytes expected to be a 32-bit value.");
+
+                        Array.Copy(iterationCountBytes, 0, result, 0, iterationCountBytes.Length);
+                        Array.Copy(saltBytes, 0, result, iterationCountBytes.Length, saltBytes.Length);
+                        Array.Copy(ivBytes, 0, result, iterationCountBytes.Length + saltBytes.Length, ivBytes.Length);
+                        Array.Copy(encryptedTextBytes, 0, result, iterationCountBytes.Length + saltBytes.Length + ivBytes.Length, encryptedTextBytes.Length);
 
                         return result;
                     }
@@ -98,17 +104,22 @@ namespace Kirkin.Cryptography
             if (encryptedBytes == null) throw new ArgumentNullException(nameof(encryptedBytes));
             if (secret == null) throw new ArgumentNullException(nameof(secret));
 
-            // Expected format: 128 bits of salt, 128 bits of IV, 128 (or more) bits of encrypted text.
+            // Expected format: 32 bits of SHA1 iteration count, 128 bits of salt,
+            // 128 bits of IV, 128 (or more) bits of encrypted text.
+            byte[] iterationCountBytes = new byte[sizeof(int)];
             byte[] saltBytes = new byte[SaltBitSize / 8];
             byte[] ivBytes = new byte[BlockBitSize / 8];
-            byte[] encryptedTextBytes = new byte[encryptedBytes.Length - saltBytes.Length - ivBytes.Length];
+            byte[] encryptedTextBytes = new byte[encryptedBytes.Length - iterationCountBytes.Length - saltBytes.Length - ivBytes.Length];
 
-            Array.Copy(encryptedBytes, 0, saltBytes, 0, saltBytes.Length);
-            Array.Copy(encryptedBytes, saltBytes.Length, ivBytes, 0, ivBytes.Length);
-            Array.Copy(encryptedBytes, saltBytes.Length + ivBytes.Length, encryptedTextBytes, 0, encryptedTextBytes.Length);
+            Array.Copy(encryptedBytes, 0, iterationCountBytes, 0, iterationCountBytes.Length);
+            Array.Copy(encryptedBytes, iterationCountBytes.Length, saltBytes, 0, saltBytes.Length);
+            Array.Copy(encryptedBytes, iterationCountBytes.Length + saltBytes.Length, ivBytes, 0, ivBytes.Length);
+            Array.Copy(encryptedBytes, iterationCountBytes.Length + saltBytes.Length + ivBytes.Length, encryptedTextBytes, 0, encryptedTextBytes.Length);
+
+            int iterations = BitConverter.ToInt32(iterationCountBytes, 0);
 
             // Rfc2898DeriveBytes always uses UTF8 no BOM.
-            using (Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(secret, saltBytes, Iterations))
+            using (Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(secret, saltBytes, iterations))
             {
                 byte[] keyBytes = keyDerivationFunction.GetBytes(KeyBitSize / 8);
 

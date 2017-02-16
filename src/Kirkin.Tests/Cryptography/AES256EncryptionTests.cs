@@ -14,6 +14,7 @@ namespace Kirkin.Tests.Cryptography
             string text = "The quick brown fox jumps over the lazy dog";
             string secret = "Secret";
             AES256Encryption aes = new AES256Encryption();
+
             string encrypted = aes.EncryptBase64(text, secret);
 
             Assert.AreNotEqual(text, encrypted);
@@ -36,7 +37,7 @@ namespace Kirkin.Tests.Cryptography
         }
 
         [Test]
-        public void MinResultLength48Bytes()
+        public void MinResultLength52Bytes()
         {
             string text = "a";
             string secret = "a";
@@ -44,7 +45,7 @@ namespace Kirkin.Tests.Cryptography
             string encrypted = aes.EncryptBase64(text, secret);
             byte[] bytes = Convert.FromBase64String(encrypted);
 
-            Assert.AreEqual(48, bytes.Length);
+            Assert.AreEqual(52, bytes.Length);
         }
 
         [Test]
