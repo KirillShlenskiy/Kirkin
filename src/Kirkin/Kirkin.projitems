@@ -54,7 +54,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Linq\Expressions\ExpressionUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Linq\Expressions\Fluent\ConstructorResolutionHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Linq\Expressions\Fluent\FieldOrPropertyResolutionHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Linq\Expressions\Fluent\MethodResolutionHelpercs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Linq\Expressions\Fluent\MethodResolutionHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Linq\Expressions\SubstituteParameterVisitor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logging\EntryFilter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logging\EntryFormatter.cs" />

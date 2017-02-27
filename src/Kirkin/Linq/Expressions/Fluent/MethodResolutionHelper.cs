@@ -143,9 +143,11 @@ namespace Kirkin.Linq.Expressions.Fluent
 
         private static Expression<TDelegate> InstanceMethod<TDelegate>(string name, Type[] parameterTypes, bool nonPublic, bool ignoreCase)
         {
-            BindingFlags bindingFlags = nonPublic
-                ? BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
-                : BindingFlags.Instance | BindingFlags.Public;
+            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public;
+
+            if (nonPublic) {
+                bindingFlags |= BindingFlags.NonPublic;
+            }
 
             if (ignoreCase) {
                 bindingFlags |= BindingFlags.IgnoreCase;
