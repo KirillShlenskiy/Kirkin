@@ -6,6 +6,7 @@ namespace Kirkin
     /// <summary>
     /// 64-bit data type used by timestamp columns.
     /// </summary>
+    [Serializable]
     public struct Timestamp : IEquatable<Timestamp>, IComparable<Timestamp>
     {
         /// <summary>
