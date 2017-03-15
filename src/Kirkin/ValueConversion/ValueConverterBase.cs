@@ -36,9 +36,7 @@ namespace Kirkin.ValueConversion
 
         private Func<object, object> ResolveConvertDelegate(Type type)
         {
-            Func<object, object> func;
-
-            return ConvertDelegatesByReturnType.TryGetValue(type, out func)
+            return ConvertDelegatesByReturnType.TryGetValue(type, out Func<object, object> func)
                 ? func
                 : ResolveConvertDelegateSlow(type);
         }

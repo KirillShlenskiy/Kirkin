@@ -122,9 +122,7 @@ namespace Kirkin.ChangeTracking
 #if NET_40
             return EqualityComparer<object>.Default;
 #else
-            IEqualityComparer comparer;
-
-            return EqualityComparers != null && EqualityComparers.TryGetValue(type, out comparer)
+            return EqualityComparers != null && EqualityComparers.TryGetValue(type, out IEqualityComparer comparer)
                 ? comparer
                 : EqualityComparer<object>.Default;
 #endif

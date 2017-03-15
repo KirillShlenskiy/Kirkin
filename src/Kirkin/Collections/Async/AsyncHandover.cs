@@ -49,9 +49,7 @@ namespace Kirkin.Collections.Async
         public bool TryAdd(T item)
         {
             // Ignored.
-            bool itemAddedToCache = false;
-
-            return TryAddInternal(item, out itemAddedToCache);
+            return TryAddInternal(item, out bool itemAddedToCache);
         }
     }
 }

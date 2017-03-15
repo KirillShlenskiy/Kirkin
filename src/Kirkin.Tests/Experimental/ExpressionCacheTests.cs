@@ -70,23 +70,20 @@ namespace Kirkin.Tests.Experimental
             {
                 Expression<Func<T, TMember>> expr;
 
-                if (this.TryGet(token, out expr))
-                {
+                if (TryGet(token, out expr)) {
                     return expr;
                 }
 
                 expr = factory();
 
-                this.Expressions.Add(token, expr);
+                Expressions.Add(token, expr);
 
                 return expr;
             }
 
             public bool TryGet<TMember>(int token, out Expression<Func<T, TMember>> expr)
             {
-                Expression exprObj;
-
-                if (this.Expressions.TryGetValue(token, out exprObj))
+                if (Expressions.TryGetValue(token, out Expression exprObj))
                 {
                     expr = (Expression<Func<T, TMember>>)exprObj;
                     return true;

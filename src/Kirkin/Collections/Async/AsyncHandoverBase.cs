@@ -179,11 +179,9 @@ namespace Kirkin.Collections.Async
             {
                 ct.ThrowIfCancellationRequested();
 
-                T item;
-
                 // Check if an item was queued while
                 // we were waiting for the mutex.
-                if (TryTakeImmediately(out item)) {
+                if (TryTakeImmediately(out T item)) {
                     return Task.FromResult(new TakeResult<T>(item));
                 }
 

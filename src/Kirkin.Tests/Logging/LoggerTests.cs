@@ -175,10 +175,9 @@ namespace Kirkin.Tests.Logging
                     return false;
                 }
 
-                DateTime date;
                 string timeString = s.Substring(0, timeFormat.Length);
 
-                return DateTime.TryParseExact(timeString, timeFormat, null, System.Globalization.DateTimeStyles.None, out date);
+                return DateTime.TryParseExact(timeString, timeFormat, null, System.Globalization.DateTimeStyles.None, out DateTime date);
             };
 
             Assert.False(startsWithTime(""));

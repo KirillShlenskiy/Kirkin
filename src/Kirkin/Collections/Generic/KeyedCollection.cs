@@ -143,9 +143,7 @@ namespace Kirkin.Collections.Generic
         {
             get
             {
-                TItem item;
-
-                if (TryGetItem(key, out item)) {
+                if (TryGetItem(key, out TItem item)) {
                     return item;
                 }
 

@@ -142,17 +142,13 @@ namespace Kirkin.Mapping
 
             foreach (Member<TTarget> targetMember in targetMemberDict.Values)
             {
-                Func<MapperBuilder<TSource, TTarget>, MemberMapping<TSource, TTarget>> customTargetMappingFactory;
-
-                if (CustomTargetMappingFactories.TryGetValue(targetMember, out customTargetMappingFactory))
+                if (CustomTargetMappingFactories.TryGetValue(targetMember, out Func<MapperBuilder<TSource, TTarget>, MemberMapping<TSource, TTarget>> customTargetMappingFactory))
                 {
                     memberMappings.Add(customTargetMappingFactory(this));
                 }
                 else
                 {
-                    Member<TSource> sourceMember;
-
-                    if (sourceMemberDict.TryGetValue(targetMember.Name, out sourceMember))
+                    if (sourceMemberDict.TryGetValue(targetMember.Name, out Member<TSource> sourceMember))
                     {
                         memberMappings.Add(new DefaultMemberMapping<TSource, TTarget>(sourceMember, targetMember, NullableBehaviour));
                         sourceMemberDict.Remove(sourceMember.Name); // Saves some validation work down the track.

@@ -109,8 +109,7 @@ namespace Kirkin.Collections.Async
 
             try
             {
-                bool itemAddedToCache = false;
-                bool result = TryAddInternal(item, out itemAddedToCache);
+                bool result = TryAddInternal(item, out bool itemAddedToCache);
 
                 if (itemAddedToCache) {
                     // This is the only case where we don't want to release.

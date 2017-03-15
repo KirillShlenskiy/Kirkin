@@ -23,9 +23,7 @@ namespace Kirkin
 
             finalEventHandler = () =>
             {
-                TDependency strongRef = null;
-
-                if (weakRef.TryGetTarget(out strongRef))
+                if (weakRef.TryGetTarget(out TDependency strongRef))
                 {
                     eventHandler(strongRef);
                 }

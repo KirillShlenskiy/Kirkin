@@ -56,9 +56,7 @@ namespace Kirkin.Caching
                 // We will invalidate the cache entry if another thread hasn't done so already.
                 lock (Cache)
                 {
-                    Lazy<TValue> currentLazy;
-
-                    if (Cache.TryGetValue(key, out currentLazy) && lazy == currentLazy) {
+                    if (Cache.TryGetValue(key, out Lazy<TValue> currentLazy) && lazy == currentLazy) {
                         Cache.Remove(key);
                     }
                 }

@@ -204,9 +204,7 @@ namespace Kirkin.Dependencies
         /// </summary>
         public bool Deregister(Type type)
         {
-            IValueResolver valueResolver;
-
-            if (ValueResolvers.TryRemove(type, out valueResolver))
+            if (ValueResolvers.TryRemove(type, out IValueResolver valueResolver))
             {
                 valueResolver.Dispose();
                 return true;
@@ -224,9 +222,7 @@ namespace Kirkin.Dependencies
         /// </summary>
         public T Resolve<T>()
         {
-            T instance;
-
-            if (TryResolve(out instance)) {
+            if (TryResolve(out T instance)) {
                 return instance;
             }
 
@@ -238,9 +234,7 @@ namespace Kirkin.Dependencies
         /// </summary>
         public object Resolve(Type type)
         {
-            object instance;
-
-            if (TryResolve(type, out instance)) {
+            if (TryResolve(type, out object instance)) {
                 return instance;
             }
 
@@ -260,8 +254,7 @@ namespace Kirkin.Dependencies
         /// </summary>
         public T ResolveOrDefault<T>(T defaultValue)
         {
-            T instance;
-            return TryResolve(out instance) ? instance : defaultValue;
+            return TryResolve(out T instance) ? instance : defaultValue;
         }
 
         /// <summary>
@@ -269,9 +262,7 @@ namespace Kirkin.Dependencies
         /// </summary>
         public bool TryResolve<T>(out T instance)
         {
-            IValueResolver valueResolver;
-
-            if (ValueResolvers.TryGetValue(typeof(T), out valueResolver))
+            if (ValueResolvers.TryGetValue(typeof(T), out IValueResolver valueResolver))
             {
                 instance = ((ValueResolverBase<T>)valueResolver).GetValue();
                 return true;
@@ -292,9 +283,7 @@ namespace Kirkin.Dependencies
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
 
-            IValueResolver valueResolver;
-
-            if (ValueResolvers.TryGetValue(type, out valueResolver))
+            if (ValueResolvers.TryGetValue(type, out IValueResolver valueResolver))
             {
                 instance = valueResolver.GetValue();
                 return true;

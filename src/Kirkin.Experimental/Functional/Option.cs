@@ -273,8 +273,7 @@ namespace Kirkin.Functional
         public static T? ToNullable<T>(this Option<T> option)
             where T : struct
         {
-            T value;
-            return option.TryGetValue(out value) ? value : new T?();
+            return option.TryGetValue(out T value) ? value : new T?();
         }
 
         /// <summary>

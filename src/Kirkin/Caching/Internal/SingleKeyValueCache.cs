@@ -32,8 +32,7 @@ namespace Kirkin.Caching.Internal
         /// </summary>
         public TValue GetValue(TKey key)
         {
-            TValue value;
-            return TryGetValue(key, out value) ? value : GetValueSlow(key);
+            return TryGetValue(key, out TValue value) ? value : GetValueSlow(key);
         }
 
         /// <summary>

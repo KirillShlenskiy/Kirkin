@@ -85,9 +85,7 @@ namespace Kirkin.Data.SqlClient
                 return $"nvarchar({ComputeVarcharColumnLength(column)}) {nullOrNotNull}";
             }
 
-            string sqlType;
-
-            if (ClrSqlTypeMappings.TryGetValue(column.DataType, out sqlType)) {
+            if (ClrSqlTypeMappings.TryGetValue(column.DataType, out string sqlType)) {
                 return sqlType + " " + nullOrNotNull;
             }
 

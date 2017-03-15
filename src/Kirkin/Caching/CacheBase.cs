@@ -37,8 +37,7 @@ namespace Kirkin.Caching
         {
             get
             {
-                T value;
-                return TryGetValue(out value) ? value : GetValueSlow();
+                return TryGetValue(out T value) ? value : GetValueSlow();
             }
         }
 
