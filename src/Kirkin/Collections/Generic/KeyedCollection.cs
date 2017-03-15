@@ -82,11 +82,6 @@ namespace Kirkin.Collections.Generic
         protected internal readonly IDictionary<TKey, TItem> Items; // Internal for testability.
 
         /// <summary>
-        /// Used to detect redundant calls to Dispose().
-        /// </summary>
-        private bool _disposed;
-
-        /// <summary>
         /// Gets the number of items in this collection.
         /// </summary>
         public int Count
