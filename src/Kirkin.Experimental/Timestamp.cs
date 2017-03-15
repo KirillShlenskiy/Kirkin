@@ -35,7 +35,7 @@ namespace Kirkin
         /// </summary>
         public Timestamp(byte[] bytes)
         {
-            if (bytes == null) throw new ArgumentNullException("bytes");
+            if (bytes == null) throw new ArgumentNullException(nameof(bytes));
             if (bytes.Length > 8) throw new ArgumentException("Arrays longer than 8 bytes not supported.");
 
             // Normalize bytes to an 8-byte array.
@@ -56,11 +56,11 @@ namespace Kirkin
         }
 
         /// <summary>
-        /// Parses the given timestamp value stripping optional "0x" and "-" values.
+        /// Parses the given timestamp value. Can handle values starting with "0x" and values containing hyphens.
         /// </summary>
         public static Timestamp Parse(string text)
         {
-            if (text == null) throw new ArgumentNullException("text");
+            if (text == null) throw new ArgumentNullException(nameof(text));
             if (text.Length == 0) throw new ArgumentException("Text cannot be empty."); // In line with framework's standard Parse methods.
 
             // Rebuild string.
@@ -89,11 +89,12 @@ namespace Kirkin
         }
 
         /// <summary>
-        /// Parses the given timestamp value.
+        /// Parses the given timestamp value. Can handle values starting with "0x",
+        /// but throws a <see cref="FormatException"/> if the text contains hyphens.
         /// </summary>
         public static Timestamp ParseExact(string text)
         {
-            if (text == null) throw new ArgumentNullException("text");
+            if (text == null) throw new ArgumentNullException(nameof(text));
 
             long value = Convert.ToInt64(text, 16);
 
