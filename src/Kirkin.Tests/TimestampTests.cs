@@ -31,7 +31,7 @@ namespace Kirkin.Tests
         }
 
         [Test]
-        public void StringParse()
+        public void StringParseRange()
         {
             // Int32.
             Assert.AreEqual(new Timestamp(1), Timestamp.Parse("1"));
@@ -61,7 +61,7 @@ namespace Kirkin.Tests
         }
 
         [Test]
-        public void StringParseExact()
+        public void StringParseExactRange()
         {
             // Int32.
             Assert.AreEqual(new Timestamp(1), Timestamp.ParseExact("1"));
@@ -97,6 +97,32 @@ namespace Kirkin.Tests
             Assert.AreEqual(new Timestamp(1000000000), Timestamp.Parse("0x3B9A-CA00"));
             Assert.AreEqual(new Timestamp(1000000000), Timestamp.ParseExact("0x3B9ACA00")); // No hyphens: succeeds.
             Assert.Throws<FormatException>(() => Timestamp.ParseExact("0x3B9A-CA00"));
+        }
+
+        [Test]
+        public void ByteArrayConstructorRangeNormalized()
+        {
+            Assert.AreEqual("1", new Timestamp(new byte[] { 0, 0, 0, 0, 0, 0, 0, 1 }).ToString());
+            Assert.AreEqual("101", new Timestamp(new byte[] { 0, 0, 0, 0, 0, 0, 1, 1 }).ToString());
+            Assert.AreEqual("10101", new Timestamp(new byte[] { 0, 0, 0, 0, 0, 1, 1, 1 }).ToString());
+            Assert.AreEqual("1010101", new Timestamp(new byte[] { 0, 0, 0, 0, 1, 1, 1, 1 }).ToString());
+            Assert.AreEqual("101010101", new Timestamp(new byte[] { 0, 0, 0, 1, 1, 1, 1, 1 }).ToString());
+            Assert.AreEqual("10101010101", new Timestamp(new byte[] { 0, 0, 1, 1, 1, 1, 1, 1 }).ToString());
+            Assert.AreEqual("1010101010101", new Timestamp(new byte[] { 0, 1, 1, 1, 1, 1, 1, 1 }).ToString());
+            Assert.AreEqual("101010101010101", new Timestamp(new byte[] { 1, 1, 1, 1, 1, 1, 1, 1 }).ToString());
+        }
+
+        [Test]
+        public void ByteArrayConstructorRangeDenormalized()
+        {
+            Assert.AreEqual("1", new Timestamp(new byte[] { 1 }).ToString());
+            Assert.AreEqual("101", new Timestamp(new byte[] { 1, 1 }).ToString());
+            Assert.AreEqual("10101", new Timestamp(new byte[] { 1, 1, 1 }).ToString());
+            Assert.AreEqual("1010101", new Timestamp(new byte[] { 1, 1, 1, 1 }).ToString());
+            Assert.AreEqual("101010101", new Timestamp(new byte[] { 1, 1, 1, 1, 1 }).ToString());
+            Assert.AreEqual("10101010101", new Timestamp(new byte[] { 1, 1, 1, 1, 1, 1 }).ToString());
+            Assert.AreEqual("1010101010101", new Timestamp(new byte[] { 1, 1, 1, 1, 1, 1, 1 }).ToString());
+            Assert.AreEqual("101010101010101", new Timestamp(new byte[] { 1, 1, 1, 1, 1, 1, 1, 1 }).ToString());
         }
 
         [Test]
