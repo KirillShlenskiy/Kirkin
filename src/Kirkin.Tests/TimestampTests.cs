@@ -29,25 +29,6 @@ namespace Kirkin.Tests
         }
 
         [Test]
-        public void Performance()
-        {
-            var memStart = GC.GetTotalMemory(true);
-
-            for (int i = 0; i < 1000000; i++)
-            {
-                //var t = new Timestamp("AAA");
-                var t = new Timestamp(-1);
-
-                t++;
-            }
-
-            var memEnd = GC.GetTotalMemory(false);
-
-            Debug.Print("Mem diff new: {0}", memEnd - memStart);
-            Debug.Print("Done.");
-        }
-
-        [Test]
         public void NullCompare()
         {
             Assert.AreNotSame(null, default(Timestamp));
@@ -62,6 +43,12 @@ namespace Kirkin.Tests
             Assert.True(t1 < t2);
             Assert.True(t2 > t1);
             Assert.AreEqual(t1.CompareTo(t2), 1.CompareTo(2));
+        }
+
+        [Test]
+        public void ComparisonTestWithOverflow()
+        {
+            Assert.True(new Timestamp(unchecked(long.MaxValue + 1)) > new Timestamp(long.MaxValue));
         }
 
         [Test]
