@@ -378,5 +378,16 @@ namespace Kirkin.Tests
             Assert.AreEqual(timestamp, Timestamp.InterlockedCompareExchange(ref timestamp, new Timestamp(1), new Timestamp(-1)));
             Assert.AreEqual(new Timestamp(1), timestamp); // Changed.
         }
+
+        [Test]
+        public void ByteArrayConstructorPerf()
+        {
+            byte[] bytes = { 1, 1, 1, 1, 1, 1, 1, 1 };
+            Timestamp t;
+
+            for (int i = 0; i < 10000000; i++) {
+                t = new Timestamp(bytes);
+            }
+        }
     }
 }

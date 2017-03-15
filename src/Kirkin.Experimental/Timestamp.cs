@@ -48,9 +48,11 @@ namespace Kirkin
                 bytes = newBytes;
             }
 
-            int i1 = (bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
-            int i2 = (bytes[4] << 24) | (bytes[5] << 16) | (bytes[6] << 8) | bytes[7];
-            ulong unsigned = (uint)i2 | ((ulong)i1 << 32);
+            // We could cast all bytes to ulongs and shift those,
+            // but it's actually faster to operate on integers.
+            int i1 = bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3];
+            int i2 = bytes[4] << 24 | bytes[5] << 16 | bytes[6] << 8 | bytes[7];
+            ulong unsigned = ((ulong)i1 << 32) | (uint)i2;
 
             Value = unchecked((long)unsigned);
         }
