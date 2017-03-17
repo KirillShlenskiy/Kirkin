@@ -10,6 +10,7 @@ namespace Kirkin.Tests.Diagnostics
     public class ProcessMemoryTests
     {
         [Test]
+        [Ignore("Skip")]
         public void ReadNotepadMemory()
         {
             Directory.CreateDirectory(@"C:\Temp");
