@@ -1,10 +1,96 @@
 ﻿using System.IO;
+using System.Text;
 
 namespace Kirkin.Serialization
 {
-    internal abstract class Serializer
+    /// <summary>
+    /// Standard serializer base class.
+    /// </summary>
+    public abstract class Serializer
     {
-        public abstract void Serialize<T>(T content, Stream stream);
-        public abstract T Deserialize<T>(Stream steram);
+        /// <summary>
+        /// Default encoding: UTF8 no BOM.
+        /// </summary>
+        public static UTF8Encoding Encoding { get; } = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+        protected const int BufferSize = 8192;
+
+        #region Deserialization
+
+        protected abstract T Deserialize<T>(StreamReader reader);
+
+        /// <summary>
+        /// Deserializes the contents of the given stream.
+        /// </summary>
+        public T Deserialize<T>(Stream stream)
+        {
+            using (StreamReader reader = new StreamReader(stream, Encoding, true, BufferSize, true)) {
+                return Deserialize<T>(reader);
+            }
+        }
+
+        /// <summary>
+        /// Deserializes the given string content.
+        /// </summary>
+        public T Deserialize<T>(string content)
+        {
+            using (MemoryStream ms = new MemoryStream(Encoding.GetBytes(content))) {
+                return Deserialize<T>(ms);
+            }
+        }
+
+        /// <summary>
+        /// Reads the file at the given path and deserializes its contents.
+        /// </summary>
+        public T DeserializeFile<T>(string filePath)
+        {
+            using (FileStream stream = File.OpenRead(filePath)) {
+                return Deserialize<T>(stream);
+            }
+        }
+
+        #endregion
+
+        #region Serialization
+
+        protected abstract void Serialize<T>(T value, StreamWriter writer);
+
+        /// <summary>
+        /// Serializes the objects and outputs the result as a string.
+        /// </summary>
+        public string Serialize<T>(T value)
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                Serialize(value, stream);
+
+                stream.Position = 0;
+
+                using (StreamReader sr = new StreamReader(stream, Encoding, false, BufferSize, true)) {
+                    return sr.ReadToEnd();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Serializes the value to the given stream.
+        /// </summary>
+        public void Serialize<T>(T value, Stream stream)
+        {
+            using (StreamWriter writer = new StreamWriter(stream, Encoding, BufferSize, true)) {
+                Serialize(value, writer);
+            }
+        }
+
+        /// <summary>
+        /// Serializes the object and writes it to the file at the given path.
+        /// </summary>
+        public void SerializeFile<T>(T value, string filePath)
+        {
+            using (FileStream stream = File.Open(filePath, FileMode.Create, FileAccess.Write)) {
+                Serialize(value, stream);
+            }
+        }
+
+        #endregion
     }
 }

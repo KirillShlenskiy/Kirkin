@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Xml.Serialization;
 
 using XSerializer = System.Xml.Serialization.XmlSerializer;
@@ -10,18 +11,22 @@ namespace Kirkin.Serialization
         private static readonly XmlSerializerFactory Factory = new XmlSerializerFactory();
         private static readonly XmlSerializerNamespaces DefaultNamespaces = CreateDefaultNamespaces();
 
-        public override T Deserialize<T>(Stream stream)
+        protected override T Deserialize<T>(StreamReader reader)
         {
+            if (reader == null) throw new ArgumentNullException(nameof(reader));
+
             XSerializer serializer = CreateSerializer<T>();
 
-            return (T)serializer.Deserialize(stream);
+            return (T)serializer.Deserialize(reader);
         }
 
-        public override void Serialize<T>(T content, Stream stream)
+        protected override void Serialize<T>(T value, StreamWriter writer)
         {
+            if (writer == null) throw new ArgumentNullException(nameof(writer));
+
             XSerializer serializer = CreateSerializer<T>();
 
-            serializer.Serialize(stream, content, DefaultNamespaces);
+            serializer.Serialize(writer, value, DefaultNamespaces);
         }
 
         private static XSerializer CreateSerializer<T>()
