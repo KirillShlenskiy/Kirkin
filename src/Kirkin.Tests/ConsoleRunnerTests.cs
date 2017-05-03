@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 using NUnit.Framework;
-using System.Windows.Forms;
 
 namespace Kirkin.Tests
 {
