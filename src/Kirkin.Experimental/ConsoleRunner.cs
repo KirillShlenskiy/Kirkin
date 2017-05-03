@@ -9,7 +9,7 @@ namespace Kirkin
     /// <summary>
     /// <see cref="Process"/> wrapper that facilitates console app interop.
     /// </summary>
-    public sealed class ConsoleProcess
+    public sealed class ConsoleRunner
     {
         /// <summary>
         /// Executable name/path specified when this instance was created.
@@ -22,9 +22,9 @@ namespace Kirkin
         public string Arguments { get; }
 
         /// <summary>
-        /// Creates a new instance of <see cref="ConsoleProcess"/> with the given executable name and args.
+        /// Creates a new instance of <see cref="ConsoleRunner"/> with the given executable name and args.
         /// </summary>
-        private ConsoleProcess(string fileName, string args = null)
+        public ConsoleRunner(string fileName, string args = null)
         {
             if (string.IsNullOrEmpty(fileName)) throw new ArgumentException("File name must be specified.");
 
@@ -41,7 +41,7 @@ namespace Kirkin
         /// <summary>
         /// Runs the process.
         /// </summary>
-        public async Task RunAsync(CancellationToken cancellationToken)
+        public async Task RunAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             ProcessStartInfo processStartInfo = new ProcessStartInfo(FileName) {
                 Arguments = Arguments,
@@ -63,9 +63,12 @@ namespace Kirkin
 
             TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
 
-            cancellationToken.Register(() => processExitHandler(null, null), useSynchronizationContext: false);
-            cancellationToken.ThrowIfCancellationRequested();
-
+            if (cancellationToken.CanBeCanceled)
+            {
+                cancellationToken.Register(() => processExitHandler(null, null), useSynchronizationContext: false);
+                cancellationToken.ThrowIfCancellationRequested();
+            }
+            
             AppDomain.CurrentDomain.ProcessExit += processExitHandler;
 
             try
