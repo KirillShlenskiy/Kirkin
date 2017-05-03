@@ -11,6 +11,8 @@ namespace Kirkin
     /// </summary>
     public sealed class ConsoleRunner
     {
+        private Process _process;
+
         /// <summary>
         /// Executable name/path specified when this instance was created.
         /// </summary>
@@ -20,6 +22,17 @@ namespace Kirkin
         /// Arguments specified when this instance was created.
         /// </summary>
         public string Arguments { get; }
+
+        /// <summary>
+        /// <see cref="System.Diagnostics.Process"/> created by the Run call.
+        /// </summary>
+        internal Process Process
+        {
+            get
+            {
+                return _process;
+            }
+        }
 
         /// <summary>
         /// Creates a new instance of <see cref="ConsoleRunner"/> with the given executable name and args.
@@ -51,6 +64,10 @@ namespace Kirkin
         /// </summary>
         public async Task RunAsync(CancellationToken cancellationToken)
         {
+            if (_process != null) {
+                throw new InvalidOperationException("Ypu should not call Run multiple times. The process has already been created.");
+            }
+
             ProcessStartInfo processStartInfo = new ProcessStartInfo(FileName) {
                 Arguments = Arguments,
                 CreateNoWindow = true,
@@ -58,11 +75,9 @@ namespace Kirkin
                 UseShellExecute = false
             };
 
-            Process process = null;
-
             EventHandler processExitHandler = delegate
             {
-                Process p = Interlocked.Exchange(ref process, null);
+                Process p = Interlocked.Exchange(ref _process, null);
 
                 if (p != null) {
                     p.Kill();
@@ -80,33 +95,36 @@ namespace Kirkin
 
             try
             {
-                process = Process.Start(processStartInfo);
+                _process = Process.Start(processStartInfo);
 
-                process.EnableRaisingEvents = true;
+                _process.EnableRaisingEvents = true;
 
-                process.OutputDataReceived += (s, e) =>
+                _process.OutputDataReceived += (s, e) =>
                 {
                     string line = e.Data;
 
                     Output?.Invoke(line);
                 };
 
-                process.BeginOutputReadLine();
+                _process.BeginOutputReadLine();
 
                 TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
 
-                process.Exited += (s, e) => tcs.SetResult(null);
+                _process.Exited += (s, e) => tcs.SetResult(null);
 
                 await tcs.Task.ConfigureAwait(false); // Long-running operation.
 
                 // By now the child process could have been killed and nulled out by the
                 // OutputDataReceived event handler. Handle this scenario gracefully.
                 // No need for memory barrier - it is inserted by the await.
-                Process p = process;
+                Process p = _process;
 
                 if (p == null)
                 {
-                    // Ultimately gets converted to a TaskCanceledException.
+                    if (!cancellationToken.IsCancellationRequested) {
+                        throw new InvalidOperationException("Unexpected runner state. Expecting token to be marked as canceled.");
+                    }
+
                     throw new OperationCanceledException("Child process forcibly terminated.", cancellationToken);
                 }
                 else
@@ -121,7 +139,7 @@ namespace Kirkin
             finally
             {
                 AppDomain.CurrentDomain.ProcessExit -= processExitHandler;
-                Process p = Interlocked.Exchange(ref process, null);
+                Process p = Interlocked.Exchange(ref _process, null);
 
                 if (p != null) {
                     p.Close();
