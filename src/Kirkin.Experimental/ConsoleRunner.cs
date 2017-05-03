@@ -106,6 +106,7 @@ namespace Kirkin
 
                 if (p == null)
                 {
+                    // Ultimately gets converted to a TaskCanceledException.
                     throw new OperationCanceledException("Child process forcibly terminated.", cancellationToken);
                 }
                 else
