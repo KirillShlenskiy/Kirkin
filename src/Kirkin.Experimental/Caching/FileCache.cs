@@ -69,7 +69,7 @@ namespace Kirkin.Caching
             // Ensure the value can be roundtripped before writing it to file.
             using (MemoryStream ms = new MemoryStream())
             {
-                Serializer.Serialize(newValue, ms);
+                Serializer.Serialize(ms, newValue);
 
                 ms.Position = 0;
 
@@ -77,7 +77,7 @@ namespace Kirkin.Caching
 
                 using (MemoryStream cloneStream = new MemoryStream())
                 {
-                    Serializer.Serialize(clone, cloneStream);
+                    Serializer.Serialize(cloneStream, clone);
 
                     if (!ms.ToArray().SequenceEqual(cloneStream.ToArray())) {
                         throw new InvalidOperationException("Unable to persist object: roundtrip serialization validation failed.");

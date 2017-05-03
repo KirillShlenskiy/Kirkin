@@ -20,7 +20,7 @@ namespace Kirkin.Serialization
             return (T)serializer.Deserialize(reader);
         }
 
-        protected override void Serialize<T>(T value, StreamWriter writer)
+        protected override void Serialize<T>(StreamWriter writer, T value)
         {
             if (writer == null) throw new ArgumentNullException(nameof(writer));
 

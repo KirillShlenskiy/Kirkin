@@ -52,7 +52,7 @@ namespace Kirkin.Serialization
 
         #region Serialization
 
-        protected abstract void Serialize<T>(T value, StreamWriter writer);
+        protected abstract void Serialize<T>(StreamWriter writer, T value);
 
         /// <summary>
         /// Serializes the objects and outputs the result as a string.
@@ -61,7 +61,7 @@ namespace Kirkin.Serialization
         {
             using (MemoryStream stream = new MemoryStream())
             {
-                Serialize(value, stream);
+                Serialize(stream, value);
 
                 stream.Position = 0;
 
@@ -74,20 +74,20 @@ namespace Kirkin.Serialization
         /// <summary>
         /// Serializes the value to the given stream.
         /// </summary>
-        public void Serialize<T>(T value, Stream stream)
+        public void Serialize<T>(Stream stream, T value)
         {
             using (StreamWriter writer = new StreamWriter(stream, Encoding, BufferSize, true)) {
-                Serialize(value, writer);
+                Serialize(writer, value);
             }
         }
 
         /// <summary>
         /// Serializes the object and writes it to the file at the given path.
         /// </summary>
-        public void SerializeFile<T>(T value, string filePath)
+        public void SerializeFile<T>(string filePath, T value)
         {
             using (FileStream stream = File.Open(filePath, FileMode.Create, FileAccess.Write)) {
-                Serialize(value, stream);
+                Serialize(stream, value);
             }
         }
 
