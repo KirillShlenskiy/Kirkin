@@ -9,6 +9,7 @@ namespace Kirkin.Tests
     public class ConsoleRunnerTests
     {
         [Test]
+        [Ignore("External dependencies")]
         public async Task Run()
         {
             ConsoleRunner app = new ConsoleRunner("replmon", "sync extra");
@@ -17,7 +18,7 @@ namespace Kirkin.Tests
 
             CancellationTokenSource cts = new CancellationTokenSource();
 
-            cts.CancelAfter(5000);
+            //cts.CancelAfter(5000);
 
             await app.RunAsync(cts.Token);
         }

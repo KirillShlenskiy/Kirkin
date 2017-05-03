@@ -39,9 +39,17 @@ namespace Kirkin
         public event Action<string> Output;
 
         /// <summary>
-        /// Runs the process.
+        /// Runs the console app process.
         /// </summary>
-        public async Task RunAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public Task RunAsync()
+        {
+            return RunAsync(default(CancellationToken));
+        }
+
+        /// <summary>
+        /// Runs the console app process.
+        /// </summary>
+        public async Task RunAsync(CancellationToken cancellationToken)
         {
             ProcessStartInfo processStartInfo = new ProcessStartInfo(FileName) {
                 Arguments = Arguments,
@@ -61,14 +69,13 @@ namespace Kirkin
                 };
             };
 
-            TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
-
             if (cancellationToken.CanBeCanceled)
             {
                 cancellationToken.Register(() => processExitHandler(null, null), useSynchronizationContext: false);
                 cancellationToken.ThrowIfCancellationRequested();
             }
             
+            // Ensure the child process is killed if the parent exits.
             AppDomain.CurrentDomain.ProcessExit += processExitHandler;
 
             try
@@ -86,15 +93,16 @@ namespace Kirkin
 
                 process.BeginOutputReadLine();
 
+                TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+
                 process.Exited += (s, e) => tcs.SetResult(null);
 
                 await tcs.Task.ConfigureAwait(false); // Long-running operation.
 
-                // By now replmergProcess could have been killed and nulled out by the
+                // By now the child process could have been killed and nulled out by the
                 // OutputDataReceived event handler. Handle this scenario gracefully.
+                // No need for memory barrier - it is inserted by the await.
                 Process p = process;
-
-                //Thread.MemoryBarrier(); // Barrier inserted by the await.
 
                 if (p == null)
                 {
