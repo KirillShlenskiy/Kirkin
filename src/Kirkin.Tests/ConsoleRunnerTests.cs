@@ -7,13 +7,12 @@ using NUnit.Framework;
 
 namespace Kirkin.Tests
 {
-    [Ignore("External dependencies")]
     public class ConsoleRunnerTests
     {
         [Test]
         public async Task AsyncRun()
         {
-            ConsoleRunner app = new ConsoleRunner("replmon", "sync extra");
+            ConsoleRunner app = new ConsoleRunner("cmd");
 
             app.Output += Console.WriteLine;
 
@@ -21,22 +20,30 @@ namespace Kirkin.Tests
 
             cts.CancelAfter(500);
 
+            bool canceled = false;
+
             try
             {
                 await app.RunAsync(cts.Token);
             }
             catch (OperationCanceledException)
             {
+                canceled = true;
             }
+
+            Assert.True(canceled, "Expecting the operation to have been canceled.");
         }
 
         [Test]
+        [Ignore("External dependencies")]
         public void SyncRunNoDeadlock()
         {
             RunWithSyncContext(syncContext =>
             {
-                Action<string> output = s => {
-                    syncContext.Send(_ => Console.WriteLine(s), null);
+                Action<string> output = s =>
+                {
+                    Console.WriteLine(s);
+                    //syncContext.Send(_ => Console.WriteLine(s), null);
                 };
 
                 ConsoleRunner app = new ConsoleRunner("replmon", "sync extra");
