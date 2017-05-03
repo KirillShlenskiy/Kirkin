@@ -88,13 +88,13 @@ namespace Kirkin.Tests.Cryptography
         [Test]
         public void VariableIterationCount()
         {
-            AES256Encryption aes = new AES256Encryption();
             string text = "The quick brown fox jumps over the lazy dog";
             string secret = "Secret";
 
             foreach (int iterationCount in new[] { 1, 10, 100, 1000, 10000, 20000, 50000 })
             {
-                byte[] encrypted = aes.Encrypt(text, secret, iterationCount);
+                AES256Encryption aes = new AES256Encryption(iterationCount);
+                byte[] encrypted = aes.Encrypt(text, secret);
 
                 Assert.AreEqual(text, aes.Decrypt(encrypted, secret));
             }

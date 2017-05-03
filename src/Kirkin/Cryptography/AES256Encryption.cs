@@ -20,15 +20,31 @@ namespace Kirkin.Cryptography
             = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
         /// <summary>
-        /// Encrypts the plain text input using the given secret.
+        /// Number of PBKDF2-HMAC-SHA1 iterations used when hashing the secret.
+        /// The higher this number, the stronger the encryption. The default is 10,000.
         /// </summary>
-        /// <param name="plainText">Plain text to be encrypted.</param>
-        /// <param name="secret">Secret passphrase used to encrypt plain text.</param>
+        public int HashIterations { get; }
+
+        /// <summary>
+        /// Creates a new instance of the AES256 crypto engine.
+        /// </summary>
         /// <param name="hashIterations">
         /// Number of PBKDF2-HMAC-SHA1 iterations used when hashing the secret.
         /// The higher this number, the stronger the encryption.
         /// </param>
-        public byte[] Encrypt(string plainText, string secret, int hashIterations = 10000)
+        public AES256Encryption(int hashIterations = 10000)
+        {
+            if (hashIterations < 1) throw new ArgumentOutOfRangeException(nameof(hashIterations));
+
+            HashIterations = hashIterations;
+        }
+
+        /// <summary>
+        /// Encrypts the plain text input using the given secret.
+        /// </summary>
+        /// <param name="plainText">Plain text to be encrypted.</param>
+        /// <param name="secret">Secret passphrase used to encrypt plain text.</param>
+        public byte[] Encrypt(string plainText, string secret)
         {
             if (plainText == null) throw new ArgumentNullException(nameof(plainText));
             if (secret == null) throw new ArgumentNullException(nameof(secret));
@@ -36,7 +52,7 @@ namespace Kirkin.Cryptography
             const int saltBitSize = 256; // May change in future.
 
             // Rfc2898DeriveBytes always uses UTF8 no BOM.
-            using (Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(secret, saltBitSize / 8, hashIterations))
+            using (Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(secret, saltBitSize / 8, HashIterations))
             {
                 byte[] saltBytes = keyDerivationFunction.Salt;
                 byte[] keyBytes = keyDerivationFunction.GetBytes(KeyBitSize / 8);
@@ -60,7 +76,7 @@ namespace Kirkin.Cryptography
                         // 256 bits of salt, 128 bits of IV, 128 (or more) bits of encrypted text.
                         byte[][] resultSlices = {
                             BitConverter.GetBytes(saltBitSize),
-                            BitConverter.GetBytes(hashIterations),
+                            BitConverter.GetBytes(HashIterations),
                             saltBytes,
                             ivBytes,
                             encryptedTextBytes
@@ -106,12 +122,6 @@ namespace Kirkin.Cryptography
                     return streamReader.ReadToEnd();
                 }
             }
-        }
-
-        // Explicit interface implementation.
-        byte[] ICryptoKernel.Encrypt(string plainText, string secret)
-        {
-            return Encrypt(plainText, secret);
         }
 
         /// <summary>
