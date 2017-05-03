@@ -13,8 +13,6 @@ namespace Kirkin.Tests
         [Test]
         public async Task AsyncRun()
         {
-            SynchronizationContext.SetSynchronizationContext(null);
-
             ConsoleRunner app = new ConsoleRunner("replmon", "sync extra");
 
             app.Output += Console.WriteLine;
@@ -35,29 +33,25 @@ namespace Kirkin.Tests
         [Test]
         public void SyncRunNoDeadlock()
         {
-            SynchronizationContext.SetSynchronizationContext(new WindowsFormsSynchronizationContext());
-
-            try
+            RunWithSyncContext(syncContext =>
             {
+                Action<string> output = s => {
+                    syncContext.Send(_ => Console.WriteLine(s), null);
+                };
+
                 ConsoleRunner app = new ConsoleRunner("replmon", "sync extra");
 
-                app.Output += Console.WriteLine;
+                app.Output += output;
 
-                app.RunAsync().GetAwaiter().GetResult();
-            }
-            finally
-            {
-                WindowsFormsSynchronizationContext.Uninstall();
-            }
+                app.Run();
+            });
         }
 
         // Proof of concept.
         //[Test]
         public void Deadlock()
         {
-            SynchronizationContext.SetSynchronizationContext(new WindowsFormsSynchronizationContext());
-
-            try
+            RunWithSyncContext(_ =>
             {
                 Func<Task> f = async () =>
                 {
@@ -66,6 +60,18 @@ namespace Kirkin.Tests
                 };
 
                 f().GetAwaiter().GetResult();
+            });
+        }
+
+        static void RunWithSyncContext(Action<SynchronizationContext> action)
+        {
+            WindowsFormsSynchronizationContext syncContext = new WindowsFormsSynchronizationContext();
+
+            SynchronizationContext.SetSynchronizationContext(syncContext);
+
+            try
+            {
+                action(syncContext);
             }
             finally
             {

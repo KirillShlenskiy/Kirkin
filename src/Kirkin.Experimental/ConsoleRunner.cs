@@ -54,15 +54,33 @@ namespace Kirkin
         /// <summary>
         /// Runs the console app process.
         /// </summary>
-        public Task RunAsync()
+        public void Run()
         {
-            return RunAsync(default(CancellationToken));
+            Task t = RunImpl(false, default(CancellationToken));
+
+            if (!t.IsCompleted) {
+                throw new InvalidOperationException("Expecting RunImpl to have completed synchronously.");
+            }
         }
 
         /// <summary>
         /// Runs the console app process.
         /// </summary>
-        public async Task RunAsync(CancellationToken cancellationToken)
+        public Task RunAsync()
+        {
+            return RunImpl(true, default(CancellationToken));
+        }
+
+        /// <summary>
+        /// Runs the console app process.
+        /// </summary>
+        public Task RunAsync(CancellationToken cancellationToken)
+        {
+            return RunImpl(true, cancellationToken);
+        }
+
+        // Implementation.
+        private async Task RunImpl(bool async, CancellationToken cancellationToken)
         {
             if (_process != null) {
                 throw new InvalidOperationException("Ypu should not call Run multiple times. The process has already been created.");
@@ -108,11 +126,18 @@ namespace Kirkin
 
                 _process.BeginOutputReadLine();
 
-                TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+                if (async)
+                {
+                    TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
 
-                _process.Exited += (s, e) => tcs.SetResult(null);
+                    _process.Exited += (s, e) => tcs.SetResult(null);
 
-                await tcs.Task.ConfigureAwait(false); // Long-running operation.
+                    await tcs.Task.ConfigureAwait(false); // Long-running operation.
+                }
+                else
+                {
+                    _process.WaitForExit();
+                }
 
                 // By now the child process could have been killed and nulled out by the
                 // OutputDataReceived event handler. Handle this scenario gracefully.
