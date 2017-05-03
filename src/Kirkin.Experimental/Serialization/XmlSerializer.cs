@@ -2,7 +2,7 @@
 using System.IO;
 using System.Xml.Serialization;
 
-using XSerializer = System.Xml.Serialization.XmlSerializer;
+using SystemXmlSerializer = System.Xml.Serialization.XmlSerializer;
 
 namespace Kirkin.Serialization
 {
@@ -15,7 +15,7 @@ namespace Kirkin.Serialization
         {
             if (reader == null) throw new ArgumentNullException(nameof(reader));
 
-            XSerializer serializer = CreateSerializer<T>();
+            SystemXmlSerializer serializer = CreateSerializer<T>();
 
             return (T)serializer.Deserialize(reader);
         }
@@ -24,12 +24,12 @@ namespace Kirkin.Serialization
         {
             if (writer == null) throw new ArgumentNullException(nameof(writer));
 
-            XSerializer serializer = CreateSerializer<T>();
+            SystemXmlSerializer serializer = CreateSerializer<T>();
 
             serializer.Serialize(writer, value, DefaultNamespaces);
         }
 
-        private static XSerializer CreateSerializer<T>()
+        private static SystemXmlSerializer CreateSerializer<T>()
         {
             // "Root" choice is justified by additional backwards compatibility. If the
             // root type is renamed, deserialization of existing content will still work.
