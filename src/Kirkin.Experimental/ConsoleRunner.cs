@@ -9,8 +9,9 @@ namespace Kirkin
     /// <summary>
     /// <see cref="Process"/> wrapper that facilitates console app interop.
     /// </summary>
-    public sealed class ConsoleRunner
+    public sealed class ConsoleRunner : IDisposable
     {
+        private CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
         private Process _process;
 
         /// <summary>
@@ -82,6 +83,15 @@ namespace Kirkin
         // Implementation.
         private async Task RunImpl(bool async, CancellationToken cancellationToken)
         {
+            if (CancellationTokenSource == null) {
+                throw new ObjectDisposedException(nameof(ConsoleRunner));
+            }
+
+            cancellationToken = cancellationToken.CanBeCanceled
+                // TODO: Local variable, dispose.
+                ? CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, CancellationTokenSource.Token).Token
+                : CancellationTokenSource.Token;
+
             if (_process != null) {
                 throw new InvalidOperationException("Ypu should not call Run multiple times. The process has already been created.");
             }
@@ -103,11 +113,8 @@ namespace Kirkin
                 };
             };
 
-            if (cancellationToken.CanBeCanceled)
-            {
-                cancellationToken.Register(() => processExitHandler(null, null), useSynchronizationContext: false);
-                cancellationToken.ThrowIfCancellationRequested();
-            }
+            cancellationToken.Register(() => processExitHandler(null, null), useSynchronizationContext: false);
+            cancellationToken.ThrowIfCancellationRequested();
             
             // Ensure the child process is killed if the parent exits.
             AppDomain.CurrentDomain.ProcessExit += processExitHandler;
@@ -170,6 +177,16 @@ namespace Kirkin
                 if (p != null) {
                     p.Close();
                 }
+            }
+        }
+
+        public void Dispose()
+        {
+            if (CancellationTokenSource != null)
+            {
+                CancellationTokenSource.Cancel();
+                CancellationTokenSource.Dispose();
+                CancellationTokenSource = null;
             }
         }
     }

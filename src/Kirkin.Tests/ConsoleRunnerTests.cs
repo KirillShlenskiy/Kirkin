@@ -13,13 +13,15 @@ namespace Kirkin.Tests
         [Test]
         public void RunSimple()
         {
-            ConsoleRunner app = new ConsoleRunner("cmd", args: @"/C dir C:\");
             List<string> messages = new List<string>();
 
-            app.Output += messages.Add;
+            using (ConsoleRunner app = new ConsoleRunner("cmd", args: @"/C dir C:\"))
+            {
+                app.Output += messages.Add;
 
-            app.Run();
-
+                app.Run();
+            }
+            
             foreach (string message in messages) {
                 Console.WriteLine(message);
             }
@@ -28,22 +30,24 @@ namespace Kirkin.Tests
         [Test]
         public void RunWithInput()
         {
-            ConsoleRunner app = new ConsoleRunner("cmd");
             List<string> messages = new List<string>();
 
-            app.Output += messages.Add;
+            using (ConsoleRunner app = new ConsoleRunner("cmd"))
+            {
+                app.Output += messages.Add;
 
-            Task runTask = app.RunAsync();
+                Task runTask = app.RunAsync();
 
-            app.Process.StandardInput.WriteLine(@"dir C:\");
+                app.Process.StandardInput.WriteLine(@"dir C:\");
 
-            Thread.Sleep(100);
-            Assert.False(runTask.IsCompleted);
+                Thread.Sleep(100);
+                Assert.False(runTask.IsCompleted);
 
-            app.Process.StandardInput.WriteLine("exit");
+                app.Process.StandardInput.WriteLine("exit");
 
-            Thread.Sleep(100);
-            Assert.True(runTask.IsCompleted);
+                Thread.Sleep(100);
+                Assert.True(runTask.IsCompleted);
+            }
 
             foreach (string message in messages) {
                 Console.WriteLine(message);
@@ -51,25 +55,55 @@ namespace Kirkin.Tests
         }
 
         [Test]
+        public void CancellationViaToken()
+        {
+            Task runTask;
+
+            using (ConsoleRunner app = new ConsoleRunner("cmd"))
+            {
+                CancellationTokenSource cts = new CancellationTokenSource(10);
+
+                runTask = app.RunAsync(cts.Token);
+
+                Thread.Sleep(100);
+                Assert.True(runTask.IsCanceled, "Task expected to be canceled.");
+            }
+        }
+
+        [Test]
+        public void CancellationViaDispose()
+        {
+            Task runTask;
+
+            using (ConsoleRunner app = new ConsoleRunner("cmd")) {
+                runTask = app.RunAsync();
+            }
+
+            Thread.Sleep(100);
+            Assert.True(runTask.IsCanceled, "Task expected to be canceled.");
+        }
+
+        [Test]
         public async Task AsyncRun()
         {
-            ConsoleRunner app = new ConsoleRunner("cmd");
-
-            app.Output += Console.WriteLine;
-
-            CancellationTokenSource cts = new CancellationTokenSource();
-
-            cts.CancelAfter(500);
-
             bool canceled = false;
 
-            try
+            using (ConsoleRunner app = new ConsoleRunner("cmd"))
             {
-                await app.RunAsync(cts.Token);
-            }
-            catch (OperationCanceledException)
-            {
-                canceled = true;
+                app.Output += Console.WriteLine;
+
+                CancellationTokenSource cts = new CancellationTokenSource();
+
+                cts.CancelAfter(500);
+
+                try
+                {
+                    await app.RunAsync(cts.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    canceled = true;
+                }
             }
 
             Assert.True(canceled, "Expecting the operation to have been canceled.");
@@ -87,11 +121,12 @@ namespace Kirkin.Tests
                     //syncContext.Send(_ => Console.WriteLine(s), null);
                 };
 
-                ConsoleRunner app = new ConsoleRunner("replmon", "sync extra");
+                using (ConsoleRunner app = new ConsoleRunner("replmon", "sync extra"))
+                {
+                    app.Output += output;
 
-                app.Output += output;
-
-                app.Run();
+                    app.Run();
+                }
             });
         }
 
