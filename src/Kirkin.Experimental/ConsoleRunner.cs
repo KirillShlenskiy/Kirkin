@@ -26,7 +26,7 @@ namespace Kirkin
         /// <summary>
         /// <see cref="System.Diagnostics.Process"/> created by the Run call.
         /// </summary>
-        internal Process Process
+        public Process Process
         {
             get
             {
@@ -89,6 +89,7 @@ namespace Kirkin
             ProcessStartInfo processStartInfo = new ProcessStartInfo(FileName) {
                 Arguments = Arguments,
                 CreateNoWindow = true,
+                RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 UseShellExecute = false
             };
