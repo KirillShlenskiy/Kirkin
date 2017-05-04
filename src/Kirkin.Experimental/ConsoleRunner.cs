@@ -31,6 +31,8 @@ namespace Kirkin
         {
             get
             {
+                ThrowIfDisposed();
+
                 return _process;
             }
         }
@@ -83,9 +85,7 @@ namespace Kirkin
         // Implementation.
         private async Task RunImpl(bool async, CancellationToken cancellationToken)
         {
-            if (CancellationTokenSource == null) {
-                throw new ObjectDisposedException(nameof(ConsoleRunner));
-            }
+            ThrowIfDisposed();
 
             cancellationToken = cancellationToken.CanBeCanceled
                 // TODO: Local variable, dispose.
@@ -177,6 +177,13 @@ namespace Kirkin
                 if (p != null) {
                     p.Close();
                 }
+            }
+        }
+
+        private void ThrowIfDisposed()
+        {
+            if (CancellationTokenSource == null) {
+                throw new ObjectDisposedException(nameof(ConsoleRunner));
             }
         }
 
