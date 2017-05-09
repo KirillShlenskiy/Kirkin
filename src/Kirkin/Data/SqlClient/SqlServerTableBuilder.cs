@@ -82,7 +82,7 @@ namespace Kirkin.Data.SqlClient
             string nullOrNotNull = column.AllowDBNull ? "NULL" : "NOT NULL";
 
             if (column.DataType == typeof(string)) {
-                return $"nvarchar({ComputeVarcharColumnLength(column)}) {nullOrNotNull}";
+                return $"nvarchar({ComputeVarcharColumnLength(column)}) COLLATE database_default {nullOrNotNull}";
             }
 
             if (ClrSqlTypeMappings.TryGetValue(column.DataType, out string sqlType)) {
