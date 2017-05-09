@@ -87,95 +87,112 @@ namespace Kirkin
         {
             ThrowIfDisposed();
 
-            cancellationToken = cancellationToken.CanBeCanceled
-                // TODO: Local variable, dispose.
-                ? CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, CancellationTokenSource.Token).Token
-                : CancellationTokenSource.Token;
-
-            if (_process != null) {
-                throw new InvalidOperationException("Ypu should not call Run multiple times. The process has already been created.");
-            }
-
-            ProcessStartInfo processStartInfo = new ProcessStartInfo(FileName) {
-                Arguments = Arguments,
-                CreateNoWindow = true,
-                RedirectStandardInput = true,
-                RedirectStandardOutput = true,
-                UseShellExecute = false
-            };
-
-            EventHandler processExitHandler = delegate
-            {
-                Process p = Interlocked.Exchange(ref _process, null);
-
-                if (p != null) {
-                    p.Kill();
-                };
-            };
-
-            cancellationToken.Register(() => processExitHandler(null, null), useSynchronizationContext: false);
-            cancellationToken.ThrowIfCancellationRequested();
-            
-            // Ensure the child process is killed if the parent exits.
-            AppDomain.CurrentDomain.ProcessExit += processExitHandler;
+            CancellationTokenSource tmpCTS = null;
 
             try
             {
-                _process = Process.Start(processStartInfo);
-
-                _process.EnableRaisingEvents = true;
-
-                _process.OutputDataReceived += (s, e) =>
+                if (cancellationToken.CanBeCanceled)
                 {
-                    string line = e.Data;
+                    tmpCTS = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, CancellationTokenSource.Token);
 
-                    Output?.Invoke(line);
+                    cancellationToken = tmpCTS.Token;
+                }
+                else
+                {
+                    cancellationToken = CancellationTokenSource.Token;
+                }
+
+                if (_process != null) {
+                    throw new InvalidOperationException("Ypu should not call Run multiple times. The process has already been created.");
+                }
+
+                ProcessStartInfo processStartInfo = new ProcessStartInfo(FileName) {
+                    Arguments = Arguments,
+                    CreateNoWindow = true,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false
                 };
 
-                _process.BeginOutputReadLine();
-
-                if (async)
+                EventHandler processExitHandler = delegate
                 {
-                    TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+                    Process p = Interlocked.Exchange(ref _process, null);
 
-                    _process.Exited += (s, e) => tcs.SetResult(null);
+                    if (p != null) {
+                        p.Kill();
+                    };
+                };
 
-                    await tcs.Task.ConfigureAwait(false); // Long-running operation.
-                }
-                else
+                cancellationToken.Register(() => processExitHandler(null, null), useSynchronizationContext: false);
+                cancellationToken.ThrowIfCancellationRequested();
+            
+                // Ensure the child process is killed if the parent exits.
+                AppDomain.CurrentDomain.ProcessExit += processExitHandler;
+
+                try
                 {
-                    _process.WaitForExit();
-                }
+                    _process = Process.Start(processStartInfo);
 
-                // By now the child process could have been killed and nulled out by the
-                // OutputDataReceived event handler. Handle this scenario gracefully.
-                // No need for memory barrier - it is inserted by the await.
-                Process p = _process;
+                    _process.EnableRaisingEvents = true;
 
-                if (p == null)
-                {
-                    if (!cancellationToken.IsCancellationRequested) {
-                        throw new InvalidOperationException("Unexpected runner state. Expecting token to be marked as canceled.");
+                    _process.OutputDataReceived += (s, e) =>
+                    {
+                        string line = e.Data;
+
+                        Output?.Invoke(line);
+                    };
+
+                    _process.BeginOutputReadLine();
+
+                    if (async)
+                    {
+                        TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+
+                        _process.Exited += (s, e) => tcs.SetResult(null);
+
+                        await tcs.Task.ConfigureAwait(false); // Long-running operation.
+                    }
+                    else
+                    {
+                        _process.WaitForExit();
                     }
 
-                    throw new OperationCanceledException("Child process forcibly terminated.", cancellationToken);
-                }
-                else
-                {
-                    int result = p.ExitCode;
+                    // By now the child process could have been killed and nulled out by the
+                    // OutputDataReceived event handler. Handle this scenario gracefully.
+                    // No need for memory barrier - it is inserted by the await.
+                    Process p = _process;
 
-                    if (result != 0) {
-                        throw new Win32Exception(result, "Non-zero exit code.");
+                    if (p == null)
+                    {
+                        if (!cancellationToken.IsCancellationRequested) {
+                            throw new InvalidOperationException("Unexpected runner state. Expecting token to be marked as canceled.");
+                        }
+
+                        throw new OperationCanceledException("Child process forcibly terminated.", cancellationToken);
+                    }
+                    else
+                    {
+                        int result = p.ExitCode;
+
+                        if (result != 0) {
+                            throw new Win32Exception(result, "Non-zero exit code.");
+                        }
+                    }
+                }
+                finally
+                {
+                    AppDomain.CurrentDomain.ProcessExit -= processExitHandler;
+                    Process p = Interlocked.Exchange(ref _process, null);
+
+                    if (p != null) {
+                        p.Close();
                     }
                 }
             }
             finally
             {
-                AppDomain.CurrentDomain.ProcessExit -= processExitHandler;
-                Process p = Interlocked.Exchange(ref _process, null);
-
-                if (p != null) {
-                    p.Close();
+                if (tmpCTS != null) {
+                    tmpCTS.Dispose();
                 }
             }
         }
