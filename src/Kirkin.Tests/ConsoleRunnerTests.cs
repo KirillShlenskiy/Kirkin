@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using NUnit.Framework;
-using System.ComponentModel;
 
 namespace Kirkin.Tests
 {
