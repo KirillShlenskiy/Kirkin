@@ -186,13 +186,15 @@ namespace Kirkin
 
                         if (result != 0)
                         {
-                            if (errors.Count == 0)
+                            string error = string.Join("", errors);
+
+                            if (string.IsNullOrEmpty(error))
                             {
                                 throw new ConsoleRunnerException(result, "Non-zero exit code.");
                             }
                             else
                             {
-                                throw new ConsoleRunnerException(result, string.Join("", errors));
+                                throw new ConsoleRunnerException(result, error);
                             }
                         }
                     }

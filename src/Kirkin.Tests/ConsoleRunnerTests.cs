@@ -21,7 +21,7 @@ namespace Kirkin.Tests
 
                 app.Run();
             }
-            
+
             foreach (string message in messages) {
                 Console.WriteLine(message);
             }
