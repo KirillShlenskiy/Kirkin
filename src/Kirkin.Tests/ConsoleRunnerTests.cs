@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using NUnit.Framework;
+using System.ComponentModel;
 
 namespace Kirkin.Tests
 {
@@ -47,6 +48,23 @@ namespace Kirkin.Tests
 
                 Thread.Sleep(100);
                 Assert.True(runTask.IsCompleted);
+            }
+
+            foreach (string message in messages) {
+                Console.WriteLine(message);
+            }
+        }
+
+        [Test]
+        public void RunWithError()
+        {
+            List<string> messages = new List<string>();
+
+            using (ConsoleRunner app = new ConsoleRunner("cmd", args: @"/C afglakhfga8uy849h5rasdfafgdf"))
+            {
+                app.Output += messages.Add;
+
+                Assert.Throws<ConsoleRunnerException>(() => app.Run());
             }
 
             foreach (string message in messages) {

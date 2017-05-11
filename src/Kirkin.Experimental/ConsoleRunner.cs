@@ -1,5 +1,5 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -64,6 +64,9 @@ namespace Kirkin
             if (!t.IsCompleted) {
                 throw new InvalidOperationException("Expecting RunImpl to have completed synchronously.");
             }
+
+            // Propagate exceptions.
+            t.GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -103,13 +106,14 @@ namespace Kirkin
                 }
 
                 if (_process != null) {
-                    throw new InvalidOperationException("Ypu should not call Run multiple times. The process has already been created.");
+                    throw new InvalidOperationException("You should not call Run multiple times. The process has already been created.");
                 }
 
                 ProcessStartInfo processStartInfo = new ProcessStartInfo(FileName) {
                     Arguments = Arguments,
                     CreateNoWindow = true,
                     RedirectStandardInput = true,
+                    RedirectStandardError = true,
                     RedirectStandardOutput = true,
                     UseShellExecute = false
                 };
@@ -144,6 +148,12 @@ namespace Kirkin
 
                     _process.BeginOutputReadLine();
 
+                    List<string> errors = new List<string>();
+
+                    _process.ErrorDataReceived += (s, e) => errors.Add(e.Data);
+
+                    _process.BeginErrorReadLine();
+
                     if (async)
                     {
                         TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
@@ -174,8 +184,16 @@ namespace Kirkin
                     {
                         int result = p.ExitCode;
 
-                        if (result != 0) {
-                            throw new Win32Exception(result, "Non-zero exit code.");
+                        if (result != 0)
+                        {
+                            if (errors.Count == 0)
+                            {
+                                throw new ConsoleRunnerException(result, "Non-zero exit code.");
+                            }
+                            else
+                            {
+                                throw new ConsoleRunnerException(result, string.Join("", errors));
+                            }
                         }
                     }
                 }
