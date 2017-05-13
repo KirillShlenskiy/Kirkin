@@ -16,13 +16,10 @@ namespace Kirkin.Tests.Data
 
         public DataRecordExtensionsTests()
         {
-            if (Environment.MachineName.Equals("BABUSHKA", StringComparison.OrdinalIgnoreCase))
+            if (Environment.MachineName.Equals("BABUSHKA", StringComparison.OrdinalIgnoreCase) ||
+                Environment.MachineName.Equals("KIRKINPUTER", StringComparison.OrdinalIgnoreCase))
             {
                 ConnectionString = @"Data Source=.; Initial Catalog=master; Integrated Security=True;";
-            }
-            else if (Environment.MachineName.Equals("KIRKINPUTER", StringComparison.OrdinalIgnoreCase))
-            {
-                ConnectionString = @"Data Source=.\SQL2008R2; Initial Catalog=master; Integrated Security=True;";
             }
             else
             {

@@ -11,7 +11,7 @@ namespace Kirkin.Tests.Data.SqlClient
     public sealed class SqlServerDataImportTests
     {
         private static readonly string ConnectionString = new SqlConnectionStringBuilder {
-            DataSource = @"KIRKINPUTER\SQL2008R2",
+            DataSource = @"KIRKINPUTER",
             InitialCatalog = "Test",
             IntegratedSecurity = true
         }.ToString();
