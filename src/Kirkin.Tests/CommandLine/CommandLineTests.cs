@@ -30,10 +30,25 @@ namespace Kirkin.Tests.CommandLine
 
             ICommand command = parser.Parse("sync --subscription main /VALIDATE TRUE".Split(' '));
 
+            Assert.Null(subscription);
+            Assert.False(validate);
+
             command.Execute();
 
             Assert.AreEqual("main", subscription);
             Assert.True(validate);
+
+            command = parser.Parse("sync --subscription extra".Split(' '));
+
+            Assert.AreEqual("main", subscription);
+            Assert.True(validate);
+
+            validate = false; // Reset.
+
+            command.Execute();
+
+            Assert.AreEqual("extra", subscription);
+            Assert.False(validate); // Bug.
 
             //Command sync = new Command("sync");
             //bool verify = false;
