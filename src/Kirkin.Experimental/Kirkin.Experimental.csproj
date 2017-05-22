@@ -59,6 +59,11 @@
     <Compile Include="Collections\Generic\TinyBuffer.cs" />
     <Compile Include="Collections\Immutable\ImmutableArrayFactory.cs" />
     <Compile Include="Collections\Specialized\SingleElementReadOnlyList.cs" />
+    <Compile Include="CommandLine\Commands\DelegateCommand.cs" />
+    <Compile Include="CommandLine\CommandSyntax.cs" />
+    <Compile Include="CommandLine\CommandLineParser.cs" />
+    <Compile Include="CommandLine\Commands\HelpCommand.cs" />
+    <Compile Include="CommandLine\ICommand.cs" />
     <Compile Include="ConsoleRunner.cs" />
     <Compile Include="ConsoleRunnerException.cs" />
     <Compile Include="Cryptography\CryptoClient.cs" />
