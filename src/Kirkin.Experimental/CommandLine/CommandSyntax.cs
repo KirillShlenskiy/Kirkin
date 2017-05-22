@@ -1,12 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Kirkin.CommandLine
 {
     public sealed class CommandSyntax
     {
-        public string Name { get; }
+        private readonly Dictionary<string, CommandSyntaxToken> _tokensByFullName = new Dictionary<string, CommandSyntaxToken>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, CommandSyntaxToken> _tokensByShortName = new Dictionary<string, CommandSyntaxToken>(StringComparer.OrdinalIgnoreCase);
 
-        public event Action Invoked;
+        abstract class CommandSyntaxToken
+        {
+        }
+
+        class CommandSyntaxToken<T> : CommandSyntaxToken
+        {
+            internal Func<string, T> ValueConverter;
+        }
+
+        public string Name { get; }
 
         internal CommandSyntax(string name)
         {
@@ -15,17 +26,21 @@ namespace Kirkin.CommandLine
             Name = name;
         }
 
-        public void DefineOption(string name, string shortVersion, ref string value)
+        public void DefineOption(string name, string shortName, ref string value)
+        {
+            CommandSyntaxToken<string> token = new CommandSyntaxToken<string> { ValueConverter = s => s };
+
+            _tokensByFullName.Add(name, token);
+
+            if (!string.IsNullOrEmpty(shortName)) _tokensByShortName.Add(shortName, token);
+        }
+
+        public void DefineOption(string name, string shortName, ref bool value)
         {
             throw new NotImplementedException();
         }
 
-        public void DefineOption(string name, string shortVersion, ref bool value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DefineOption(string name, string shortVersion, ref int value)
+        public void DefineOption(string name, string shortName, ref int value)
         {
             throw new NotImplementedException();
         }
@@ -50,7 +65,7 @@ namespace Kirkin.CommandLine
             throw new NotImplementedException();
         }
 
-        internal ICommand BuildCommand()
+        internal ICommand BuildCommand(string[] args) // ArraySlice<string>?
         {
             throw new NotImplementedException();
         }

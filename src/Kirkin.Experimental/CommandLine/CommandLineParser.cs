@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Kirkin.CommandLine.Commands;
 
@@ -7,11 +8,11 @@ namespace Kirkin.CommandLine
 {
     public sealed class CommandLineParser
     {
-        private readonly Dictionary<string, ICommand> _commands = new Dictionary<string, ICommand>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, Func<string[], ICommand>> _commandFactories = new Dictionary<string, Func<string[], ICommand>>(StringComparer.OrdinalIgnoreCase);
 
         public void DefineCommand(string name, Func<CommandSyntax, Action> configureAction)
         {
-            if (_commands.ContainsKey(name)) {
+            if (_commandFactories.ContainsKey(name)) {
                 throw new InvalidOperationException($"Command '{name}' already defined.");
             }
 
@@ -19,7 +20,7 @@ namespace Kirkin.CommandLine
 
             configureAction(builder);
 
-            _commands.Add(name, builder.BuildCommand());
+            _commandFactories.Add(name, args => builder.BuildCommand(args));
         }
 
         //public Command DefineCommand(string name)
@@ -39,8 +40,8 @@ namespace Kirkin.CommandLine
             // TODO: Check reserved keywords (i.e. "--help", "/?").
             string commandName = args[0];
 
-            if (_commands.TryGetValue(commandName, out ICommand command)) {
-                return command;
+            if (_commandFactories.TryGetValue(commandName, out Func<string[], ICommand> commandFactory)) {
+                return commandFactory(args.Skip(1).ToArray()); // TODO: Optimize.
             }
 
             throw new InvalidOperationException($"Unknown command: '{commandName}'.");
