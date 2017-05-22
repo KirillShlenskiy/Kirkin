@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 using Kirkin.CommandLine;
 
@@ -13,13 +12,13 @@ namespace Kirkin.Tests.CommandLine
         public void BasicCommandLineParsing()
         {
             CommandLineParser parser = new CommandLineParser();
-            Func<string[], bool> ParseBoolean = args => args.Length == 0 || Convert.ToBoolean(args.Single());
+            Func<string, bool> ParseBoolean = value => string.IsNullOrEmpty(value) || Convert.ToBoolean(value);
             string subscription = null;
             bool validate = false;
 
             parser.DefineCommand("sync", sync =>
             {
-                Func<string> subscriptionOption = sync.DefineOption("subscription", null, args => args.Single());
+                Func<string> subscriptionOption = sync.DefineOption("subscription", null);
                 Func<bool> validateOption = sync.DefineOption("validate", "v", ParseBoolean);
 
                 return () =>
@@ -29,7 +28,7 @@ namespace Kirkin.Tests.CommandLine
                 };
             });
 
-            ICommand command = parser.Parse("sync --subscription main /validate TRUE".Split(' '));
+            ICommand command = parser.Parse("sync --subscription main /VALIDATE TRUE".Split(' '));
 
             command.Execute();
 

@@ -18,7 +18,23 @@ namespace Kirkin.CommandLine
             Name = name;
         }
 
-        public Func<T> DefineOption<T>(string name, string shortName, Func<string[], T> valueConverter)
+        public Func<string> DefineOption(string name, string shortName)
+        {
+            return DefineOption(name, shortName, value => value);
+        }
+
+        public Func<T> DefineOption<T>(string name, string shortName, Func<string, T> valueConverter)
+        {
+            return DefineOptionList(name, shortName, args =>
+            {
+                if (args.Length == 0) return valueConverter(string.Empty);
+                if (args.Length == 1) return valueConverter(args[0]);
+
+                throw new InvalidOperationException($"Multiple argument values are not supported for option '{name}'.");
+            });
+        }
+
+        public Func<T> DefineOptionList<T>(string name, string shortName, Func<string[], T> valueConverter)
         {
             T value = default(T);
             bool valueGenerated = false;
