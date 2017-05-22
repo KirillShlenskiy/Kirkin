@@ -150,7 +150,7 @@ namespace Kirkin.CommandLine
                 }
                 
                 if (token == null) {
-                    throw new InvalidOperationException("Unhandled syntax token.");
+                    throw new InvalidOperationException($"Unhandled syntax token: '{chunk[0]}'.");
                 }
 
                 token(chunk.Skip(1).ToArray());

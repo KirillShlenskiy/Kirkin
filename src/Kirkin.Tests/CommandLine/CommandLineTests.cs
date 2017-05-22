@@ -13,7 +13,7 @@ namespace Kirkin.Tests.CommandLine
         public void BasicCommandLineParsing()
         {
             CommandLineParser parser = new CommandLineParser();
-            Func<string[], bool> ParseBoolean = args => args.Length == 0 || args.Single().Equals("true", StringComparison.OrdinalIgnoreCase);
+            Func<string[], bool> ParseBoolean = args => args.Length == 0 || Convert.ToBoolean(args.Single());
 
             parser.DefineCommand("sync", sync =>
             {
@@ -25,7 +25,7 @@ namespace Kirkin.Tests.CommandLine
                 };
             });
 
-            ICommand command = parser.Parse("sync --subscription main --validate".Split(' '));
+            ICommand command = parser.Parse("sync --subscription main /validate TRUE".Split(' '));
 
             command.Execute();
 
