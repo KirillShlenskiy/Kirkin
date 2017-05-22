@@ -1,21 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Kirkin.CommandLine
 {
     public sealed class CommandSyntax
     {
-        private readonly Dictionary<string, CommandSyntaxToken> _tokensByFullName = new Dictionary<string, CommandSyntaxToken>(StringComparer.OrdinalIgnoreCase);
-        private readonly Dictionary<string, CommandSyntaxToken> _tokensByShortName = new Dictionary<string, CommandSyntaxToken>(StringComparer.OrdinalIgnoreCase);
-
-        abstract class CommandSyntaxToken
-        {
-        }
-
-        class CommandSyntaxToken<T> : CommandSyntaxToken
-        {
-            internal Func<string, T> ValueConverter;
-        }
+        private readonly Dictionary<string, Action<string[]>> _tokensByFullName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, Action<string[]>> _tokensByShortName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
 
         public string Name { get; }
 
@@ -26,48 +18,143 @@ namespace Kirkin.CommandLine
             Name = name;
         }
 
-        public void DefineOption(string name, string shortName, ref string value)
+        public Func<T> DefineOption<T>(string name, string shortName, Func<string[], T> valueConverter)
         {
-            CommandSyntaxToken<string> token = new CommandSyntaxToken<string> { ValueConverter = s => s };
+            T value = default(T);
+            bool valueGenerated = false;
 
-            _tokensByFullName.Add(name, token);
+            Action<string[]> parse = args =>
+            {
+                value = valueConverter(args);
+                valueGenerated = true;
+            };
 
-            if (!string.IsNullOrEmpty(shortName)) _tokensByShortName.Add(shortName, token);
+            _tokensByFullName.Add(name, parse);
+
+            if (!string.IsNullOrEmpty(shortName)) _tokensByShortName.Add(shortName, parse);
+
+            return () =>
+            {
+                if (valueGenerated) {
+                    return value;
+                }
+
+                throw new InvalidOperationException("Value not yet generated.");
+            };
         }
 
-        public void DefineOption(string name, string shortName, ref bool value)
-        {
-            throw new NotImplementedException();
-        }
+        //public void DefineOption(string name, string shortName, Action<string> setter)
+        //{
+        //    Action<string[]> parse = args => setter(args.Single());
 
-        public void DefineOption(string name, string shortName, ref int value)
-        {
-            throw new NotImplementedException();
-        }
+        //    _tokensByFullName.Add(name, parse);
 
-        public void DefineOptionList(string shortOption, string longOption) // string[].
-        {
-            throw new NotImplementedException();
-        }
+        //    if (!string.IsNullOrEmpty(shortName)) _tokensByShortName.Add(shortName, parse);
+        //}
 
-        public void DefineParameter(string name, ref string value, string help = null)
-        {
-            throw new NotImplementedException();
-        }
+        //public void DefineOption(string name, string shortName, Action<bool> setter)
+        //{
+        //    Dictionary<string, bool> boolValues = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase) {
+        //        { "0", false },
+        //        { "1", true },
+        //        { "false", false },
+        //        { "true", true }
+        //    };
 
-        public void DefineParameter(string name, ref int value, string help = null)
-        {
-            throw new NotImplementedException();
-        }
+        //    Action<string[]> parse = args => setter(boolValues[args.Single()]);
 
-        public void DefineParameter<T>(string name, ref T value, Func<string, T> valueConverter, string help = null)
-        {
-            throw new NotImplementedException();
-        }
+        //    _tokensByFullName.Add(name, parse);
 
-        internal ICommand BuildCommand(string[] args) // ArraySlice<string>?
+        //    if (!string.IsNullOrEmpty(shortName)) _tokensByShortName.Add(shortName, parse);
+        //}
+
+        //public void DefineOption(string name, string shortName, Action<int> setter)
+        //{
+        //    Action<string[]> parse = args => setter(int.Parse(args.Single()));
+
+        //    _tokensByFullName.Add(name, parse);
+
+        //    if (!string.IsNullOrEmpty(shortName)) _tokensByShortName.Add(shortName, parse);
+        //}
+
+        //public void DefineOptionList(string shortOption, string longOption) // string[].
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public void DefineParameter(string name, Action<string> setter, string help = null)
+        //{
+        //    Action<string[]> parse = args => setter(args.Single());
+
+        //    _tokensByFullName.Add(name, parse);
+        //}
+
+        //public void DefineParameter(string name, ref int value, string help = null)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public void DefineParameter<T>(string name, ref T value, Func<string, T> valueConverter, string help = null)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        internal void BuildCommand(string[] args) // ArraySlice<string>?
         {
-            throw new NotImplementedException();
+            List<List<string>> chunks = new List<List<string>>();
+            List<string> currentChunk = null;
+
+            foreach (string arg in args)
+            {
+                if (currentChunk == null || arg.StartsWith("-") || arg.StartsWith("/"))
+                {
+                    currentChunk = new List<string>();
+
+                    chunks.Add(currentChunk);
+                }
+
+                currentChunk.Add(arg);
+            }
+
+            foreach (List<string> chunk in chunks)
+            {
+                Action<string[]> token = null;
+
+                if (chunk[0].StartsWith("-") || chunk[0].StartsWith("/"))
+                {
+                    // Option.
+                    if (chunk[0].StartsWith("--"))
+                    {
+                        string fullName = chunk[0].Substring(2);
+
+                        if (!_tokensByFullName.TryGetValue(fullName, out token)) {
+                            throw new InvalidOperationException($"Unable to find option with name '{fullName}'.");
+                        }
+                    }
+                    else if (chunk[0].StartsWith("/"))
+                    {
+                        string fullName = chunk[0].Substring(1);
+
+                        if (!_tokensByFullName.TryGetValue(fullName, out token)) {
+                            throw new InvalidOperationException($"Unable to find option with name '{fullName}'.");
+                        }
+                    }
+                    else if (chunk[0].StartsWith("-"))
+                    {
+                        string shortName = chunk[0].Substring(1);
+
+                        if (!_tokensByShortName.TryGetValue(shortName, out token)) {
+                            throw new InvalidOperationException($"Unable to find option with short name '{shortName}'.");
+                        }
+                    }
+                }
+                
+                if (token == null) {
+                    throw new InvalidOperationException("Unhandled syntax token.");
+                }
+
+                token(chunk.Skip(1).ToArray());
+            }
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using Kirkin.CommandLine;
+﻿using System;
+using System.Linq;
+
+using Kirkin.CommandLine;
 
 using NUnit.Framework;
 
@@ -7,33 +10,22 @@ namespace Kirkin.Tests.CommandLine
     public class CommandLineTests
     {
         [Test]
-        [Ignore("Work in progress")]
-        public void BasincCommandLineParsing()
+        public void BasicCommandLineParsing()
         {
             CommandLineParser parser = new CommandLineParser();
+            Func<string[], bool> ParseBoolean = args => args.Length == 0 || args.Single().Equals("true", StringComparison.OrdinalIgnoreCase);
 
             parser.DefineCommand("sync", sync =>
             {
-                bool verify = false;
-                string subscription = null;
+                Func<bool> validate = sync.DefineOption("validate", "v", ParseBoolean);
+                Func<string> subscription = sync.DefineOption("subscription", null, args => args.Single());
 
-                sync.DefineOption("verify", "v", ref verify);
-                sync.DefineParameter("subscription", ref subscription);
-
-                return () =>
-                {
-                    if (verify)
-                    {
-
-                    }
-                    else
-                    {
-
-                    }
+                return () => {
+                    Console.WriteLine($"sync {subscription()} validate:{validate()}.");
                 };
             });
 
-            ICommand command = parser.Parse("sync main --validate");
+            ICommand command = parser.Parse("sync --subscription main --validate".Split(' '));
 
             command.Execute();
 

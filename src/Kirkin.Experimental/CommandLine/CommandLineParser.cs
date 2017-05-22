@@ -17,20 +17,15 @@ namespace Kirkin.CommandLine
             }
 
             CommandSyntax builder = new CommandSyntax(name);
+            Action action = configureAction(builder);
 
-            configureAction(builder);
+            _commandFactories.Add(name, args =>
+            {
+                builder.BuildCommand(args);
 
-            _commandFactories.Add(name, args => builder.BuildCommand(args));
+                return new DelegateCommand(name, action);
+            });
         }
-
-        //public Command DefineCommand(string name)
-        //{
-        //    Command command = new Command(name);
-
-        //    Commands.Add(command);
-
-        //    return command;
-        //}
 
         public ICommand Parse(params string[] args)
         {
