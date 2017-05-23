@@ -40,9 +40,9 @@ namespace Kirkin.CommandLine
         /// </summary>
         public Arg<string> DefineOption(string name, string shortName = null)
         {
-            ArgContainer<string> container = DefineCustomOption(name, shortName, value => value);
+            Func<string> container = DefineCustomOption(name, shortName, value => value);
 
-            return new Arg<string>(() => container.GetValueOrDefault());
+            return new Arg<string>(() => container());
         }
 
         /// <summary>
@@ -50,17 +50,17 @@ namespace Kirkin.CommandLine
         /// </summary>
         public Arg<bool> DefineSwitch(string name, string shortName = null)
         {
-            ArgContainer<string> container = DefineCustomOption(name, shortName, value => value);
+            Func<string> container = DefineCustomOption(name, shortName, value => value);
 
             return new Arg<bool>(() =>
             {
-                string value = container.GetValueOrDefault();
+                string value = container();
 
                 return value != null && (value.Length == 0 || value.Equals("true", StringComparison.OrdinalIgnoreCase));
             });
         }
 
-        internal ArgContainer<T> DefineCustomOption<T>(string name, string shortName, Func<string, T> valueConverter)
+        internal Func<T> DefineCustomOption<T>(string name, string shortName, Func<string, T> valueConverter)
         {
             return DefineCustomOptionList(name, shortName, args =>
             {
@@ -71,31 +71,29 @@ namespace Kirkin.CommandLine
             });
         }
 
-        internal ArgContainer<T> DefineCustomOptionList<T>(string name, string shortName, Func<string[], T> valueConverter)
+        internal Func<T> DefineCustomOptionList<T>(string name, string shortName, Func<string[], T> valueConverter)
         {
-            ArgContainer<T> arg = new ArgContainer<T>();
+            bool ready = false;
+            T value = default(T);
 
-            Action<string[]> parse = args =>
+            Action<string[]> processor = args =>
             {
-                if (args == null)
-                {
-                    arg._hasValue = false;
-                    arg._value = default(T);
-                    arg.Ready = true;
-                }
-                else
-                {
-                    arg._hasValue = true;
-                    arg._value = valueConverter(args);
-                    arg.Ready = true;
-                }
+                value = (args == null) ? default(T) : valueConverter(args);
+                ready = true;
             };
 
-            _processorsByFullName.Add(name, parse);
+            _processorsByFullName.Add(name, processor);
 
-            if (!string.IsNullOrEmpty(shortName)) _processorsByShortName.Add(shortName, parse);
+            if (!string.IsNullOrEmpty(shortName)) _processorsByShortName.Add(shortName, processor);
 
-            return arg;
+            return () =>
+            {
+                if (!ready) {
+                    throw new InvalidOperationException("Value is undefined until Execute is called on the command.");
+                }
+
+                return value;
+            };
         }
 
         internal void BuildCommand(string[] args) // ArraySlice<string>?
