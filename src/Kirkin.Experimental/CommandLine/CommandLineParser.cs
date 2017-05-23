@@ -6,10 +6,16 @@ using Kirkin.CommandLine.Commands;
 
 namespace Kirkin.CommandLine
 {
+    /// <summary>
+    /// Non-case sensitive command line argument parser.
+    /// </summary>
     public sealed class CommandLineParser
     {
         private readonly Dictionary<string, Func<string[], ICommand>> _commandFactories = new Dictionary<string, Func<string[], ICommand>>(StringComparer.OrdinalIgnoreCase);
 
+        /// <summary>
+        /// Defines a command with the given name.
+        /// </summary>
         public void DefineCommand(string name, Action<CommandSyntax> configureAction)
         {
             if (_commandFactories.ContainsKey(name)) {
@@ -28,6 +34,9 @@ namespace Kirkin.CommandLine
             });
         }
 
+        /// <summary>
+        /// Parses the command line args and returns the configured, ready-to-execute command.
+        /// </summary>
         public ICommand Parse(params string[] args)
         {
             if (args == null) throw new ArgumentNullException(nameof(args));

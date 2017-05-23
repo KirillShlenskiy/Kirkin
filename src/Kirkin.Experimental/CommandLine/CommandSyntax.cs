@@ -4,19 +4,24 @@ using System.Linq;
 
 namespace Kirkin.CommandLine
 {
+    /// <summary>
+    /// Builder type used to configure commands.
+    /// </summary>
     public sealed class CommandSyntax
     {
         private readonly Dictionary<string, Action<string[]>> _processorsByFullName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, Action<string[]>> _processorsByShortName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
 
+        /// <summary>
+        /// The name of the command being configured.
+        /// </summary>
         public string Name { get; }
 
+        /// <summary>
+        /// Raised when <see cref="ICommand.Execute"/> is called on the command.
+        /// When this event fires, it is safe to access command argument values.
+        /// </summary>
         public event Action Executed;
-
-        internal void OnExecuted()
-        {
-            Executed?.Invoke();
-        }
 
         internal CommandSyntax(string name)
         {
@@ -25,6 +30,14 @@ namespace Kirkin.CommandLine
             Name = name;
         }
 
+        internal void OnExecuted()
+        {
+            Executed?.Invoke();
+        }
+
+        /// <summary>
+        /// Defines a string option, i.e. "--subscription main" or "-s main" or "/subscription main".
+        /// </summary>
         public Arg<string> DefineOption(string name, string shortName = null)
         {
             ArgContainer<string> container = DefineCustomOption(name, shortName, value => value);
@@ -32,6 +45,9 @@ namespace Kirkin.CommandLine
             return new Arg<string>(() => container.GetValueOrDefault());
         }
 
+        /// <summary>
+        /// Defines a boolean switch, i.e. "--validate" or "/validate true".
+        /// </summary>
         public Arg<bool> DefineSwitch(string name, string shortName = null)
         {
             ArgContainer<string> container = DefineCustomOption(name, shortName, value => value);
