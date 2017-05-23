@@ -1,8 +1,8 @@
 ﻿namespace Kirkin.CommandLine
 {
     /// <summary>
-    /// Parsed command line argument whose value is only available
-    /// once <see cref="ICommand.Execute"/> has been called.
+    /// Command line argument whose value is only available once
+    /// <see cref="CommandLineParser.Parse(string[])"/> has been called.
     /// </summary>
     public interface ICommandArg
     {
@@ -17,7 +17,7 @@
         string ShortName { get; }
 
         /// <summary>
-        /// Parsed argument value. Only available once <see cref="ICommand.Execute"/> has been called.
+        /// Parsed argument value. Only available once <see cref="CommandLineParser.Parse(string[])"/> has been called.
         /// </summary>
         object Value { get; }
     }

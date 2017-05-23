@@ -3,8 +3,8 @@
 namespace Kirkin.CommandLine
 {
     /// <summary>
-    /// Parsed command line argument whose value is only available
-    /// once <see cref="ICommand.Execute"/> has been called.
+    /// Command line argument whose value is only available once
+    /// <see cref="CommandLineParser.Parse(string[])"/> has been called.
     /// </summary>
     public sealed class CommandArg<T> : ICommandArg
     {
@@ -21,7 +21,7 @@ namespace Kirkin.CommandLine
         public string ShortName { get; }
 
         /// <summary>
-        /// Parsed argument value. Only available once <see cref="ICommand.Execute"/> has been called.
+        /// Parsed argument value. Only available once <see cref="CommandLineParser.Parse(string[])"/> has been called.
         /// </summary>
         public T Value
         {
@@ -39,9 +39,25 @@ namespace Kirkin.CommandLine
             }
         }
 
-        internal CommandArg(Func<T> resolver)
+        internal CommandArg(string name, string shortName, Func<T> resolver)
         {
+            Name = name;
+            ShortName = shortName;
             _resolver = resolver;
+        }
+
+        public override string ToString()
+        {
+            string name = (ShortName == null) ? Name : $"{ShortName}|{Name}";
+
+            try
+            {
+                return $"{name}: {Value}";
+            }
+            catch (InvalidOperationException)
+            {
+                return $"{name}: value not available yet.";
+            }
         }
     }
 }

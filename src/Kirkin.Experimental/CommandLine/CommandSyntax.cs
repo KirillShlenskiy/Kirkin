@@ -41,7 +41,7 @@ namespace Kirkin.CommandLine
         public CommandArg<string> DefineOption(string name, string shortName = null)
         {
             Func<string> container = DefineCustomOption(name, shortName, value => value);
-            CommandArg<string> arg = new CommandArg<string>(() => container());
+            CommandArg<string> arg = new CommandArg<string>(name, shortName, () => container());
 
             Arguments.Add(arg);
 
@@ -55,7 +55,7 @@ namespace Kirkin.CommandLine
         {
             Func<string> container = DefineCustomOption(name, shortName, value => value);
 
-            CommandArg<bool> arg = new CommandArg<bool>(() =>
+            CommandArg<bool> arg = new CommandArg<bool>(name, shortName, () =>
             {
                 string value = container();
 
@@ -101,6 +101,11 @@ namespace Kirkin.CommandLine
 
                 return value;
             };
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

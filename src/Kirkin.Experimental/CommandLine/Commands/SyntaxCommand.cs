@@ -1,4 +1,8 @@
-﻿namespace Kirkin.CommandLine.Commands
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Kirkin.CommandLine.Commands
 {
     /// <summary>
     /// Immutable facade over <see cref="CommandSyntax"/>.
@@ -15,11 +19,11 @@
             }
         }
 
-        public ICommandArg[] Arguments
+        public IDictionary<string, ICommandArg> Arguments
         {
             get
             {
-                return _syntax.Arguments.ToArray();
+                return _syntax.Arguments.ToDictionary(arg => arg.Name, StringComparer.OrdinalIgnoreCase);
             }
         }
 
@@ -31,6 +35,11 @@
         public void Execute()
         {
             _syntax.OnExecuted();
+        }
+
+        public override string ToString()
+        {
+            return _syntax.ToString();
         }
     }
 }

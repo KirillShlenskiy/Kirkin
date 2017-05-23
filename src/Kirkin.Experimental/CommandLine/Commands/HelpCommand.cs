@@ -1,6 +1,5 @@
 ﻿using System;
-
-using Kirkin.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Kirkin.CommandLine.Commands
 {
@@ -14,7 +13,7 @@ namespace Kirkin.CommandLine.Commands
             }
         }
 
-        public ICommandArg[] Arguments => Array<ICommandArg>.Empty;
+        public IDictionary<string, ICommandArg> Arguments { get; } = new Dictionary<string, ICommandArg>();
 
         public void Execute()
         {
