@@ -18,13 +18,13 @@ namespace Kirkin.Tests.CommandLine
 
             parser.DefineCommand("sync", sync =>
             {
-                Func<string> subscriptionOption = sync.DefineOption("subscription", null);
-                Func<bool> validateOption = sync.DefineOption("validate", "v", ParseBoolean);
+                Arg<string> subscriptionOption = sync.DefineOption("subscription", null);
+                Arg<bool> validateOption = sync.DefineOption("validate", "v", ParseBoolean);
 
                 return () =>
                 {
-                    subscription = subscriptionOption();
-                    validate = validateOption();
+                    subscription = subscriptionOption.GetValueOrDefault();
+                    validate = validateOption.GetValueOrDefault();
                 };
             });
 

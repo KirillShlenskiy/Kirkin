@@ -18,12 +18,19 @@ namespace Kirkin.CommandLine
             Name = name;
         }
 
-        public Func<string> DefineOption(string name, string shortName)
+        public void DefineOption(string name, string shortName, ref string value)
+        {
+            Arg<string> arg = DefineOption(name, shortName);
+
+            value = arg._value;
+        }
+
+        public Arg<string> DefineOption(string name, string shortName)
         {
             return DefineOption(name, shortName, value => value);
         }
 
-        public Func<T> DefineOption<T>(string name, string shortName, Func<string, T> valueConverter)
+        public Arg<T> DefineOption<T>(string name, string shortName, Func<string, T> valueConverter)
         {
             return DefineOptionList(name, shortName, args =>
             {
@@ -34,29 +41,31 @@ namespace Kirkin.CommandLine
             });
         }
 
-        public Func<T> DefineOptionList<T>(string name, string shortName, Func<string[], T> valueConverter)
+        public Arg<T> DefineOptionList<T>(string name, string shortName, Func<string[], T> valueConverter)
         {
-            T value = default(T);
-            bool valueGenerated = false;
+            Arg<T> arg = new Arg<T>();
 
             Action<string[]> parse = args =>
             {
-                value = valueConverter(args);
-                valueGenerated = true;
+                if (args == null)
+                {
+                    arg._hasValue = false;
+                    arg._value = default(T);
+                    arg.Ready = true;
+                }
+                else
+                {
+                    arg._hasValue = true;
+                    arg._value = valueConverter(args);
+                    arg.Ready = true;
+                }
             };
 
             _tokensByFullName.Add(name, parse);
 
             if (!string.IsNullOrEmpty(shortName)) _tokensByShortName.Add(shortName, parse);
 
-            return () =>
-            {
-                if (valueGenerated) {
-                    return value;
-                }
-
-                throw new InvalidOperationException("Value not yet generated.");
-            };
+            return arg;
         }
 
         //public void DefineOption(string name, string shortName, Action<string> setter)
@@ -132,6 +141,8 @@ namespace Kirkin.CommandLine
                 currentChunk.Add(arg);
             }
 
+            HashSet<string> seenTokens = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
             foreach (List<string> chunk in chunks)
             {
                 Action<string[]> token = null;
@@ -146,6 +157,10 @@ namespace Kirkin.CommandLine
                         if (!_tokensByFullName.TryGetValue(fullName, out token)) {
                             throw new InvalidOperationException($"Unable to find option with name '{fullName}'.");
                         }
+
+                        if (!seenTokens.Add(fullName)) {
+                            throw new InvalidOperationException($"Duplicate option: '{fullName}'.");
+                        }
                     }
                     else if (chunk[0].StartsWith("/"))
                     {
@@ -154,9 +169,15 @@ namespace Kirkin.CommandLine
                         if (!_tokensByFullName.TryGetValue(fullName, out token)) {
                             throw new InvalidOperationException($"Unable to find option with name '{fullName}'.");
                         }
+
+                        if (!seenTokens.Add(fullName)) {
+                            throw new InvalidOperationException($"Duplicate option: '{fullName}'.");
+                        }
                     }
                     else if (chunk[0].StartsWith("-"))
                     {
+                        throw new NotImplementedException();
+
                         string shortName = chunk[0].Substring(1);
 
                         if (!_tokensByShortName.TryGetValue(shortName, out token)) {
@@ -170,6 +191,13 @@ namespace Kirkin.CommandLine
                 }
 
                 token(chunk.Skip(1).ToArray());
+            }
+
+            foreach (KeyValuePair<string, Action<string[]>> kvp in _tokensByFullName)
+            {
+                if (!seenTokens.Contains(kvp.Key)) {
+                    kvp.Value(null);
+                }
             }
         }
     }
