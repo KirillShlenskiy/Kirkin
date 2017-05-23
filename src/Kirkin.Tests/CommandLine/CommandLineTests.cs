@@ -18,7 +18,7 @@ namespace Kirkin.Tests.CommandLine
 
             parser.DefineCommand("sync", sync =>
             {
-                subscriptionArg = sync.DefineOption("subscription");
+                subscriptionArg = sync.DefineOption("subscription", "s");
                 Arg<bool> validateArg = sync.DefineSwitch("validate", "v");
 
                 sync.Executed += () =>
@@ -53,6 +53,16 @@ namespace Kirkin.Tests.CommandLine
             parser.Parse("sync --validate".Split(' ')).Execute();
 
             Assert.Null(subscription);
+            Assert.True(validate);
+
+            parser.Parse("sync --validate false".Split(' ')).Execute();
+
+            Assert.Null(subscription);
+            Assert.False(validate);
+
+            parser.Parse("sync -s zzz -v".Split(' ')).Execute();
+
+            Assert.AreEqual("zzz", subscription);
             Assert.True(validate);
         }
     }

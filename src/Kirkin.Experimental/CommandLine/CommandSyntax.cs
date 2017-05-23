@@ -6,8 +6,8 @@ namespace Kirkin.CommandLine
 {
     public sealed class CommandSyntax
     {
-        private readonly Dictionary<string, Action<string[]>> _tokensByFullName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
-        private readonly Dictionary<string, Action<string[]>> _tokensByShortName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, Action<string[]>> _processorsByFullName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, Action<string[]>> _processorsByShortName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
 
         public string Name { get; }
 
@@ -75,9 +75,9 @@ namespace Kirkin.CommandLine
                 }
             };
 
-            _tokensByFullName.Add(name, parse);
+            _processorsByFullName.Add(name, parse);
 
-            if (!string.IsNullOrEmpty(shortName)) _tokensByShortName.Add(shortName, parse);
+            if (!string.IsNullOrEmpty(shortName)) _processorsByShortName.Add(shortName, parse);
 
             return arg;
         }
@@ -99,11 +99,11 @@ namespace Kirkin.CommandLine
                 currentChunk.Add(arg);
             }
 
-            HashSet<string> seenTokens = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            HashSet<Action<string[]>> seenProcessors = new HashSet<Action<string[]>>();
 
             foreach (List<string> chunk in chunks)
             {
-                Action<string[]> token = null;
+                Action<string[]> processor = null;
 
                 if (chunk[0].StartsWith("-") || chunk[0].StartsWith("/"))
                 {
@@ -112,50 +112,46 @@ namespace Kirkin.CommandLine
                     {
                         string fullName = chunk[0].Substring(2);
 
-                        if (!_tokensByFullName.TryGetValue(fullName, out token)) {
+                        if (!_processorsByFullName.TryGetValue(fullName, out processor)) {
                             throw new InvalidOperationException($"Unable to find option with name '{fullName}'.");
-                        }
-
-                        if (!seenTokens.Add(fullName)) {
-                            throw new InvalidOperationException($"Duplicate option: '{fullName}'.");
                         }
                     }
                     else if (chunk[0].StartsWith("/"))
                     {
                         string fullName = chunk[0].Substring(1);
 
-                        if (!_tokensByFullName.TryGetValue(fullName, out token)) {
+                        if (!_processorsByFullName.TryGetValue(fullName, out processor)) {
                             throw new InvalidOperationException($"Unable to find option with name '{fullName}'.");
-                        }
-
-                        if (!seenTokens.Add(fullName)) {
-                            throw new InvalidOperationException($"Duplicate option: '{fullName}'.");
                         }
                     }
                     else if (chunk[0].StartsWith("-"))
                     {
-                        throw new NotImplementedException();
-
                         string shortName = chunk[0].Substring(1);
 
-                        if (!_tokensByShortName.TryGetValue(shortName, out token)) {
+                        if (!_processorsByShortName.TryGetValue(shortName, out processor)) {
                             throw new InvalidOperationException($"Unable to find option with short name '{shortName}'.");
                         }
                     }
                 }
                 
-                if (token == null) {
+                if (processor == null) {
                     throw new InvalidOperationException($"Unhandled syntax token: '{chunk[0]}'.");
                 }
 
-                token(chunk.Skip(1).ToArray());
+                if (!seenProcessors.Add(processor)) {
+                    throw new InvalidOperationException($"Duplicate option: '{chunk[0]}'.");
+                }
+
+                processor(chunk.Skip(1).ToArray());
             }
 
-            foreach (KeyValuePair<string, Action<string[]>> kvp in _tokensByFullName)
-            {
-                if (!seenTokens.Contains(kvp.Key)) {
-                    kvp.Value(null);
-                }
+            HashSet<Action<string[]>> unusedProcessors = new HashSet<Action<string[]>>(_processorsByFullName.Values);
+
+            unusedProcessors.UnionWith(_processorsByShortName.Values);
+            unusedProcessors.ExceptWith(seenProcessors);
+
+            foreach (Action<string[]> processor in unusedProcessors) {
+                processor(null);
             }
         }
     }
