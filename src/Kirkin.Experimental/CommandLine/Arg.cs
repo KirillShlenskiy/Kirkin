@@ -14,14 +14,6 @@ namespace Kirkin.CommandLine
         internal bool _hasValue;
         internal T _value;
 
-        internal ref T ValueRef
-        {
-            get
-            {
-                return ref _value;
-            }
-        }
-
         public bool HasValue
         {
             get

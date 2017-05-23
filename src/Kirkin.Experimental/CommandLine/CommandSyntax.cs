@@ -18,13 +18,6 @@ namespace Kirkin.CommandLine
             Name = name;
         }
 
-        public void DefineOption(string name, string shortName, ref string value)
-        {
-            Arg<string> arg = DefineOption(name, shortName);
-
-            value = arg._value;
-        }
-
         public Arg<string> DefineOption(string name, string shortName)
         {
             return DefineOption(name, shortName, value => value);
