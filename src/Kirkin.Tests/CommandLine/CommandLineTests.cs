@@ -39,25 +39,29 @@ namespace Kirkin.Tests.CommandLine
             Assert.Throws<InvalidOperationException>(() => parser.Parse("uuu"));
             Assert.Throws<InvalidOperationException>(() => { var _ = subscriptionArg.Value; });
 
-            ICommand command = parser.Parse("sync --subscription main /VALIDATE TRUE".Split(' '));
+            {
+                ICommand command = parser.Parse("sync --subscription main /VALIDATE TRUE".Split(' '));
 
-            Assert.Null(subscription);
-            Assert.False(validate);
+                Assert.Null(subscription);
+                Assert.False(validate);
 
-            command.Execute();
+                command.Execute();
 
-            Assert.AreEqual("main", subscription);
-            Assert.True(validate);
+                Assert.AreEqual("main", subscription);
+                Assert.True(validate);
+            }
 
-            command = parser.Parse("sync --subscription extra".Split(' '));
+            {
+                ICommand command = parser.Parse("sync --subscription extra".Split(' '));
 
-            Assert.AreEqual("main", subscription);
-            Assert.True(validate);
+                Assert.AreEqual("main", subscription);
+                Assert.True(validate);
 
-            command.Execute();
+                command.Execute();
 
-            Assert.AreEqual("extra", subscription);
-            Assert.False(validate);
+                Assert.AreEqual("extra", subscription);
+                Assert.False(validate);
+            }
 
             parser.Parse("sync --validate".Split(' ')).Execute();
 
@@ -75,11 +79,13 @@ namespace Kirkin.Tests.CommandLine
             Assert.True(validate);
 
             // Alternative arg syntax.
-            ICommand cmd = parser.Parse("zzz --fizz 1 /buzz ultra --holy-moly".Split(' '));
+            {
+                ICommand command = parser.Parse("zzz --fizz 1 /buzz ultra --holy-moly".Split(' '));
 
-            Assert.AreEqual("1", (string)cmd.Arguments["fizz"]);
-            Assert.AreEqual("ultra", (string)cmd.Arguments["buzz"]);
-            Assert.True((bool)cmd.Arguments["holy-moly"]);
+                Assert.AreEqual("1", (string)command.Arguments["fizz"]);
+                Assert.AreEqual("ultra", (string)command.Arguments["buzz"]);
+                Assert.True((bool)command.Arguments["holy-moly"]);
+            }
         }
     }
 }
