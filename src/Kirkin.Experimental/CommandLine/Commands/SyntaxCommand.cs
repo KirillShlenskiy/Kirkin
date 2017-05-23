@@ -19,11 +19,11 @@ namespace Kirkin.CommandLine.Commands
             }
         }
 
-        public IDictionary<string, ICommandArg> Arguments
+        public IDictionary<string, object> Arguments
         {
             get
             {
-                return _syntax.Arguments.ToDictionary(arg => arg.Name, StringComparer.OrdinalIgnoreCase);
+                return _syntax.Arguments.ToDictionary(arg => arg.Name, arg => arg.Value, StringComparer.OrdinalIgnoreCase);
             }
         }
 

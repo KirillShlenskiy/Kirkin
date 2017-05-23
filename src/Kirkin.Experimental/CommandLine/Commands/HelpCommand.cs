@@ -13,7 +13,7 @@ namespace Kirkin.CommandLine.Commands
             }
         }
 
-        public IDictionary<string, ICommandArg> Arguments { get; } = new Dictionary<string, ICommandArg>();
+        public IDictionary<string, object> Arguments { get; } = new Dictionary<string, object>();
 
         public void Execute()
         {

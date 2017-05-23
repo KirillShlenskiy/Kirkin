@@ -77,9 +77,9 @@ namespace Kirkin.Tests.CommandLine
             // Alternative arg syntax.
             ICommand cmd = parser.Parse("zzz --fizz 1 /buzz ultra --holy-moly".Split(' '));
 
-            Assert.AreEqual("1", (string)cmd.Arguments["fizz"].Value);
-            Assert.AreEqual("ultra", (string)cmd.Arguments["buzz"].Value);
-            Assert.True((bool)cmd.Arguments["holy-moly"].Value);
+            Assert.AreEqual("1", (string)cmd.Arguments["fizz"]);
+            Assert.AreEqual("ultra", (string)cmd.Arguments["buzz"]);
+            Assert.True((bool)cmd.Arguments["holy-moly"]);
         }
     }
 }

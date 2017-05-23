@@ -15,7 +15,7 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Parsed arguments.
         /// </summary>
-        IDictionary<string, ICommandArg> Arguments { get; }
+        IDictionary<string, object> Arguments { get; }
 
         /// <summary>
         /// Populates any related parameter values and executes the command.
