@@ -6,9 +6,19 @@ namespace Kirkin.CommandLine
     /// Parsed command line argument whose value is only available
     /// once <see cref="ICommand.Execute"/> has been called.
     /// </summary>
-    public sealed class Arg<T>
+    public sealed class CommandArg<T> : ICommandArg
     {
         private readonly Func<T> _resolver;
+
+        /// <summary>
+        /// Parameter name.
+        /// </summary>
+        public string Name { get; }
+
+        /// <summary>
+        /// Parameter short name (or null).
+        /// </summary>
+        public string ShortName { get; }
 
         /// <summary>
         /// Parsed argument value. Only available once <see cref="ICommand.Execute"/> has been called.
@@ -21,7 +31,15 @@ namespace Kirkin.CommandLine
             }
         }
 
-        internal Arg(Func<T> resolver)
+        object ICommandArg.Value
+        {
+            get
+            {
+                return Value;
+            }
+        }
+
+        internal CommandArg(Func<T> resolver)
         {
             _resolver = resolver;
         }

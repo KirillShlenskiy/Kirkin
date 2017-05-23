@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Kirkin.CommandLine
 {
@@ -9,8 +8,9 @@ namespace Kirkin.CommandLine
     /// </summary>
     public sealed class CommandSyntax
     {
-        private readonly Dictionary<string, Action<string[]>> _processorsByFullName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
-        private readonly Dictionary<string, Action<string[]>> _processorsByShortName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
+        internal readonly Dictionary<string, Action<string[]>> ProcessorsByFullName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
+        internal readonly Dictionary<string, Action<string[]>> ProcessorsByShortName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
+        internal readonly List<ICommandArg> Arguments = new List<ICommandArg>();
 
         /// <summary>
         /// The name of the command being configured.
@@ -38,26 +38,33 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Defines a string option, i.e. "--subscription main" or "-s main" or "/subscription main".
         /// </summary>
-        public Arg<string> DefineOption(string name, string shortName = null)
+        public CommandArg<string> DefineOption(string name, string shortName = null)
         {
             Func<string> container = DefineCustomOption(name, shortName, value => value);
+            CommandArg<string> arg = new CommandArg<string>(() => container());
 
-            return new Arg<string>(() => container());
+            Arguments.Add(arg);
+
+            return arg;
         }
 
         /// <summary>
         /// Defines a boolean switch, i.e. "--validate" or "/validate true".
         /// </summary>
-        public Arg<bool> DefineSwitch(string name, string shortName = null)
+        public CommandArg<bool> DefineSwitch(string name, string shortName = null)
         {
             Func<string> container = DefineCustomOption(name, shortName, value => value);
 
-            return new Arg<bool>(() =>
+            CommandArg<bool> arg = new CommandArg<bool>(() =>
             {
                 string value = container();
 
                 return value != null && (value.Length == 0 || value.Equals("true", StringComparison.OrdinalIgnoreCase));
             });
+
+            Arguments.Add(arg);
+
+            return arg;
         }
 
         internal Func<T> DefineCustomOption<T>(string name, string shortName, Func<string, T> valueConverter)
@@ -82,9 +89,9 @@ namespace Kirkin.CommandLine
                 ready = true;
             };
 
-            _processorsByFullName.Add(name, processor);
+            ProcessorsByFullName.Add(name, processor);
 
-            if (!string.IsNullOrEmpty(shortName)) _processorsByShortName.Add(shortName, processor);
+            if (!string.IsNullOrEmpty(shortName)) ProcessorsByShortName.Add(shortName, processor);
 
             return () =>
             {
@@ -94,79 +101,6 @@ namespace Kirkin.CommandLine
 
                 return value;
             };
-        }
-
-        internal void BuildCommand(string[] args) // ArraySlice<string>?
-        {
-            List<List<string>> chunks = new List<List<string>>();
-            List<string> currentChunk = null;
-
-            foreach (string arg in args)
-            {
-                if (currentChunk == null || arg.StartsWith("-") || arg.StartsWith("/"))
-                {
-                    currentChunk = new List<string>();
-
-                    chunks.Add(currentChunk);
-                }
-
-                currentChunk.Add(arg);
-            }
-
-            HashSet<Action<string[]>> seenProcessors = new HashSet<Action<string[]>>();
-
-            foreach (List<string> chunk in chunks)
-            {
-                Action<string[]> processor = null;
-
-                if (chunk[0].StartsWith("-") || chunk[0].StartsWith("/"))
-                {
-                    // Option.
-                    if (chunk[0].StartsWith("--"))
-                    {
-                        string fullName = chunk[0].Substring(2);
-
-                        if (!_processorsByFullName.TryGetValue(fullName, out processor)) {
-                            throw new InvalidOperationException($"Unable to find option with name '{fullName}'.");
-                        }
-                    }
-                    else if (chunk[0].StartsWith("/"))
-                    {
-                        string fullName = chunk[0].Substring(1);
-
-                        if (!_processorsByFullName.TryGetValue(fullName, out processor)) {
-                            throw new InvalidOperationException($"Unable to find option with name '{fullName}'.");
-                        }
-                    }
-                    else if (chunk[0].StartsWith("-"))
-                    {
-                        string shortName = chunk[0].Substring(1);
-
-                        if (!_processorsByShortName.TryGetValue(shortName, out processor)) {
-                            throw new InvalidOperationException($"Unable to find option with short name '{shortName}'.");
-                        }
-                    }
-                }
-                
-                if (processor == null) {
-                    throw new InvalidOperationException($"Unhandled syntax token: '{chunk[0]}'.");
-                }
-
-                if (!seenProcessors.Add(processor)) {
-                    throw new InvalidOperationException($"Duplicate option: '{chunk[0]}'.");
-                }
-
-                processor(chunk.Skip(1).ToArray());
-            }
-
-            HashSet<Action<string[]>> unusedProcessors = new HashSet<Action<string[]>>(_processorsByFullName.Values);
-
-            unusedProcessors.UnionWith(_processorsByShortName.Values);
-            unusedProcessors.ExceptWith(seenProcessors);
-
-            foreach (Action<string[]> processor in unusedProcessors) {
-                processor(null);
-            }
         }
     }
 }

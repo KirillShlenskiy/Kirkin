@@ -14,12 +14,12 @@ namespace Kirkin.Tests.CommandLine
             CommandLineParser parser = new CommandLineParser();
             string subscription = null;
             bool validate = false;
-            Arg<string> subscriptionArg = null;
+            CommandArg<string> subscriptionArg = null;
 
             parser.DefineCommand("sync", sync =>
             {
                 subscriptionArg = sync.DefineOption("subscription", "s");
-                Arg<bool> validateArg = sync.DefineSwitch("validate", "v");
+                CommandArg<bool> validateArg = sync.DefineSwitch("validate", "v");
 
                 sync.Executed += () =>
                 {

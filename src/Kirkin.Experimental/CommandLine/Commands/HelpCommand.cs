@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Kirkin.Collections.Generic;
+
 namespace Kirkin.CommandLine.Commands
 {
     internal sealed class HelpCommand : ICommand
@@ -11,6 +13,8 @@ namespace Kirkin.CommandLine.Commands
                 return "help";
             }
         }
+
+        public ICommandArg[] Arguments => Array<ICommandArg>.Empty;
 
         public void Execute()
         {

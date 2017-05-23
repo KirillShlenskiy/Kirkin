@@ -11,6 +11,11 @@
         string Name { get; }
 
         /// <summary>
+        /// Parsed arguments.
+        /// </summary>
+        ICommandArg[] Arguments { get; }
+
+        /// <summary>
         /// Populates any related parameter values and executes the command.
         /// </summary>
         void Execute();
