@@ -25,14 +25,28 @@ namespace Kirkin.CommandLine
             Name = name;
         }
 
-        public Arg<string> DefineOption(string name, string shortName)
+        public Arg<string> DefineOption(string name, string shortName = null)
         {
-            return DefineOption(name, shortName, value => value);
+            ArgContainer<string> container = DefineCustomOption(name, shortName, value => value);
+
+            return new Arg<string>(() => container.GetValueOrDefault());
         }
 
-        public Arg<T> DefineOption<T>(string name, string shortName, Func<string, T> valueConverter)
+        public Arg<bool> DefineSwitch(string name, string shortName = null)
         {
-            return DefineOptionList(name, shortName, args =>
+            ArgContainer<string> container = DefineCustomOption(name, shortName, value => value);
+
+            return new Arg<bool>(() =>
+            {
+                string value = container.GetValueOrDefault();
+
+                return value != null && (value.Length == 0 || value.Equals("true", StringComparison.OrdinalIgnoreCase));
+            });
+        }
+
+        internal ArgContainer<T> DefineCustomOption<T>(string name, string shortName, Func<string, T> valueConverter)
+        {
+            return DefineCustomOptionList(name, shortName, args =>
             {
                 if (args.Length == 0) return valueConverter(string.Empty);
                 if (args.Length == 1) return valueConverter(args[0]);
@@ -41,9 +55,9 @@ namespace Kirkin.CommandLine
             });
         }
 
-        public Arg<T> DefineOptionList<T>(string name, string shortName, Func<string[], T> valueConverter)
+        internal ArgContainer<T> DefineCustomOptionList<T>(string name, string shortName, Func<string[], T> valueConverter)
         {
-            Arg<T> arg = new Arg<T>();
+            ArgContainer<T> arg = new ArgContainer<T>();
 
             Action<string[]> parse = args =>
             {
@@ -67,62 +81,6 @@ namespace Kirkin.CommandLine
 
             return arg;
         }
-
-        //public void DefineOption(string name, string shortName, Action<string> setter)
-        //{
-        //    Action<string[]> parse = args => setter(args.Single());
-
-        //    _tokensByFullName.Add(name, parse);
-
-        //    if (!string.IsNullOrEmpty(shortName)) _tokensByShortName.Add(shortName, parse);
-        //}
-
-        //public void DefineOption(string name, string shortName, Action<bool> setter)
-        //{
-        //    Dictionary<string, bool> boolValues = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase) {
-        //        { "0", false },
-        //        { "1", true },
-        //        { "false", false },
-        //        { "true", true }
-        //    };
-
-        //    Action<string[]> parse = args => setter(boolValues[args.Single()]);
-
-        //    _tokensByFullName.Add(name, parse);
-
-        //    if (!string.IsNullOrEmpty(shortName)) _tokensByShortName.Add(shortName, parse);
-        //}
-
-        //public void DefineOption(string name, string shortName, Action<int> setter)
-        //{
-        //    Action<string[]> parse = args => setter(int.Parse(args.Single()));
-
-        //    _tokensByFullName.Add(name, parse);
-
-        //    if (!string.IsNullOrEmpty(shortName)) _tokensByShortName.Add(shortName, parse);
-        //}
-
-        //public void DefineOptionList(string shortOption, string longOption) // string[].
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public void DefineParameter(string name, Action<string> setter, string help = null)
-        //{
-        //    Action<string[]> parse = args => setter(args.Single());
-
-        //    _tokensByFullName.Add(name, parse);
-        //}
-
-        //public void DefineParameter(string name, ref int value, string help = null)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public void DefineParameter<T>(string name, ref T value, Func<string, T> valueConverter, string help = null)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         internal void BuildCommand(string[] args) // ArraySlice<string>?
         {

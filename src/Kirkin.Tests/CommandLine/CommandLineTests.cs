@@ -12,21 +12,23 @@ namespace Kirkin.Tests.CommandLine
         public void BasicCommandLineParsing()
         {
             CommandLineParser parser = new CommandLineParser();
-            Func<string, bool> ParseBoolean = value => string.IsNullOrEmpty(value) || Convert.ToBoolean(value);
             string subscription = null;
             bool validate = false;
+            Arg<string> subscriptionArg = null;
 
             parser.DefineCommand("sync", sync =>
             {
-                Arg<string> subscriptionOption = sync.DefineOption("subscription", null);
-                Arg<bool> validateOption = sync.DefineOption("validate", "v", ParseBoolean);
+                subscriptionArg = sync.DefineOption("subscription");
+                Arg<bool> validateArg = sync.DefineSwitch("validate", "v");
 
                 sync.Executed += () =>
                 {
-                    subscription = subscriptionOption.GetValueOrDefault();
-                    validate = validateOption.GetValueOrDefault();
+                    subscription = subscriptionArg.Value;
+                    validate = validateArg.Value;
                 };
             });
+
+            Assert.Throws<InvalidOperationException>(() => { var _ = subscriptionArg.Value; });
 
             ICommand command = parser.Parse("sync --subscription main /VALIDATE TRUE".Split(' '));
 
@@ -43,12 +45,15 @@ namespace Kirkin.Tests.CommandLine
             Assert.AreEqual("main", subscription);
             Assert.True(validate);
 
-            validate = false; // Reset.
-
             command.Execute();
 
             Assert.AreEqual("extra", subscription);
             Assert.False(validate);
+
+            parser.Parse("sync --validate".Split(' ')).Execute();
+
+            Assert.Null(subscription);
+            Assert.True(validate);
         }
     }
 }

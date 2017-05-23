@@ -2,82 +2,21 @@
 
 namespace Kirkin.CommandLine
 {
-    public interface IArg
+    public sealed class Arg<T>
     {
-        bool HasValue { get; }
-        object Value { get; }
-    }
-
-    public sealed class Arg<T> : IArg
-    {
-        internal bool Ready;
-        internal bool _hasValue;
-        internal T _value;
-
-        public bool HasValue
-        {
-            get
-            {
-                ThrowIfNotReady();
-
-                return _hasValue;
-            }
-        }
+        private readonly Func<T> _resolver;
 
         public T Value
         {
             get
             {
-                ThrowIfNotReady();
-
-                if (!_hasValue) {
-                    throw new InvalidOperationException($"Value is undefined when {nameof(HasValue)} is false.");
-                }
-
-                return _value;
+                return _resolver();
             }
         }
 
-        object IArg.Value
+        internal Arg(Func<T> resolver)
         {
-            get
-            {
-                return Value;
-            }
-        }
-
-        internal Arg()
-        {
-        }
-
-        public T GetValueOrDefault()
-        {
-            ThrowIfNotReady();
-
-            return _hasValue ? _value : default(T);
-        }
-
-        public bool TryGetValue(out T value)
-        {
-            ThrowIfNotReady();
-
-            if (_hasValue)
-            {
-                value = _value;
-
-                return true;
-            }
-
-            value = default(T);
-
-            return false;
-        }
-
-        private void ThrowIfNotReady()
-        {
-            if (!Ready) {
-                throw new InvalidOperationException("The value of this instance is not yet ready.");
-            }
+            _resolver = resolver;
         }
     }
 }
