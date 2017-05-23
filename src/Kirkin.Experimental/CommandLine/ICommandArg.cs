@@ -4,7 +4,7 @@
     /// Command line argument whose value is only available once
     /// <see cref="CommandLineParser.Parse(string[])"/> has been called.
     /// </summary>
-    public interface ICommandArg
+    internal interface ICommandArg
     {
         /// <summary>
         /// Parameter name.
