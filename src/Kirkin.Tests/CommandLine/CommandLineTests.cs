@@ -12,6 +12,14 @@ namespace Kirkin.Tests.CommandLine
         public void BasicCommandLineParsing()
         {
             CommandLineParser parser = new CommandLineParser();
+
+            parser.DefineCommand("zzz", zzz =>
+            {
+                zzz.DefineOption("fizz");
+                zzz.DefineOption("buzz");
+                zzz.DefineSwitch("holy-moly", shortName: "hm");
+            });
+
             string subscription = null;
             bool validate = false;
             CommandArg<string> subscriptionArg = null;
@@ -28,6 +36,7 @@ namespace Kirkin.Tests.CommandLine
                 };
             });
 
+            Assert.Throws<InvalidOperationException>(() => parser.Parse("uuu"));
             Assert.Throws<InvalidOperationException>(() => { var _ = subscriptionArg.Value; });
 
             ICommand command = parser.Parse("sync --subscription main /VALIDATE TRUE".Split(' '));
@@ -64,6 +73,13 @@ namespace Kirkin.Tests.CommandLine
 
             Assert.AreEqual("zzz", subscription);
             Assert.True(validate);
+
+            // Alternative arg syntax.
+            ICommand cmd = parser.Parse("zzz --fizz 1 /buzz ultra --holy-moly".Split(' '));
+
+            Assert.AreEqual("1", (string)cmd.Arguments["fizz"].Value);
+            Assert.AreEqual("ultra", (string)cmd.Arguments["buzz"].Value);
+            Assert.True((bool)cmd.Arguments["holy-moly"].Value);
         }
     }
 }
