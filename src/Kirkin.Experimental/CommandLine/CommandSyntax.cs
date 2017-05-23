@@ -11,6 +11,13 @@ namespace Kirkin.CommandLine
 
         public string Name { get; }
 
+        public event Action Executed;
+
+        internal void OnExecuted()
+        {
+            Executed?.Invoke();
+        }
+
         internal CommandSyntax(string name)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command name cannot be empty.");

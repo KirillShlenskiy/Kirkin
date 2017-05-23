@@ -21,7 +21,7 @@ namespace Kirkin.Tests.CommandLine
                 Arg<string> subscriptionOption = sync.DefineOption("subscription", null);
                 Arg<bool> validateOption = sync.DefineOption("validate", "v", ParseBoolean);
 
-                return () =>
+                sync.Executed += () =>
                 {
                     subscription = subscriptionOption.GetValueOrDefault();
                     validate = validateOption.GetValueOrDefault();
@@ -48,25 +48,7 @@ namespace Kirkin.Tests.CommandLine
             command.Execute();
 
             Assert.AreEqual("extra", subscription);
-            Assert.False(validate); // Bug.
-
-            //Command sync = new Command("sync");
-            //bool verify = false;
-
-            //sync.DefineOption("v", "verify", ref verify);
-            //sync.DefineParameter()
-
-            //sync.Invoked += () =>
-            //{
-            //    if (verify)
-            //    {
-
-            //    }
-            //    else
-            //    {
-
-            //    }
-            //};
+            Assert.False(validate);
         }
     }
 }

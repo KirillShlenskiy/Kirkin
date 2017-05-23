@@ -10,20 +10,21 @@ namespace Kirkin.CommandLine
     {
         private readonly Dictionary<string, Func<string[], ICommand>> _commandFactories = new Dictionary<string, Func<string[], ICommand>>(StringComparer.OrdinalIgnoreCase);
 
-        public void DefineCommand(string name, Func<CommandSyntax, Action> configureAction)
+        public void DefineCommand(string name, Action<CommandSyntax> configureAction)
         {
             if (_commandFactories.ContainsKey(name)) {
                 throw new InvalidOperationException($"Command '{name}' already defined.");
             }
 
             CommandSyntax builder = new CommandSyntax(name);
-            Action action = configureAction(builder);
+
+            configureAction(builder);
 
             _commandFactories.Add(name, args =>
             {
                 builder.BuildCommand(args);
 
-                return new DelegateCommand(name, action);
+                return new DelegateCommand(name, () => builder.OnExecuted());
             });
         }
 
