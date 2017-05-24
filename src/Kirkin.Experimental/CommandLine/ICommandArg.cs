@@ -17,8 +17,8 @@
         string ShortName { get; }
 
         /// <summary>
-        /// Parsed argument value. Only available once <see cref="CommandLineParser.Parse(string[])"/> has been called.
+        /// Parses the given arguments and converts them to an appropriate value.
         /// </summary>
-        object Value { get; }
+        object GetValue(string[] args);
     }
 }

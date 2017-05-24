@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace Kirkin.CommandLine.Commands
 {
@@ -19,22 +17,17 @@ namespace Kirkin.CommandLine.Commands
             }
         }
 
-        public IDictionary<string, object> Arguments
-        {
-            get
-            {
-                return _definition.Arguments.ToDictionary(arg => arg.Name, arg => arg.Value, StringComparer.OrdinalIgnoreCase);
-            }
-        }
+        public IDictionary<string, object> Arguments { get; }
 
-        internal DefaultCommand(CommandDefinition definition)
+        internal DefaultCommand(CommandDefinition definition, IDictionary<string, object> arguments)
         {
             _definition = definition;
+            Arguments = arguments;
         }
 
         public void Execute()
         {
-            _definition.OnExecuted();
+            _definition.OnExecuted(Arguments);
         }
 
         public override string ToString()

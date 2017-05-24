@@ -14,9 +14,9 @@ namespace cli
 
                 parser.DefineCommand("hello", hello =>
                 {
-                    CommandArg<string> name = hello.DefineOption("name", shortName: "n");
+                    hello.DefineOption("name", shortName: "n");
 
-                    hello.Executed += () => Console.WriteLine($"Hello {name.Value}!");
+                    hello.Executed += commandArgs => Console.WriteLine($"Hello {(string)commandArgs["name"]}!");
                 });
 
                 ICommand command = parser.Parse(args);

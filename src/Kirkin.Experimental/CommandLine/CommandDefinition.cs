@@ -9,10 +9,10 @@ namespace Kirkin.CommandLine
     /// </summary>
     public sealed class CommandDefinition
     {
-        internal KeyValuePair<string, Action<string[]>> Parameter { get; private set; }
-        internal readonly Dictionary<string, Action<string[]>> ProcessorsByFullName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
-        internal readonly Dictionary<string, Action<string[]>> ProcessorsByShortName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
-        internal readonly List<ICommandArg> Arguments = new List<ICommandArg>();
+        internal ICommandArg Parameter { get; private set; }
+        internal readonly List<ICommandArg> Options = new List<ICommandArg>();
+        internal readonly Dictionary<string, ICommandArg> OptionsByFullName = new Dictionary<string, ICommandArg>(StringComparer.OrdinalIgnoreCase);
+        internal readonly Dictionary<string, ICommandArg> OptionsByShortName = new Dictionary<string, ICommandArg>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// The name of the command being configured.
@@ -23,7 +23,7 @@ namespace Kirkin.CommandLine
         /// Raised when <see cref="ICommand.Execute"/> is called on the command.
         /// When this event fires, it is safe to access command argument values.
         /// </summary>
-        public event Action Executed;
+        public event Action<IDictionary<string, object>> Executed;
 
         internal CommandDefinition(string name)
         {
@@ -32,123 +32,86 @@ namespace Kirkin.CommandLine
             Name = name;
         }
 
-        internal void OnExecuted()
+        internal void OnExecuted(IDictionary<string, object> args)
         {
-            Executed?.Invoke();
+            Executed?.Invoke(args);
+        }
+
+        private void RegisterArg(ICommandArg arg)
+        {
+            if (OptionsByFullName.ContainsKey(arg.Name)) {
+                throw new InvalidOperationException($"Duplicate option name: '{arg.Name}'.");
+            }
+
+            if (!string.IsNullOrEmpty(arg.ShortName) && OptionsByShortName.ContainsKey(arg.ShortName)) {
+                throw new InvalidOperationException($"Duplicate option short name: '{arg.Name}'.");
+            }
+
+            OptionsByFullName.Add(arg.Name, arg);
+            
+            if (!string.IsNullOrEmpty(arg.ShortName)) {
+                OptionsByShortName.Add(arg.ShortName, arg);
+            }
+
+            Options.Add(arg);
         }
 
         /// <summary>
         /// Defines a string option, i.e. "--subscription main" or "-s main" or "/subscription main".
         /// </summary>
-        public CommandArg<string> DefineOption(string name, string shortName = null)
+        public void DefineOption(string name, string shortName = null)
         {
-            Func<string> container = DefineCustomOption(name, shortName, value => value);
-            CommandArg<string> arg = new CommandArg<string>(name, shortName, () => container());
+            CommandArg<string> option = new CommandArg<string>(name, shortName, args =>
+            {
+                if (args == null || args.Length == 0) return null;
 
-            Arguments.Add(arg);
+                if (args.Length > 1) {
+                    throw new InvalidOperationException($"Multiple argument values are not supported for option '{name}'.");
+                }
 
-            return arg;
+                return args[0];
+            });
+
+            RegisterArg(option);
         }
 
         /// <summary>
         /// Defines a string parameter.
         /// </summary>
-        public CommandArg<string> DefineParameter(string name)
+        public void DefineParameter(string name)
         {
-            Func<string> container = DefineCustomParameter(name, args =>
+            CommandArg<string> parameter = new CommandArg<string>(name, null, args =>
             {
+                if (args == null || args.Length == 0) return null;
+
                 if (args.Length > 1) {
-                    throw new InvalidOperationException("Multiple parameter values are not supported.");
+                    throw new InvalidOperationException($"Multiple argument values are not supported for option '{name}'.");
                 }
 
-                return (args.Length) == 0 ? null : args[0];
+                return args[0];
             });
 
-            CommandArg<string> arg = new CommandArg<string>(name, null, container);
-
-            Arguments.Add(arg);
-
-            return arg;
+            Parameter = parameter;
         }
 
         /// <summary>
         /// Defines a boolean switch, i.e. "--validate" or "/validate true".
         /// </summary>
-        public CommandArg<bool> DefineSwitch(string name, string shortName = null)
+        public void DefineSwitch(string name, string shortName = null)
         {
-            Func<string> container = DefineCustomOption(name, shortName, value => value);
-
-            CommandArg<bool> arg = new CommandArg<bool>(name, shortName, () =>
+            CommandArg<bool> option = new CommandArg<bool>(name, shortName, args =>
             {
-                string value = container();
+                if (args == null) return false;
 
-                return value != null && (value.Length == 0 || value.Equals("true", StringComparison.OrdinalIgnoreCase));
-            });
-
-            Arguments.Add(arg);
-
-            return arg;
-        }
-
-        internal Func<T> DefineCustomOption<T>(string name, string shortName, Func<string, T> valueConverter)
-        {
-            return DefineCustomOptionList(name, shortName, args =>
-            {
-                if (args.Length == 0) return valueConverter(string.Empty);
-                if (args.Length == 1) return valueConverter(args[0]);
-
-                throw new InvalidOperationException($"Multiple argument values are not supported for option '{name}'.");
-            });
-        }
-
-        private Func<T> DefineCustomOptionList<T>(string name, string shortName, Func<string[], T> valueConverter)
-        {
-            bool ready = false;
-            T value = default(T);
-
-            Action<string[]> processor = args =>
-            {
-                value = (args == null) ? default(T) : valueConverter(args);
-                ready = true;
-            };
-
-            ProcessorsByFullName.Add(name, processor);
-
-            if (!string.IsNullOrEmpty(shortName)) ProcessorsByShortName.Add(shortName, processor);
-
-            return () =>
-            {
-                if (!ready) {
-                    throw new InvalidOperationException("Value is undefined until Execute is called on the command.");
+                if (args.Length > 1) {
+                    throw new InvalidOperationException($"Multiple argument values are not supported for switch '{name}'.");
                 }
 
-                return value;
-            };
-        }
+                return args.Length == 0 // A switch does not need to have a value to be true.
+                    || Convert.ToBoolean(args[0]);
+            });
 
-        private Func<T> DefineCustomParameter<T>(string name, Func<string[], T> valueConverter)
-        {
-            if (Parameter.Key != null) throw new InvalidOperationException($"Command '{Name}' already defines a parameter.");
-
-            bool ready = false;
-            T value = default(T);
-
-            Action<string[]> processor = args =>
-            {
-                value = (args == null) ? default(T) : valueConverter(args);
-                ready = true;
-            };
-
-            Parameter = new KeyValuePair<string, Action<string[]>>(name, processor);
-
-            return () =>
-            {
-                if (!ready) {
-                    throw new InvalidOperationException("Value is undefined until Execute is called on the command.");
-                }
-
-                return value;
-            };
+            RegisterArg(option);
         }
 
         public override string ToString()
@@ -158,32 +121,23 @@ namespace Kirkin.CommandLine
 
             sb.Append(Name);
 
-            string parameterName = Parameter.Key;
-
-            if (parameterName != null)
-            {
-                sb.Append(' ');
-                sb.Append('<');
-                sb.Append(parameterName);
-                sb.Append('>');
+            if (Parameter != null) {
+                sb.Append($" <{Parameter.Name}>");
             }
 
-            foreach (ICommandArg parameter in Arguments)
+            foreach (ICommandArg option in Options)
             {
-                if (!string.Equals(parameter.Name, parameterName, StringComparison.OrdinalIgnoreCase))
+                sb.Append(" [");
+
+                if (option.ShortName!= null)
                 {
-                    sb.Append(" [");
-
-                    if (parameter.ShortName!= null)
-                    {
-                        sb.Append('-');
-                        sb.Append(parameter.ShortName);
-                        sb.Append('|');
-                    }
-
-                    sb.Append($"--{parameter.Name}");
-                    sb.Append(" <arg>]");
+                    sb.Append('-');
+                    sb.Append(option.ShortName);
+                    sb.Append('|');
                 }
+
+                sb.Append($"--{option.Name}");
+                sb.Append(" <arg>]");
             }
 
             return sb.ToString();

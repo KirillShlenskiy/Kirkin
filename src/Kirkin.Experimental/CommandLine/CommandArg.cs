@@ -6,9 +6,9 @@ namespace Kirkin.CommandLine
     /// Command line argument whose value is only available once
     /// <see cref="CommandLineParser.Parse(string[])"/> has been called.
     /// </summary>
-    public sealed class CommandArg<T> : ICommandArg
+    internal sealed class CommandArg<T> : ICommandArg
     {
-        private readonly Func<T> _resolver;
+        private readonly Func<string[], T> _valueConverter;
 
         /// <summary>
         /// Parameter name.
@@ -20,44 +20,35 @@ namespace Kirkin.CommandLine
         /// </summary>
         public string ShortName { get; }
 
-        /// <summary>
-        /// Parsed argument value. Only available once <see cref="CommandLineParser.Parse(string[])"/> has been called.
-        /// </summary>
-        public T Value
-        {
-            get
-            {
-                return _resolver();
-            }
-        }
-
-        object ICommandArg.Value
-        {
-            get
-            {
-                return Value;
-            }
-        }
-
-        internal CommandArg(string name, string shortName, Func<T> resolver)
+        internal CommandArg(string name, string shortName, Func<string[], T> valueConverter)
         {
             Name = name;
             ShortName = shortName;
-            _resolver = resolver;
+            _valueConverter = valueConverter;
         }
 
+        /// <summary>
+        /// Parses the given arguments and converts them to an appropriate value.
+        /// </summary>
+        public T GetValue(string[] args)
+        {
+            return _valueConverter(args);
+        }
+
+        /// <summary>
+        /// Parses the given arguments and converts them to an appropriate value.
+        /// </summary>
+        object ICommandArg.GetValue(string[] args)
+        {
+            return GetValue(args);
+        }
+
+        /// <summary>
+        /// Returns the description of this instance.
+        /// </summary>
         public override string ToString()
         {
-            string name = (ShortName == null) ? Name : $"{ShortName}|{Name}";
-
-            try
-            {
-                return $"{name}: {Value}";
-            }
-            catch (InvalidOperationException)
-            {
-                return $"{name}: value not available yet.";
-            }
+            return $"{ShortName}|{Name}";
         }
     }
 }

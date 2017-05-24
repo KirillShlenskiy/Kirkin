@@ -76,20 +76,21 @@ namespace Kirkin.CommandLine
                 currentChunk.Add(arg);
             }
 
-            HashSet<Action<string[]>> seenProcessors = new HashSet<Action<string[]>>();
+            HashSet<ICommandArg> seenParameters = new HashSet<ICommandArg>();
+            Dictionary<string, object> argValues = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
             foreach (List<string> chunk in chunks)
             {
-                Action<string[]> processor = null;
-
                 if (chunk[0].StartsWith("-") || chunk[0].StartsWith("/"))
                 {
                     // Option.
+                    ICommandArg option = null;
+
                     if (chunk[0].StartsWith("--"))
                     {
                         string fullName = chunk[0].Substring(2);
 
-                        if (!definition.ProcessorsByFullName.TryGetValue(fullName, out processor)) {
+                        if (!definition.OptionsByFullName.TryGetValue(fullName, out option)) {
                             throw new InvalidOperationException($"Unable to find option with name '{fullName}'.");
                         }
                     }
@@ -97,7 +98,7 @@ namespace Kirkin.CommandLine
                     {
                         string fullName = chunk[0].Substring(1);
 
-                        if (!definition.ProcessorsByFullName.TryGetValue(fullName, out processor)) {
+                        if (!definition.OptionsByFullName.TryGetValue(fullName, out option)) {
                             throw new InvalidOperationException($"Unable to find option with name '{fullName}'.");
                         }
                     }
@@ -105,48 +106,49 @@ namespace Kirkin.CommandLine
                     {
                         string shortName = chunk[0].Substring(1);
 
-                        if (!definition.ProcessorsByShortName.TryGetValue(shortName, out processor)) {
+                        if (!definition.OptionsByShortName.TryGetValue(shortName, out option)) {
                             throw new InvalidOperationException($"Unable to find option with short name '{shortName}'.");
                         }
                     }
 
-                    if (processor == null) {
+                    if (option == null) {
                         throw new InvalidOperationException($"Unhandled syntax token: '{chunk[0]}'.");
                     }
 
-                    if (!seenProcessors.Add(processor)) {
+                    if (!seenParameters.Add(option)) {
                         throw new InvalidOperationException($"Duplicate option: '{chunk[0]}'.");
                     }
 
-                    processor(chunk.Skip(1).ToArray());
+                    // TODO: Optimise.
+                    argValues.Add(option.Name, option.GetValue(chunk.Skip(1).ToArray()));
                 }
                 else
                 {
                     // Parameter.
-                    if (definition.Parameter.Key == null) {
+                    if (definition.Parameter == null) {
                         throw new InvalidOperationException($"Command '{definition.Name}' does not define a parameter.");
                     }
 
-                    processor = definition.Parameter.Value;
-
-                    if (!seenProcessors.Add(processor)) {
+                    if (!seenParameters.Add(definition.Parameter)) {
                         throw new InvalidOperationException("Duplicate parameter value detected.");
                     }
 
-                    processor(chunk.ToArray());
+                    argValues.Add(definition.Parameter.Name, definition.Parameter.GetValue(chunk.ToArray()));
                 }
             }
 
-            HashSet<Action<string[]>> unusedProcessors = new HashSet<Action<string[]>>(definition.ProcessorsByFullName.Values);
-
-            unusedProcessors.UnionWith(definition.ProcessorsByShortName.Values);
-            unusedProcessors.ExceptWith(seenProcessors);
-
-            foreach (Action<string[]> processor in unusedProcessors) {
-                processor(null);
+            if (definition.Parameter != null && !seenParameters.Contains(definition.Parameter)) {
+                argValues.Add(definition.Parameter.Name, null);
             }
 
-            return new DefaultCommand(definition);
+            foreach (ICommandArg option in definition.Options)
+            {
+                if (!seenParameters.Contains(option)) {
+                    argValues.Add(option.Name, option.GetValue(null));
+                }
+            }
+
+            return new DefaultCommand(definition, argValues);
         }
     }
 }

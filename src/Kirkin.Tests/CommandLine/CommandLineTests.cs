@@ -22,22 +22,20 @@ namespace Kirkin.Tests.CommandLine
 
             string subscription = null;
             bool validate = false;
-            CommandArg<string> subscriptionArg = null;
 
             parser.DefineCommand("sync", sync =>
             {
-                subscriptionArg = sync.DefineOption("subscription", "s");
-                CommandArg<bool> validateArg = sync.DefineSwitch("validate", "v");
+                sync.DefineOption("subscription", "s");
+                sync.DefineSwitch("validate", "v");
 
-                sync.Executed += () =>
+                sync.Executed += args =>
                 {
-                    subscription = subscriptionArg.Value;
-                    validate = validateArg.Value;
+                    subscription = (string)args["subscription"];
+                    validate = (bool)args["validate"];
                 };
             });
 
             Assert.Throws<InvalidOperationException>(() => parser.Parse("uuu"));
-            Assert.Throws<InvalidOperationException>(() => { var _ = subscriptionArg.Value; });
 
             {
                 ICommand command = parser.Parse("sync --subscription main /VALIDATE TRUE".Split(' '));
