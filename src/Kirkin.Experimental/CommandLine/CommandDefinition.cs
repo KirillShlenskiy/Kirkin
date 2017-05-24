@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Kirkin.CommandLine
 {
@@ -8,7 +9,7 @@ namespace Kirkin.CommandLine
     /// </summary>
     public sealed class CommandDefinition
     {
-        internal Action<string[]> Parameter { get; private set; }
+        internal KeyValuePair<string, Action<string[]>> Parameter { get; private set; }
         internal readonly Dictionary<string, Action<string[]>> ProcessorsByFullName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
         internal readonly Dictionary<string, Action<string[]>> ProcessorsByShortName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
         internal readonly List<ICommandArg> Arguments = new List<ICommandArg>();
@@ -127,7 +128,7 @@ namespace Kirkin.CommandLine
 
         private Func<T> DefineCustomParameter<T>(string name, Func<string[], T> valueConverter)
         {
-            if (Parameter != null) throw new InvalidOperationException($"Command '{Name}' already defines a parameter.");
+            if (Parameter.Key != null) throw new InvalidOperationException($"Command '{Name}' already defines a parameter.");
 
             bool ready = false;
             T value = default(T);
@@ -138,7 +139,7 @@ namespace Kirkin.CommandLine
                 ready = true;
             };
 
-            Parameter = processor;
+            Parameter = new KeyValuePair<string, Action<string[]>>(name, processor);
 
             return () =>
             {
@@ -152,7 +153,40 @@ namespace Kirkin.CommandLine
 
         public override string ToString()
         {
-            return Name;
+            // replmon sync [-v] [-l <arg>] [-p <arg>...] [--] <subscription>
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(Name);
+
+            string parameterName = Parameter.Key;
+
+            if (parameterName != null)
+            {
+                sb.Append(' ');
+                sb.Append('<');
+                sb.Append(parameterName);
+                sb.Append('>');
+            }
+
+            foreach (ICommandArg parameter in Arguments)
+            {
+                if (!string.Equals(parameter.Name, parameterName, StringComparison.OrdinalIgnoreCase))
+                {
+                    sb.Append(" [");
+
+                    if (parameter.ShortName!= null)
+                    {
+                        sb.Append('-');
+                        sb.Append(parameter.ShortName);
+                        sb.Append('|');
+                    }
+
+                    sb.Append($"--{parameter.Name}");
+                    sb.Append(" <arg>]");
+                }
+            }
+
+            return sb.ToString();
         }
     }
 }

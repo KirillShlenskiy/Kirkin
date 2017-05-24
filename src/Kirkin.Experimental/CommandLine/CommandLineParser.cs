@@ -123,11 +123,11 @@ namespace Kirkin.CommandLine
                 else
                 {
                     // Parameter.
-                    if (definition.Parameter == null) {
+                    if (definition.Parameter.Key == null) {
                         throw new InvalidOperationException($"Command '{definition.Name}' does not define a parameter.");
                     }
 
-                    processor = definition.Parameter;
+                    processor = definition.Parameter.Value;
 
                     if (!seenProcessors.Add(processor)) {
                         throw new InvalidOperationException("Duplicate parameter value detected.");
