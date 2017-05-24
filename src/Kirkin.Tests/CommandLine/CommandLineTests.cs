@@ -102,5 +102,36 @@ namespace Kirkin.Tests.CommandLine
             Assert.AreEqual("extra", (string)command.Arguments["subscription"]);
             Assert.True((bool)command.Arguments["validate"]);
         }
+
+        [Test]
+        public void DefaultValues()
+        {
+            CommandLineParser parser = new CommandLineParser();
+
+            parser.DefineCommand("sync", sync =>
+            {
+                sync.DefineParameter("subscription");
+                sync.DefineSwitch("validate", shortName: "v");
+                sync.DefineOption("log", shortName: "l");
+            });
+
+            {
+                ICommand command = parser.Parse("sync --validate --log zzz.txt".Split(' '));
+
+                Assert.Null(command.Arguments["subscription"]);
+            }
+
+            {
+                ICommand command = parser.Parse("sync main --log zzz.txt".Split(' '));
+
+                Assert.False((bool)command.Arguments["validate"]);
+            }
+
+            {
+                ICommand command = parser.Parse("sync main --validate".Split(' '));
+
+                Assert.Null(command.Arguments["log"]);
+            }
+        }
     }
 }
