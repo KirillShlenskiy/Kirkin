@@ -113,7 +113,15 @@ namespace Kirkin.CommandLine
                     sb.Append($"-{option.ShortName}|");
                 }
 
-                sb.Append($"--{option.Name} <arg>]");
+                if (option is SwitchCommandParameter)
+                {
+                    // Switches don't have arguments.
+                    sb.Append($"--{option.Name}]");
+                }
+                else
+                {
+                    sb.Append($"--{option.Name} <arg>]");
+                }
             }
 
             return sb.ToString();

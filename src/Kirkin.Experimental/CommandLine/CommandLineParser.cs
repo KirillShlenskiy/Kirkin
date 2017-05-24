@@ -65,27 +65,40 @@ namespace Kirkin.CommandLine
         private static ICommand BuildCommand(CommandDefinition definition, string[] args)
         {
             // TODO: Special handling for "--help", "/?".
-            List<List<string>> chunks = new List<List<string>>();
-            List<string> currentChunk = null;
+            List<List<string>> tokenGroups = new List<List<string>>();
+            List<string> currentTokenGroup = null;
 
             for (int i = 1; i < args.Length; i++) // Always skip first element.
             {
                 string arg = args[i];
 
-                if (currentChunk == null || arg.StartsWith("-") || arg.StartsWith("/"))
+                if (currentTokenGroup == null || arg.StartsWith("-") || arg.StartsWith("/"))
                 {
-                    currentChunk = new List<string>();
+                    currentTokenGroup = new List<string>();
 
-                    chunks.Add(currentChunk);
+                    tokenGroups.Add(currentTokenGroup);
                 }
 
-                currentChunk.Add(arg);
+                int nameValueSplitIndex = arg.IndexOf(':');
+
+                if (nameValueSplitIndex == -1) nameValueSplitIndex = arg.IndexOf('=');
+
+                if (nameValueSplitIndex != -1)
+                {
+                    // Name/value pair.
+                    currentTokenGroup.Add(arg.Substring(0, nameValueSplitIndex));
+                    currentTokenGroup.Add(arg.Substring(nameValueSplitIndex + 1));
+                }
+                else
+                {
+                    currentTokenGroup.Add(arg);
+                }
             }
 
             HashSet<ICommandParameter> seenParameters = new HashSet<ICommandParameter>();
             Dictionary<string, object> argValues = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
-            foreach (List<string> chunk in chunks)
+            foreach (List<string> chunk in tokenGroups)
             {
                 if (chunk[0].StartsWith("-") || chunk[0].StartsWith("/"))
                 {

@@ -14,16 +14,34 @@ namespace cli
 
                 parser.DefineCommand("hello", hello =>
                 {
-                    hello.DefineOption("name", shortName: "n");
+                    hello.DefineParameter("name");
+                    hello.DefineSwitch("sir", shortName: "s");
+                    hello.DefineOption("surname");
 
-                    hello.Executed += (s, e) => Console.WriteLine($"Hello {(string)e.Args["name"]}!");
+                    hello.Executed += (s, e) =>
+                    {
+                        string name = (string)e.Args["name"];
+                        bool sir = (bool)e.Args["sir"];
+                        string surname = (string)e.Args["surname"];
+
+                        Console.WriteLine($"Hello {(sir ? "sir " : "")}{name}{(surname == null ? "" : " " + surname)}!");
+                    };
                 });
 
                 parser.DefineCommand("goodbye", goodbye =>
                 {
                     goodbye.DefineParameter("name");
+                    goodbye.DefineSwitch("sir", shortName: "s");
+                    goodbye.DefineOption("surname");
 
-                    goodbye.Executed += (s, e) => Console.WriteLine($"Goodbye {(string)e.Args["name"]}!");
+                    goodbye.Executed += (s, e) =>
+                    {
+                        string name = (string)e.Args["name"];
+                        bool sir = (bool)e.Args["sir"];
+                        string surname = (string)e.Args["surname"];
+
+                        Console.WriteLine($"Goodbye {(sir ? "sir " : "")}{name}{(surname == null ? "" : " " + surname)}");
+                    };
                 });
 
                 ICommand command = parser.Parse(args);

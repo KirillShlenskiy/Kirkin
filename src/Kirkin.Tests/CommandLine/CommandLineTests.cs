@@ -133,5 +133,35 @@ namespace Kirkin.Tests.CommandLine
                 Assert.Null(command.Arguments["log"]);
             }
         }
+
+        [Test]
+        public void OptionValueVariants()
+        {
+            CommandLineParser parser = new CommandLineParser();
+
+            parser.DefineCommand("sync", sync =>
+            {
+                sync.DefineParameter("subscription");
+                sync.DefineOption("log", shortName: "l");
+            });
+
+            {
+                ICommand command = parser.Parse("sync --log zzz.txt".Split(' '));
+
+                Assert.AreEqual("zzz.txt", command.Arguments["log"]);
+            }
+
+            {
+                ICommand command = parser.Parse("sync --log=zzz.txt".Split(' '));
+
+                Assert.AreEqual("zzz.txt", command.Arguments["log"]);
+            }
+
+            {
+                ICommand command = parser.Parse("sync --log:zzz.txt".Split(' '));
+
+                Assert.AreEqual("zzz.txt", command.Arguments["log"]);
+            }
+        }
     }
 }
