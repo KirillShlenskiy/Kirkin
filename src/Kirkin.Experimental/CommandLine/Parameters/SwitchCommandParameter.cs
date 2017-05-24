@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Kirkin.CommandLine.Parameters
 {
@@ -10,15 +11,11 @@ namespace Kirkin.CommandLine.Parameters
         {
         }
 
-        public override bool ParseArgs(string[] args)
+        public override bool ParseArgs(List<string> args)
         {
-            if (args == null) return false;
+            if (args.Count > 1) throw new InvalidOperationException($"Multiple argument values are not supported for switch '{Name}'.");
 
-            if (args.Length > 1) {
-                throw new InvalidOperationException($"Multiple argument values are not supported for switch '{Name}'.");
-            }
-
-            return args.Length == 0 // A switch does not need to have a value to be true.
+            return args.Count == 0 // A switch does not need to have a value to be true.
                 || Convert.ToBoolean(args[0]);
         }
     }

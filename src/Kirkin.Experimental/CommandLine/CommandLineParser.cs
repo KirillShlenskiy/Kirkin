@@ -16,7 +16,11 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Returns the collection of command definitions supported by this parser.
         /// </summary>
+#if NET_40
+        public IEnumerable<CommandDefinition> CommandDefinitions
+#else
         public IReadOnlyList<CommandDefinition> CommandDefinitions
+#endif
         {
             get
             {
@@ -52,20 +56,22 @@ namespace Kirkin.CommandLine
             string commandName = args[0];
 
             if (_commandDefinitions.TryGetValue(commandName, out CommandDefinition definition)) {
-                return BuildCommand(definition, args.Skip(1).ToArray()); // TODO: Optimize.
+                return BuildCommand(definition, args);
             }
 
             throw new InvalidOperationException($"Unknown command: '{commandName}'.");
         }
 
-        private static ICommand BuildCommand(CommandDefinition definition, string[] args) // ArraySlice<string>?
+        private static ICommand BuildCommand(CommandDefinition definition, string[] args)
         {
             // TODO: Special handling for "--help", "/?".
             List<List<string>> chunks = new List<List<string>>();
             List<string> currentChunk = null;
 
-            foreach (string arg in args)
+            for (int i = 1; i < args.Length; i++) // Always skip first element.
             {
+                string arg = args[i];
+
                 if (currentChunk == null || arg.StartsWith("-") || arg.StartsWith("/"))
                 {
                     currentChunk = new List<string>();
@@ -119,8 +125,8 @@ namespace Kirkin.CommandLine
                         throw new InvalidOperationException($"Duplicate option: '{chunk[0]}'.");
                     }
 
-                    // TODO: Optimise.
-                    argValues.Add(option.Name, option.ParseArgs(chunk.Skip(1).ToArray()));
+                    chunk.RemoveAt(0);
+                    argValues.Add(option.Name, option.ParseArgs(chunk));
                 }
                 else
                 {
@@ -133,18 +139,18 @@ namespace Kirkin.CommandLine
                         throw new InvalidOperationException("Duplicate parameter value detected.");
                     }
 
-                    argValues.Add(definition.Parameter.Name, definition.Parameter.ParseArgs(chunk.ToArray()));
+                    argValues.Add(definition.Parameter.Name, definition.Parameter.ParseArgs(chunk));
                 }
             }
 
             if (definition.Parameter != null && !seenParameters.Contains(definition.Parameter)) {
-                argValues.Add(definition.Parameter.Name, null);
+                argValues.Add(definition.Parameter.Name, definition.Parameter.GetDefaultValue());
             }
 
             foreach (ICommandParameter option in definition.Options)
             {
                 if (!seenParameters.Contains(option)) {
-                    argValues.Add(option.Name, option.ParseArgs(null));
+                    argValues.Add(option.Name, option.GetDefaultValue());
                 }
             }
 

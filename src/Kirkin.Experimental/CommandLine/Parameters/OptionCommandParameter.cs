@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Kirkin.CommandLine.Parameters
 {
@@ -10,13 +11,10 @@ namespace Kirkin.CommandLine.Parameters
         {
         }
 
-        public override string ParseArgs(string[] args)
+        public override string ParseArgs(List<string> args)
         {
-            if (args == null || args.Length == 0) return null;
-
-            if (args.Length > 1) {
-                throw new InvalidOperationException($"Multiple argument values are not supported for option '{Name}'.");
-            }
+            if (args.Count == 0) return null;
+            if (args.Count > 1) throw new InvalidOperationException($"Multiple argument values are not supported for option '{Name}'.");
 
             return args[0];
         }

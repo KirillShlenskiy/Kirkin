@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Kirkin.CommandLine.Parameters
 {
     /// <summary>
     /// Command parameter definition.
     /// </summary>
-    internal abstract class CommandParameterBase<T> : ICommandParameter
+    internal abstract class CommandParameterBase<T>
+        : ICommandParameter
     {
         /// <summary>
         /// Parameter name.
@@ -31,14 +33,30 @@ namespace Kirkin.CommandLine.Parameters
         /// <summary>
         /// Parses the given arguments and converts them to an appropriate value.
         /// </summary>
-        public abstract T ParseArgs(string[] args);
+        public abstract T ParseArgs(List<string> args);
+
+        /// <summary>
+        /// Returns the default value to be used when the parameter, switch or option is omitted.
+        /// </summary>
+        public virtual T GetDefaultValue()
+        {
+            return default(T);
+        }
 
         /// <summary>
         /// Parses the given arguments and converts them to an appropriate value.
         /// </summary>
-        object ICommandParameter.ParseArgs(string[] args)
+        object ICommandParameter.ParseArgs(List<string> args)
         {
             return ParseArgs(args);
+        }
+
+        /// <summary>
+        /// Returns the default value to be used when the parameter, switch or option is omitted.
+        /// </summary>
+        object ICommandParameter.GetDefaultValue()
+        {
+            return GetDefaultValue();
         }
 
         /// <summary>

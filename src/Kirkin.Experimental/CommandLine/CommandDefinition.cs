@@ -11,6 +11,8 @@ namespace Kirkin.CommandLine
     /// </summary>
     public sealed class CommandDefinition
     {
+        // Every command has zero or one parameter ("sync ==>extra<== --validate --log zzz.txt"),
+        // and zero or more options/switches ("sync extra ==>--validate --log zzz.txt<==").
         internal CommandParameter Parameter { get; private set; }
         internal readonly List<ICommandParameter> Options = new List<ICommandParameter>();
         internal readonly Dictionary<string, ICommandParameter> OptionsByFullName = new Dictionary<string, ICommandParameter>(StringComparer.OrdinalIgnoreCase);
@@ -54,7 +56,7 @@ namespace Kirkin.CommandLine
         }
 
         /// <summary>
-        /// Defines a string parameter.
+        /// Defines a string parameter (unqualified value immediately following command name).
         /// </summary>
         public void DefineParameter(string name)
         {

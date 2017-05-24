@@ -9,7 +9,7 @@ namespace Kirkin.Collections.Generic
     /// in the slice of an array whose bounds are defined by
     /// this instance's offset and count.
     /// </summary>
-    public struct ArraySlice<T>
+    internal struct ArraySlice<T>
         : IReadOnlyList<T>, ICollection<T>
     {
         private readonly T[] _array;
@@ -30,6 +30,7 @@ namespace Kirkin.Collections.Generic
             if (array == null) throw new ArgumentNullException(nameof(array));
             if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
             if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
+            if (offset + count > array.Length) throw new ArgumentOutOfRangeException();
 
             _array = array;
             _offset = offset;
