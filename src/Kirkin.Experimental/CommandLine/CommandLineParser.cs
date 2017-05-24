@@ -11,7 +11,7 @@ namespace Kirkin.CommandLine
     /// </summary>
     public sealed class CommandLineParser
     {
-        private readonly Dictionary<string, CommandDefinition> _commands = new Dictionary<string, CommandDefinition>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, CommandDefinition> _commandDefinitions = new Dictionary<string, CommandDefinition>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Returns the collection of command definitions supported by this parser.
@@ -20,7 +20,7 @@ namespace Kirkin.CommandLine
         {
             get
             {
-                return _commands.Values.ToArray();
+                return _commandDefinitions.Values.ToArray();
             }
         }
 
@@ -29,7 +29,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public void DefineCommand(string name, Action<CommandDefinition> configureAction)
         {
-            if (_commands.ContainsKey(name)) {
+            if (_commandDefinitions.ContainsKey(name)) {
                 throw new InvalidOperationException($"Command '{name}' already defined.");
             }
 
@@ -37,7 +37,7 @@ namespace Kirkin.CommandLine
 
             configureAction(definition);
 
-            _commands.Add(name, definition);
+            _commandDefinitions.Add(name, definition);
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Kirkin.CommandLine
             // TODO: Check reserved keywords (i.e. "--help", "/?").
             string commandName = args[0];
 
-            if (_commands.TryGetValue(commandName, out CommandDefinition definition)) {
+            if (_commandDefinitions.TryGetValue(commandName, out CommandDefinition definition)) {
                 return BuildCommand(definition, args.Skip(1).ToArray()); // TODO: Optimize.
             }
 

@@ -27,7 +27,7 @@ namespace Kirkin.CommandLine.Commands
 
         public void Execute()
         {
-            _definition.OnExecuted(Arguments);
+            _definition.OnExecuted(this, Arguments);
         }
 
         public override string ToString()

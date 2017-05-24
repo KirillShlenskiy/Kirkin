@@ -28,10 +28,10 @@ namespace Kirkin.Tests.CommandLine
                 sync.DefineOption("subscription", "s");
                 sync.DefineSwitch("validate", "v");
 
-                sync.Executed += args =>
+                sync.Executed += (s, e) =>
                 {
-                    subscription = (string)args["subscription"];
-                    validate = (bool)args["validate"];
+                    subscription = (string)e.Args["subscription"];
+                    validate = (bool)e.Args["validate"];
                 };
             });
 

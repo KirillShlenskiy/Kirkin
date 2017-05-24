@@ -16,7 +16,14 @@ namespace cli
                 {
                     hello.DefineOption("name", shortName: "n");
 
-                    hello.Executed += commandArgs => Console.WriteLine($"Hello {(string)commandArgs["name"]}!");
+                    hello.Executed += (s, e) => Console.WriteLine($"Hello {(string)e.Args["name"]}!");
+                });
+
+                parser.DefineCommand("goodbye", goodbye =>
+                {
+                    goodbye.DefineParameter("name");
+
+                    goodbye.Executed += (s, e) => Console.WriteLine($"Goodbye {(string)e.Args["name"]}!");
                 });
 
                 ICommand command = parser.Parse(args);

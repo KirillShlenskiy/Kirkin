@@ -23,7 +23,7 @@ namespace Kirkin.CommandLine
         /// Raised when <see cref="ICommand.Execute"/> is called on the command.
         /// When this event fires, it is safe to access command argument values.
         /// </summary>
-        public event Action<IDictionary<string, object>> Executed;
+        public event EventHandler<CommandExecutedEventArgs> Executed;
 
         internal CommandDefinition(string name)
         {
@@ -32,28 +32,14 @@ namespace Kirkin.CommandLine
             Name = name;
         }
 
-        internal void OnExecuted(IDictionary<string, object> args)
+        internal void OnExecuted(ICommand command, IDictionary<string, object> args)
         {
-            Executed?.Invoke(args);
-        }
+            if (Executed != null)
+            {
+                CommandExecutedEventArgs e = new CommandExecutedEventArgs(command, args);
 
-        private void RegisterArg(ICommandArg arg)
-        {
-            if (OptionsByFullName.ContainsKey(arg.Name)) {
-                throw new InvalidOperationException($"Duplicate option name: '{arg.Name}'.");
+                Executed(command, e);
             }
-
-            if (!string.IsNullOrEmpty(arg.ShortName) && OptionsByShortName.ContainsKey(arg.ShortName)) {
-                throw new InvalidOperationException($"Duplicate option short name: '{arg.Name}'.");
-            }
-
-            OptionsByFullName.Add(arg.Name, arg);
-            
-            if (!string.IsNullOrEmpty(arg.ShortName)) {
-                OptionsByShortName.Add(arg.ShortName, arg);
-            }
-
-            Options.Add(arg);
         }
 
         /// <summary>
@@ -114,6 +100,25 @@ namespace Kirkin.CommandLine
             RegisterArg(option);
         }
 
+        private void RegisterArg(ICommandArg arg)
+        {
+            if (OptionsByFullName.ContainsKey(arg.Name)) {
+                throw new InvalidOperationException($"Duplicate option name: '{arg.Name}'.");
+            }
+
+            if (!string.IsNullOrEmpty(arg.ShortName) && OptionsByShortName.ContainsKey(arg.ShortName)) {
+                throw new InvalidOperationException($"Duplicate option short name: '{arg.Name}'.");
+            }
+
+            OptionsByFullName.Add(arg.Name, arg);
+            
+            if (!string.IsNullOrEmpty(arg.ShortName)) {
+                OptionsByShortName.Add(arg.ShortName, arg);
+            }
+
+            Options.Add(arg);
+        }
+
         public override string ToString()
         {
             // replmon sync [-v] [-l <arg>] [-p <arg>...] [--] <subscription>
@@ -129,15 +134,11 @@ namespace Kirkin.CommandLine
             {
                 sb.Append(" [");
 
-                if (option.ShortName!= null)
-                {
-                    sb.Append('-');
-                    sb.Append(option.ShortName);
-                    sb.Append('|');
+                if (option.ShortName!= null) {
+                    sb.Append($"-{option.ShortName}|");
                 }
 
-                sb.Append($"--{option.Name}");
-                sb.Append(" <arg>]");
+                sb.Append($"--{option.Name} <arg>]");
             }
 
             return sb.ToString();
