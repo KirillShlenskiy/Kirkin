@@ -59,7 +59,7 @@ namespace Kirkin.CommandLine
                 return BuildCommand(definition, args);
             }
 
-            throw new InvalidOperationException($"Unknown command: '{commandName}'.");
+            throw new InvalidOperationException($"Unknown command '{commandName}'.");
         }
 
         private static ICommand BuildCommand(CommandDefinition definition, string[] args)
@@ -110,7 +110,7 @@ namespace Kirkin.CommandLine
                         string fullName = chunk[0].Substring(2);
 
                         if (!definition.OptionsByFullName.TryGetValue(fullName, out option)) {
-                            throw new InvalidOperationException($"Unable to find option with name '{fullName}'.");
+                            throw new InvalidOperationException($"Unknown option '{fullName}'.");
                         }
                     }
                     else if (chunk[0].StartsWith("/"))
@@ -118,7 +118,7 @@ namespace Kirkin.CommandLine
                         string fullName = chunk[0].Substring(1);
 
                         if (!definition.OptionsByFullName.TryGetValue(fullName, out option)) {
-                            throw new InvalidOperationException($"Unable to find option with name '{fullName}'.");
+                            throw new InvalidOperationException($"Unknown option '{fullName}'.");
                         }
                     }
                     else if (chunk[0].StartsWith("-"))
@@ -126,16 +126,16 @@ namespace Kirkin.CommandLine
                         string shortName = chunk[0].Substring(1);
 
                         if (!definition.OptionsByShortName.TryGetValue(shortName, out option)) {
-                            throw new InvalidOperationException($"Unable to find option with short name '{shortName}'.");
+                            throw new InvalidOperationException($"Unknown option '{shortName}'.");
                         }
                     }
 
                     if (option == null) {
-                        throw new InvalidOperationException($"Unhandled syntax token: '{chunk[0]}'.");
+                        throw new InvalidOperationException($"Unhandled syntax token '{chunk[0]}'.");
                     }
 
                     if (!seenParameters.Add(option)) {
-                        throw new InvalidOperationException($"Duplicate option: '{chunk[0]}'.");
+                        throw new InvalidOperationException($"Duplicate option '{chunk[0]}'.");
                     }
 
                     chunk.RemoveAt(0);
@@ -149,7 +149,7 @@ namespace Kirkin.CommandLine
                     }
 
                     if (!seenParameters.Add(definition.Parameter)) {
-                        throw new InvalidOperationException("Duplicate parameter value detected.");
+                        throw new InvalidOperationException("Duplicate parameter value.");
                     }
 
                     argValues.Add(definition.Parameter.Name, definition.Parameter.ParseArgs(chunk));
