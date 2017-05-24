@@ -25,16 +25,8 @@ namespace cli
             }
             catch (Exception ex)
             {
-                ConsoleColor color = Console.ForegroundColor;
-
-                try
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
+                using (ConsoleFormatter.ForegroundColorScope(ConsoleColor.Red)) {
                     Console.Error.WriteLine(ex.Message);
-                }
-                finally
-                {
-                    Console.ForegroundColor = color;
                 }
 
                 return ex.HResult;

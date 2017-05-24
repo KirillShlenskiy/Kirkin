@@ -64,6 +64,7 @@
     <Compile Include="CommandLine\CommandDefinition.cs" />
     <Compile Include="CommandLine\CommandLineParser.cs" />
     <Compile Include="CommandLine\Commands\HelpCommand.cs" />
+    <Compile Include="CommandLine\ConsoleFormatter.cs" />
     <Compile Include="CommandLine\ICommand.cs" />
     <Compile Include="CommandLine\ICommandArg.cs" />
     <Compile Include="ConsoleRunner.cs" />
