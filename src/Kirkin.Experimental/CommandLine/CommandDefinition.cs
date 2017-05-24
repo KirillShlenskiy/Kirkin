@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
+using Kirkin.CommandLine.Parameters;
+
 namespace Kirkin.CommandLine
 {
     /// <summary>
@@ -9,7 +11,7 @@ namespace Kirkin.CommandLine
     /// </summary>
     public sealed class CommandDefinition
     {
-        internal ICommandParameter Parameter { get; private set; }
+        internal CommandParameter Parameter { get; private set; }
         internal readonly List<ICommandParameter> Options = new List<ICommandParameter>();
         internal readonly Dictionary<string, ICommandParameter> OptionsByFullName = new Dictionary<string, ICommandParameter>(StringComparer.OrdinalIgnoreCase);
         internal readonly Dictionary<string, ICommandParameter> OptionsByShortName = new Dictionary<string, ICommandParameter>(StringComparer.OrdinalIgnoreCase);
@@ -46,16 +48,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public void DefineOption(string name, string shortName = null)
         {
-            CommandParameter<string> option = new CommandParameter<string>(name, shortName, args =>
-            {
-                if (args == null || args.Length == 0) return null;
-
-                if (args.Length > 1) {
-                    throw new InvalidOperationException($"Multiple argument values are not supported for option '{name}'.");
-                }
-
-                return args[0];
-            });
+            ICommandParameter option = new OptionCommandParameter(name, shortName);
 
             RegisterOption(option);
         }
@@ -65,16 +58,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public void DefineParameter(string name)
         {
-            CommandParameter<string> parameter = new CommandParameter<string>(name, null, args =>
-            {
-                if (args == null || args.Length == 0) return null;
-
-                if (args.Length > 1) {
-                    throw new InvalidOperationException($"Multiple argument values are not supported for option '{name}'.");
-                }
-
-                return args[0];
-            });
+            CommandParameter parameter = new CommandParameter(name);
 
             Parameter = parameter;
         }
@@ -84,17 +68,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public void DefineSwitch(string name, string shortName = null)
         {
-            CommandParameter<bool> option = new CommandParameter<bool>(name, shortName, args =>
-            {
-                if (args == null) return false;
-
-                if (args.Length > 1) {
-                    throw new InvalidOperationException($"Multiple argument values are not supported for switch '{name}'.");
-                }
-
-                return args.Length == 0 // A switch does not need to have a value to be true.
-                    || Convert.ToBoolean(args[0]);
-            });
+            ICommandParameter option = new SwitchCommandParameter(name, shortName);
 
             RegisterOption(option);
         }
