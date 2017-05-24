@@ -98,17 +98,32 @@ namespace Kirkin.CommandLine
                             throw new InvalidOperationException($"Unable to find option with short name '{shortName}'.");
                         }
                     }
-                }
-                
-                if (processor == null) {
-                    throw new InvalidOperationException($"Unhandled syntax token: '{chunk[0]}'.");
-                }
 
-                if (!seenProcessors.Add(processor)) {
-                    throw new InvalidOperationException($"Duplicate option: '{chunk[0]}'.");
-                }
+                    if (processor == null) {
+                        throw new InvalidOperationException($"Unhandled syntax token: '{chunk[0]}'.");
+                    }
 
-                processor(chunk.Skip(1).ToArray());
+                    if (!seenProcessors.Add(processor)) {
+                        throw new InvalidOperationException($"Duplicate option: '{chunk[0]}'.");
+                    }
+
+                    processor(chunk.Skip(1).ToArray());
+                }
+                else
+                {
+                    // Parameter.
+                    if (syntax.Parameter == null) {
+                        throw new InvalidOperationException($"Command '{syntax.Name}' does not define a parameter.");
+                    }
+
+                    processor = syntax.Parameter;
+
+                    if (!seenProcessors.Add(processor)) {
+                        throw new InvalidOperationException("Duplicate parameter value detected.");
+                    }
+
+                    processor(chunk.ToArray());
+                }
             }
 
             HashSet<Action<string[]>> unusedProcessors = new HashSet<Action<string[]>>(syntax.ProcessorsByFullName.Values);

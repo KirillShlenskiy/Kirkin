@@ -87,5 +87,22 @@ namespace Kirkin.Tests.CommandLine
                 Assert.True((bool)command.Arguments["holy-moly"]);
             }
         }
+
+        [Test]
+        public void Parameters()
+        {
+            CommandLineParser parser = new CommandLineParser();
+
+            parser.DefineCommand("sync", sync =>
+            {
+                sync.DefineParameter("subscription");
+                sync.DefineSwitch("validate", shortName: "v");
+            });
+
+            ICommand command = parser.Parse("sync extra --validate".Split(' '));
+
+            Assert.AreEqual("extra", (string)command.Arguments["subscription"]);
+            Assert.True((bool)command.Arguments["validate"]);
+        }
     }
 }

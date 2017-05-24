@@ -8,6 +8,7 @@ namespace Kirkin.CommandLine
     /// </summary>
     public sealed class CommandSyntax
     {
+        internal Action<string[]> Parameter { get; private set; }
         internal readonly Dictionary<string, Action<string[]>> ProcessorsByFullName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
         internal readonly Dictionary<string, Action<string[]>> ProcessorsByShortName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
         internal readonly List<ICommandArg> Arguments = new List<ICommandArg>();
@@ -49,6 +50,27 @@ namespace Kirkin.CommandLine
         }
 
         /// <summary>
+        /// Defines a string parameter.
+        /// </summary>
+        public CommandArg<string> DefineParameter(string name)
+        {
+            Func<string> container = DefineCustomParameter(name, args =>
+            {
+                if (args.Length > 1) {
+                    throw new InvalidOperationException("Multiple parameter values are not supported.");
+                }
+
+                return (args.Length) == 0 ? null : args[0];
+            });
+
+            CommandArg<string> arg = new CommandArg<string>(name, null, container);
+
+            Arguments.Add(arg);
+
+            return arg;
+        }
+
+        /// <summary>
         /// Defines a boolean switch, i.e. "--validate" or "/validate true".
         /// </summary>
         public CommandArg<bool> DefineSwitch(string name, string shortName = null)
@@ -78,7 +100,7 @@ namespace Kirkin.CommandLine
             });
         }
 
-        internal Func<T> DefineCustomOptionList<T>(string name, string shortName, Func<string[], T> valueConverter)
+        private Func<T> DefineCustomOptionList<T>(string name, string shortName, Func<string[], T> valueConverter)
         {
             bool ready = false;
             T value = default(T);
@@ -92,6 +114,31 @@ namespace Kirkin.CommandLine
             ProcessorsByFullName.Add(name, processor);
 
             if (!string.IsNullOrEmpty(shortName)) ProcessorsByShortName.Add(shortName, processor);
+
+            return () =>
+            {
+                if (!ready) {
+                    throw new InvalidOperationException("Value is undefined until Execute is called on the command.");
+                }
+
+                return value;
+            };
+        }
+
+        private Func<T> DefineCustomParameter<T>(string name, Func<string[], T> valueConverter)
+        {
+            if (Parameter != null) throw new InvalidOperationException($"Command '{Name}' already defines a parameter.");
+
+            bool ready = false;
+            T value = default(T);
+
+            Action<string[]> processor = args =>
+            {
+                value = (args == null) ? default(T) : valueConverter(args);
+                ready = true;
+            };
+
+            Parameter = processor;
 
             return () =>
             {
