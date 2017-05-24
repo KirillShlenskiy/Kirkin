@@ -76,7 +76,7 @@ namespace Kirkin.CommandLine
                 currentChunk.Add(arg);
             }
 
-            HashSet<ICommandArg> seenParameters = new HashSet<ICommandArg>();
+            HashSet<ICommandParameter> seenParameters = new HashSet<ICommandParameter>();
             Dictionary<string, object> argValues = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
             foreach (List<string> chunk in chunks)
@@ -84,7 +84,7 @@ namespace Kirkin.CommandLine
                 if (chunk[0].StartsWith("-") || chunk[0].StartsWith("/"))
                 {
                     // Option.
-                    ICommandArg option = null;
+                    ICommandParameter option = null;
 
                     if (chunk[0].StartsWith("--"))
                     {
@@ -120,7 +120,7 @@ namespace Kirkin.CommandLine
                     }
 
                     // TODO: Optimise.
-                    argValues.Add(option.Name, option.GetValue(chunk.Skip(1).ToArray()));
+                    argValues.Add(option.Name, option.ParseArgs(chunk.Skip(1).ToArray()));
                 }
                 else
                 {
@@ -133,7 +133,7 @@ namespace Kirkin.CommandLine
                         throw new InvalidOperationException("Duplicate parameter value detected.");
                     }
 
-                    argValues.Add(definition.Parameter.Name, definition.Parameter.GetValue(chunk.ToArray()));
+                    argValues.Add(definition.Parameter.Name, definition.Parameter.ParseArgs(chunk.ToArray()));
                 }
             }
 
@@ -141,10 +141,10 @@ namespace Kirkin.CommandLine
                 argValues.Add(definition.Parameter.Name, null);
             }
 
-            foreach (ICommandArg option in definition.Options)
+            foreach (ICommandParameter option in definition.Options)
             {
                 if (!seenParameters.Contains(option)) {
-                    argValues.Add(option.Name, option.GetValue(null));
+                    argValues.Add(option.Name, option.ParseArgs(null));
                 }
             }
 

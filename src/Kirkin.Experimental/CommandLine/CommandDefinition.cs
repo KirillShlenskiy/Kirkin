@@ -9,10 +9,10 @@ namespace Kirkin.CommandLine
     /// </summary>
     public sealed class CommandDefinition
     {
-        internal ICommandArg Parameter { get; private set; }
-        internal readonly List<ICommandArg> Options = new List<ICommandArg>();
-        internal readonly Dictionary<string, ICommandArg> OptionsByFullName = new Dictionary<string, ICommandArg>(StringComparer.OrdinalIgnoreCase);
-        internal readonly Dictionary<string, ICommandArg> OptionsByShortName = new Dictionary<string, ICommandArg>(StringComparer.OrdinalIgnoreCase);
+        internal ICommandParameter Parameter { get; private set; }
+        internal readonly List<ICommandParameter> Options = new List<ICommandParameter>();
+        internal readonly Dictionary<string, ICommandParameter> OptionsByFullName = new Dictionary<string, ICommandParameter>(StringComparer.OrdinalIgnoreCase);
+        internal readonly Dictionary<string, ICommandParameter> OptionsByShortName = new Dictionary<string, ICommandParameter>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// The name of the command being configured.
@@ -21,7 +21,6 @@ namespace Kirkin.CommandLine
 
         /// <summary>
         /// Raised when <see cref="ICommand.Execute"/> is called on the command.
-        /// When this event fires, it is safe to access command argument values.
         /// </summary>
         public event EventHandler<CommandExecutedEventArgs> Executed;
 
@@ -47,7 +46,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public void DefineOption(string name, string shortName = null)
         {
-            CommandArg<string> option = new CommandArg<string>(name, shortName, args =>
+            CommandParameter<string> option = new CommandParameter<string>(name, shortName, args =>
             {
                 if (args == null || args.Length == 0) return null;
 
@@ -58,7 +57,7 @@ namespace Kirkin.CommandLine
                 return args[0];
             });
 
-            RegisterArg(option);
+            RegisterOption(option);
         }
 
         /// <summary>
@@ -66,7 +65,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public void DefineParameter(string name)
         {
-            CommandArg<string> parameter = new CommandArg<string>(name, null, args =>
+            CommandParameter<string> parameter = new CommandParameter<string>(name, null, args =>
             {
                 if (args == null || args.Length == 0) return null;
 
@@ -85,7 +84,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public void DefineSwitch(string name, string shortName = null)
         {
-            CommandArg<bool> option = new CommandArg<bool>(name, shortName, args =>
+            CommandParameter<bool> option = new CommandParameter<bool>(name, shortName, args =>
             {
                 if (args == null) return false;
 
@@ -97,26 +96,26 @@ namespace Kirkin.CommandLine
                     || Convert.ToBoolean(args[0]);
             });
 
-            RegisterArg(option);
+            RegisterOption(option);
         }
 
-        private void RegisterArg(ICommandArg arg)
+        private void RegisterOption(ICommandParameter option)
         {
-            if (OptionsByFullName.ContainsKey(arg.Name)) {
-                throw new InvalidOperationException($"Duplicate option name: '{arg.Name}'.");
+            if (OptionsByFullName.ContainsKey(option.Name)) {
+                throw new InvalidOperationException($"Duplicate option name: '{option.Name}'.");
             }
 
-            if (!string.IsNullOrEmpty(arg.ShortName) && OptionsByShortName.ContainsKey(arg.ShortName)) {
-                throw new InvalidOperationException($"Duplicate option short name: '{arg.Name}'.");
+            if (!string.IsNullOrEmpty(option.ShortName) && OptionsByShortName.ContainsKey(option.ShortName)) {
+                throw new InvalidOperationException($"Duplicate option short name: '{option.Name}'.");
             }
 
-            OptionsByFullName.Add(arg.Name, arg);
+            OptionsByFullName.Add(option.Name, option);
             
-            if (!string.IsNullOrEmpty(arg.ShortName)) {
-                OptionsByShortName.Add(arg.ShortName, arg);
+            if (!string.IsNullOrEmpty(option.ShortName)) {
+                OptionsByShortName.Add(option.ShortName, option);
             }
 
-            Options.Add(arg);
+            Options.Add(option);
         }
 
         public override string ToString()
@@ -130,7 +129,7 @@ namespace Kirkin.CommandLine
                 sb.Append($" <{Parameter.Name}>");
             }
 
-            foreach (ICommandArg option in Options)
+            foreach (ICommandParameter option in Options)
             {
                 sb.Append(" [");
 

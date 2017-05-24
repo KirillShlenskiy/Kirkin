@@ -59,7 +59,7 @@
     <Compile Include="Collections\Generic\TinyBuffer.cs" />
     <Compile Include="Collections\Immutable\ImmutableArrayFactory.cs" />
     <Compile Include="Collections\Specialized\SingleElementReadOnlyList.cs" />
-    <Compile Include="CommandLine\CommandArg.cs" />
+    <Compile Include="CommandLine\CommandParameter.cs" />
     <Compile Include="CommandLine\CommandExecutedEventArgs.cs" />
     <Compile Include="CommandLine\Commands\DefaultCommand.cs" />
     <Compile Include="CommandLine\CommandDefinition.cs" />

@@ -1,10 +1,9 @@
 ﻿namespace Kirkin.CommandLine
 {
     /// <summary>
-    /// Command line argument whose value is only available once
-    /// <see cref="CommandLineParser.Parse(string[])"/> has been called.
+    /// Command parameter definition.
     /// </summary>
-    internal interface ICommandArg
+    internal interface ICommandParameter
     {
         /// <summary>
         /// Parameter name.
@@ -19,6 +18,6 @@
         /// <summary>
         /// Parses the given arguments and converts them to an appropriate value.
         /// </summary>
-        object GetValue(string[] args);
+        object ParseArgs(string[] args);
     }
 }

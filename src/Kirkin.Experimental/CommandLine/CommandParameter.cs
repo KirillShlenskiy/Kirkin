@@ -3,10 +3,9 @@
 namespace Kirkin.CommandLine
 {
     /// <summary>
-    /// Command line argument whose value is only available once
-    /// <see cref="CommandLineParser.Parse(string[])"/> has been called.
+    /// Command parameter definition.
     /// </summary>
-    internal sealed class CommandArg<T> : ICommandArg
+    internal sealed class CommandParameter<T> : ICommandParameter
     {
         private readonly Func<string[], T> _valueConverter;
 
@@ -20,8 +19,14 @@ namespace Kirkin.CommandLine
         /// </summary>
         public string ShortName { get; }
 
-        internal CommandArg(string name, string shortName, Func<string[], T> valueConverter)
+        /// <summary>
+        /// Creates a new <see cref="CommandParameter{T}"/> instance.
+        /// </summary>
+        internal CommandParameter(string name, string shortName, Func<string[], T> valueConverter)
         {
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Parameter name cannot be empty.");
+            if (valueConverter == null) throw new ArgumentNullException(nameof(valueConverter));
+
             Name = name;
             ShortName = shortName;
             _valueConverter = valueConverter;
@@ -30,7 +35,7 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Parses the given arguments and converts them to an appropriate value.
         /// </summary>
-        public T GetValue(string[] args)
+        public T ParseArgs(string[] args)
         {
             return _valueConverter(args);
         }
@@ -38,9 +43,9 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Parses the given arguments and converts them to an appropriate value.
         /// </summary>
-        object ICommandArg.GetValue(string[] args)
+        object ICommandParameter.ParseArgs(string[] args)
         {
-            return GetValue(args);
+            return ParseArgs(args);
         }
 
         /// <summary>
