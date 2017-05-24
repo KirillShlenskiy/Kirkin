@@ -60,8 +60,8 @@
     <Compile Include="Collections\Immutable\ImmutableArrayFactory.cs" />
     <Compile Include="Collections\Specialized\SingleElementReadOnlyList.cs" />
     <Compile Include="CommandLine\CommandArg.cs" />
-    <Compile Include="CommandLine\Commands\SyntaxCommand.cs" />
-    <Compile Include="CommandLine\CommandSyntax.cs" />
+    <Compile Include="CommandLine\Commands\DefaultCommand.cs" />
+    <Compile Include="CommandLine\CommandDefinition.cs" />
     <Compile Include="CommandLine\CommandLineParser.cs" />
     <Compile Include="CommandLine\Commands\HelpCommand.cs" />
     <Compile Include="CommandLine\ICommand.cs" />

@@ -6,7 +6,7 @@ namespace Kirkin.CommandLine
     /// <summary>
     /// Builder type used to configure commands.
     /// </summary>
-    public sealed class CommandSyntax
+    public sealed class CommandDefinition
     {
         internal Action<string[]> Parameter { get; private set; }
         internal readonly Dictionary<string, Action<string[]>> ProcessorsByFullName = new Dictionary<string, Action<string[]>>(StringComparer.OrdinalIgnoreCase);
@@ -24,7 +24,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public event Action Executed;
 
-        internal CommandSyntax(string name)
+        internal CommandDefinition(string name)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command name cannot be empty.");
 
