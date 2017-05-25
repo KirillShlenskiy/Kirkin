@@ -103,7 +103,7 @@ namespace Kirkin.CommandLine
                 if (chunk[0].StartsWith("-") || chunk[0].StartsWith("/"))
                 {
                     // Option.
-                    ICommandParameter option = null;
+                    ICommandParameterDefinition option = null;
 
                     if (chunk[0].StartsWith("--"))
                     {
@@ -160,7 +160,7 @@ namespace Kirkin.CommandLine
                 argValues.Add(definition.Parameter.Name, definition.Parameter.GetDefaultValue());
             }
 
-            foreach (ICommandParameter option in definition.Options)
+            foreach (ICommandParameterDefinition option in definition.Options)
             {
                 if (!seenParameters.Contains(option)) {
                     argValues.Add(option.Name, option.GetDefaultValue());

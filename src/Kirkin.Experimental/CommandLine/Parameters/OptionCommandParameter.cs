@@ -6,6 +6,14 @@ namespace Kirkin.CommandLine.Parameters
     internal sealed class OptionCommandParameter
         : CommandParameterBase<string>
     {
+        public override bool SupportsMultipleValues
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         internal OptionCommandParameter(string name, string shortName)
             : base(name, shortName)
         {

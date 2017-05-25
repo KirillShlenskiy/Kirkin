@@ -6,6 +6,14 @@ namespace Kirkin.CommandLine.Parameters
     internal sealed class SwitchCommandParameter
         : CommandParameterBase<bool>
     {
+        public override bool SupportsMultipleValues
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         internal SwitchCommandParameter(string name, string shortName)
             : base(name, shortName)
         {

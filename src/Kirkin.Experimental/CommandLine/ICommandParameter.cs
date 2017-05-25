@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-
-namespace Kirkin.CommandLine
+﻿namespace Kirkin.CommandLine
 {
     /// <summary>
     /// Command parameter definition.
     /// </summary>
-    internal interface ICommandParameter
+    public interface ICommandParameter
     {
         /// <summary>
         /// Parameter name.
@@ -18,13 +16,8 @@ namespace Kirkin.CommandLine
         string ShortName { get; }
 
         /// <summary>
-        /// Parses the given arguments and converts them to an appropriate value.
+        /// Returns true if this parameter/option supports multiple input values.
         /// </summary>
-        object ParseArgs(List<string> args);
-
-        /// <summary>
-        /// Returns the default value to be used when the parameter, switch or option is omitted.
-        /// </summary>
-        object GetDefaultValue();
+        bool SupportsMultipleValues { get; }
     }
 }

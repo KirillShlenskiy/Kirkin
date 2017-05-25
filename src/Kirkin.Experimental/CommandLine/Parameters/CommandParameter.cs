@@ -6,6 +6,14 @@ namespace Kirkin.CommandLine.Parameters
     internal sealed class CommandParameter
         : CommandParameterBase<string>
     {
+        public override bool SupportsMultipleValues
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         internal CommandParameter(string name)
             : base(name, null)
         {

@@ -7,7 +7,7 @@ namespace Kirkin.CommandLine.Parameters
     /// Command parameter definition.
     /// </summary>
     internal abstract class CommandParameterBase<T>
-        : ICommandParameter
+        : ICommandParameterDefinition
     {
         /// <summary>
         /// Parameter name.
@@ -18,6 +18,11 @@ namespace Kirkin.CommandLine.Parameters
         /// Parameter short name (or null).
         /// </summary>
         public string ShortName { get; }
+
+        /// <summary>
+        /// Returns true if this parameter/option supports multiple input values.
+        /// </summary>
+        public abstract bool SupportsMultipleValues { get; }
 
         /// <summary>
         /// Creates a new <see cref="CommandParameter{T}"/> instance.
@@ -46,7 +51,7 @@ namespace Kirkin.CommandLine.Parameters
         /// <summary>
         /// Parses the given arguments and converts them to an appropriate value.
         /// </summary>
-        object ICommandParameter.ParseArgs(List<string> args)
+        object ICommandParameterDefinition.ParseArgs(List<string> args)
         {
             return ParseArgs(args);
         }
@@ -54,7 +59,7 @@ namespace Kirkin.CommandLine.Parameters
         /// <summary>
         /// Returns the default value to be used when the parameter, switch or option is omitted.
         /// </summary>
-        object ICommandParameter.GetDefaultValue()
+        object ICommandParameterDefinition.GetDefaultValue()
         {
             return GetDefaultValue();
         }

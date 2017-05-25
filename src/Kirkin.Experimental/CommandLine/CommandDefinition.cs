@@ -14,9 +14,9 @@ namespace Kirkin.CommandLine
         // Every command has zero or one parameter ("sync ==>extra<== --validate --log zzz.txt"),
         // and zero or more options/switches ("sync extra ==>--validate --log zzz.txt<==").
         internal CommandParameter Parameter { get; private set; }
-        internal readonly List<ICommandParameter> Options = new List<ICommandParameter>();
-        internal readonly Dictionary<string, ICommandParameter> OptionsByFullName = new Dictionary<string, ICommandParameter>(StringComparer.OrdinalIgnoreCase);
-        internal readonly Dictionary<string, ICommandParameter> OptionsByShortName = new Dictionary<string, ICommandParameter>(StringComparer.OrdinalIgnoreCase);
+        internal readonly List<ICommandParameterDefinition> Options = new List<ICommandParameterDefinition>();
+        internal readonly Dictionary<string, ICommandParameterDefinition> OptionsByFullName = new Dictionary<string, ICommandParameterDefinition>(StringComparer.OrdinalIgnoreCase);
+        internal readonly Dictionary<string, ICommandParameterDefinition> OptionsByShortName = new Dictionary<string, ICommandParameterDefinition>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// The name of the command being configured.
@@ -46,36 +46,42 @@ namespace Kirkin.CommandLine
         }
 
         /// <summary>
-        /// Defines a string option, i.e. "--subscription main" or "-s main" or "/subscription main".
-        /// </summary>
-        public void DefineOption(string name, string shortName = null)
-        {
-            ICommandParameter option = new OptionCommandParameter(name, shortName);
-
-            RegisterOption(option);
-        }
-
-        /// <summary>
         /// Defines a string parameter (unqualified value immediately following command name).
         /// </summary>
-        public void DefineParameter(string name)
+        public ICommandParameter DefineParameter(string name)
         {
             CommandParameter parameter = new CommandParameter(name);
 
             Parameter = parameter;
+
+            return parameter;
+        }
+
+        /// <summary>
+        /// Defines a string option, i.e. "--subscription main" or "-s main" or "/subscription main".
+        /// </summary>
+        public ICommandParameter DefineOption(string name, string shortName = null)
+        {
+            OptionCommandParameter option = new OptionCommandParameter(name, shortName);
+
+            RegisterOption(option);
+
+            return option;
         }
 
         /// <summary>
         /// Defines a boolean switch, i.e. "--validate" or "/validate true".
         /// </summary>
-        public void DefineSwitch(string name, string shortName = null)
+        public ICommandParameter DefineSwitch(string name, string shortName = null)
         {
-            ICommandParameter option = new SwitchCommandParameter(name, shortName);
+            SwitchCommandParameter option = new SwitchCommandParameter(name, shortName);
 
             RegisterOption(option);
+
+            return option;
         }
 
-        private void RegisterOption(ICommandParameter option)
+        private void RegisterOption(ICommandParameterDefinition option)
         {
             if (OptionsByFullName.ContainsKey(option.Name)) {
                 throw new InvalidOperationException($"Duplicate option name: '{option.Name}'.");

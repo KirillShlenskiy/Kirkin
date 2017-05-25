@@ -67,6 +67,7 @@
     <Compile Include="CommandLine\ConsoleFormatter.cs" />
     <Compile Include="CommandLine\ICommand.cs" />
     <Compile Include="CommandLine\ICommandParameter.cs" />
+    <Compile Include="CommandLine\ICommandParameterDefinition.cs" />
     <Compile Include="CommandLine\Parameters\CommandParameter.cs" />
     <Compile Include="CommandLine\Parameters\CommandParameterBase.cs" />
     <Compile Include="CommandLine\Parameters\OptionCommandParameter.cs" />
