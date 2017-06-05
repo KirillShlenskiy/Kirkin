@@ -11,7 +11,26 @@ namespace Kirkin.CommandLine
     /// </summary>
     public sealed class CommandLineParser
     {
-        private readonly Dictionary<string, CommandDefinition> _commandDefinitions = new Dictionary<string, CommandDefinition>(StringComparer.OrdinalIgnoreCase);
+        private Dictionary<string, CommandDefinition> _commandDefinitions = new Dictionary<string, CommandDefinition>(StringComparer.Ordinal);
+
+        /// <summary>
+        /// Equality comparer used by the parser to resolve commands and their arguments.
+        /// </summary>
+        public IEqualityComparer<string> StringEqualityComparer
+        {
+            get
+            {
+                return _commandDefinitions.Comparer;
+            }
+            set
+            {
+                if (_commandDefinitions.Count != 0) {
+                    throw new InvalidOperationException("Cannot change default string equality comparer once commands have been defined.");
+                }
+
+                _commandDefinitions = new Dictionary<string, CommandDefinition>(value);
+            }
+        }
 
         /// <summary>
         /// Returns the collection of command definitions supported by this parser.
@@ -37,7 +56,7 @@ namespace Kirkin.CommandLine
                 throw new InvalidOperationException($"Command '{name}' already defined.");
             }
 
-            CommandDefinition definition = new CommandDefinition(name);
+            CommandDefinition definition = new CommandDefinition(name, StringEqualityComparer);
 
             configureAction(definition);
 

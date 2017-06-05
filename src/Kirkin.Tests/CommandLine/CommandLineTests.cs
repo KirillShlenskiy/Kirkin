@@ -11,7 +11,9 @@ namespace Kirkin.Tests.CommandLine
         [Test]
         public void BasicCommandLineParsing()
         {
-            CommandLineParser parser = new CommandLineParser();
+            CommandLineParser parser = new CommandLineParser {
+                StringEqualityComparer = StringComparer.OrdinalIgnoreCase
+            };
 
             parser.DefineCommand("zzz", zzz =>
             {

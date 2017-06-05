@@ -15,8 +15,8 @@ namespace Kirkin.CommandLine
         // and zero or more options/switches ("sync extra ==>--validate --log zzz.txt<==").
         internal CommandParameter Parameter { get; private set; }
         internal readonly List<ICommandParameterDefinition> Options = new List<ICommandParameterDefinition>();
-        internal readonly Dictionary<string, ICommandParameterDefinition> OptionsByFullName = new Dictionary<string, ICommandParameterDefinition>(StringComparer.OrdinalIgnoreCase);
-        internal readonly Dictionary<string, ICommandParameterDefinition> OptionsByShortName = new Dictionary<string, ICommandParameterDefinition>(StringComparer.OrdinalIgnoreCase);
+        internal readonly Dictionary<string, ICommandParameterDefinition> OptionsByFullName;
+        internal readonly Dictionary<string, ICommandParameterDefinition> OptionsByShortName;
 
         /// <summary>
         /// The name of the command being configured.
@@ -28,11 +28,13 @@ namespace Kirkin.CommandLine
         /// </summary>
         public event EventHandler<CommandExecutedEventArgs> Executed;
 
-        internal CommandDefinition(string name)
+        internal CommandDefinition(string name, IEqualityComparer<string> stringEqualityComparer)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command name cannot be empty.");
 
             Name = name;
+            OptionsByFullName = new Dictionary<string, ICommandParameterDefinition>(stringEqualityComparer);
+            OptionsByShortName = new Dictionary<string, ICommandParameterDefinition>(stringEqualityComparer);
         }
 
         internal void OnExecuted(ICommand command, IDictionary<string, object> args)
