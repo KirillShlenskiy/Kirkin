@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace Kirkin.Diagnostics
 {
@@ -33,15 +30,18 @@ namespace Kirkin.Diagnostics
 
         private void KillChildProcess()
         {
-            if (!Process.HasExited)
-            {
-                Process.Kill();
+            Process process = Interlocked.Exchange(ref _process, null);
+
+            if (!process.HasExited) {
+                process.Kill();
             }
         }
 
         public void Dispose()
         {
             AppDomain.CurrentDomain.ProcessExit -= CurrentDomainExitHandler;
+
+            KillChildProcess();
         }
     }
 }
