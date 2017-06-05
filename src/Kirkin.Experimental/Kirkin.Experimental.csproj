@@ -97,6 +97,7 @@
     <Compile Include="Diagnostics\Diag.cs" />
     <Compile Include="Diagnostics\NoDebuggerAttachedException.cs" />
     <Compile Include="Diagnostics\ProcessMemory.cs" />
+    <Compile Include="Diagnostics\ProcessScope.cs" />
     <Compile Include="Functional\Decorate.cs" />
     <Compile Include="Functional\Executable.cs" />
     <Compile Include="Functional\ExecutableExtensions.cs" />
