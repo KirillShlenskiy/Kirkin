@@ -11,8 +11,12 @@ namespace Kirkin.Diagnostics
     /// </summary>
     public sealed class ProcessScope : IDisposable
     {
+        const int STATE_ACTIVE = 0;
+        const int STATE_DISPOSED = 1;
+        const int STATE_COMPLETED = 2;
+
         private readonly EventHandler CurrentDomainExitHandler;
-        private int _disposed;
+        private int _state = STATE_ACTIVE;
 
         /// <summary>
         /// <see cref="System.Diagnostics.Process"/> whose lifetime is managed by ths instance.
@@ -25,7 +29,7 @@ namespace Kirkin.Diagnostics
         public bool ForciblyTerminated { get; private set; }
 
         /// <summary>
-        /// Creates a new instance.
+        /// Creates a new <see cref="ProcessScope"/> instance.
         /// </summary>
         /// <param name="process">Process whose lifetime will be managed by this instance.</param>
         public ProcessScope(Process process)
@@ -38,18 +42,28 @@ namespace Kirkin.Diagnostics
         }
 
         /// <summary>
+        /// Marks the scope as complete, disabling subsequent <see cref="Dispose"/> calls.
+        /// </summary>
+        public void Complete()
+        {
+            if (Interlocked.CompareExchange(ref _state, STATE_COMPLETED, STATE_ACTIVE) == STATE_DISPOSED) {
+                throw new ObjectDisposedException(nameof(ProcessScope));
+            }
+        }
+
+        /// <summary>
         /// Terminates the managed process if necessary and releases any resources held by this instance.
         /// </summary>
         public void Dispose()
         {
-            bool needsDisposing = (Interlocked.CompareExchange(ref _disposed, 1, 0) == 0);
+            // Even if the below Kill call fails, we don't want this
+            // handler left dangling as it won't do anything useful.
+            AppDomain.CurrentDomain.ProcessExit -= CurrentDomainExitHandler;
+
+            bool needsDisposing = (Interlocked.CompareExchange(ref _state, STATE_DISPOSED, STATE_ACTIVE) == STATE_ACTIVE);
 
             if (needsDisposing)
             {
-                // Even if the below Kill call fails, we don't want this
-                // handler left dangling as it won't do anything useful.
-                AppDomain.CurrentDomain.ProcessExit -= CurrentDomainExitHandler;
-
                 if (Process.HasExited)
                 {
                     // TODO: Determine if this is really necessary.

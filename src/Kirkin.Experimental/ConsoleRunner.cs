@@ -166,22 +166,22 @@ namespace Kirkin
 
                         throw new OperationCanceledException("Child process forcibly terminated.", cancellationToken);
                     }
-                    else
+
+                    scope.Complete();
+
+                    int result = _process.ExitCode;
+
+                    if (result != 0)
                     {
-                        int result = _process.ExitCode;
+                        string error = string.Join("", errors);
 
-                        if (result != 0)
+                        if (string.IsNullOrEmpty(error))
                         {
-                            string error = string.Join("", errors);
-
-                            if (string.IsNullOrEmpty(error))
-                            {
-                                throw new ConsoleRunnerException(result, "Non-zero exit code.");
-                            }
-                            else
-                            {
-                                throw new ConsoleRunnerException(result, error);
-                            }
+                            throw new ConsoleRunnerException(result, "Non-zero exit code.");
+                        }
+                        else
+                        {
+                            throw new ConsoleRunnerException(result, error);
                         }
                     }
                 }
