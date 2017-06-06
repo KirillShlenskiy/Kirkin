@@ -85,17 +85,17 @@ namespace Kirkin.Diagnostics
                 operation = OperationsByName.GetOrAdd(operationName, new Operation(operationName));
             }
 
-            return new TimedScope(operation.Timespans);
+            return new TimedScope(operation);
         }
 
         public struct TimedScope : IDisposable
         {
-            private readonly ConcurrentBag<TimeSpan> Timespans;
+            private readonly Operation Operation;
             private readonly Stopwatch Stopwatch;
 
-            internal TimedScope(ConcurrentBag<TimeSpan> timespans)
+            internal TimedScope(Operation operation)
             {
-                Timespans = timespans;
+                Operation = operation;
                 Stopwatch = Stopwatch.StartNew();
             }
 
@@ -106,7 +106,7 @@ namespace Kirkin.Diagnostics
                 }
 
                 Stopwatch.Stop();
-                Timespans.Add(Stopwatch.Elapsed);
+                Operation.Add(Stopwatch.Elapsed);
             }
         }
 
@@ -115,7 +115,7 @@ namespace Kirkin.Diagnostics
         /// </summary>
         public sealed class Operation
         {
-            internal readonly ConcurrentBag<TimeSpan> Timespans;
+            private readonly ConcurrentBag<TimeSpan> Timespans;
 
             /// <summary>
             /// Name of the timed operation.
@@ -181,6 +181,11 @@ namespace Kirkin.Diagnostics
             {
                 Name = name;
                 Timespans = new ConcurrentBag<TimeSpan>();
+            }
+
+            internal void Add(TimeSpan timespan)
+            {
+                Timespans.Add(timespan);
             }
 
             public override string ToString()
