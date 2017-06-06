@@ -5,14 +5,25 @@ using System.Threading;
 namespace Kirkin.Diagnostics
 {
     /// <summary>
-    /// Manages the lifetime of the given process, ensuring that the managed process is
-    /// reliably killed if <see cref="IDisposable.Dispose"/> is called before the process exits.
-    /// Also terminates the managed process if the current <see cref="AppDomain"/> exits before the scope is completed.
+    /// Manages the lifetime of the given process, ensuring that the process is reliably
+    /// killed if <see cref="IDisposable.Dispose"/> is called before the scope is marked as completed.
+    /// Also terminates the process if the current <see cref="AppDomain"/> exits before the scope is completed.
     /// </summary>
     public sealed class ProcessScope : IDisposable
     {
+        ///// <summary>
+        ///// Starts a new <see cref="System.Diagnostics.Process"/> and returns a
+        ///// <see cref="ProcessScope"/> instance which will manage its lifetime.
+        ///// </summary>
+        //public ProcessScope Start(ProcessStartInfo startInfo)
+        //{
+        //    Process process = Process.Start(startInfo);
+
+        //    return new ProcessScope(process);
+        //}
+
         const int STATE_ACTIVE = 0;
-        const int STATE_TERMINATED = 1;
+        //const int STATE_COMPLETED = 1;
         const int STATE_DISPOSED = 2;
 
         private readonly EventHandler CurrentDomainExitHandler;
@@ -27,17 +38,11 @@ namespace Kirkin.Diagnostics
         /// <summary>
         /// Returns true if <see cref="Dispose"/> has been called.
         /// </summary>
-        public bool Terminated
+        public bool Disposed
         {
             get
             {
-                int state = _state;
-
-                if (state == STATE_DISPOSED) {
-                    throw new ObjectDisposedException(nameof(ProcessScope));
-                }
-
-                return state == STATE_TERMINATED;
+                return _state == STATE_DISPOSED;
             }
         }
 
@@ -56,51 +61,42 @@ namespace Kirkin.Diagnostics
             AppDomain.CurrentDomain.ProcessExit += CurrentDomainExitHandler;
         }
 
-        /// <summary>
-        /// Ensures that the process terminates. Returns true if the process was forcibly killed.
-        /// </summary>
-        public bool Terminate()
-        {
-            Interlocked.CompareExchange(ref _state, STATE_TERMINATED, STATE_ACTIVE);
-
-            return TerminateImpl();
-        }
+        ///// <summary>
+        ///// Marks the scope as successfully completed, disabling subsequent <see cref="Dispose"/> calls.
+        ///// </summary>
+        //public void Complete()
+        //{
+        //    // Multiple calls to Complete are fine.
+        //    if (Interlocked.CompareExchange(ref _state, STATE_COMPLETED, STATE_ACTIVE) == STATE_TERMINATED) {
+        //        throw new ObjectDisposedException(nameof(ProcessScope));
+        //    }
+        //}
 
         /// <summary>
         /// Terminates the managed process if necessary and releases any resources held by this instance.
         /// </summary>
         public void Dispose()
         {
-            int state = Interlocked.Exchange(ref _state, STATE_DISPOSED);
+            int state = Interlocked.CompareExchange(ref _state, STATE_DISPOSED, STATE_ACTIVE);
 
-            if (state != STATE_DISPOSED)
+            if (state == STATE_ACTIVE)
             {
                 // Even if the below Kill call fails, we don't want this
                 // handler left dangling as it won't do anything useful.
                 AppDomain.CurrentDomain.ProcessExit -= CurrentDomainExitHandler;
 
-                if (state == STATE_ACTIVE) {
-                    TerminateImpl();
+                // The HasExited check serves to reduce exceptions in situations where
+                // the process has already completed, but the client hasn't yet had
+                // the chance to call Complete. In that case another Dispose call
+                // can come in as the result of user cancellation, for instance.
+                if (!Process.HasExited) {
+                    Process.Kill();
+                }
+
+                if (OwnsProcess) {
+                    Process.Close();
                 }
             }
-
-            if (OwnsProcess) {
-                Process.Dispose();
-            }
-        }
-
-        private bool TerminateImpl()
-        {
-            // The HasExited check serves to reduce exceptions in situations where
-            // the process has already completed, but the client doesn't know yet.
-            if (!Process.HasExited)
-            {
-                Process.Kill();
-
-                return true;
-            }
-
-            return false;
         }
     }
 }
