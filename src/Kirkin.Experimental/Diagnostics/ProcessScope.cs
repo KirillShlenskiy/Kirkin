@@ -11,23 +11,11 @@ namespace Kirkin.Diagnostics
     /// </summary>
     public sealed class ProcessScope : IDisposable
     {
-        ///// <summary>
-        ///// Starts a new <see cref="System.Diagnostics.Process"/> and returns a
-        ///// <see cref="ProcessScope"/> instance which will manage its lifetime.
-        ///// </summary>
-        //public ProcessScope Start(ProcessStartInfo startInfo)
-        //{
-        //    Process process = Process.Start(startInfo);
-
-        //    return new ProcessScope(process);
-        //}
-
         const int STATE_ACTIVE = 0;
-        //const int STATE_COMPLETED = 1;
+        const int STATE_COMPLETED = 1;
         const int STATE_DISPOSED = 2;
 
         private readonly EventHandler CurrentDomainExitHandler;
-        private readonly bool OwnsProcess;
         private int _state = STATE_ACTIVE;
 
         /// <summary>
@@ -51,35 +39,35 @@ namespace Kirkin.Diagnostics
         /// </summary>
         /// <param name="process">Process whose lifetime will be managed by this instance.</param>
         /// <param name="ownsProcess">If true, the <see cref="Process"/> instance will be disposed when this scope is disposed.</param>
-        public ProcessScope(Process process, bool ownsProcess)
+        public ProcessScope(Process process)
         {
             Process = process;
-            OwnsProcess = ownsProcess;
             CurrentDomainExitHandler = (s, e) => Dispose();
 
             // Ensure that the managed process is killed when this domain exits.
             AppDomain.CurrentDomain.ProcessExit += CurrentDomainExitHandler;
         }
 
-        ///// <summary>
-        ///// Marks the scope as successfully completed, disabling subsequent <see cref="Dispose"/> calls.
-        ///// </summary>
-        //public void Complete()
-        //{
-        //    // Multiple calls to Complete are fine.
-        //    if (Interlocked.CompareExchange(ref _state, STATE_COMPLETED, STATE_ACTIVE) == STATE_TERMINATED) {
-        //        throw new ObjectDisposedException(nameof(ProcessScope));
-        //    }
-        //}
+        /// <summary>
+        /// Marks the scope as successfully completed, disabling subsequent <see cref="Dispose"/> calls.
+        /// Returns false if the scope is already disposed. Otherwise returns true.
+        /// </summary>
+        public bool Complete()
+        {
+            // Multiple calls to Complete are fine.
+            int state = Interlocked.CompareExchange(ref _state, STATE_COMPLETED, STATE_ACTIVE);
+
+            return state == STATE_ACTIVE || state == STATE_COMPLETED;
+        }
 
         /// <summary>
-        /// Terminates the managed process if necessary and releases any resources held by this instance.
+        /// Terminates the managed process (if necessary) and releases any resources held by this instance.
         /// </summary>
         public void Dispose()
         {
-            int state = Interlocked.CompareExchange(ref _state, STATE_DISPOSED, STATE_ACTIVE);
+            int state = Interlocked.Exchange(ref _state, STATE_DISPOSED);
 
-            if (state == STATE_ACTIVE)
+            if (state != STATE_DISPOSED)
             {
                 // Even if the below Kill call fails, we don't want this
                 // handler left dangling as it won't do anything useful.
@@ -89,12 +77,8 @@ namespace Kirkin.Diagnostics
                 // the process has already completed, but the client hasn't yet had
                 // the chance to call Complete. In that case another Dispose call
                 // can come in as the result of user cancellation, for instance.
-                if (!Process.HasExited) {
+                if (state == STATE_ACTIVE && !Process.HasExited) {
                     Process.Kill();
-                }
-
-                if (OwnsProcess) {
-                    Process.Close();
                 }
             }
         }

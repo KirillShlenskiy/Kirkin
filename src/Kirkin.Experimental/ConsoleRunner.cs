@@ -122,9 +122,8 @@ namespace Kirkin
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                _process = Process.Start(processStartInfo);
-
-                using (ProcessScope scope = new ProcessScope(_process, ownsProcess: true))
+                using (_process = Process.Start(processStartInfo))
+                using (ProcessScope scope = new ProcessScope(_process))
                 {
                     cancellationToken.Register(() => scope.Dispose(), useSynchronizationContext: false);
 
@@ -160,8 +159,7 @@ namespace Kirkin
 
                     if (scope.Disposed)
                     {
-                        if (!cancellationToken.IsCancellationRequested)
-                        {
+                        if (!cancellationToken.IsCancellationRequested) {
                             throw new InvalidOperationException("Unexpected runner state. Expecting token to be marked as canceled.");
                         }
 
@@ -174,14 +172,11 @@ namespace Kirkin
                     {
                         string error = string.Join("", errors);
 
-                        if (string.IsNullOrEmpty(error))
-                        {
+                        if (string.IsNullOrEmpty(error)) {
                             throw new ConsoleRunnerException(result, "Non-zero exit code.");
                         }
-                        else
-                        {
-                            throw new ConsoleRunnerException(result, error);
-                        }
+
+                        throw new ConsoleRunnerException(result, error);
                     }
                 }
             }
