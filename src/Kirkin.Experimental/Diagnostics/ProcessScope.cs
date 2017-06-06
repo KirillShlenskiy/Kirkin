@@ -46,18 +46,23 @@ namespace Kirkin.Diagnostics
 
             if (needsDisposing)
             {
+                // Even if the below Kill call fails, we don't want this
+                // handler left dangling as it won't do anything useful.
+                AppDomain.CurrentDomain.ProcessExit -= CurrentDomainExitHandler;
+
                 if (Process.HasExited)
                 {
+                    // TODO: Determine if this is really necessary.
                     Process.Close();
                 }
                 else
                 {
-                    Process.Kill();
-
+                    // Setting this flag first to ensure that any clients listening for the Process.Exited
+                    // event or waiting on the Process.WaitForExit call will be able to see this value.
                     ForciblyTerminated = true;
-                }
 
-                AppDomain.CurrentDomain.ProcessExit -= CurrentDomainExitHandler;
+                    Process.Kill();
+                }
             }
         }
     }
