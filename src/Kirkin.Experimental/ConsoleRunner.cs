@@ -122,8 +122,9 @@ namespace Kirkin
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                using (_process = Process.Start(processStartInfo))
-                using (ProcessScope scope = new ProcessScope(_process))
+                _process = Process.Start(processStartInfo);
+
+                using (ProcessScope scope = new ProcessScope(_process, ownsProcess: true))
                 {
                     cancellationToken.Register(() => scope.Dispose(), useSynchronizationContext: false);
 
@@ -157,7 +158,7 @@ namespace Kirkin
                         _process.WaitForExit();
                     }
 
-                    if (scope.ForciblyTerminated)
+                    if (scope.Disposed)
                     {
                         if (!cancellationToken.IsCancellationRequested)
                         {
@@ -166,8 +167,6 @@ namespace Kirkin
 
                         throw new OperationCanceledException("Child process forcibly terminated.", cancellationToken);
                     }
-
-                    scope.Complete();
 
                     int result = _process.ExitCode;
 

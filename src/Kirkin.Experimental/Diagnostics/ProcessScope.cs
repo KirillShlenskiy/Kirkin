@@ -23,10 +23,11 @@ namespace Kirkin.Diagnostics
         //}
 
         const int STATE_ACTIVE = 0;
-        const int STATE_COMPLETED = 1;
-        const int STATE_TERMINATED = 2;
+        //const int STATE_COMPLETED = 1;
+        const int STATE_DISPOSED = 2;
 
         private readonly EventHandler CurrentDomainExitHandler;
+        private readonly bool OwnsProcess;
         private int _state = STATE_ACTIVE;
 
         /// <summary>
@@ -35,13 +36,13 @@ namespace Kirkin.Diagnostics
         public Process Process { get; }
 
         /// <summary>
-        /// Returns true if the process was killed as the result of the <see cref="Dispose"/> call.
+        /// Returns true if <see cref="Dispose"/> has been called.
         /// </summary>
-        public bool ForciblyTerminated
+        public bool Disposed
         {
             get
             {
-                return _state == STATE_TERMINATED;
+                return _state == STATE_DISPOSED;
             }
         }
 
@@ -49,43 +50,51 @@ namespace Kirkin.Diagnostics
         /// Creates a new <see cref="ProcessScope"/> instance.
         /// </summary>
         /// <param name="process">Process whose lifetime will be managed by this instance.</param>
-        public ProcessScope(Process process)
+        /// <param name="ownsProcess">If true, the <see cref="Process"/> instance will be disposed when this scope is disposed.</param>
+        public ProcessScope(Process process, bool ownsProcess)
         {
             Process = process;
+            OwnsProcess = ownsProcess;
             CurrentDomainExitHandler = (s, e) => Dispose();
 
             // Ensure that the managed process is killed when this domain exits.
             AppDomain.CurrentDomain.ProcessExit += CurrentDomainExitHandler;
         }
 
-        /// <summary>
-        /// Marks the scope as successfully completed, disabling subsequent <see cref="Dispose"/> calls.
-        /// </summary>
-        public void Complete()
-        {
-            // Multiple calls to Complete are fine.
-            if (Interlocked.CompareExchange(ref _state, STATE_COMPLETED, STATE_ACTIVE) == STATE_TERMINATED) {
-                throw new ObjectDisposedException(nameof(ProcessScope));
-            }
-        }
+        ///// <summary>
+        ///// Marks the scope as successfully completed, disabling subsequent <see cref="Dispose"/> calls.
+        ///// </summary>
+        //public void Complete()
+        //{
+        //    // Multiple calls to Complete are fine.
+        //    if (Interlocked.CompareExchange(ref _state, STATE_COMPLETED, STATE_ACTIVE) == STATE_TERMINATED) {
+        //        throw new ObjectDisposedException(nameof(ProcessScope));
+        //    }
+        //}
 
         /// <summary>
         /// Terminates the managed process if necessary and releases any resources held by this instance.
         /// </summary>
         public void Dispose()
         {
-            // Even if the below Kill call fails, we don't want this
-            // handler left dangling as it won't do anything useful.
-            AppDomain.CurrentDomain.ProcessExit -= CurrentDomainExitHandler;
+            int state = Interlocked.CompareExchange(ref _state, STATE_DISPOSED, STATE_ACTIVE);
 
-            if (Interlocked.CompareExchange(ref _state, STATE_TERMINATED, STATE_ACTIVE) == STATE_ACTIVE)
+            if (state == STATE_ACTIVE)
             {
-                // The HasExited check reduces exceptions in situations where the
-                // process has already completed, but the client hasn't yet had the
-                // chance to call Complete. In that case another Dispose call
+                // Even if the below Kill call fails, we don't want this
+                // handler left dangling as it won't do anything useful.
+                AppDomain.CurrentDomain.ProcessExit -= CurrentDomainExitHandler;
+
+                // The HasExited check serves to reduce exceptions in situations where
+                // the process has already completed, but the client hasn't yet had
+                // the chance to call Complete. In that case another Dispose call
                 // can come in as the result of user cancellation, for instance.
                 if (!Process.HasExited) {
                     Process.Kill();
+                }
+
+                if (OwnsProcess) {
+                    Process.Close();
                 }
             }
         }
