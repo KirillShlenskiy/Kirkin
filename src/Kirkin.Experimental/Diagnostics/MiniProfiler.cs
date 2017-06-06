@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -13,18 +14,16 @@ namespace Kirkin.Diagnostics
         /// <summary>
         /// Durations by operation name.
         /// </summary>
-        private readonly Dictionary<string, Operation> OperationsByName = new Dictionary<string, Operation>();
+        private readonly ConcurrentDictionary<string, Operation> OperationsByName = new ConcurrentDictionary<string, Operation>();
 
         /// <summary>
         /// All operations tracked by this profiler.
         /// </summary>
-        public Operation[] Operations
+        public ICollection<Operation> Operations
         {
             get
             {
-                return OperationsByName.Values
-                    .OrderByDescending(o => o.TotalDuration)
-                    .ToArray();
+                return OperationsByName.Values;
             }
         }
 
@@ -45,11 +44,8 @@ namespace Kirkin.Diagnostics
         {
             Operation operation;
 
-            if (!OperationsByName.TryGetValue(operationName, out operation))
-            {
-                operation = new Operation(operationName);
-
-                OperationsByName.Add(operationName, operation);
+            if (!OperationsByName.TryGetValue(operationName, out operation)) {
+                operation = OperationsByName.GetOrAdd(operationName, new Operation(operationName));
             }
 
             return new TimedScope(operation.Timespans);
@@ -57,10 +53,10 @@ namespace Kirkin.Diagnostics
 
         public struct TimedScope : IDisposable
         {
-            private readonly List<TimeSpan> Timespans;
+            private readonly ConcurrentBag<TimeSpan> Timespans;
             private readonly Stopwatch Stopwatch;
 
-            internal TimedScope(List<TimeSpan> timespans)
+            internal TimedScope(ConcurrentBag<TimeSpan> timespans)
             {
                 Timespans = timespans;
                 Stopwatch = Stopwatch.StartNew();
@@ -82,7 +78,7 @@ namespace Kirkin.Diagnostics
         /// </summary>
         public sealed class Operation
         {
-            internal readonly List<TimeSpan> Timespans;
+            internal readonly ConcurrentBag<TimeSpan> Timespans;
 
             /// <summary>
             /// Name of the timed operation.
@@ -147,7 +143,7 @@ namespace Kirkin.Diagnostics
             internal Operation(string name)
             {
                 Name = name;
-                Timespans = new List<TimeSpan>();
+                Timespans = new ConcurrentBag<TimeSpan>();
             }
 
             public override string ToString()
