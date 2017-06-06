@@ -15,6 +15,7 @@ namespace Kirkin.Diagnostics
         /// Durations by operation name.
         /// </summary>
         private readonly ConcurrentDictionary<string, Operation> OperationsByName = new ConcurrentDictionary<string, Operation>();
+        private readonly ConcurrentDictionary<string, TimedScope> Scopes = new ConcurrentDictionary<string, TimedScope>();
 
         /// <summary>
         /// All operations tracked by this profiler.
@@ -28,12 +29,48 @@ namespace Kirkin.Diagnostics
         }
 
         /// <summary>
+        /// Starts timing the operation with the given name.
+        /// </summary>
+        public void BeginTime(string operationName)
+        {
+            TimedScope scope = Time(operationName);
+
+            if (!Scopes.TryAdd(operationName, scope)) {
+                throw new InvalidOperationException($"Another '{operationName}' scope is already open and must be closed before you can call {nameof(BeginTime)} again.");
+            }
+        }
+
+        /// <summary>
+        /// Stops timing the operation with the given name.
+        /// </summary>
+        public void EndTime(string operationName)
+        {
+            TimedScope scope;
+
+            if (!Scopes.TryRemove(operationName, out scope)) {
+                throw new InvalidOperationException($"No open scope matching operation name '{operationName}' found.");
+            }
+
+            scope.Dispose();
+        }
+
+        /// <summary>
         /// Times the given action.
         /// </summary>
         public void Time(string operationName, Action action)
         {
             using (Time(operationName)) {
                 action();
+            }
+        }
+
+        /// <summary>
+        /// Times the given function call.
+        /// </summary>
+        public T Time<T>(string operationName, Func<T> func)
+        {
+            using (Time(operationName)) {
+                return func();
             }
         }
 
