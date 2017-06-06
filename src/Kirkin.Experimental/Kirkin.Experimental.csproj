@@ -95,6 +95,7 @@
     <Compile Include="Decisions\IPreference.cs" />
     <Compile Include="Decisions\Preference.cs" />
     <Compile Include="Diagnostics\Diag.cs" />
+    <Compile Include="Diagnostics\MiniProfiler.cs" />
     <Compile Include="Diagnostics\NoDebuggerAttachedException.cs" />
     <Compile Include="Diagnostics\ProcessMemory.cs" />
     <Compile Include="Diagnostics\ProcessScope.cs" />
