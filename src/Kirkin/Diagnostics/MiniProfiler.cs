@@ -87,6 +87,10 @@ namespace Kirkin.Diagnostics
             return new TimedScope(operation);
         }
 
+        /// <summary>
+        /// Disposable scope involved in timing an operation.
+        /// When the scope is disposed the operation is marked as completed.
+        /// </summary>
         public struct TimedScope : IDisposable
         {
             private readonly Operation Operation;
@@ -98,6 +102,9 @@ namespace Kirkin.Diagnostics
                 Stopwatch = Stopwatch.StartNew();
             }
 
+            /// <summary>
+            /// Marks the operation as completed.
+            /// </summary>
             public void Dispose()
             {
                 if (!Stopwatch.IsRunning) {
@@ -196,6 +203,9 @@ namespace Kirkin.Diagnostics
                 }
             }
 
+            /// <summary>
+            /// Returns the operation stats in human-readable form.
+            /// </summary>
             public override string ToString()
             {
                 return $"[{Name}] Count: {Count}, Total: {TotalDuration.TotalSeconds:0.00}s, Avg: {AverageDuration.TotalSeconds:0.00}s, Min: {MinDuration.TotalSeconds:0.00}s, Max: {MaxDuration.TotalSeconds:0.00}s";

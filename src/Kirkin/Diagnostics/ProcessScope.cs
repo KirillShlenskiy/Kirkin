@@ -38,7 +38,6 @@ namespace Kirkin.Diagnostics
         /// Creates a new <see cref="ProcessScope"/> instance.
         /// </summary>
         /// <param name="process">Process whose lifetime will be managed by this instance.</param>
-        /// <param name="ownsProcess">If true, the <see cref="Process"/> instance will be disposed when this scope is disposed.</param>
         public ProcessScope(Process process)
         {
             Process = process;
