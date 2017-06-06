@@ -22,7 +22,9 @@ namespace Kirkin.Diagnostics
         {
             get
             {
-                return OperationsByName.Values.ToArray();
+                return OperationsByName.Values
+                    .OrderByDescending(o => o.TotalDuration)
+                    .ToArray();
             }
         }
 
