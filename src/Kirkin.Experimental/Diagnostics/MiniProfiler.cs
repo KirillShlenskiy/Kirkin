@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Kirkin.Diagnostics
 {
@@ -115,7 +114,10 @@ namespace Kirkin.Diagnostics
         /// </summary>
         public sealed class Operation
         {
-            private readonly ConcurrentBag<TimeSpan> Timespans;
+            private long _sum;
+            private int _count;
+            private long _min;
+            private long _max;
 
             /// <summary>
             /// Name of the timed operation.
@@ -129,7 +131,7 @@ namespace Kirkin.Diagnostics
             {
                 get
                 {
-                    return Timespans.Count;
+                    return _count;
                 }
             }
 
@@ -140,7 +142,7 @@ namespace Kirkin.Diagnostics
             {
                 get
                 {
-                    return new TimeSpan((long)Timespans.Average(t => t.Ticks));
+                    return new TimeSpan((long)((double)_sum / _count));
                 }
             }
 
@@ -151,7 +153,7 @@ namespace Kirkin.Diagnostics
             {
                 get
                 {
-                    return Timespans.DefaultIfEmpty().Max();
+                    return new TimeSpan(_max);
                 }
             }
 
@@ -162,7 +164,7 @@ namespace Kirkin.Diagnostics
             {
                 get
                 {
-                    return Timespans.DefaultIfEmpty().Min();
+                    return new TimeSpan(_min);
                 }
             }
 
@@ -173,19 +175,25 @@ namespace Kirkin.Diagnostics
             {
                 get
                 {
-                    return new TimeSpan(Timespans.Sum(t => t.Ticks));
+                    return new TimeSpan(_sum);
                 }
             }
 
             internal Operation(string name)
             {
                 Name = name;
-                Timespans = new ConcurrentBag<TimeSpan>();
             }
 
             internal void Add(TimeSpan timespan)
             {
-                Timespans.Add(timespan);
+                lock (this)
+                {
+                    _count++;
+                    _sum += timespan.Ticks;
+
+                    if (timespan.Ticks > _max) _max = timespan.Ticks;
+                    if (timespan.Ticks < _min || _min == 0) _min = timespan.Ticks;
+                }
             }
 
             public override string ToString()
