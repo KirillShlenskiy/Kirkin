@@ -144,7 +144,13 @@ namespace Kirkin.Diagnostics
 
             internal Operation(string name)
             {
+                Name = name;
                 Timespans = new List<TimeSpan>();
+            }
+
+            public override string ToString()
+            {
+                return $"[{Name}] Count: {Count}, Total: {TotalDuration.TotalSeconds:0.00}s, Avg: {AverageDuration.TotalSeconds:0.00}s, Min: {MinDuration.TotalSeconds:0.00}s, Max: {MaxDuration.TotalSeconds:0.00}s";
             }
         }
     }
