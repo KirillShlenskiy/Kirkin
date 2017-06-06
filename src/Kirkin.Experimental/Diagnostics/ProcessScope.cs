@@ -32,16 +32,16 @@ namespace Kirkin.Diagnostics
         {
             Process process = Interlocked.Exchange(ref _process, null);
 
-            if (!process.HasExited) {
+            if (process != null && !process.HasExited) {
                 process.Kill();
             }
         }
 
         public void Dispose()
         {
-            AppDomain.CurrentDomain.ProcessExit -= CurrentDomainExitHandler;
-
             KillChildProcess();
+
+            AppDomain.CurrentDomain.ProcessExit -= CurrentDomainExitHandler;
         }
     }
 }

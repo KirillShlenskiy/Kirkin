@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Kirkin.Diagnostics;
+
 namespace Kirkin
 {
     /// <summary>
@@ -118,24 +120,13 @@ namespace Kirkin
                     UseShellExecute = false
                 };
 
-                EventHandler processExitHandler = delegate
-                {
-                    Process p = Interlocked.Exchange(ref _process, null);
-
-                    if (p != null) {
-                        p.Kill();
-                    };
-                };
-
-                cancellationToken.Register(() => processExitHandler(null, null), useSynchronizationContext: false);
                 cancellationToken.ThrowIfCancellationRequested();
-            
-                // Ensure the child process is killed if the parent exits.
-                AppDomain.CurrentDomain.ProcessExit += processExitHandler;
 
-                try
+                _process = Process.Start(processStartInfo);
+
+                using (ProcessScope scope = new ProcessScope(_process))
                 {
-                    _process = Process.Start(processStartInfo);
+                    cancellationToken.Register(() => scope.Dispose(), useSynchronizationContext: false);
 
                     _process.EnableRaisingEvents = true;
 
@@ -197,15 +188,6 @@ namespace Kirkin
                                 throw new ConsoleRunnerException(result, error);
                             }
                         }
-                    }
-                }
-                finally
-                {
-                    AppDomain.CurrentDomain.ProcessExit -= processExitHandler;
-                    Process p = Interlocked.Exchange(ref _process, null);
-
-                    if (p != null) {
-                        p.Close();
                     }
                 }
             }
