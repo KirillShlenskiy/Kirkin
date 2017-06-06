@@ -126,7 +126,7 @@ namespace Kirkin
 
                 using (ProcessScope scope = new ProcessScope(_process, ownsProcess: true))
                 {
-                    cancellationToken.Register(() => scope.Dispose(), useSynchronizationContext: false);
+                    cancellationToken.Register(() => scope.Terminate(), useSynchronizationContext: false);
 
                     _process.EnableRaisingEvents = true;
 
@@ -151,6 +151,10 @@ namespace Kirkin
 
                         _process.Exited += (s, e) => tcs.SetResult(null);
 
+                        if (_process.HasExited) {
+                            throw new InvalidOperationException("The process has already exited.");
+                        }
+
                         await tcs.Task.ConfigureAwait(false); // Long-running operation.
                     }
                     else
@@ -158,10 +162,9 @@ namespace Kirkin
                         _process.WaitForExit();
                     }
 
-                    if (scope.Disposed)
+                    if (scope.Terminated)
                     {
-                        if (!cancellationToken.IsCancellationRequested)
-                        {
+                        if (!cancellationToken.IsCancellationRequested) {
                             throw new InvalidOperationException("Unexpected runner state. Expecting token to be marked as canceled.");
                         }
 
