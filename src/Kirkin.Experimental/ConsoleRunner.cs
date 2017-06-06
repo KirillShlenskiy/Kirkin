@@ -158,12 +158,7 @@ namespace Kirkin
                         _process.WaitForExit();
                     }
 
-                    // By now the child process could have been killed and nulled out by the
-                    // OutputDataReceived event handler. Handle this scenario gracefully.
-                    // No need for memory barrier - it is inserted by the await.
-                    Process p = _process;
-
-                    if (p == null)
+                    if (scope.ForciblyTerminated)
                     {
                         if (!cancellationToken.IsCancellationRequested) {
                             throw new InvalidOperationException("Unexpected runner state. Expecting token to be marked as canceled.");
@@ -173,7 +168,7 @@ namespace Kirkin
                     }
                     else
                     {
-                        int result = p.ExitCode;
+                        int result = _process.ExitCode;
 
                         if (result != 0)
                         {
