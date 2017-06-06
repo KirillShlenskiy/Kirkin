@@ -57,11 +57,17 @@ namespace Kirkin.Diagnostics
             // Multiple calls to Complete are fine.
             int state = Interlocked.CompareExchange(ref _state, STATE_COMPLETED, STATE_ACTIVE);
 
-            return state == STATE_ACTIVE || state == STATE_COMPLETED;
+            if (state == STATE_DISPOSED) {
+                return false;
+            }
+
+            AppDomain.CurrentDomain.ProcessExit -= CurrentDomainExitHandler;
+
+            return true;
         }
 
         /// <summary>
-        /// Terminates the managed process (if necessary) and releases any resources held by this instance.
+        /// Terminates the managed process (if necessary).
         /// </summary>
         public void Dispose()
         {
