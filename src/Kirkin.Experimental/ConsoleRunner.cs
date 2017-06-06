@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Kirkin.Diagnostics;
+
 namespace Kirkin
 {
     /// <summary>
@@ -118,24 +120,12 @@ namespace Kirkin
                     UseShellExecute = false
                 };
 
-                EventHandler processExitHandler = delegate
-                {
-                    Process p = Interlocked.Exchange(ref _process, null);
-
-                    if (p != null) {
-                        p.Kill();
-                    };
-                };
-
-                cancellationToken.Register(() => processExitHandler(null, null), useSynchronizationContext: false);
                 cancellationToken.ThrowIfCancellationRequested();
-            
-                // Ensure the child process is killed if the parent exits.
-                AppDomain.CurrentDomain.ProcessExit += processExitHandler;
 
-                try
+                using (_process = Process.Start(processStartInfo))
+                using (ProcessScope scope = new ProcessScope(_process))
                 {
-                    _process = Process.Start(processStartInfo);
+                    cancellationToken.Register(() => scope.Dispose(), useSynchronizationContext: false);
 
                     _process.EnableRaisingEvents = true;
 
@@ -167,12 +157,7 @@ namespace Kirkin
                         _process.WaitForExit();
                     }
 
-                    // By now the child process could have been killed and nulled out by the
-                    // OutputDataReceived event handler. Handle this scenario gracefully.
-                    // No need for memory barrier - it is inserted by the await.
-                    Process p = _process;
-
-                    if (p == null)
+                    if (scope.Disposed)
                     {
                         if (!cancellationToken.IsCancellationRequested) {
                             throw new InvalidOperationException("Unexpected runner state. Expecting token to be marked as canceled.");
@@ -180,32 +165,18 @@ namespace Kirkin
 
                         throw new OperationCanceledException("Child process forcibly terminated.", cancellationToken);
                     }
-                    else
+
+                    int result = _process.ExitCode;
+
+                    if (result != 0)
                     {
-                        int result = p.ExitCode;
+                        string error = string.Join("", errors);
 
-                        if (result != 0)
-                        {
-                            string error = string.Join("", errors);
-
-                            if (string.IsNullOrEmpty(error))
-                            {
-                                throw new ConsoleRunnerException(result, "Non-zero exit code.");
-                            }
-                            else
-                            {
-                                throw new ConsoleRunnerException(result, error);
-                            }
+                        if (string.IsNullOrEmpty(error)) {
+                            throw new ConsoleRunnerException(result, "Non-zero exit code.");
                         }
-                    }
-                }
-                finally
-                {
-                    AppDomain.CurrentDomain.ProcessExit -= processExitHandler;
-                    Process p = Interlocked.Exchange(ref _process, null);
 
-                    if (p != null) {
-                        p.Close();
+                        throw new ConsoleRunnerException(result, error);
                     }
                 }
             }
