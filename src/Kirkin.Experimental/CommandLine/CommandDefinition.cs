@@ -81,6 +81,18 @@ namespace Kirkin.CommandLine
         }
 
         /// <summary>
+        /// Defines a string option, i.e. "--colours red green" or "-s red green".
+        /// </summary>
+        public ICommandParameter DefineOptionList(string name, string shortName = null)
+        {
+            OptionListCommandParameter optionList = new OptionListCommandParameter(name, shortName);
+
+            RegisterOption(optionList);
+
+            return optionList;
+        }
+
+        /// <summary>
         /// Defines a boolean switch, i.e. "--validate" or "/validate true".
         /// </summary>
         public ICommandParameter DefineSwitch(string name, string shortName = null)
