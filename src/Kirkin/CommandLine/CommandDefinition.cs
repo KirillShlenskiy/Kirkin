@@ -258,9 +258,11 @@ namespace Kirkin.CommandLine
             Options.Add(option);
         }
 
+        /// <summary>
+        /// Returns the formal command definition.
+        /// </summary>
         public override string ToString()
         {
-            // replmon sync <subscription> [-v] [-l <arg>] [-p <arg>...]
             StringBuilder sb = new StringBuilder();
 
             sb.Append(Name);

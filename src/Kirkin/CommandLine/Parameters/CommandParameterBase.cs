@@ -30,7 +30,7 @@ namespace Kirkin.CommandLine.Parameters
         public string Help { get; }
 
         /// <summary>
-        /// Creates a new <see cref="CommandParameter{T}"/> instance.
+        /// Creates a new <see cref="CommandParameterBase{T}"/> instance.
         /// </summary>
         internal CommandParameterBase(string name, string shortName, string help)
         {
