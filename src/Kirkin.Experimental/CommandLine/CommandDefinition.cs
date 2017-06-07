@@ -126,6 +126,14 @@ namespace Kirkin.CommandLine
         /// </summary>
         public ICommand Parse(string[] args)
         {
+            if (args == null) throw new ArgumentNullException(nameof(args));
+
+            IEqualityComparer<string> stringEqualityComparer = OptionsByFullName.Comparer;
+
+            if (args.Length == 1 && IsHelpSwitch(args[0], stringEqualityComparer)) {
+                return new CommandHelpCommand(this);
+            }
+
             List<List<string>> tokenGroups = new List<List<string>>();
             List<string> currentTokenGroup = null;
 
@@ -269,6 +277,14 @@ namespace Kirkin.CommandLine
             }
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Returns true if the given token is recognized as a help switch.
+        /// </summary>
+        internal static bool IsHelpSwitch(string arg, IEqualityComparer<string> equalityComparer)
+        {
+            return equalityComparer.Equals(arg, "--help") || equalityComparer.Equals(arg, "/?");
         }
     }
 }

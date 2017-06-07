@@ -10,7 +10,6 @@ namespace Kirkin.CommandLine.Commands
     internal sealed class CommandHelpCommand : IHelpCommand
     {
         private readonly CommandDefinition Definition;
-        private readonly IEqualityComparer<string> StringEqualityComparer;
 
         public string Name
         {
@@ -20,10 +19,9 @@ namespace Kirkin.CommandLine.Commands
             }
         }
 
-        internal CommandHelpCommand(CommandDefinition definition, IEqualityComparer<string> stringEqualityComparer)
+        internal CommandHelpCommand(CommandDefinition definition)
         {
             Definition = definition;
-            StringEqualityComparer = stringEqualityComparer;
         }
 
         public IDictionary<string, object> Arguments { get; } = new Dictionary<string, object>();
@@ -52,7 +50,7 @@ namespace Kirkin.CommandLine.Commands
 
             Dictionary<string, string> dictionary = new[] { Definition.Parameter }
                 .Concat(Definition.Options)
-                .ToDictionary(p => p.ToString(), p => p.Help, StringEqualityComparer);
+                .ToDictionary(p => p.ToString(), p => p.Help);
 
             TextFormatter.FormatAsTable(dictionary, sb);
 

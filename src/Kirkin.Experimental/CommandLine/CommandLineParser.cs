@@ -85,16 +85,12 @@ namespace Kirkin.CommandLine
 
             string commandName = args.Length == 0 ? "" : args[0];
 
-            if (args.Length == 1 && IsHelpSwitch(commandName)) {
+            if (args.Length == 1 && CommandDefinition.IsHelpSwitch(commandName, StringEqualityComparer)) {
                 return new GeneralHelpCommand(this);
             }
 
             if (_commandDefinitions.TryGetValue(commandName, out CommandDefinition definition))
             {
-                if (args.Length == 2 && IsHelpSwitch(args[1])) {
-                    return new CommandHelpCommand(definition, StringEqualityComparer);
-                }
-
                 // Always skip first element.
                 string[] argsMinusFirstElement = new string[args.Length - 1];
 
@@ -104,14 +100,6 @@ namespace Kirkin.CommandLine
             }
 
             throw new InvalidOperationException($"Unknown command '{commandName}'.");
-        }
-
-        /// <summary>
-        /// Returns true if the given token is recognized as a help switch.
-        /// </summary>
-        private bool IsHelpSwitch(string arg)
-        {
-            return StringEqualityComparer.Equals(arg, "--help") || StringEqualityComparer.Equals(arg, "/?");
         }
     }
 }
