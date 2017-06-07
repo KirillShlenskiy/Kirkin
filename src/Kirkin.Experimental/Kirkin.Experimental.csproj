@@ -70,6 +70,7 @@
     <Compile Include="CommandLine\ICommandParameterDefinition.cs" />
     <Compile Include="CommandLine\Parameters\CommandParameter.cs" />
     <Compile Include="CommandLine\Parameters\CommandParameterBase.cs" />
+    <Compile Include="CommandLine\Parameters\CommandParameterList.cs" />
     <Compile Include="CommandLine\Parameters\OptionCommandParameter.cs" />
     <Compile Include="CommandLine\Parameters\SwitchCommandParameter.cs" />
     <Compile Include="ConsoleRunner.cs" />

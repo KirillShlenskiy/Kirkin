@@ -180,5 +180,32 @@ namespace Kirkin.Tests.CommandLine
 
             Assert.AreEqual("sync <subscription> [-v|--validate] [-l|--log <arg>]", parser.CommandDefinitions[0].ToString());
         }
+
+        [Test]
+        public void ParameterList()
+        {
+            CommandLineParser parser = new CommandLineParser();
+            string result = null;
+            bool? @switch = null;
+
+            parser.DefineCommand("hello", hello =>
+            {
+                hello.DefineParameterList("names");
+                hello.DefineSwitch("switch");
+
+                hello.Executed += (s, e) =>
+                {
+                    result = string.Join(", ", (string[])e.Args["names"]);
+                    @switch = (bool)e.Args["switch"];
+                };
+            });
+
+            ICommand command = parser.Parse("hello name1 name2 --switch".Split(' '));
+
+            command.Execute();
+
+            Assert.AreEqual("name1, name2", result);
+            Assert.True(@switch);
+        }
     }
 }
