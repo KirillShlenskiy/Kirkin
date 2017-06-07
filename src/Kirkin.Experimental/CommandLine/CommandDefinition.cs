@@ -45,6 +45,8 @@ namespace Kirkin.CommandLine
         internal CommandDefinition(string name, IEqualityComparer<string> stringEqualityComparer)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
+            if (name.StartsWith("-")) throw new ArgumentException("Command name cannot start with a '-'.");
+            if (name.StartsWith("/")) throw new ArgumentException("Command name cannot start with a '/'.");
 
             Name = name;
             OptionsByFullName = new Dictionary<string, ICommandParameterDefinition>(stringEqualityComparer);
@@ -130,7 +132,7 @@ namespace Kirkin.CommandLine
 
             IEqualityComparer<string> stringEqualityComparer = OptionsByFullName.Comparer;
 
-            if (args.Length == 1 && IsHelpSwitch(args[0], stringEqualityComparer)) {
+            if (args.Length == 1 && CommandSyntax.IsHelpSwitch(args[0], stringEqualityComparer)) {
                 return new CommandHelpCommand(this);
             }
 
@@ -277,14 +279,6 @@ namespace Kirkin.CommandLine
             }
 
             return sb.ToString();
-        }
-
-        /// <summary>
-        /// Returns true if the given token is recognized as a help switch.
-        /// </summary>
-        internal static bool IsHelpSwitch(string arg, IEqualityComparer<string> equalityComparer)
-        {
-            return equalityComparer.Equals(arg, "--help") || equalityComparer.Equals(arg, "/?");
         }
     }
 }

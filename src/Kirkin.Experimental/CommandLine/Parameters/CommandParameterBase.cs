@@ -36,6 +36,12 @@ namespace Kirkin.CommandLine.Parameters
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Parameter name cannot be empty.");
 
+            CommandSyntax.EnsureNotAReservedKeyword(name);
+
+            if (shortName != null) {
+                CommandSyntax.EnsureNotAReservedKeyword(shortName);
+            }
+
             Name = name;
             ShortName = shortName;
             Help = help;

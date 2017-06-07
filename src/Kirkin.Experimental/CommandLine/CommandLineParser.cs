@@ -85,7 +85,7 @@ namespace Kirkin.CommandLine
 
             string commandName = args.Length == 0 ? "" : args[0];
 
-            if (args.Length == 1 && CommandDefinition.IsHelpSwitch(commandName, StringEqualityComparer)) {
+            if (args.Length == 1 && CommandSyntax.IsHelpSwitch(commandName, StringEqualityComparer)) {
                 return new GeneralHelpCommand(this);
             }
 

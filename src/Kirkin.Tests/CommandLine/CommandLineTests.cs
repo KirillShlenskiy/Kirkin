@@ -2,6 +2,7 @@
 
 using Kirkin.CommandLine;
 using Kirkin.CommandLine.Commands;
+
 using NUnit.Framework;
 
 namespace Kirkin.Tests.CommandLine
@@ -233,6 +234,50 @@ namespace Kirkin.Tests.CommandLine
             // Not help commands:
             Assert.Throws<InvalidOperationException>(() => parser.Parse(new string[0]));
             Assert.Throws<InvalidOperationException>(() => parser.Parse(""));
+
+            // Check text.
+            string expected = @"Usage: Kirkin.Experimental <command> [<args>].
+
+    aaa    Does the zzz thing.
+    bbb    Does the uuu thing, which is totally different to the aaa
+           thing. Totally.
+    ccc    Does the ccc thing.
+";
+            Assert.AreEqual(expected, ((IHelpCommand)command).RenderHelpText());
+        }
+
+        [Test]
+        public void CommandHelp()
+        {
+            CommandLineParser parser = new CommandLineParser();
+
+            parser.DefineCommand("command", c =>
+            {
+                c.DefineParameter("aaa", help: "Does the zzz thing.");
+                c.DefineOption("bbb", help: "Does the uuu thing, which is totally different to the aaa thing. Totally.");
+                c.DefineSwitch("ccc", help: "Does the ccc thing.");
+            });
+
+            ICommand command = parser.Parse("command --help".Split(' '));
+
+            command.Execute();
+
+            Assert.True(parser.Parse("command --help".Split(' ')) is CommandHelpCommand);
+            Assert.True(parser.Parse("command /?".Split(' ')) is CommandHelpCommand);
+
+            // Not help commands:
+            Assert.Throws<InvalidOperationException>(() => parser.Parse(new string[0]));
+            Assert.Throws<InvalidOperationException>(() => parser.Parse(""));
+
+            // Check text.
+            string expected = @"Usage: Kirkin.Experimental command <aaa> [--bbb <arg>] [--ccc].
+
+    <aaa>          Does the zzz thing.
+    --bbb <arg>    Does the uuu thing, which is totally different to the
+                   aaa thing. Totally.
+    --ccc          Does the ccc thing.
+";
+            Assert.AreEqual(expected, ((IHelpCommand)command).RenderHelpText());
         }
 
         [Test]
@@ -249,24 +294,5 @@ namespace Kirkin.Tests.CommandLine
 
             Console.WriteLine(string.Join(", ", (string[])command.Arguments["names"]));
         }
-
-        //[Test]
-        //public void CommandHelp()
-        //{
-        //    CommandLineParser parser = new CommandLineParser();
-
-        //    parser.DefineCommand("aaa", aaa => aaa.Help = "Does the zzz thing.");
-        //    parser.DefineCommand("bbb", bbb => bbb.Help = "Does the uuu thing, which is totally different to the aaa thing. Totally.");
-        //    parser.DefineCommand("ccc", ccc => ccc.Help = "Does the ccc thing.");
-
-        //    ICommand command = parser.Parse("--help");
-
-        //    command.Execute();
-
-        //    Assert.True(parser.Parse(new string[0]) is GeneralHelpCommand);
-        //    Assert.True(parser.Parse("") is GeneralHelpCommand);
-        //    Assert.True(parser.Parse("--help") is GeneralHelpCommand);
-        //    Assert.True(parser.Parse("/?") is GeneralHelpCommand);
-        //}
     }
 }
