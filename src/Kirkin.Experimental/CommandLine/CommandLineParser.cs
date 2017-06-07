@@ -63,6 +63,8 @@ namespace Kirkin.CommandLine
         /// </summary>
         public void DefineCommand(string name, Action<CommandDefinition> configureAction)
         {
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command name cannot be empty.");
+
             if (_commandDefinitions.ContainsKey(name)) {
                 throw new InvalidOperationException($"Command '{name}' already defined.");
             }

@@ -34,9 +34,17 @@ namespace Kirkin.CommandLine
         /// </summary>
         public event EventHandler<CommandExecutedEventArgs> Executed;
 
+        /// <summary>
+        /// Creates a new standalone <see cref="CommandDefinition"/> instance.
+        /// </summary>
+        public CommandDefinition(bool caseInsensitive = false)
+            : this("", caseInsensitive ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal)
+        {
+        }
+
         internal CommandDefinition(string name, IEqualityComparer<string> stringEqualityComparer)
         {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command name cannot be empty.");
+            if (name == null) throw new ArgumentNullException(nameof(name));
 
             Name = name;
             OptionsByFullName = new Dictionary<string, ICommandParameterDefinition>(stringEqualityComparer);

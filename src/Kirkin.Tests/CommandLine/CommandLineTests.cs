@@ -238,10 +238,10 @@ namespace Kirkin.Tests.CommandLine
         [Test]
         public void ParseSingleCommand()
         {
-            CommandDefinition definition = new CommandDefinition("Default command", StringComparer.Ordinal);
+            CommandDefinition definition = new CommandDefinition();
 
             definition.DefineParameterList("names");
-            definition.DefineSwitch("yay");
+            definition.DefineSwitch("hru");
 
             ICommand command = definition.Parse("Stu Dru Gru --hru".Split(' '));
 
