@@ -1,7 +1,7 @@
 ﻿using System;
 
 using Kirkin.CommandLine;
-
+using Kirkin.CommandLine.Commands;
 using NUnit.Framework;
 
 namespace Kirkin.Tests.CommandLine
@@ -189,8 +189,10 @@ namespace Kirkin.Tests.CommandLine
             bool? switchValue = null;
             string optionValue = null;
 
-            parser.DefineCommand("hello", hello =>
+            parser.DefineCommand("hello", "Says hello", hello =>
             {
+                hello.Help = "Says hello";
+
                 hello.DefineParameterList("names");
                 hello.DefineSwitch("switch");
                 hello.DefineOptionList("colors");
@@ -210,6 +212,25 @@ namespace Kirkin.Tests.CommandLine
             Assert.AreEqual("name1, name2", parameterValue);
             Assert.True(switchValue);
             Assert.AreEqual("red, green, blue", optionValue);
+        }
+
+        [Test]
+        public void Help()
+        {
+            CommandLineParser parser = new CommandLineParser();
+
+            parser.DefineCommand("aaa", "Does the zzz thing.", aaa => { });
+            parser.DefineCommand("bbb", "Does the uuu thing, which is totally different to the aaa thing. Totally.", bbb => { });
+            parser.DefineCommand("ccc", "Does the ccc thing.", ccc => { });
+
+            ICommand command = parser.Parse("--help");
+
+            command.Execute();
+
+            Assert.True(parser.Parse(new string[0]) is HelpCommand);
+            Assert.True(parser.Parse("") is HelpCommand);
+            Assert.True(parser.Parse("--help") is HelpCommand);
+            Assert.True(parser.Parse("/?") is HelpCommand);
         }
     }
 }

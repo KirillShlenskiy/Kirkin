@@ -26,7 +26,7 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Human-readable command description.
         /// </summary>
-        public string Help { get; }
+        public string Help { get; set; }
 
         /// <summary>
         /// Raised when <see cref="ICommand.Execute"/> is called on the command.
@@ -65,6 +65,9 @@ namespace Kirkin.CommandLine
             return parameter;
         }
 
+        /// <summary>
+        /// Defines a string parameter list (unqualified values immediately following command name).
+        /// </summary>
         public ICommandParameter DefineParameterList(string name)
         {
             CommandParameterList parameterList = new CommandParameterList(name);
