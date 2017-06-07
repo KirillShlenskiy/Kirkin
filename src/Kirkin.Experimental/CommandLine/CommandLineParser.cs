@@ -80,11 +80,10 @@ namespace Kirkin.CommandLine
         public ICommand Parse(params string[] args)
         {
             if (args == null) throw new ArgumentNullException(nameof(args));
-            if (args.Length == 0) return new GeneralHelpCommand(this);
 
-            string commandName = args[0];
+            string commandName = args.Length == 0 ? "" : args[0];
 
-            if (args.Length == 1 && (string.IsNullOrEmpty(commandName) || IsHelpSwitch(commandName))) {
+            if (args.Length == 1 && IsHelpSwitch(commandName)) {
                 return new GeneralHelpCommand(this);
             }
 
