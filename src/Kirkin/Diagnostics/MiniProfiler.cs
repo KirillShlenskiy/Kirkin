@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Kirkin.Diagnostics
 {
@@ -88,6 +89,22 @@ namespace Kirkin.Diagnostics
         }
 
         /// <summary>
+        /// Returns a string description of this instance.
+        /// </summary>
+        public override string ToString()
+        {
+            return ToString(Environment.NewLine);
+        }
+
+        /// <summary>
+        /// Returns a string description of this instance.
+        /// </summary>
+        public string ToString(string delimiter)
+        {
+            return string.Join(delimiter, Operations.OrderByDescending(o => o.TotalDuration));
+        }
+
+        /// <summary>
         /// Disposable scope involved in timing an operation.
         /// When the scope is disposed the operation is marked as completed.
         /// </summary>
@@ -121,8 +138,8 @@ namespace Kirkin.Diagnostics
         /// </summary>
         public sealed class Operation
         {
-            private long _sum;
             private int _count;
+            private long _sum;
             private long _min;
             private long _max;
 
