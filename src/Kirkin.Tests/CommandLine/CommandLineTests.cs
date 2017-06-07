@@ -12,7 +12,7 @@ namespace Kirkin.Tests.CommandLine
         public void BasicCommandLineParsing()
         {
             CommandLineParser parser = new CommandLineParser {
-                StringEqualityComparer = StringComparer.OrdinalIgnoreCase
+                CaseInsensitive = true
             };
 
             parser.DefineCommand("zzz", "Prints Holy Moly", zzz =>
@@ -227,10 +227,10 @@ namespace Kirkin.Tests.CommandLine
 
             command.Execute();
 
-            Assert.True(parser.Parse(new string[0]) is HelpCommand);
-            Assert.True(parser.Parse("") is HelpCommand);
-            Assert.True(parser.Parse("--help") is HelpCommand);
-            Assert.True(parser.Parse("/?") is HelpCommand);
+            Assert.True(parser.Parse(new string[0]) is GeneralHelpCommand);
+            Assert.True(parser.Parse("") is GeneralHelpCommand);
+            Assert.True(parser.Parse("--help") is GeneralHelpCommand);
+            Assert.True(parser.Parse("/?") is GeneralHelpCommand);
         }
     }
 }

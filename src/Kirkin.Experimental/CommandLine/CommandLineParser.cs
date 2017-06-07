@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 using Kirkin.CommandLine.Commands;
 
@@ -17,11 +16,22 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Equality comparer used by the parser to resolve commands and their arguments.
         /// </summary>
-        public IEqualityComparer<string> StringEqualityComparer
+        internal IEqualityComparer<string> StringEqualityComparer
         {
             get
             {
                 return _commandDefinitions.Comparer;
+            }
+        }
+
+        /// <summary>
+        /// Equality comparer used by the parser to resolve commands and their arguments.
+        /// </summary>
+        public bool CaseInsensitive
+        {
+            get
+            {
+                return _commandDefinitions.Comparer == StringComparer.OrdinalIgnoreCase;
             }
             set
             {
@@ -29,7 +39,7 @@ namespace Kirkin.CommandLine
                     throw new InvalidOperationException("Cannot change default string equality comparer once commands have been defined.");
                 }
 
-                _commandDefinitions = new Dictionary<string, CommandDefinition>(value);
+                _commandDefinitions = new Dictionary<string, CommandDefinition>(value ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
             }
         }
 
@@ -70,12 +80,12 @@ namespace Kirkin.CommandLine
         public ICommand Parse(params string[] args)
         {
             if (args == null) throw new ArgumentNullException(nameof(args));
-            if (args.Length == 0) return new HelpCommand(this);
+            if (args.Length == 0) return new GeneralHelpCommand(this);
 
             string commandName = args[0];
 
             if (args.Length == 1 && (string.IsNullOrEmpty(commandName) || StringEqualityComparer.Equals(commandName, "--help") || StringEqualityComparer.Equals(commandName, "/?"))) {
-                return new HelpCommand(this);
+                return new GeneralHelpCommand(this);
             }
 
             if (_commandDefinitions.TryGetValue(commandName, out CommandDefinition definition)) {
@@ -191,53 +201,6 @@ namespace Kirkin.CommandLine
             }
 
             return new DefaultCommand(definition, argValues);
-        }
-
-        /// <summary>
-        /// Builds the help string.
-        /// </summary>
-        private string RenderHelpText()
-        {
-            const int screenWidth = 72;
-            int maxCommandWidth = 0;
-
-            foreach (CommandDefinition commandDefinition in _commandDefinitions.Values)
-            {
-                if (commandDefinition.Name.Length > maxCommandWidth) {
-                    maxCommandWidth = commandDefinition.Name.Length;
-                }
-            }
-
-            StringBuilder sb = new StringBuilder();
-            const string tab = "    ";
-            int leftColumnWidth = tab.Length * 2 + maxCommandWidth;
-
-            foreach (CommandDefinition commandDefinition in _commandDefinitions.Values)
-            {
-                sb.Append(tab);
-                sb.Append(commandDefinition.Name.PadRight(maxCommandWidth));
-                sb.Append(tab);
-
-                for (int i = 0; i < commandDefinition.Help.Length; i++)
-                {
-                    if (i > 0 && i % (screenWidth - leftColumnWidth) == 0)
-                    {
-                        sb.AppendLine();
-                        sb.Append(' ', leftColumnWidth);
-                    }
-
-                    sb.Append(commandDefinition.Help[i]);
-                }
-
-                sb.AppendLine();
-            }
-
-            return sb.ToString();
-        }
-
-        public override string ToString()
-        {
-            return RenderHelpText();
         }
     }
 }
