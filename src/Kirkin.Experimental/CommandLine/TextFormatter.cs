@@ -5,7 +5,7 @@ namespace Kirkin.CommandLine
 {
     internal sealed class TextFormatter
     {
-        internal static string FormatAsTable(Dictionary<string, string> dictionary)
+        internal static void FormatAsTable(Dictionary<string, string> dictionary, StringBuilder sb)
         {
             const int screenWidth = 72;
             int maxCommandWidth = 0;
@@ -17,7 +17,6 @@ namespace Kirkin.CommandLine
                 }
             }
 
-            StringBuilder sb = new StringBuilder();
             const string tab = "    ";
             int leftColumnWidth = tab.Length * 2 + maxCommandWidth;
 
@@ -27,37 +26,35 @@ namespace Kirkin.CommandLine
                 sb.Append(kvp.Key.PadRight(maxCommandWidth));
                 sb.Append(tab);
 
-                if (string.IsNullOrEmpty(kvp.Value)) {
-                    continue;
-                }
-
-                int position = leftColumnWidth;
-
-                foreach (string word in kvp.Value.Split(' '))
+                if (!string.IsNullOrEmpty(kvp.Value))
                 {
-                    if (position + word.Length + 1 /* space */ > screenWidth)
+                    int position = leftColumnWidth;
+
+                    foreach (string word in kvp.Value.Split(' '))
                     {
-                        sb.AppendLine();
-                        sb.Append(' ', leftColumnWidth);
+                        if (position + word.Length + 1 /* space */ > screenWidth)
+                        {
+                            sb.AppendLine();
+                            sb.Append(' ', leftColumnWidth);
 
-                        position = leftColumnWidth;
+                            position = leftColumnWidth;
+                        }
+                        else if (position > leftColumnWidth)
+                        {
+                            sb.Append(' ');
+
+                            position++;
+                        }
+
+                        sb.Append(word);
+
+                        position += word.Length;
                     }
-                    else if (position > leftColumnWidth)
-                    {
-                        sb.Append(' ');
-
-                        position++;
-                    }
-
-                    sb.Append(word);
-
-                    position += word.Length;
                 }
 
                 sb.AppendLine();
             }
 
-            return sb.ToString();
         }
     }
 }

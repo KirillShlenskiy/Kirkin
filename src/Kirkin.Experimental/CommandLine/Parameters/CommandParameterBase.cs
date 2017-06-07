@@ -38,6 +38,7 @@ namespace Kirkin.CommandLine.Parameters
 
             Name = name;
             ShortName = shortName;
+            Help = help;
         }
 
         /// <summary>

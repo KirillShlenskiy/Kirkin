@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 
 namespace Kirkin.CommandLine.Commands
 {
     internal sealed class CommandHelpCommand : IHelpCommand
     {
-        private readonly CommandDefinition Command;
+        private readonly CommandDefinition Definition;
         private readonly IEqualityComparer<string> StringEqualityComparer;
 
         public string Name
@@ -17,9 +20,9 @@ namespace Kirkin.CommandLine.Commands
             }
         }
 
-        internal CommandHelpCommand(CommandDefinition command, IEqualityComparer<string> stringEqualityComparer)
+        internal CommandHelpCommand(CommandDefinition definition, IEqualityComparer<string> stringEqualityComparer)
         {
-            Command = command;
+            Definition = definition;
             StringEqualityComparer = stringEqualityComparer;
         }
 
@@ -40,13 +43,20 @@ namespace Kirkin.CommandLine.Commands
 
         private string RenderHelpText()
         {
-            // TODO: usage: replmon <command> [<args>].
+            StringBuilder sb = new StringBuilder();
+            Assembly entryAssembly = Assembly.GetEntryAssembly();
+            string executableName = Path.GetFileNameWithoutExtension(entryAssembly.Location);
 
-            Dictionary<string, string> dictionary = new[] { Command.Parameter }
-                .Concat(Command.Options)
+            sb.AppendLine($"Usage: {executableName} {Definition}.");
+            sb.AppendLine();
+
+            Dictionary<string, string> dictionary = new[] { Definition.Parameter }
+                .Concat(Definition.Options)
                 .ToDictionary(p => p.ToString(), p => p.Help, StringEqualityComparer);
 
-            return TextFormatter.FormatAsTable(dictionary);
+            TextFormatter.FormatAsTable(dictionary, sb);
+
+            return sb.ToString();
         }
     }
 }

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 
 namespace Kirkin.CommandLine.Commands
 {
@@ -38,12 +41,19 @@ namespace Kirkin.CommandLine.Commands
 
         private string RenderHelpText()
         {
-            // TODO: usage: replmon <command> [<args>].
+            StringBuilder sb = new StringBuilder();
+            Assembly entryAssembly = Assembly.GetEntryAssembly();
+            string executableName = Path.GetFileNameWithoutExtension(entryAssembly.Location);
+
+            sb.AppendLine($"Usage: {executableName} <command> [<args>].");
+            sb.AppendLine();
 
             IEnumerable<CommandDefinition> commandDefinitions = Parser.CommandDefinitions;
             Dictionary<string, string> dictionary = commandDefinitions.ToDictionary(d => d.Name, d => d.Help, Parser.StringEqualityComparer);
 
-            return TextFormatter.FormatAsTable(dictionary);
+            TextFormatter.FormatAsTable(dictionary, sb);
+
+            return sb.ToString();
         }
     }
 }

@@ -16,9 +16,9 @@ namespace cli
                 {
                     hello.Help = "Greets the user";
 
-                    hello.DefineParameter("name");
-                    hello.DefineSwitch("sir", shortName: "s");
-                    hello.DefineOption("surname");
+                    hello.DefineParameter("name", help: "Name of the person to be greeted.");
+                    hello.DefineSwitch("sir", shortName: "s", help: "Specify if you want the name to be prefixed with 'sir'.");
+                    hello.DefineOption("surname", help: "Optional surname of the person to be greeted.");
 
                     hello.Executed += (s, e) =>
                     {
