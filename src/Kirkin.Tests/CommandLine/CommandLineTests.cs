@@ -15,7 +15,7 @@ namespace Kirkin.Tests.CommandLine
                 CaseInsensitive = true
             };
 
-            parser.DefineCommand("zzz", "Prints Holy Moly", zzz =>
+            parser.DefineCommand("zzz", zzz =>
             {
                 zzz.DefineOption("fizz");
                 zzz.DefineOption("buzz");
@@ -25,7 +25,7 @@ namespace Kirkin.Tests.CommandLine
             string subscription = null;
             bool validate = false;
 
-            parser.DefineCommand("sync", "Performs database synchronisation", sync =>
+            parser.DefineCommand("sync", sync =>
             {
                 sync.DefineOption("subscription", "s");
                 sync.DefineSwitch("validate", "v");
@@ -93,7 +93,7 @@ namespace Kirkin.Tests.CommandLine
         {
             CommandLineParser parser = new CommandLineParser();
 
-            parser.DefineCommand("sync", "Performs database synchronisation", sync =>
+            parser.DefineCommand("sync", sync =>
             {
                 sync.DefineParameter("subscription");
                 sync.DefineSwitch("validate", shortName: "v");
@@ -110,7 +110,7 @@ namespace Kirkin.Tests.CommandLine
         {
             CommandLineParser parser = new CommandLineParser();
 
-            parser.DefineCommand("sync", "Performs database synchronisation", sync =>
+            parser.DefineCommand("sync", sync =>
             {
                 sync.DefineParameter("subscription");
                 sync.DefineSwitch("validate", shortName: "v");
@@ -141,7 +141,7 @@ namespace Kirkin.Tests.CommandLine
         {
             CommandLineParser parser = new CommandLineParser();
 
-            parser.DefineCommand("sync", "Performs database synchronisation", sync =>
+            parser.DefineCommand("sync", sync =>
             {
                 sync.DefineParameter("subscription");
                 sync.DefineOption("log", shortName: "l");
@@ -171,7 +171,7 @@ namespace Kirkin.Tests.CommandLine
         {
             CommandLineParser parser = new CommandLineParser();
 
-            parser.DefineCommand("sync", "Performs database synchronisation", sync =>
+            parser.DefineCommand("sync", sync =>
             {
                 sync.DefineParameter("subscription");
                 sync.DefineSwitch("validate", shortName: "v");
@@ -189,7 +189,7 @@ namespace Kirkin.Tests.CommandLine
             bool? switchValue = null;
             string optionValue = null;
 
-            parser.DefineCommand("hello", "Says hello", hello =>
+            parser.DefineCommand("hello", hello =>
             {
                 hello.Help = "Says hello";
 
@@ -215,13 +215,32 @@ namespace Kirkin.Tests.CommandLine
         }
 
         [Test]
-        public void Help()
+        public void GeneralHelp()
         {
             CommandLineParser parser = new CommandLineParser();
 
-            parser.DefineCommand("aaa", "Does the zzz thing.", aaa => { });
-            parser.DefineCommand("bbb", "Does the uuu thing, which is totally different to the aaa thing. Totally.", bbb => { });
-            parser.DefineCommand("ccc", "Does the ccc thing.", ccc => { });
+            parser.DefineCommand("aaa", aaa => aaa.Help = "Does the zzz thing.");
+            parser.DefineCommand("bbb", bbb => bbb.Help = "Does the uuu thing, which is totally different to the aaa thing. Totally.");
+            parser.DefineCommand("ccc", ccc => ccc.Help = "Does the ccc thing.");
+
+            ICommand command = parser.Parse("--help");
+
+            command.Execute();
+
+            Assert.True(parser.Parse(new string[0]) is GeneralHelpCommand);
+            Assert.True(parser.Parse("") is GeneralHelpCommand);
+            Assert.True(parser.Parse("--help") is GeneralHelpCommand);
+            Assert.True(parser.Parse("/?") is GeneralHelpCommand);
+        }
+
+        [Test]
+        public void CommandHelp()
+        {
+            CommandLineParser parser = new CommandLineParser();
+
+            parser.DefineCommand("aaa", aaa => aaa.Help = "Does the zzz thing.");
+            parser.DefineCommand("bbb", bbb => bbb.Help = "Does the uuu thing, which is totally different to the aaa thing. Totally.");
+            parser.DefineCommand("ccc", ccc => ccc.Help = "Does the ccc thing.");
 
             ICommand command = parser.Parse("--help");
 

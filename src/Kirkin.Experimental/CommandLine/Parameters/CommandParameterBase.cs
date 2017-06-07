@@ -25,9 +25,14 @@ namespace Kirkin.CommandLine.Parameters
         public abstract bool SupportsMultipleValues { get; }
 
         /// <summary>
+        /// Human-readable parameter description.
+        /// </summary>
+        public string Help { get; }
+
+        /// <summary>
         /// Creates a new <see cref="CommandParameter{T}"/> instance.
         /// </summary>
-        internal CommandParameterBase(string name, string shortName)
+        internal CommandParameterBase(string name, string shortName, string help)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Parameter name cannot be empty.");
 

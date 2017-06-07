@@ -61,13 +61,13 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Defines a command with the given name.
         /// </summary>
-        public void DefineCommand(string name, string help, Action<CommandDefinition> configureAction)
+        public void DefineCommand(string name, Action<CommandDefinition> configureAction)
         {
             if (_commandDefinitions.ContainsKey(name)) {
                 throw new InvalidOperationException($"Command '{name}' already defined.");
             }
 
-            CommandDefinition definition = new CommandDefinition(name, help, StringEqualityComparer);
+            CommandDefinition definition = new CommandDefinition(name, StringEqualityComparer);
 
             configureAction(definition);
 

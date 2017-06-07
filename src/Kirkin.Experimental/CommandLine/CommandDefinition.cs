@@ -33,12 +33,11 @@ namespace Kirkin.CommandLine
         /// </summary>
         public event EventHandler<CommandExecutedEventArgs> Executed;
 
-        internal CommandDefinition(string name, string help, IEqualityComparer<string> stringEqualityComparer)
+        internal CommandDefinition(string name, IEqualityComparer<string> stringEqualityComparer)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command name cannot be empty.");
 
             Name = name;
-            Help = help;
             OptionsByFullName = new Dictionary<string, ICommandParameterDefinition>(stringEqualityComparer);
             OptionsByShortName = new Dictionary<string, ICommandParameterDefinition>(stringEqualityComparer);
         }
@@ -56,9 +55,9 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Defines a string parameter (unqualified value immediately following command name).
         /// </summary>
-        public ICommandParameter DefineParameter(string name)
+        public ICommandParameter DefineParameter(string name, string help = null)
         {
-            CommandParameter parameter = new CommandParameter(name);
+            CommandParameter parameter = new CommandParameter(name, help);
 
             Parameter = parameter;
 
@@ -68,9 +67,9 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Defines a string parameter list (unqualified values immediately following command name).
         /// </summary>
-        public ICommandParameter DefineParameterList(string name)
+        public ICommandParameter DefineParameterList(string name, string help = null)
         {
-            CommandParameterList parameterList = new CommandParameterList(name);
+            CommandParameterList parameterList = new CommandParameterList(name, help);
 
             Parameter = parameterList;
 
@@ -80,9 +79,9 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Defines a string option, i.e. "--subscription main" or "-s main" or "/subscription main".
         /// </summary>
-        public ICommandParameter DefineOption(string name, string shortName = null)
+        public ICommandParameter DefineOption(string name, string shortName = null, string help = null)
         {
-            OptionCommandParameter option = new OptionCommandParameter(name, shortName);
+            OptionCommandParameter option = new OptionCommandParameter(name, shortName, help);
 
             RegisterOption(option);
 
@@ -92,9 +91,9 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Defines a string option, i.e. "--colours red green" or "-s red green".
         /// </summary>
-        public ICommandParameter DefineOptionList(string name, string shortName = null)
+        public ICommandParameter DefineOptionList(string name, string shortName = null, string help = null)
         {
-            OptionListCommandParameter optionList = new OptionListCommandParameter(name, shortName);
+            OptionListCommandParameter optionList = new OptionListCommandParameter(name, shortName, help);
 
             RegisterOption(optionList);
 
@@ -104,9 +103,9 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Defines a boolean switch, i.e. "--validate" or "/validate true".
         /// </summary>
-        public ICommandParameter DefineSwitch(string name, string shortName = null)
+        public ICommandParameter DefineSwitch(string name, string shortName = null, string help = null)
         {
-            SwitchCommandParameter option = new SwitchCommandParameter(name, shortName);
+            SwitchCommandParameter option = new SwitchCommandParameter(name, shortName, help);
 
             RegisterOption(option);
 

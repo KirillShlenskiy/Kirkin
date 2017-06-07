@@ -15,8 +15,8 @@ namespace Kirkin.CommandLine.Parameters
             }
         }
 
-        public CommandParameterList(string name)
-            : base(name, null)
+        public CommandParameterList(string name, string help)
+            : base(name, null, help)
         {
         }
 

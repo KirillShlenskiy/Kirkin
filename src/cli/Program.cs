@@ -12,8 +12,10 @@ namespace cli
             {
                 CommandLineParser parser = new CommandLineParser();
 
-                parser.DefineCommand("hello", "Greets the user", hello =>
+                parser.DefineCommand("hello", hello =>
                 {
+                    hello.Help = "Greets the user";
+
                     hello.DefineParameter("name");
                     hello.DefineSwitch("sir", shortName: "s");
                     hello.DefineOption("surname");
@@ -28,8 +30,10 @@ namespace cli
                     };
                 });
 
-                parser.DefineCommand("goodbye", "Farewells the user", goodbye =>
+                parser.DefineCommand("goodbye", goodbye =>
                 {
+                    goodbye.Help = "Farewells the user";
+
                     goodbye.DefineParameter("name");
                     goodbye.DefineSwitch("sir", shortName: "s");
                     goodbye.DefineOption("surname");

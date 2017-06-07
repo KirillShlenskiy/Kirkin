@@ -19,5 +19,10 @@
         /// Returns true if this parameter/option supports multiple input values.
         /// </summary>
         bool SupportsMultipleValues { get; }
+
+        /// <summary>
+        /// Human-readable parameter description.
+        /// </summary>
+        string Help { get; }
     }
 }
