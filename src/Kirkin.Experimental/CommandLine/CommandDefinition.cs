@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
+using Kirkin.CommandLine.Commands;
 using Kirkin.CommandLine.Parameters;
 
 namespace Kirkin.CommandLine
@@ -15,8 +16,8 @@ namespace Kirkin.CommandLine
         // and zero or more options/switches ("sync extra ==>--validate --log zzz.txt<==").
         internal ICommandParameterDefinition Parameter { get; private set; }
         internal readonly List<ICommandParameterDefinition> Options = new List<ICommandParameterDefinition>();
-        internal readonly Dictionary<string, ICommandParameterDefinition> OptionsByFullName;
-        internal readonly Dictionary<string, ICommandParameterDefinition> OptionsByShortName;
+        private readonly Dictionary<string, ICommandParameterDefinition> OptionsByFullName;
+        private readonly Dictionary<string, ICommandParameterDefinition> OptionsByShortName;
 
         /// <summary>
         /// The name of the command being configured.
@@ -110,6 +111,114 @@ namespace Kirkin.CommandLine
             RegisterOption(option);
 
             return option;
+        }
+
+        /// <summary>
+        /// Parses the given args collection and produces a ready-to-use <see cref="ICommand"/> instance.
+        /// </summary>
+        public ICommand Parse(string[] args)
+        {
+            List<List<string>> tokenGroups = new List<List<string>>();
+            List<string> currentTokenGroup = null;
+
+            foreach (string arg in args)
+            {
+                if (currentTokenGroup == null || arg.StartsWith("-") || arg.StartsWith("/"))
+                {
+                    currentTokenGroup = new List<string>();
+
+                    tokenGroups.Add(currentTokenGroup);
+                }
+
+                int nameValueSplitIndex = arg.IndexOf(':');
+
+                if (nameValueSplitIndex == -1) nameValueSplitIndex = arg.IndexOf('=');
+
+                if (nameValueSplitIndex != -1)
+                {
+                    // Name/value pair.
+                    currentTokenGroup.Add(arg.Substring(0, nameValueSplitIndex));
+                    currentTokenGroup.Add(arg.Substring(nameValueSplitIndex + 1));
+                }
+                else
+                {
+                    currentTokenGroup.Add(arg);
+                }
+            }
+
+            HashSet<ICommandParameter> seenParameters = new HashSet<ICommandParameter>();
+            Dictionary<string, object> argValues = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (List<string> chunk in tokenGroups)
+            {
+                if (chunk[0].StartsWith("-") || chunk[0].StartsWith("/"))
+                {
+                    // Option.
+                    ICommandParameterDefinition option = null;
+
+                    if (chunk[0].StartsWith("--"))
+                    {
+                        string fullName = chunk[0].Substring(2);
+
+                        if (!OptionsByFullName.TryGetValue(fullName, out option)) {
+                            throw new InvalidOperationException($"Unknown option '{fullName}'.");
+                        }
+                    }
+                    else if (chunk[0].StartsWith("/"))
+                    {
+                        string fullName = chunk[0].Substring(1);
+
+                        if (!OptionsByFullName.TryGetValue(fullName, out option)) {
+                            throw new InvalidOperationException($"Unknown option '{fullName}'.");
+                        }
+                    }
+                    else if (chunk[0].StartsWith("-"))
+                    {
+                        string shortName = chunk[0].Substring(1);
+
+                        if (!OptionsByShortName.TryGetValue(shortName, out option)) {
+                            throw new InvalidOperationException($"Unknown option '{shortName}'.");
+                        }
+                    }
+
+                    if (option == null) {
+                        throw new InvalidOperationException($"Unhandled syntax token '{chunk[0]}'.");
+                    }
+
+                    if (!seenParameters.Add(option)) {
+                        throw new InvalidOperationException($"Duplicate option '{chunk[0]}'.");
+                    }
+
+                    chunk.RemoveAt(0);
+                    argValues.Add(option.Name, option.ParseArgs(chunk));
+                }
+                else
+                {
+                    // Parameter.
+                    if (Parameter == null) {
+                        throw new InvalidOperationException($"Command '{Name}' does not define a parameter.");
+                    }
+
+                    if (!seenParameters.Add(Parameter)) {
+                        throw new InvalidOperationException("Duplicate parameter value.");
+                    }
+
+                    argValues.Add(Parameter.Name, Parameter.ParseArgs(chunk));
+                }
+            }
+
+            if (Parameter != null && !seenParameters.Contains(Parameter)) {
+                argValues.Add(Parameter.Name, Parameter.GetDefaultValue());
+            }
+
+            foreach (ICommandParameterDefinition option in Options)
+            {
+                if (!seenParameters.Contains(option)) {
+                    argValues.Add(option.Name, option.GetDefaultValue());
+                }
+            }
+
+            return new DefaultCommand(this, argValues);
         }
 
         private void RegisterOption(ICommandParameterDefinition option)

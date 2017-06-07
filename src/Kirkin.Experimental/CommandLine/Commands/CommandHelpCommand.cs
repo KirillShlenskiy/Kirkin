@@ -44,7 +44,7 @@ namespace Kirkin.CommandLine.Commands
         private string RenderHelpText()
         {
             StringBuilder sb = new StringBuilder();
-            Assembly entryAssembly = Assembly.GetEntryAssembly();
+            Assembly entryAssembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
             string executableName = Path.GetFileNameWithoutExtension(entryAssembly.Location);
 
             sb.AppendLine($"Usage: {executableName} {Definition}.");

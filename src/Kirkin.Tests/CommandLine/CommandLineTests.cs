@@ -227,29 +227,46 @@ namespace Kirkin.Tests.CommandLine
 
             command.Execute();
 
-            Assert.True(parser.Parse(new string[0]) is GeneralHelpCommand);
-            Assert.True(parser.Parse("") is GeneralHelpCommand);
             Assert.True(parser.Parse("--help") is GeneralHelpCommand);
             Assert.True(parser.Parse("/?") is GeneralHelpCommand);
+
+            // Not help commands:
+            Assert.Throws<InvalidOperationException>(() => parser.Parse(new string[0]));
+            Assert.Throws<InvalidOperationException>(() => parser.Parse(""));
         }
 
         [Test]
-        public void CommandHelp()
+        public void ParseSingleCommand()
         {
-            CommandLineParser parser = new CommandLineParser();
+            CommandDefinition definition = new CommandDefinition("Default command", StringComparer.Ordinal);
 
-            parser.DefineCommand("aaa", aaa => aaa.Help = "Does the zzz thing.");
-            parser.DefineCommand("bbb", bbb => bbb.Help = "Does the uuu thing, which is totally different to the aaa thing. Totally.");
-            parser.DefineCommand("ccc", ccc => ccc.Help = "Does the ccc thing.");
+            definition.DefineParameterList("names");
+            definition.DefineSwitch("yay");
 
-            ICommand command = parser.Parse("--help");
+            ICommand command = definition.Parse("Stu Dru Gru --hru".Split(' '));
 
-            command.Execute();
+            Assert.True((bool)command.Arguments["hru"]);
 
-            Assert.True(parser.Parse(new string[0]) is GeneralHelpCommand);
-            Assert.True(parser.Parse("") is GeneralHelpCommand);
-            Assert.True(parser.Parse("--help") is GeneralHelpCommand);
-            Assert.True(parser.Parse("/?") is GeneralHelpCommand);
+            Console.WriteLine(string.Join(", ", (string[])command.Arguments["names"]));
         }
+
+        //[Test]
+        //public void CommandHelp()
+        //{
+        //    CommandLineParser parser = new CommandLineParser();
+
+        //    parser.DefineCommand("aaa", aaa => aaa.Help = "Does the zzz thing.");
+        //    parser.DefineCommand("bbb", bbb => bbb.Help = "Does the uuu thing, which is totally different to the aaa thing. Totally.");
+        //    parser.DefineCommand("ccc", ccc => ccc.Help = "Does the ccc thing.");
+
+        //    ICommand command = parser.Parse("--help");
+
+        //    command.Execute();
+
+        //    Assert.True(parser.Parse(new string[0]) is GeneralHelpCommand);
+        //    Assert.True(parser.Parse("") is GeneralHelpCommand);
+        //    Assert.True(parser.Parse("--help") is GeneralHelpCommand);
+        //    Assert.True(parser.Parse("/?") is GeneralHelpCommand);
+        //}
     }
 }

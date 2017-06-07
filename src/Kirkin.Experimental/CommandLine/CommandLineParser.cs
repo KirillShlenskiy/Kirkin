@@ -93,7 +93,12 @@ namespace Kirkin.CommandLine
                     return new CommandHelpCommand(definition, StringEqualityComparer);
                 }
 
-                return BuildCommand(definition, args);
+                // Always skip first element.
+                string[] argsMinusFirstElement = new string[args.Length - 1];
+
+                Array.Copy(args, 1, argsMinusFirstElement, 0, args.Length - 1);
+
+                return definition.Parse(argsMinusFirstElement);
             }
 
             throw new InvalidOperationException($"Unknown command '{commandName}'.");
@@ -105,114 +110,6 @@ namespace Kirkin.CommandLine
         private bool IsHelpSwitch(string arg)
         {
             return StringEqualityComparer.Equals(arg, "--help") || StringEqualityComparer.Equals(arg, "/?");
-        }
-
-        private static ICommand BuildCommand(CommandDefinition definition, string[] args)
-        {
-            // TODO: Special handling for "--help", "/?".
-            List<List<string>> tokenGroups = new List<List<string>>();
-            List<string> currentTokenGroup = null;
-
-            for (int i = 1; i < args.Length; i++) // Always skip first element.
-            {
-                string arg = args[i];
-
-                if (currentTokenGroup == null || arg.StartsWith("-") || arg.StartsWith("/"))
-                {
-                    currentTokenGroup = new List<string>();
-
-                    tokenGroups.Add(currentTokenGroup);
-                }
-
-                int nameValueSplitIndex = arg.IndexOf(':');
-
-                if (nameValueSplitIndex == -1) nameValueSplitIndex = arg.IndexOf('=');
-
-                if (nameValueSplitIndex != -1)
-                {
-                    // Name/value pair.
-                    currentTokenGroup.Add(arg.Substring(0, nameValueSplitIndex));
-                    currentTokenGroup.Add(arg.Substring(nameValueSplitIndex + 1));
-                }
-                else
-                {
-                    currentTokenGroup.Add(arg);
-                }
-            }
-
-            HashSet<ICommandParameter> seenParameters = new HashSet<ICommandParameter>();
-            Dictionary<string, object> argValues = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-
-            foreach (List<string> chunk in tokenGroups)
-            {
-                if (chunk[0].StartsWith("-") || chunk[0].StartsWith("/"))
-                {
-                    // Option.
-                    ICommandParameterDefinition option = null;
-
-                    if (chunk[0].StartsWith("--"))
-                    {
-                        string fullName = chunk[0].Substring(2);
-
-                        if (!definition.OptionsByFullName.TryGetValue(fullName, out option)) {
-                            throw new InvalidOperationException($"Unknown option '{fullName}'.");
-                        }
-                    }
-                    else if (chunk[0].StartsWith("/"))
-                    {
-                        string fullName = chunk[0].Substring(1);
-
-                        if (!definition.OptionsByFullName.TryGetValue(fullName, out option)) {
-                            throw new InvalidOperationException($"Unknown option '{fullName}'.");
-                        }
-                    }
-                    else if (chunk[0].StartsWith("-"))
-                    {
-                        string shortName = chunk[0].Substring(1);
-
-                        if (!definition.OptionsByShortName.TryGetValue(shortName, out option)) {
-                            throw new InvalidOperationException($"Unknown option '{shortName}'.");
-                        }
-                    }
-
-                    if (option == null) {
-                        throw new InvalidOperationException($"Unhandled syntax token '{chunk[0]}'.");
-                    }
-
-                    if (!seenParameters.Add(option)) {
-                        throw new InvalidOperationException($"Duplicate option '{chunk[0]}'.");
-                    }
-
-                    chunk.RemoveAt(0);
-                    argValues.Add(option.Name, option.ParseArgs(chunk));
-                }
-                else
-                {
-                    // Parameter.
-                    if (definition.Parameter == null) {
-                        throw new InvalidOperationException($"Command '{definition.Name}' does not define a parameter.");
-                    }
-
-                    if (!seenParameters.Add(definition.Parameter)) {
-                        throw new InvalidOperationException("Duplicate parameter value.");
-                    }
-
-                    argValues.Add(definition.Parameter.Name, definition.Parameter.ParseArgs(chunk));
-                }
-            }
-
-            if (definition.Parameter != null && !seenParameters.Contains(definition.Parameter)) {
-                argValues.Add(definition.Parameter.Name, definition.Parameter.GetDefaultValue());
-            }
-
-            foreach (ICommandParameterDefinition option in definition.Options)
-            {
-                if (!seenParameters.Contains(option)) {
-                    argValues.Add(option.Name, option.GetDefaultValue());
-                }
-            }
-
-            return new DefaultCommand(definition, argValues);
         }
     }
 }
