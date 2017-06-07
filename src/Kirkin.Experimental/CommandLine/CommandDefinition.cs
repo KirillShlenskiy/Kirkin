@@ -104,32 +104,22 @@ namespace Kirkin.CommandLine
 
         public override string ToString()
         {
-            // replmon sync [-v] [-l <arg>] [-p <arg>...] [--] <subscription>
+            // replmon sync <subscription> [-v] [-l <arg>] [-p <arg>...]
             StringBuilder sb = new StringBuilder();
 
             sb.Append(Name);
 
-            if (Parameter != null) {
-                sb.Append($" <{Parameter.Name}>");
+            if (Parameter != null)
+            {
+                sb.Append(' ');
+                sb.Append(Parameter);
             }
 
             foreach (ICommandParameter option in Options)
             {
                 sb.Append(" [");
-
-                if (option.ShortName!= null) {
-                    sb.Append($"-{option.ShortName}|");
-                }
-
-                if (option is SwitchCommandParameter)
-                {
-                    // Switches don't have arguments.
-                    sb.Append($"--{option.Name}]");
-                }
-                else
-                {
-                    sb.Append($"--{option.Name} <arg>]");
-                }
+                sb.Append(option);
+                sb.Append(']');
             }
 
             return sb.ToString();

@@ -26,5 +26,12 @@ namespace Kirkin.CommandLine.Parameters
 
             return args[0];
         }
+
+        public override string ToString()
+        {
+            return string.IsNullOrEmpty(ShortName)
+                ? $"--{Name} <arg>"
+                : $"-{ShortName}|--{Name} <arg>";
+        }
     }
 }
