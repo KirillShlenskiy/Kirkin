@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 using Kirkin.CommandLine.Commands;
 
@@ -50,17 +51,59 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Defines a command with the given name.
         /// </summary>
-        public void DefineCommand(string name, Action<CommandDefinition> configureAction)
+        public void DefineCommand(string name, string help, Action<CommandDefinition> configureAction)
         {
             if (_commandDefinitions.ContainsKey(name)) {
                 throw new InvalidOperationException($"Command '{name}' already defined.");
             }
 
-            CommandDefinition definition = new CommandDefinition(name, StringEqualityComparer);
+            CommandDefinition definition = new CommandDefinition(name, help, StringEqualityComparer);
 
             configureAction(definition);
 
             _commandDefinitions.Add(name, definition);
+        }
+
+        /// <summary>
+        /// Builds the help string.
+        /// </summary>
+        internal string RenderHelpText()
+        {
+            const int screenWidth = 72;
+            int maxCommandWidth = 0;
+
+            foreach (CommandDefinition commandDefinition in _commandDefinitions.Values)
+            {
+                if (commandDefinition.Name.Length > maxCommandWidth) {
+                    maxCommandWidth = commandDefinition.Name.Length;
+                }
+            }
+
+            StringBuilder sb = new StringBuilder();
+            const string tab = "    ";
+            int leftColumnWidth = tab.Length * 2 + maxCommandWidth;
+
+            foreach (CommandDefinition commandDefinition in _commandDefinitions.Values)
+            {
+                sb.Append(tab);
+                sb.Append(commandDefinition.Name.PadRight(maxCommandWidth));
+                sb.Append(tab);
+
+                for (int i = 0; i < commandDefinition.Help.Length; i++)
+                {
+                    if (i > 0 && i % (screenWidth - leftColumnWidth) == 0)
+                    {
+                        sb.AppendLine();
+                        sb.Append(' ', leftColumnWidth);
+                    }
+
+                    sb.Append(commandDefinition.Help[i]);
+                }
+
+                sb.AppendLine();
+            }
+
+            return sb.ToString();
         }
 
         /// <summary>
@@ -187,6 +230,11 @@ namespace Kirkin.CommandLine
             }
 
             return new DefaultCommand(definition, argValues);
+        }
+
+        public override string ToString()
+        {
+            return RenderHelpText();
         }
     }
 }

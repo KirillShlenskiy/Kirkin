@@ -15,7 +15,7 @@ namespace Kirkin.Tests.CommandLine
                 StringEqualityComparer = StringComparer.OrdinalIgnoreCase
             };
 
-            parser.DefineCommand("zzz", zzz =>
+            parser.DefineCommand("zzz", "Prints Holy Moly", zzz =>
             {
                 zzz.DefineOption("fizz");
                 zzz.DefineOption("buzz");
@@ -25,7 +25,7 @@ namespace Kirkin.Tests.CommandLine
             string subscription = null;
             bool validate = false;
 
-            parser.DefineCommand("sync", sync =>
+            parser.DefineCommand("sync", "Performs database synchronisation", sync =>
             {
                 sync.DefineOption("subscription", "s");
                 sync.DefineSwitch("validate", "v");
@@ -93,7 +93,7 @@ namespace Kirkin.Tests.CommandLine
         {
             CommandLineParser parser = new CommandLineParser();
 
-            parser.DefineCommand("sync", sync =>
+            parser.DefineCommand("sync", "Performs database synchronisation", sync =>
             {
                 sync.DefineParameter("subscription");
                 sync.DefineSwitch("validate", shortName: "v");
@@ -110,7 +110,7 @@ namespace Kirkin.Tests.CommandLine
         {
             CommandLineParser parser = new CommandLineParser();
 
-            parser.DefineCommand("sync", sync =>
+            parser.DefineCommand("sync", "Performs database synchronisation", sync =>
             {
                 sync.DefineParameter("subscription");
                 sync.DefineSwitch("validate", shortName: "v");
@@ -141,7 +141,7 @@ namespace Kirkin.Tests.CommandLine
         {
             CommandLineParser parser = new CommandLineParser();
 
-            parser.DefineCommand("sync", sync =>
+            parser.DefineCommand("sync", "Performs database synchronisation", sync =>
             {
                 sync.DefineParameter("subscription");
                 sync.DefineOption("log", shortName: "l");
@@ -171,7 +171,7 @@ namespace Kirkin.Tests.CommandLine
         {
             CommandLineParser parser = new CommandLineParser();
 
-            parser.DefineCommand("sync", sync =>
+            parser.DefineCommand("sync", "Performs database synchronisation", sync =>
             {
                 sync.DefineParameter("subscription");
                 sync.DefineSwitch("validate", shortName: "v");

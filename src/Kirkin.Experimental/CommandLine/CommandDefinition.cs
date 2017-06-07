@@ -24,15 +24,21 @@ namespace Kirkin.CommandLine
         public string Name { get; }
 
         /// <summary>
+        /// Human-readable command description.
+        /// </summary>
+        public string Help { get; }
+
+        /// <summary>
         /// Raised when <see cref="ICommand.Execute"/> is called on the command.
         /// </summary>
         public event EventHandler<CommandExecutedEventArgs> Executed;
 
-        internal CommandDefinition(string name, IEqualityComparer<string> stringEqualityComparer)
+        internal CommandDefinition(string name, string help, IEqualityComparer<string> stringEqualityComparer)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command name cannot be empty.");
 
             Name = name;
+            Help = help;
             OptionsByFullName = new Dictionary<string, ICommandParameterDefinition>(stringEqualityComparer);
             OptionsByShortName = new Dictionary<string, ICommandParameterDefinition>(stringEqualityComparer);
         }
