@@ -180,5 +180,36 @@ namespace Kirkin.Tests.CommandLine
 
             Assert.AreEqual("sync <subscription> [-v|--validate] [-l|--log <arg>]", parser.CommandDefinitions[0].ToString());
         }
+
+        [Test]
+        public void ParameterAndOptionList()
+        {
+            CommandLineParser parser = new CommandLineParser();
+            string parameterValue = null;
+            bool? switchValue = null;
+            string optionValue = null;
+
+            parser.DefineCommand("hello", hello =>
+            {
+                hello.DefineParameterList("names");
+                hello.DefineSwitch("switch");
+                hello.DefineOptionList("colors");
+
+                hello.Executed += (s, e) =>
+                {
+                    parameterValue = string.Join(", ", (string[])e.Args["names"]);
+                    switchValue = (bool)e.Args["switch"];
+                    optionValue = string.Join(", ", (string[])e.Args["colors"]);
+                };
+            });
+
+            ICommand command = parser.Parse("hello name1 name2 --switch --colors red green blue".Split(' '));
+
+            command.Execute();
+
+            Assert.AreEqual("name1, name2", parameterValue);
+            Assert.True(switchValue);
+            Assert.AreEqual("red, green, blue", optionValue);
+        }
     }
 }

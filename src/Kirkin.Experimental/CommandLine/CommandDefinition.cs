@@ -13,7 +13,7 @@ namespace Kirkin.CommandLine
     {
         // Every command has zero or one parameter ("sync ==>extra<== --validate --log zzz.txt"),
         // and zero or more options/switches ("sync extra ==>--validate --log zzz.txt<==").
-        internal CommandParameter Parameter { get; private set; }
+        internal ICommandParameterDefinition Parameter { get; private set; }
         internal readonly List<ICommandParameterDefinition> Options = new List<ICommandParameterDefinition>();
         internal readonly Dictionary<string, ICommandParameterDefinition> OptionsByFullName;
         internal readonly Dictionary<string, ICommandParameterDefinition> OptionsByShortName;
@@ -65,6 +65,15 @@ namespace Kirkin.CommandLine
             return parameter;
         }
 
+        public ICommandParameter DefineParameterList(string name)
+        {
+            CommandParameterList parameterList = new CommandParameterList(name);
+
+            Parameter = parameterList;
+
+            return parameterList;
+        }
+
         /// <summary>
         /// Defines a string option, i.e. "--subscription main" or "-s main" or "/subscription main".
         /// </summary>
@@ -75,6 +84,18 @@ namespace Kirkin.CommandLine
             RegisterOption(option);
 
             return option;
+        }
+
+        /// <summary>
+        /// Defines a string option, i.e. "--colours red green" or "-s red green".
+        /// </summary>
+        public ICommandParameter DefineOptionList(string name, string shortName = null)
+        {
+            OptionListCommandParameter optionList = new OptionListCommandParameter(name, shortName);
+
+            RegisterOption(optionList);
+
+            return optionList;
         }
 
         /// <summary>

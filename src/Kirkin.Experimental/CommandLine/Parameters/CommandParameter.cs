@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Kirkin.CommandLine.Parameters
 {
     internal sealed class CommandParameter
-        : CommandParameterBase<string>
+        : CommandParameterBase<string>, ICommandParameter
     {
         public override bool SupportsMultipleValues
         {
