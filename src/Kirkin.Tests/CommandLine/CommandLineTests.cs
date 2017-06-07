@@ -165,5 +165,20 @@ namespace Kirkin.Tests.CommandLine
                 Assert.AreEqual("zzz.txt", command.Arguments["log"]);
             }
         }
+
+        [Test]
+        public void ToStringTest()
+        {
+            CommandLineParser parser = new CommandLineParser();
+
+            parser.DefineCommand("sync", sync =>
+            {
+                sync.DefineParameter("subscription");
+                sync.DefineSwitch("validate", shortName: "v");
+                sync.DefineOption("log", shortName: "l");
+            });
+
+            Assert.AreEqual("sync <subscription> [-v|--validate] [-l|--log <arg>]", parser.CommandDefinitions[0].ToString());
+        }
     }
 }
