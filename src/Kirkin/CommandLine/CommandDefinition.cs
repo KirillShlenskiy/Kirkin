@@ -148,17 +148,17 @@ namespace Kirkin.CommandLine
                     tokenGroups.Add(currentTokenGroup);
                 }
 
-                int nameValueSplitIndex = arg.IndexOf(':');
+                //int nameValueSplitIndex = arg.IndexOf(':');
 
-                if (nameValueSplitIndex == -1) nameValueSplitIndex = arg.IndexOf('=');
+                //if (nameValueSplitIndex == -1) nameValueSplitIndex = arg.IndexOf('=');
 
-                if (nameValueSplitIndex != -1)
-                {
-                    // Name/value pair.
-                    currentTokenGroup.Add(arg.Substring(0, nameValueSplitIndex));
-                    currentTokenGroup.Add(arg.Substring(nameValueSplitIndex + 1));
-                }
-                else
+                //if (nameValueSplitIndex != -1)
+                //{
+                //    // Name/value pair.
+                //    currentTokenGroup.Add(arg.Substring(0, nameValueSplitIndex));
+                //    currentTokenGroup.Add(arg.Substring(nameValueSplitIndex + 1));
+                //}
+                //else
                 {
                     currentTokenGroup.Add(arg);
                 }
