@@ -269,8 +269,9 @@ namespace Kirkin.CommandLine
 
             if (Parameter != null)
             {
-                sb.Append(' ');
+                sb.Append(" [");
                 sb.Append(Parameter);
+                sb.Append(']');
             }
 
             foreach (ICommandParameter option in Options)
