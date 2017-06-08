@@ -21,7 +21,9 @@ namespace Kirkin.CommandLine.Parameters
 
         public override string ParseArgs(List<string> args)
         {
-            if (args.Count == 0) return null;
+            // If the option is specified, we want a value
+            // different from the default (which is null).
+            if (args.Count == 0) return string.Empty;
             if (args.Count > 1) throw new InvalidOperationException($"Multiple argument values are not supported for option '{Name}'.");
 
             return args[0];
