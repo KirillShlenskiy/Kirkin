@@ -14,7 +14,7 @@ namespace Kirkin.CommandLine
     {
         // Every command has zero or one parameter ("sync ==>extra<== --validate --log zzz.txt"),
         // and zero or more options/switches ("sync extra ==>--validate --log zzz.txt<==").
-        internal ICommandParameterDefinition Parameter { get; private set; }
+        internal readonly List<ICommandParameterDefinition> Parameters = new List<ICommandParameterDefinition>();
         internal readonly List<ICommandParameterDefinition> Options = new List<ICommandParameterDefinition>();
         private readonly Dictionary<string, ICommandParameterDefinition> OptionsByFullName;
         private readonly Dictionary<string, ICommandParameterDefinition> OptionsByShortName;
@@ -68,9 +68,16 @@ namespace Kirkin.CommandLine
         /// </summary>
         public ICommandParameter DefineParameter(string name, string help = null)
         {
+            foreach (ICommandParameter p in Parameters)
+            {
+                if (p.SupportsMultipleValues) {
+                    throw new InvalidOperationException("Parameter list cannot be defined alonside other parameters.");
+                }
+            }
+
             CommandParameter parameter = new CommandParameter(name, help);
 
-            Parameter = parameter;
+            Parameters.Add(parameter);
 
             return parameter;
         }
@@ -80,9 +87,13 @@ namespace Kirkin.CommandLine
         /// </summary>
         public ICommandParameter DefineParameterList(string name, string help = null)
         {
+            if (Parameters.Count != 0) {
+                throw new InvalidOperationException("Parameter list cannot be defined alonside other parameters.");
+            }
+
             CommandParameterList parameterList = new CommandParameterList(name, help);
 
-            Parameter = parameterList;
+            Parameters.Add(parameterList);
 
             return parameterList;
         }
@@ -213,13 +224,18 @@ namespace Kirkin.CommandLine
                 else
                 {
                     // Parameter.
-                    if (Parameter == null) {
+                    if (Parameters.Count == 0) {
                         throw new InvalidOperationException($"Command '{Name}' does not define a parameter.");
                     }
 
-                    if (!seenParameters.Add(Parameter)) {
-                        throw new InvalidOperationException("Duplicate parameter value.");
+                    foreach (ICommandParameter parameter in Parameters)
+                    {
+                        if (!seenParameters.Add(parameter))
+                        {
+                            throw new InvalidOperationException("Duplicate parameter value.");
+                        }
                     }
+                    
 
                     argValues.Add(Parameter.Name, Parameter.ParseArgs(chunk));
                 }

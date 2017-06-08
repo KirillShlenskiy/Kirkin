@@ -294,5 +294,30 @@ namespace Kirkin.Tests.CommandLine
 
             Console.WriteLine(string.Join(", ", (string[])command.Arguments["names"]));
         }
+
+        [Test]
+        public void MultipleParameters()
+        {
+            CommandLineParser parser = new CommandLineParser();
+            string key = null;
+            string value = null;
+
+            parser.DefineCommand("config", config =>
+            {
+                config.DefineParameter("key");
+                config.DefineParameter("value");
+
+                config.Executed += (s, e) =>
+                {
+                    key = (string)e.Args["key"];
+                    value = (string)e.Args["value"];
+                };
+            });
+
+            parser.Parse("config zzz uuu".Split(' ')).Execute();
+
+            Assert.AreEqual("zzz", key);
+            Assert.AreEqual("uuu", value);
+        }
     }
 }
