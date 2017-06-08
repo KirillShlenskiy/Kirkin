@@ -48,9 +48,15 @@ namespace Kirkin.CommandLine.Commands
             sb.AppendLine($"Usage: {executableName} {Definition}.");
             sb.AppendLine();
 
-            Dictionary<string, string> dictionary = new[] { Definition.Parameter }
-                .Concat(Definition.Options)
-                .ToDictionary(p => p.ToString(), p => p.Help);
+            List<ICommandParameter> parameters = new List<ICommandParameter>();
+
+            if (Definition.Parameter != null) {
+                parameters.Add(Definition.Parameter);
+            }
+
+            parameters.AddRange(Definition.Options);
+
+            Dictionary<string, string> dictionary = parameters.ToDictionary(p => p.ToString(), p => p.Help);
 
             TextFormatter.FormatAsTable(dictionary, sb);
 
