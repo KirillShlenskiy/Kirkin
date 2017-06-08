@@ -154,17 +154,17 @@ namespace Kirkin.Tests.CommandLine
                 Assert.AreEqual("zzz.txt", command.Arguments["log"]);
             }
 
-            {
-                ICommand command = parser.Parse("sync --log=zzz.txt".Split(' '));
+            //{
+            //    ICommand command = parser.Parse("sync --log=zzz.txt".Split(' '));
 
-                Assert.AreEqual("zzz.txt", command.Arguments["log"]);
-            }
+            //    Assert.AreEqual("zzz.txt", command.Arguments["log"]);
+            //}
 
-            {
-                ICommand command = parser.Parse("sync --log:zzz.txt".Split(' '));
+            //{
+            //    ICommand command = parser.Parse("sync --log:zzz.txt".Split(' '));
 
-                Assert.AreEqual("zzz.txt", command.Arguments["log"]);
-            }
+            //    Assert.AreEqual("zzz.txt", command.Arguments["log"]);
+            //}
         }
 
         [Test]
@@ -236,7 +236,7 @@ namespace Kirkin.Tests.CommandLine
             Assert.Throws<InvalidOperationException>(() => parser.Parse(""));
 
             // Check text.
-            string expected = @"Usage: Kirkin.Experimental <command> [<args>].
+            string expected = @"Usage: Kirkin <command> [<args>].
 
     aaa    Does the zzz thing.
     bbb    Does the uuu thing, which is totally different to the aaa
@@ -270,7 +270,7 @@ namespace Kirkin.Tests.CommandLine
             Assert.Throws<InvalidOperationException>(() => parser.Parse(""));
 
             // Check text.
-            string expected = @"Usage: Kirkin.Experimental command <aaa> [--bbb <arg>] [--ccc].
+            string expected = @"Usage: Kirkin command <aaa> [--bbb <arg>] [--ccc].
 
     <aaa>          Does the zzz thing.
     --bbb <arg>    Does the uuu thing, which is totally different to the
