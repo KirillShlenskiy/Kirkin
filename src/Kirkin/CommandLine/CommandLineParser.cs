@@ -7,7 +7,7 @@ using Kirkin.CommandLine.Commands;
 namespace Kirkin.CommandLine
 {
     /// <summary>
-    /// Non-case sensitive command line argument parser.
+    /// Command line argument parser.
     /// </summary>
     public sealed class CommandLineParser
     {

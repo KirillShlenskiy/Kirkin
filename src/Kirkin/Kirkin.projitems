@@ -48,7 +48,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ConsoleFormatter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommandParameter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommandParameterDefinition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\ICommandParameterDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\CommandParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\CommandParameterBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\CommandParameterList.cs" />

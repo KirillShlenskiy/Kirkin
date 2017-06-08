@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Kirkin.CommandLine
+namespace Kirkin.CommandLine.Parameters
 {
     /// <summary>
     /// Command parameter definition.
