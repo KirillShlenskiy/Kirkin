@@ -135,8 +135,8 @@ namespace Kirkin.Mapping
 
         struct Assigner
         {
-            private readonly TObject Object;
             private readonly Action<TObject, TValue> Action;
+            private readonly TObject Object;
 
             public Assigner(TObject obj, Action<TObject, TValue> action)
             {
@@ -239,8 +239,8 @@ namespace Kirkin.Mapping
 
         struct Assigner<TValue>
         {
-            private readonly TObject Object;
             private readonly Action<TObject, object> Action;
+            private readonly TObject Object;
 
             public Assigner(TObject obj, Action<TObject, object> action)
             {

@@ -7,8 +7,8 @@ namespace Kirkin.Collections.Async
     /// </summary>
     public struct TakeResult<T>
     {
-        private readonly T _value;
         private readonly bool _success;
+        private readonly T _value;
 
         /// <summary>
         /// True if TryTake was successful.
