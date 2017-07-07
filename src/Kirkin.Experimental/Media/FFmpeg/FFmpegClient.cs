@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 using Kirkin.Diagnostics;
 
@@ -127,10 +128,11 @@ namespace Kirkin.Media.FFmpeg
 
                 if (process.ExitCode != 0)
                 {
-                    throw new FFmpegException(
-                        $"FFMpeg exited with code {process.ExitCode}. Error:{Environment.NewLine + string.Join(Environment.NewLine, errors)}",
-                        process.ExitCode
-                    );
+                    string errorText = (errors.Count > 1)
+                        ? Environment.NewLine + string.Join(Environment.NewLine, errors)
+                        : errors.FirstOrDefault();
+
+                    throw new FFmpegException($"FFMpeg exited with code {process.ExitCode}. {errorText}", process.ExitCode);
                 }
 
                 scope.Complete();
