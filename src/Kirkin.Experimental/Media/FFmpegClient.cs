@@ -7,14 +7,32 @@ using Kirkin.Diagnostics;
 
 namespace Kirkin.Media
 {
+    /// <summary>
+    /// Managed FFmpeg wrapper.
+    /// </summary>
     public sealed class FFmpegClient
     {
         public string FFmpegPath { get; }
 
         /// <summary>
+        /// Target audio bitrate in KB/sec. The default is 192.
+        /// </summary>
+        public int AudioBitrate { get; set; } = 192;
+
+        /// <summary>
+        /// Audio encoder. The default is "aac".
+        /// </summary>
+        public string AudioEncoder { get; set; } = "aac";
+
+        /// <summary>
         /// Target video bitrate in KB/sec. The default is 2048.
         /// </summary>
         public int VideoBitrate { get; set; } = 2048;
+
+        /// <summary>
+        /// Video encoder. The default is "libx264".
+        /// </summary>
+        public string VideoEncoder { get; set; } = "libx264";
 
         public FFmpegClient()
         {
@@ -27,7 +45,7 @@ namespace Kirkin.Media
 
         public void ConvertFile(string inputFilePath, string outputFilePath)
         {
-            string args = $@"-i ""{inputFilePath}"" -c:v libx264 -b:v {VideoBitrate}k -c:a copy -y -v warning ""{outputFilePath}""";
+            string args = $@"-i ""{inputFilePath}"" -c:v {VideoEncoder} -b:v {VideoBitrate}k -c:a {AudioEncoder} -b:a {AudioBitrate}k -y -v warning ""{outputFilePath}""";
 
             ProcessStartInfo info = new ProcessStartInfo(FFmpegPath ?? "ffmpeg", args) {
                 RedirectStandardOutput = true,
