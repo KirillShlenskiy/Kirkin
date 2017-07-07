@@ -74,26 +74,38 @@ namespace Kirkin.Media.FFmpeg
 
             args.Add($@"-i ""{inputFilePath}"""); // Input.
 
-            if (VideoEncoder != null)
+            if (VideoEncoder == null)
+            {
+                args.Add("-c:v copy");
+            }
+            else
+            {
                 args.Add("-c:v " + VideoEncoder);
 
-            if (string.Equals(VideoEncoder, "libx264", StringComparison.OrdinalIgnoreCase))
-                args.Add("-profile:v high -preset slow");
+                if (string.Equals(VideoEncoder, "libx264", StringComparison.OrdinalIgnoreCase))
+                    args.Add("-profile:v high -preset slow");
 
-            if (VideoBitrate != 0)
-                args.Add($"-b:v {VideoBitrate}k -maxrate {VideoBitrate}k -bufsize {VideoBitrate * 2}k");
+                if (VideoBitrate != 0)
+                    args.Add($"-b:v {VideoBitrate}k -maxrate {VideoBitrate}k -bufsize {VideoBitrate * 2}k");
 
-            if (VideoHeight != 0)
-                args.Add("-vf scale=-2:" + VideoHeight);
+                if (VideoHeight != 0)
+                    args.Add("-vf scale=-2:" + VideoHeight);
+            }
 
-            if (AudioEncoder != null)
+            if (AudioEncoder == null)
+            {
+                args.Add("-c:a copy");
+            }
+            else
+            {
                 args.Add("-c:a " + AudioEncoder);
 
-            if (AudioChannels != 0)
-                args.Add("-ac " + AudioChannels);
+                if (AudioChannels != 0)
+                    args.Add("-ac " + AudioChannels);
 
-            if (AudioBitrate != 0)
-                args.Add("-b:a " + AudioBitrate + "k");
+                if (AudioBitrate != 0)
+                    args.Add("-b:a " + AudioBitrate + "k");
+            }
 
             args.Add("-y"); // Overwrite files without prompting.
             args.Add("-v warning"); // Output verbosity level.
