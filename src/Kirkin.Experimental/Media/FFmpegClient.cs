@@ -5,26 +5,31 @@ using System.Diagnostics;
 
 using Kirkin.Diagnostics;
 
-using NUnit.Framework;
-
-namespace Kirkin.Tests.Experimental
+namespace Kirkin.Media
 {
-    public class FFmpegTests
+    public sealed class FFmpegClient
     {
-        [Test]
-        public void TestConvert()
-        {
-            string inputFilePath = @"";
-            string outputFilePath = @"";
+        public string FFmpegPath { get; }
 
-            ConvertVideo(inputFilePath, outputFilePath);
+        /// <summary>
+        /// Target video bitrate in KB/sec. The default is 2048.
+        /// </summary>
+        public int VideoBitrate { get; set; } = 2048;
+
+        public FFmpegClient()
+        {
         }
 
-        private static void ConvertVideo(string inputFilePath, string outputFilePath, int bitrateK = 2048)
+        public FFmpegClient(string ffmpegPath)
         {
-            string args = $@"-i ""{inputFilePath}"" -c:v libx264 -b:v {bitrateK}k -c:a copy -y -v warning ""{outputFilePath}""";
+            FFmpegPath = ffmpegPath;
+        }
 
-            ProcessStartInfo info = new ProcessStartInfo("ffmpeg", args) {
+        public void ConvertFile(string inputFilePath, string outputFilePath)
+        {
+            string args = $@"-i ""{inputFilePath}"" -c:v libx264 -b:v {VideoBitrate}k -c:a copy -y -v warning ""{outputFilePath}""";
+
+            ProcessStartInfo info = new ProcessStartInfo(FFmpegPath ?? "ffmpeg", args) {
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false
