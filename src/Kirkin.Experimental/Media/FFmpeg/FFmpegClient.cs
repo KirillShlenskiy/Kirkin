@@ -48,14 +48,14 @@ namespace Kirkin.Media.FFmpeg
         public int VideoBitrate { get; set; } = 2048;
 
         /// <summary>
-        /// Video width. The default is -2 (scale, preserve aspect ratio if VideoHeight is greater than zero).
+        /// Video width. The default is null (scale, preserve aspect ratio if VideoHeight is greater than zero).
         /// </summary>
-        public int VideoWidth { get; set; } = -2;
+        public int? VideoWidth { get; set; }
 
         /// <summary>
-        /// Video height (usually 480, 720, 1080). The default is -2 (scale, preserve aspect ratio if VideoWidth is greater than zero).
+        /// Video height (usually 480, 720, 1080). The default is null (scale, preserve aspect ratio if VideoWidth is greater than zero).
         /// </summary>
-        public int VideoHeight { get; set; } = -2;
+        public int? VideoHeight { get; set; }
 
         /// <summary>
         /// Creates a new ffmpeg wrapper instance without specifying the exact ffmpeg.exe path.
@@ -137,9 +137,9 @@ namespace Kirkin.Media.FFmpeg
             args.Add($@"-i ""{inputFilePath}"""); // Input.
             args.Add(VideoEncoder.GetCliArgs(this));
 
-            if (VideoWidth != -2 || VideoHeight != -2) {
+            if (VideoWidth.HasValue || VideoHeight.HasValue) {
                 // -2 means "auto, preserve aspect ratio.
-                args.Add($"-vf scale={VideoWidth}:{VideoHeight}");
+                args.Add($"-vf scale={VideoWidth ?? -2}:{VideoHeight ?? -2}");
             }
 
             args.Add(AudioEncoder.GetCliArgs(this));

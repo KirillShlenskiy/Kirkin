@@ -2,9 +2,19 @@
 
 namespace Kirkin.Media.FFmpeg
 {
+    /// <summary>
+    /// ffmpeg video encoder options.
+    /// </summary>
     public abstract class VideoEncoder
     {
+        /// <summary>
+        /// libx264 video encoder.
+        /// </summary>
         public static VideoEncoder Libx264 { get; } = new Libx264VideoEncoder();
+
+        /// <summary>
+        /// Passthrough video encoder (direct stream copy).
+        /// </summary>
         public static VideoEncoder Copy { get; } = new CopyVideoEncoder();
 
         private VideoEncoder()

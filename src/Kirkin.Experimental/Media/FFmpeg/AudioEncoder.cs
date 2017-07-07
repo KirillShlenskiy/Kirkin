@@ -2,9 +2,19 @@
 
 namespace Kirkin.Media.FFmpeg
 {
+    /// <summary>
+    /// ffmpeg audio encoder options.
+    /// </summary>
     public abstract class AudioEncoder
     {
+        /// <summary>
+        /// AAC audio encoder.
+        /// </summary>
         public static AudioEncoder AAC { get; } = new AacAudioEncoder();
+
+        /// <summary>
+        /// Passthrough audio encoder (direct stream copy).
+        /// </summary>
         public static AudioEncoder Copy { get; } = new CopyAudioEncoder();
 
         private AudioEncoder()
