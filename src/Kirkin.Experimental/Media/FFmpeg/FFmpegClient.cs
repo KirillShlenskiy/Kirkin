@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 
 using Kirkin.Diagnostics;
 
-namespace Kirkin.Media
+namespace Kirkin.Media.FFmpeg
 {
     /// <summary>
     /// Managed FFmpeg wrapper.
@@ -43,28 +42,39 @@ namespace Kirkin.Media
         /// </summary>
         public string VideoEncoder { get; set; } = "libx264";
 
+        /// <summary>
+        /// Creates a new ffmpeg wrapper instance without specifying the exact ffmpeg.exe path.
+        /// </summary>
         public FFmpegClient()
         {
         }
 
+        /// <summary>
+        /// Creates a new ffmpeg wrapper instance with the given ffmpeg.exe path.
+        /// </summary>
         public FFmpegClient(string ffmpegPath)
         {
             FFmpegPath = ffmpegPath;
         }
 
+        /// <summary>
+        /// Converts the file at the given path using ffmpeg.exe.
+        /// </summary>
+        /// <param name="inputFilePath">Path to the input file.</param>
+        /// <param name="outputFilePath">Path to the output file.</param>
         public void ConvertFile(string inputFilePath, string outputFilePath)
         {
-            List<string> args = new List<string>();
-
-            args.Add($@"-i ""{inputFilePath}"""); // Input.
-            args.Add("-c:v " + VideoEncoder);
-            args.Add("-b:v " + VideoBitrate + "k");
-            args.Add("-c:a " + AudioEncoder);
-            args.Add("-ac " + AudioChannels);
-            args.Add("-b:a " + AudioBitrate + "k");
-            args.Add("-y"); // Overwrite files without prompting.
-            args.Add("-v warning"); // Output verbosity level.
-            args.Add($@"""{outputFilePath}"""); // Output.
+            List<string> args = new List<string> {
+                $@"-i ""{inputFilePath}""", // Input.
+                "-c:v " + VideoEncoder,
+                "-b:v " + VideoBitrate + "k",
+                "-c:a " + AudioEncoder,
+                "-ac " + AudioChannels,
+                "-b:a " + AudioBitrate + "k",
+                "-y", // Overwrite files without prompting.
+                "-v warning", // Output verbosity level.
+                $@"""{outputFilePath}""" // Output.
+            };
 
             ProcessStartInfo info = new ProcessStartInfo(FFmpegPath ?? "ffmpeg", string.Join(" ", args)) {
                 RedirectStandardOutput = true,
@@ -77,7 +87,17 @@ namespace Kirkin.Media
             {
                 process.EnableRaisingEvents = true;
 
-                process.OutputDataReceived += (s, e) => Console.WriteLine(e.Data);
+                bool nonEmptyOutputSeen = false;
+
+                process.OutputDataReceived += (s, e) =>
+                {
+                    if (!string.IsNullOrWhiteSpace(e.Data) || nonEmptyOutputSeen)
+                    {
+                        nonEmptyOutputSeen = true;
+
+                        Console.WriteLine(e.Data);
+                    }
+                };
 
                 List<string> errors = new List<string>();
 
@@ -96,9 +116,9 @@ namespace Kirkin.Media
 
                 if (process.ExitCode != 0)
                 {
-                    throw new Win32Exception(
-                        process.ExitCode,
-                        $"FFMpeg exited with code {process.ExitCode}. Error:{Environment.NewLine + string.Join(Environment.NewLine, errors)}"
+                    throw new FFmpegException(
+                        $"FFMpeg exited with code {process.ExitCode}. Error:{Environment.NewLine + string.Join(Environment.NewLine, errors)}",
+                        process.ExitCode
                     );
                 }
 
