@@ -1,4 +1,4 @@
-﻿using Kirkin.Media;
+﻿using Kirkin.Media.FFmpeg;
 
 using NUnit.Framework;
 

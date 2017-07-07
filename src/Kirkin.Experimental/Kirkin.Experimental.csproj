@@ -99,8 +99,10 @@
     <Compile Include="Mapping\DelegateMember.cs" />
     <Compile Include="Mapping\ExpressionMember.cs" />
     <Compile Include="Mapping\Member.cs" />
+    <Compile Include="Media\FFmpeg\AudioEncoder.cs" />
     <Compile Include="Media\FFmpeg\FFmpegClient.cs" />
     <Compile Include="Media\FFmpeg\FFmpegException.cs" />
+    <Compile Include="Media\FFmpeg\VideoEncoder.cs" />
     <Compile Include="NonNullableString.cs" />
     <Compile Include="Optional.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

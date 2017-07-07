@@ -19,6 +19,11 @@ namespace Kirkin.Media.FFmpeg
         public string FFmpegPath { get; }
 
         /// <summary>
+        /// Audio encoder. The default is "aac".
+        /// </summary>
+        public AudioEncoder AudioEncoder { get; set; } = AudioEncoder.AAC;
+
+        /// <summary>
         /// Target audio bitrate in Kb/sec. The default is 192.
         /// </summary>
         public int AudioBitrate { get; set; } = 192;
@@ -29,24 +34,28 @@ namespace Kirkin.Media.FFmpeg
         public int AudioChannels { get; set; } = 0;
 
         /// <summary>
-        /// Audio encoder. The default is "aac".
+        /// Video encoder. The default is "libx264".
         /// </summary>
-        public string AudioEncoder { get; set; } = "aac";
+        public VideoEncoder VideoEncoder { get; set; } = VideoEncoder.Libx264;
 
         /// <summary>
         /// Target video bitrate in Kb/sec. The default is 2048.
+        /// A good guide is as follows:
+        /// * 1080p (VideoHeight = 1080): ~2000 kpbs
+        /// * 720p (VideoHeight = 720): ~1500 kbps
+        /// * 480p (VideoHeight = 480): ~1000 kbps
         /// </summary>
         public int VideoBitrate { get; set; } = 2048;
 
         /// <summary>
-        /// Video encoder. The default is "libx264".
+        /// Video width. The default is -2 (scale, preserve aspect ratio if VideoHeight is greater than zero).
         /// </summary>
-        public string VideoEncoder { get; set; } = "libx264";
+        public int VideoWidth { get; set; } = -2;
 
         /// <summary>
-        /// Video height (480p, 720p, 1080p). The default is zero (original).
+        /// Video height (usually 480, 720, 1080). The default is -2 (scale, preserve aspect ratio if VideoWidth is greater than zero).
         /// </summary>
-        public int VideoHeight { get; set; } = 0;
+        public int VideoHeight { get; set; } = -2;
 
         /// <summary>
         /// Creates a new ffmpeg wrapper instance without specifying the exact ffmpeg.exe path.
@@ -70,48 +79,7 @@ namespace Kirkin.Media.FFmpeg
         /// <param name="outputFilePath">Path to the output file.</param>
         public void ConvertFile(string inputFilePath, string outputFilePath)
         {
-            List<string> args = new List<string>();
-
-            args.Add($@"-i ""{inputFilePath}"""); // Input.
-
-            if (VideoEncoder == null)
-            {
-                args.Add("-c:v copy");
-            }
-            else
-            {
-                args.Add("-c:v " + VideoEncoder);
-
-                if (string.Equals(VideoEncoder, "libx264", StringComparison.OrdinalIgnoreCase))
-                    args.Add("-profile:v high -preset slow");
-
-                if (VideoBitrate != 0)
-                    args.Add($"-b:v {VideoBitrate}k -maxrate {VideoBitrate}k -bufsize {VideoBitrate * 2}k");
-
-                if (VideoHeight != 0)
-                    args.Add("-vf scale=-2:" + VideoHeight);
-            }
-
-            if (AudioEncoder == null)
-            {
-                args.Add("-c:a copy");
-            }
-            else
-            {
-                args.Add("-c:a " + AudioEncoder);
-
-                if (AudioChannels != 0)
-                    args.Add("-ac " + AudioChannels);
-
-                if (AudioBitrate != 0)
-                    args.Add("-b:a " + AudioBitrate + "k");
-            }
-
-            args.Add("-y"); // Overwrite files without prompting.
-            args.Add("-v warning"); // Output verbosity level.
-            args.Add($@"""{outputFilePath}"""); // Output.
-
-            ProcessStartInfo info = new ProcessStartInfo(FFmpegPath ?? "ffmpeg", string.Join(" ", args)) {
+            ProcessStartInfo info = new ProcessStartInfo(FFmpegPath ?? "ffmpeg", GetFfmpegArgs(inputFilePath, outputFilePath)) {
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false
@@ -155,11 +123,40 @@ namespace Kirkin.Media.FFmpeg
                         ? Environment.NewLine + string.Join(Environment.NewLine, errors)
                         : errors.FirstOrDefault();
 
-                    throw new FFmpegException($"FFMpeg exited with code {process.ExitCode}. {errorText}", process.ExitCode);
+                    throw new FFmpegException($"FFMpeg exited with code {process.ExitCode}. {errorText?.TrimStart(' ' , ':')}", process.ExitCode);
                 }
 
                 scope.Complete();
             }
+        }
+
+        private string GetFfmpegArgs(string inputFilePath, string outputFilePath)
+        {
+            List<string> args = new List<string>();
+
+            args.Add($@"-i ""{inputFilePath}"""); // Input.
+            args.Add(VideoEncoder.GetCliArgs(this));
+
+            if (VideoWidth != -2 || VideoHeight != -2) {
+                // -2 means "auto, preserve aspect ratio.
+                args.Add($"-vf scale={VideoWidth}:{VideoHeight}");
+            }
+
+            args.Add(AudioEncoder.GetCliArgs(this));
+
+            if (AudioChannels != 0)
+                args.Add("-ac " + AudioChannels);
+
+            args.Add("-y"); // Overwrite files without prompting.
+            args.Add("-v warning"); // Output verbosity level.
+            args.Add($@"""{outputFilePath}"""); // Output.
+
+            return string.Join(" ", args);
+        }
+
+        public override string ToString()
+        {
+            return FFmpegPath ?? "ffmpeg" + " " + GetFfmpegArgs("<input>", "<output>");
         }
     }
 }
