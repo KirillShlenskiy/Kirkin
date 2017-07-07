@@ -34,18 +34,41 @@ namespace Kirkin.Media.FFmpeg
         public int AudioChannels { get; set; } = 0;
 
         /// <summary>
-        /// Video encoder. The default is "libx264".
+        /// Video encoder. The default is libx264, slow preset.
         /// </summary>
-        public VideoEncoder VideoEncoder { get; set; } = VideoEncoder.Libx264;
+        public VideoEncoder VideoEncoder { get; set; } = VideoEncoder.Libx264Slow;
 
         /// <summary>
-        /// Target video bitrate in Kb/sec. The default is 2048.
+        /// Target video bitrate in Kb/sec. The default is 0 (auto).
         /// A good guide is as follows:
         /// * 1080p (VideoHeight = 1080): ~2000 kpbs
         /// * 720p (VideoHeight = 720): ~1500 kbps
         /// * 480p (VideoHeight = 480): ~1000 kbps
         /// </summary>
-        public int VideoBitrate { get; set; } = 2048;
+        public int VideoBitrate { get; set; }
+
+        /// <summary>
+        /// Effective video bitrate.
+        /// </summary>
+        internal int VideoBitrateResolved
+        {
+            get
+            {
+                if (VideoBitrate != 0) return VideoBitrate;
+                
+                if (VideoHeight.HasValue)
+                {
+                    if (VideoHeight.Value >= 1440) return 2500;
+                    if (VideoHeight.Value >= 1080) return 2000;
+                    if (VideoHeight.Value >= 720) return 1500;
+                    if (VideoHeight.Value >= 480) return 1000;
+
+                    return 500;
+                }
+
+                return 0;
+            }
+        }
 
         /// <summary>
         /// Video width. The default is null (scale, preserve aspect ratio if VideoHeight is greater than zero).

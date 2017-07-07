@@ -8,9 +8,14 @@ namespace Kirkin.Media.FFmpeg
     public abstract class VideoEncoder
     {
         /// <summary>
-        /// libx264 video encoder.
+        /// libx264 video encoder - slow preset (best quality).
         /// </summary>
-        public static VideoEncoder Libx264 { get; } = new Libx264VideoEncoder();
+        public static VideoEncoder Libx264Slow { get; } = new Libx264VideoEncoder("slow");
+
+        /// <summary>
+        /// libx264 video encoder - fast preset (fastest encoding).
+        /// </summary>
+        public static VideoEncoder Libx264Fast { get; } = new Libx264VideoEncoder("fast");
 
         /// <summary>
         /// Passthrough video encoder (direct stream copy).
@@ -25,12 +30,21 @@ namespace Kirkin.Media.FFmpeg
 
         private sealed class Libx264VideoEncoder : VideoEncoder
         {
+            public string Preset { get; }
+
+            internal Libx264VideoEncoder(string preset)
+            {
+                Preset = preset;
+            }
+
             internal override string GetCliArgs(FFmpegClient ffmpeg)
             {
-                StringBuilder args = new StringBuilder("-c:v libx264 -profile:v high -preset slow");
+                StringBuilder args = new StringBuilder($"-c:v libx264 -profile:v high -preset {Preset}");
+                int bitrate = ffmpeg.VideoBitrateResolved;
 
-                if (ffmpeg.VideoBitrate != 0)
-                    args.Append($" -b:v {ffmpeg.VideoBitrate}k -maxrate {ffmpeg.VideoBitrate}k -bufsize {ffmpeg.VideoBitrate * 2}k");
+                if (bitrate != 0) {
+                    args.Append($" -b:v {bitrate}k -maxrate {bitrate}k -bufsize {bitrate * 2}k");
+                }
 
                 return args.ToString();
             }
