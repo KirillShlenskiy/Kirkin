@@ -12,12 +12,21 @@ namespace Kirkin.Media
     /// </summary>
     public sealed class FFmpegClient
     {
+        /// <summary>
+        /// ffmpeg.exe path specified when this instance was created.
+        /// The default is null (use current directory/PATH).
+        /// </summary>
         public string FFmpegPath { get; }
 
         /// <summary>
         /// Target audio bitrate in KB/sec. The default is 192.
         /// </summary>
         public int AudioBitrate { get; set; } = 192;
+
+        /// <summary>
+        /// Number of audio channels. The default is 2 (stereo).
+        /// </summary>
+        public int AudioChannels { get; set; } = 2;
 
         /// <summary>
         /// Audio encoder. The default is "aac".
@@ -45,9 +54,19 @@ namespace Kirkin.Media
 
         public void ConvertFile(string inputFilePath, string outputFilePath)
         {
-            string args = $@"-i ""{inputFilePath}"" -c:v {VideoEncoder} -b:v {VideoBitrate}k -c:a {AudioEncoder} -b:a {AudioBitrate}k -y -v warning ""{outputFilePath}""";
+            List<string> args = new List<string>();
 
-            ProcessStartInfo info = new ProcessStartInfo(FFmpegPath ?? "ffmpeg", args) {
+            args.Add($@"-i ""{inputFilePath}"""); // Input.
+            args.Add("-c:v " + VideoEncoder);
+            args.Add("-b:v " + VideoBitrate + "k");
+            args.Add("-c:a " + AudioEncoder);
+            args.Add("-ac " + AudioChannels);
+            args.Add("-b:a " + AudioBitrate + "k");
+            args.Add("-y"); // Overwrite files without prompting.
+            args.Add("-v warning"); // Output verbosity level.
+            args.Add($@"""{outputFilePath}"""); // Output.
+
+            ProcessStartInfo info = new ProcessStartInfo(FFmpegPath ?? "ffmpeg", string.Join(" ", args)) {
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false
@@ -58,21 +77,21 @@ namespace Kirkin.Media
             {
                 process.EnableRaisingEvents = true;
 
-                List<string> errors = new List<string>();
-
                 process.OutputDataReceived += (s, e) => Console.WriteLine(e.Data);
+
+                List<string> errors = new List<string>();
 
                 process.ErrorDataReceived += (s, e) =>
                 {
-                    errors.Add(e.Data);
-
-                    Console.WriteLine(e.Data);
+                    if (!string.IsNullOrEmpty(e.Data))
+                    {
+                        errors.Add(e.Data);
+                        Console.WriteLine(e.Data);
+                    }
                 };
 
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
-
-                process.Start();
                 process.WaitForExit();
 
                 if (process.ExitCode != 0)
