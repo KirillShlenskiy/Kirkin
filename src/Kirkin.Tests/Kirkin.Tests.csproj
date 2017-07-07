@@ -135,6 +135,7 @@
     <Compile Include="Diagnostics\ProcessMemoryTests.cs" />
     <Compile Include="Diagnostics\ProcessScopeTests.cs" />
     <Compile Include="Experimental\CastleCodegenTests.cs" />
+    <Compile Include="Experimental\FFmpegTests.cs" />
     <Compile Include="Experimental\ImmutableArrayFactoryTests.cs" />
     <Compile Include="Experimental\SkipOneAndEnumerateTests.cs" />
     <Compile Include="Functional\DisposableTests.cs" />
