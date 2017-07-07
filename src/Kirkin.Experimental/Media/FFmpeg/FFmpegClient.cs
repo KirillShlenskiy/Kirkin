@@ -64,17 +64,28 @@ namespace Kirkin.Media.FFmpeg
         /// <param name="outputFilePath">Path to the output file.</param>
         public void ConvertFile(string inputFilePath, string outputFilePath)
         {
-            List<string> args = new List<string> {
-                $@"-i ""{inputFilePath}""", // Input.
-                "-c:v " + VideoEncoder,
-                "-b:v " + VideoBitrate + "k",
-                "-c:a " + AudioEncoder,
-                "-ac " + AudioChannels,
-                "-b:a " + AudioBitrate + "k",
-                "-y", // Overwrite files without prompting.
-                "-v warning", // Output verbosity level.
-                $@"""{outputFilePath}""" // Output.
-            };
+            List<string> args = new List<string>();
+
+            args.Add($@"-i ""{inputFilePath}"""); // Input.
+
+            if (VideoEncoder != null)
+                args.Add("-c:v " + VideoEncoder);
+
+            if (VideoBitrate != 0)
+                args.Add("-b:v " + VideoBitrate + "k");
+
+            if (AudioEncoder != null)
+                args.Add("-c:a " + AudioEncoder);
+
+            if (AudioChannels != 0)
+                args.Add("-ac " + AudioChannels);
+
+            if (AudioBitrate != 0)
+                args.Add("-b:a " + AudioBitrate + "k");
+
+            args.Add("-y"); // Overwrite files without prompting.
+            args.Add("-v warning"); // Output verbosity level.
+            args.Add($@"""{outputFilePath}"""); // Output.
 
             ProcessStartInfo info = new ProcessStartInfo(FFmpegPath ?? "ffmpeg", string.Join(" ", args)) {
                 RedirectStandardOutput = true,
