@@ -207,7 +207,7 @@ namespace Kirkin.Media.FFmpeg
 
         public override string ToString()
         {
-            return FFmpegPath ?? "ffmpeg" + " " + GetFfmpegArgs("<input>", "<output>");
+            return (FFmpegPath ?? "ffmpeg") + " " + GetFfmpegArgs("<input>", "<output>");
         }
     }
 }
