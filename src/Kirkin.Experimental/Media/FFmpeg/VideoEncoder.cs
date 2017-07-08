@@ -11,9 +11,14 @@
         public static VideoEncoder Libx264Slow { get; } = new Libx264VideoEncoder("slow");
 
         /// <summary>
-        /// libx264 video encoder - fast preset (fastest encoding).
+        /// libx264 video encoder - fast preset (lower quality, faster encoding).
         /// </summary>
         public static VideoEncoder Libx264Fast { get; } = new Libx264VideoEncoder("fast");
+
+        /// <summary>
+        /// libx264 video encoder - ultra fast preset (fastest encoding).
+        /// </summary>
+        public static VideoEncoder Libx264UltraFast { get; } = new Libx264VideoEncoder("ultrafast");
 
         /// <summary>
         /// Passthrough video encoder (direct stream copy).
@@ -23,7 +28,7 @@
         /// <summary>
         /// Video suppressed.
         /// </summary>
-        public static VideoEncoder NoVideo { get; } = new NoVideoEncoder();
+        public static VideoEncoder DisableVideo { get; } = new NoVideoEncoder();
 
         private VideoEncoder()
         {

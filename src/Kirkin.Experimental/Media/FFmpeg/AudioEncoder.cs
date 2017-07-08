@@ -23,7 +23,7 @@
         /// <summary>
         /// Audio suppressed.
         /// </summary>
-        public static AudioEncoder NoAudio { get; } = new NoAudioEncoder();
+        public static AudioEncoder DisableAudio { get; } = new NoAudioEncoder();
 
         private AudioEncoder()
         {

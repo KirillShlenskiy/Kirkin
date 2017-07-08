@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 
 using Kirkin.Diagnostics;
@@ -20,24 +19,24 @@ namespace Kirkin.Media.FFmpeg
         protected internal virtual string FFmpegPath { get; }
 
         /// <summary>
-        /// Audio encoder. The default is "aac".
+        /// Audio encoder. Use AAC for web video.
         /// </summary>
-        public AudioEncoder AudioEncoder { get; set; } = AudioEncoder.AAC;
+        public AudioEncoder AudioEncoder { get; set; }
 
         /// <summary>
-        /// Target audio bitrate in Kb/sec. The default is 192.
+        /// Target audio bitrate in Kbit/sec. Use 128 for 480p video. Use 192 for 720p, 1080p or above.
         /// </summary>
-        public int AudioBitrate { get; set; } = 192;
+        public int AudioBitrate { get; set; }
 
         /// <summary>
         /// Number of audio channels. The default is zero (original).
         /// </summary>
-        public int AudioChannels { get; set; } = 0;
+        public int AudioChannels { get; set; }
 
         /// <summary>
-        /// Video encoder. The default is libx264, slow preset.
+        /// Video encoder. Use VideoEncoder.Libx264Fast/Libx264Slow for web video.
         /// </summary>
-        public VideoEncoder VideoEncoder { get; set; } = VideoEncoder.Libx264Slow;
+        public VideoEncoder VideoEncoder { get; set; }
 
         /// <summary>
         /// Target video bitrate in Kb/sec. The default is 0 (auto).
@@ -103,111 +102,118 @@ namespace Kirkin.Media.FFmpeg
         /// <param name="outputFilePath">Path to the output file.</param>
         public void ConvertFile(string inputFilePath, string outputFilePath)
         {
-            ProcessStartInfo info = new ProcessStartInfo(FFmpegPath ?? "ffmpeg", GetFfmpegArgs(inputFilePath, outputFilePath)) {
+            ProcessStartInfo info = new ProcessStartInfo(FFmpegPath ?? "ffmpeg", GetFFmpegArgString(inputFilePath, outputFilePath)) {
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false
             };
 
-            try
+            using (Process process = Process.Start(info))
+            using (ProcessScope scope = new ProcessScope(process))
             {
-                using (Process process = Process.Start(info))
-                using (ProcessScope scope = new ProcessScope(process))
+                process.EnableRaisingEvents = true;
+
+                bool nonEmptyOutputSeen = false;
+
+                process.OutputDataReceived += (s, e) =>
                 {
-                    process.EnableRaisingEvents = true;
-
-                    bool nonEmptyOutputSeen = false;
-
-                    process.OutputDataReceived += (s, e) =>
+                    if (!string.IsNullOrWhiteSpace(e.Data) || nonEmptyOutputSeen)
                     {
-                        if (!string.IsNullOrWhiteSpace(e.Data) || nonEmptyOutputSeen)
-                        {
-                            nonEmptyOutputSeen = true;
+                        nonEmptyOutputSeen = true;
 
-                            Console.WriteLine(e.Data);
-                        }
-                    };
-
-                    List<string> errors = new List<string>();
-
-                    process.ErrorDataReceived += (s, e) =>
-                    {
-                        if (!string.IsNullOrEmpty(e.Data))
-                        {
-                            errors.Add(e.Data);
-                            Console.WriteLine(e.Data);
-                        }
-                    };
-
-                    process.BeginOutputReadLine();
-                    process.BeginErrorReadLine();
-                    process.WaitForExit();
-
-                    if (process.ExitCode != 0)
-                    {
-                        string errorText = (errors.Count > 1)
-                            ? Environment.NewLine + string.Join(Environment.NewLine, errors)
-                            : errors.FirstOrDefault();
-
-                        throw new FFmpegException($"FFMpeg exited with code {process.ExitCode}. {errorText?.TrimStart(' ', ':')}", process.ExitCode);
+                        Console.WriteLine(e.Data);
                     }
+                };
 
-                    scope.Complete();
-                }
-            }
-            catch
-            {
-                try
+                List<string> errors = new List<string>();
+
+                process.ErrorDataReceived += (s, e) =>
                 {
-                    File.Delete(outputFilePath);
-                }
-                catch { }
+                    if (!string.IsNullOrEmpty(e.Data))
+                    {
+                        errors.Add(e.Data);
+                        Console.WriteLine(e.Data);
+                    }
+                };
 
-                throw;
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+                process.WaitForExit();
+
+                if (process.ExitCode != 0)
+                {
+                    string errorText = (errors.Count > 1)
+                        ? Environment.NewLine + string.Join(Environment.NewLine, errors)
+                        : errors.FirstOrDefault();
+
+                    throw new FFmpegException($"FFMpeg exited with code {process.ExitCode}. {errorText?.TrimStart(' ', ':')}", process.ExitCode);
+                }
+
+                scope.Complete();
             }
         }
 
-        protected virtual string GetFfmpegArgs(string inputFilePath, string outputFilePath)
+        private string GetFFmpegArgString(string inputFilePath, string outputFilePath)
         {
-            List<string> args = new List<string>();
+            return string.Join(" ", GetFFmpegArgs(inputFilePath, outputFilePath));
+        }
 
-            args.Add($@"-i ""{inputFilePath}"""); // Input.
+        protected virtual IEnumerable<string> GetFFmpegArgs(string inputFilePath, string outputFilePath)
+        {
+            yield return $@"-i ""{inputFilePath}"""; // Input.
 
+            foreach (string arg in GetFFmpegVideoArgs()) {
+                yield return arg;
+            }
+
+            foreach (string arg in GetFFmpegAudioArgs()) {
+                yield return arg;
+            }
+
+            yield return "-y"; // Overwrite files without prompting.
+            yield return "-v warning"; // Output verbosity level.
+            yield return $@"""{outputFilePath}"""; // Output.
+        }
+
+        protected virtual IEnumerable<string> GetFFmpegVideoArgs()
+        {
             if (VideoEncoder != null) {
-                args.Add(VideoEncoder.GetCliArgs(this));
+                yield return VideoEncoder.GetCliArgs(this);
             }
 
             int bitrate = TargetVideoBitrate;
 
-            if (bitrate != 0) {
-                args.Add($"-b:v {bitrate}k -maxrate {bitrate}k -bufsize {bitrate * 2}k");
+            if (bitrate != 0)
+            {
+                yield return $"-b:v {bitrate}k";
+                yield return $"-maxrate {bitrate}k";
+                yield return $"-bufsize {bitrate * 2}k";
             }
 
             if (VideoWidth.HasValue || VideoHeight.HasValue) {
                 // -2 means "auto, preserve aspect ratio.
-                args.Add($"-vf scale={VideoWidth ?? -2}:{VideoHeight ?? -2}");
+                yield return $"-vf scale={VideoWidth ?? -2}:{VideoHeight ?? -2}";
             }
+        }
 
+        protected virtual IEnumerable<string> GetFFmpegAudioArgs()
+        {
             if (AudioEncoder != null) {
-                args.Add(AudioEncoder.GetCliArgs(this));
+                yield return AudioEncoder.GetCliArgs(this);
             }
 
-            if (AudioBitrate != 0)
-                args.Add("-b:a " + AudioBitrate + "k");
+            if (AudioBitrate != 0) {
+                yield return "-b:a " + AudioBitrate + "k";
+            }
 
-            if (AudioChannels != 0)
-                args.Add("-ac " + AudioChannels);
-
-            args.Add("-y"); // Overwrite files without prompting.
-            args.Add("-v warning"); // Output verbosity level.
-            args.Add($@"""{outputFilePath}"""); // Output.
-
-            return string.Join(" ", args);
+            if (AudioChannels != 0) {
+                yield return "-ac " + AudioChannels;
+            }
         }
 
         public override string ToString()
         {
-            return (FFmpegPath ?? "ffmpeg") + " " + GetFfmpegArgs("<input>", "<output>");
+            return (FFmpegPath ?? "ffmpeg") + " " + GetFFmpegArgString("<input>", "<output>");
         }
     }
 }
