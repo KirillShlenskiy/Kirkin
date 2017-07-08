@@ -45,7 +45,7 @@ namespace Kirkin.Media.FFmpeg
             internal override string GetCliArgs(FFmpegClient ffmpeg)
             {
                 StringBuilder args = new StringBuilder($"-c:v libx264 -profile:v high -preset {Preset}");
-                int bitrate = ffmpeg.VideoBitrateResolved;
+                int bitrate = ffmpeg.TargetVideoBitrate;
 
                 if (bitrate != 0) {
                     args.Append($" -b:v {bitrate}k -maxrate {bitrate}k -bufsize {bitrate * 2}k");

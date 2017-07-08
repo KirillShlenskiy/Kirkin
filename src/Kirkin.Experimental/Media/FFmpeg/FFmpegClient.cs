@@ -10,7 +10,7 @@ namespace Kirkin.Media.FFmpeg
     /// <summary>
     /// Managed FFmpeg wrapper.
     /// </summary>
-    public sealed class FFmpegClient
+    public class FFmpegClient
     {
         /// <summary>
         /// ffmpeg.exe path specified when this instance was created.
@@ -48,9 +48,9 @@ namespace Kirkin.Media.FFmpeg
         public int VideoBitrate { get; set; }
 
         /// <summary>
-        /// Effective video bitrate.
+        /// Effective target video bitrate.
         /// </summary>
-        internal int VideoBitrateResolved
+        protected internal virtual int TargetVideoBitrate
         {
             get
             {
@@ -153,19 +153,24 @@ namespace Kirkin.Media.FFmpeg
             }
         }
 
-        private string GetFfmpegArgs(string inputFilePath, string outputFilePath)
+        protected virtual string GetFfmpegArgs(string inputFilePath, string outputFilePath)
         {
             List<string> args = new List<string>();
 
             args.Add($@"-i ""{inputFilePath}"""); // Input.
-            args.Add(VideoEncoder.GetCliArgs(this));
+
+            if (VideoEncoder != null) {
+                args.Add(VideoEncoder.GetCliArgs(this));
+            }
 
             if (VideoWidth.HasValue || VideoHeight.HasValue) {
                 // -2 means "auto, preserve aspect ratio.
                 args.Add($"-vf scale={VideoWidth ?? -2}:{VideoHeight ?? -2}");
             }
 
-            args.Add(AudioEncoder.GetCliArgs(this));
+            if (AudioEncoder != null) {
+                args.Add(AudioEncoder.GetCliArgs(this));
+            }
 
             if (AudioChannels != 0)
                 args.Add("-ac " + AudioChannels);
