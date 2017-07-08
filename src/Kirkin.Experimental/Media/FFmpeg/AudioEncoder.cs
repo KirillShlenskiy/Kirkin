@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace Kirkin.Media.FFmpeg
+﻿namespace Kirkin.Media.FFmpeg
 {
     /// <summary>
     /// ffmpeg audio encoder options.
@@ -11,6 +9,11 @@ namespace Kirkin.Media.FFmpeg
         /// AAC audio encoder.
         /// </summary>
         public static AudioEncoder AAC { get; } = new AacAudioEncoder();
+
+        /// <summary>
+        /// LAME MP3 audio encoder.
+        /// </summary>
+        public static AudioEncoder LibMp3Lame { get; } = new LibMp3LameAudioEncoder();
 
         /// <summary>
         /// Passthrough audio encoder (direct stream copy).
@@ -32,12 +35,15 @@ namespace Kirkin.Media.FFmpeg
         {
             internal override string GetCliArgs(FFmpegClient ffmpeg)
             {
-                StringBuilder args = new StringBuilder("-c:a aac");
+                return "-c:a aac";
+            }
+        }
 
-                if (ffmpeg.AudioBitrate != 0)
-                    args.Append(" -b:a " + ffmpeg.AudioBitrate + "k");
-
-                return args.ToString();
+        sealed class LibMp3LameAudioEncoder : AudioEncoder
+        {
+            internal override string GetCliArgs(FFmpegClient ffmpeg)
+            {
+                return "-c:a libmp3lame";
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 using Kirkin.Diagnostics;
@@ -16,7 +17,7 @@ namespace Kirkin.Media.FFmpeg
         /// ffmpeg.exe path specified when this instance was created.
         /// The default is null (use current directory/PATH).
         /// </summary>
-        public string FFmpegPath { get; }
+        protected internal virtual string FFmpegPath { get; }
 
         /// <summary>
         /// Audio encoder. The default is "aac".
@@ -90,7 +91,7 @@ namespace Kirkin.Media.FFmpeg
         /// <summary>
         /// Creates a new ffmpeg wrapper instance with the given ffmpeg.exe path.
         /// </summary>
-        public FFmpegClient(string ffmpegPath)
+        private FFmpegClient(string ffmpegPath)
         {
             FFmpegPath = ffmpegPath;
         }
@@ -108,48 +109,61 @@ namespace Kirkin.Media.FFmpeg
                 UseShellExecute = false
             };
 
-            using (Process process = Process.Start(info))
-            using (ProcessScope scope = new ProcessScope(process))
+            try
             {
-                process.EnableRaisingEvents = true;
-
-                bool nonEmptyOutputSeen = false;
-
-                process.OutputDataReceived += (s, e) =>
+                using (Process process = Process.Start(info))
+                using (ProcessScope scope = new ProcessScope(process))
                 {
-                    if (!string.IsNullOrWhiteSpace(e.Data) || nonEmptyOutputSeen)
+                    process.EnableRaisingEvents = true;
+
+                    bool nonEmptyOutputSeen = false;
+
+                    process.OutputDataReceived += (s, e) =>
                     {
-                        nonEmptyOutputSeen = true;
+                        if (!string.IsNullOrWhiteSpace(e.Data) || nonEmptyOutputSeen)
+                        {
+                            nonEmptyOutputSeen = true;
 
-                        Console.WriteLine(e.Data);
-                    }
-                };
+                            Console.WriteLine(e.Data);
+                        }
+                    };
 
-                List<string> errors = new List<string>();
+                    List<string> errors = new List<string>();
 
-                process.ErrorDataReceived += (s, e) =>
-                {
-                    if (!string.IsNullOrEmpty(e.Data))
+                    process.ErrorDataReceived += (s, e) =>
                     {
-                        errors.Add(e.Data);
-                        Console.WriteLine(e.Data);
+                        if (!string.IsNullOrEmpty(e.Data))
+                        {
+                            errors.Add(e.Data);
+                            Console.WriteLine(e.Data);
+                        }
+                    };
+
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+                    process.WaitForExit();
+
+                    if (process.ExitCode != 0)
+                    {
+                        string errorText = (errors.Count > 1)
+                            ? Environment.NewLine + string.Join(Environment.NewLine, errors)
+                            : errors.FirstOrDefault();
+
+                        throw new FFmpegException($"FFMpeg exited with code {process.ExitCode}. {errorText?.TrimStart(' ', ':')}", process.ExitCode);
                     }
-                };
 
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-                process.WaitForExit();
-
-                if (process.ExitCode != 0)
-                {
-                    string errorText = (errors.Count > 1)
-                        ? Environment.NewLine + string.Join(Environment.NewLine, errors)
-                        : errors.FirstOrDefault();
-
-                    throw new FFmpegException($"FFMpeg exited with code {process.ExitCode}. {errorText?.TrimStart(' ' , ':')}", process.ExitCode);
+                    scope.Complete();
                 }
+            }
+            catch
+            {
+                try
+                {
+                    File.Delete(outputFilePath);
+                }
+                catch { }
 
-                scope.Complete();
+                throw;
             }
         }
 
@@ -163,6 +177,12 @@ namespace Kirkin.Media.FFmpeg
                 args.Add(VideoEncoder.GetCliArgs(this));
             }
 
+            int bitrate = TargetVideoBitrate;
+
+            if (bitrate != 0) {
+                args.Add($"-b:v {bitrate}k -maxrate {bitrate}k -bufsize {bitrate * 2}k");
+            }
+
             if (VideoWidth.HasValue || VideoHeight.HasValue) {
                 // -2 means "auto, preserve aspect ratio.
                 args.Add($"-vf scale={VideoWidth ?? -2}:{VideoHeight ?? -2}");
@@ -171,6 +191,9 @@ namespace Kirkin.Media.FFmpeg
             if (AudioEncoder != null) {
                 args.Add(AudioEncoder.GetCliArgs(this));
             }
+
+            if (AudioBitrate != 0)
+                args.Add("-b:a " + AudioBitrate + "k");
 
             if (AudioChannels != 0)
                 args.Add("-ac " + AudioChannels);
