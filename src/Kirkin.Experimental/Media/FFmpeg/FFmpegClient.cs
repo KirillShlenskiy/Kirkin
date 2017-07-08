@@ -177,8 +177,8 @@ namespace Kirkin.Media.FFmpeg
 
         protected virtual IEnumerable<string> GetFFmpegVideoArgs()
         {
-            if (VideoEncoder != null) {
-                yield return VideoEncoder.GetCliArgs(this);
+            if (VideoEncoder != VideoEncoder.Auto) {
+                yield return VideoEncoderImpl.Resolve(VideoEncoder).GetCliArgs(this);
             }
 
             int bitrate = TargetVideoBitrate;
@@ -198,8 +198,8 @@ namespace Kirkin.Media.FFmpeg
 
         protected virtual IEnumerable<string> GetFFmpegAudioArgs()
         {
-            if (AudioEncoder != null) {
-                yield return AudioEncoder.GetCliArgs(this);
+            if (AudioEncoder != AudioEncoder.Auto) {
+                yield return AudioEncoderImpl.Resolve(AudioEncoder).GetCliArgs(this);
             }
 
             if (AudioBitrate != 0) {

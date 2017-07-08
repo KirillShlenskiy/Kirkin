@@ -1,37 +1,62 @@
-﻿namespace Kirkin.Media.FFmpeg
+﻿using System;
+
+namespace Kirkin.Media.FFmpeg
 {
     /// <summary>
     /// ffmpeg audio encoder options.
     /// </summary>
-    public abstract class AudioEncoder
+    public enum AudioEncoder
     {
+        /// <summary>
+        /// Auto detection (based on output file extension).
+        /// </summary>
+        Auto,
+
         /// <summary>
         /// AAC audio encoder.
         /// </summary>
-        public static AudioEncoder AAC { get; } = new AacAudioEncoder();
+        AAC,
 
         /// <summary>
         /// LAME MP3 audio encoder.
         /// </summary>
-        public static AudioEncoder LibMp3Lame { get; } = new LibMp3LameAudioEncoder();
+        LibMp3Lame,
 
         /// <summary>
         /// Passthrough audio encoder (direct stream copy).
         /// </summary>
-        public static AudioEncoder Copy { get; } = new CopyAudioEncoder();
+        Copy,
 
         /// <summary>
         /// Audio suppressed.
         /// </summary>
-        public static AudioEncoder DisableAudio { get; } = new NoAudioEncoder();
+        DisableAudio
+    }
 
-        private AudioEncoder()
+    internal abstract class AudioEncoderImpl
+    {
+        public static AudioEncoderImpl Resolve(AudioEncoder encoder)
+        {
+            if (encoder == AudioEncoder.AAC) return AAC;
+            if (encoder == AudioEncoder.Copy) return Copy;
+            if (encoder == AudioEncoder.DisableAudio) return DisableAudio;
+            if (encoder == AudioEncoder.LibMp3Lame) return LibMp3Lame;
+
+            throw new ArgumentException($"Unknown audio encoder: '{encoder}'.");
+        }
+
+        public static AudioEncoderImpl AAC { get; } = new AacAudioEncoder();
+        public static AudioEncoderImpl LibMp3Lame { get; } = new LibMp3LameAudioEncoder();
+        public static AudioEncoderImpl Copy { get; } = new CopyAudioEncoder();
+        public static AudioEncoderImpl DisableAudio { get; } = new NoAudioEncoder();
+
+        private AudioEncoderImpl()
         {
         }
 
         internal abstract string GetCliArgs(FFmpegClient ffmpeg);
 
-        private sealed class AacAudioEncoder : AudioEncoder
+        private sealed class AacAudioEncoder : AudioEncoderImpl
         {
             internal override string GetCliArgs(FFmpegClient ffmpeg)
             {
@@ -39,7 +64,7 @@
             }
         }
 
-        sealed class LibMp3LameAudioEncoder : AudioEncoder
+        sealed class LibMp3LameAudioEncoder : AudioEncoderImpl
         {
             internal override string GetCliArgs(FFmpegClient ffmpeg)
             {
@@ -47,7 +72,7 @@
             }
         }
 
-        sealed class CopyAudioEncoder : AudioEncoder
+        sealed class CopyAudioEncoder : AudioEncoderImpl
         {
             internal override string GetCliArgs(FFmpegClient ffmpeg)
             {
@@ -55,7 +80,7 @@
             }
         }
 
-        sealed class NoAudioEncoder : AudioEncoder
+        sealed class NoAudioEncoder : AudioEncoderImpl
         {
             internal override string GetCliArgs(FFmpegClient ffmpeg)
             {

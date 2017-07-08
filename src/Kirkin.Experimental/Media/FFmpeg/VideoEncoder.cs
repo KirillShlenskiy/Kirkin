@@ -1,42 +1,69 @@
-﻿namespace Kirkin.Media.FFmpeg
+﻿using System;
+
+namespace Kirkin.Media.FFmpeg
 {
     /// <summary>
     /// ffmpeg video encoder options.
     /// </summary>
-    public abstract class VideoEncoder
+    public enum VideoEncoder
     {
+        /// <summary>
+        /// Auto detection (based on output file extension).
+        /// </summary>
+        Auto,
+
         /// <summary>
         /// libx264 video encoder - slow preset (best quality).
         /// </summary>
-        public static VideoEncoder Libx264Slow { get; } = new Libx264VideoEncoder("slow");
+        Libx264Slow,
 
         /// <summary>
         /// libx264 video encoder - fast preset (lower quality, faster encoding).
         /// </summary>
-        public static VideoEncoder Libx264Fast { get; } = new Libx264VideoEncoder("fast");
+        Libx264Fast,
 
         /// <summary>
         /// libx264 video encoder - ultra fast preset (fastest encoding).
         /// </summary>
-        public static VideoEncoder Libx264UltraFast { get; } = new Libx264VideoEncoder("ultrafast");
+        Libx264UltraFast,
 
         /// <summary>
         /// Passthrough video encoder (direct stream copy).
         /// </summary>
-        public static VideoEncoder Copy { get; } = new CopyVideoEncoder();
+        Copy,
 
         /// <summary>
         /// Video suppressed.
         /// </summary>
-        public static VideoEncoder DisableVideo { get; } = new NoVideoEncoder();
+        DisableVideo
+    }
 
-        private VideoEncoder()
+    internal abstract class VideoEncoderImpl
+    {
+        public static VideoEncoderImpl Resolve(VideoEncoder encoder)
+        {
+            if (encoder == VideoEncoder.Copy) return Copy;
+            if (encoder == VideoEncoder.DisableVideo) return DisableVideo;
+            if (encoder == VideoEncoder.Libx264Fast) return Libx264Fast;
+            if (encoder == VideoEncoder.Libx264Slow) return Libx264Slow;
+            if (encoder == VideoEncoder.Libx264UltraFast) return Libx264UltraFast;
+
+            throw new ArgumentException($"Unknown video encoder: '{encoder}'.");
+        }
+
+        public static VideoEncoderImpl Libx264Slow { get; } = new Libx264VideoEncoder("slow");
+        public static VideoEncoderImpl Libx264Fast { get; } = new Libx264VideoEncoder("fast");
+        public static VideoEncoderImpl Libx264UltraFast { get; } = new Libx264VideoEncoder("ultrafast");
+        public static VideoEncoderImpl Copy { get; } = new CopyVideoEncoder();
+        public static VideoEncoderImpl DisableVideo { get; } = new NoVideoEncoder();
+
+        private VideoEncoderImpl()
         {
         }
 
         internal abstract string GetCliArgs(FFmpegClient ffmpeg);
 
-        private sealed class Libx264VideoEncoder : VideoEncoder
+        private sealed class Libx264VideoEncoder : VideoEncoderImpl
         {
             public string Preset { get; }
 
@@ -51,7 +78,7 @@
             }
         }
 
-        sealed class CopyVideoEncoder : VideoEncoder
+        sealed class CopyVideoEncoder : VideoEncoderImpl
         {
             internal override string GetCliArgs(FFmpegClient ffmpeg)
             {
@@ -59,7 +86,7 @@
             }
         }
 
-        sealed class NoVideoEncoder : VideoEncoder
+        sealed class NoVideoEncoder : VideoEncoderImpl
         {
             internal override string GetCliArgs(FFmpegClient ffmpeg)
             {
