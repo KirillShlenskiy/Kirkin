@@ -22,6 +22,11 @@ namespace Kirkin.Media.FFmpeg
         /// </summary>
         public static VideoEncoder Copy { get; } = new CopyVideoEncoder();
 
+        /// <summary>
+        /// Video suppressed.
+        /// </summary>
+        public static VideoEncoder NoVideo { get; } = new NoVideoEncoder();
+
         private VideoEncoder()
         {
         }
@@ -55,6 +60,14 @@ namespace Kirkin.Media.FFmpeg
             internal override string GetCliArgs(FFmpegClient ffmpeg)
             {
                 return "-c:v copy";
+            }
+        }
+
+        sealed class NoVideoEncoder : VideoEncoder
+        {
+            internal override string GetCliArgs(FFmpegClient ffmpeg)
+            {
+                return "-vn";
             }
         }
     }

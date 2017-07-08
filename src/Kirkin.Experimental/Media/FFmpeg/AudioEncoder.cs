@@ -17,6 +17,11 @@ namespace Kirkin.Media.FFmpeg
         /// </summary>
         public static AudioEncoder Copy { get; } = new CopyAudioEncoder();
 
+        /// <summary>
+        /// Audio suppressed.
+        /// </summary>
+        public static AudioEncoder NoAudio { get; } = new NoAudioEncoder();
+
         private AudioEncoder()
         {
         }
@@ -41,6 +46,14 @@ namespace Kirkin.Media.FFmpeg
             internal override string GetCliArgs(FFmpegClient ffmpeg)
             {
                 return "-c:a copy";
+            }
+        }
+
+        sealed class NoAudioEncoder : AudioEncoder
+        {
+            internal override string GetCliArgs(FFmpegClient ffmpeg)
+            {
+                return "-an";
             }
         }
     }

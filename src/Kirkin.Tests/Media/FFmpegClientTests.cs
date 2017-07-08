@@ -9,10 +9,13 @@ namespace Kirkin.Tests.Media
         [Test]
         public void TestConvert()
         {
-            string inputFilePath = @"";
-            string outputFilePath = @"";
+            string inputFilePath = @"C:\temp\video\source.mp4";
+            string outputFilePath = @"C:\temp\video\target.m4a";
 
             FFmpegClient ffmpeg = new FFmpegClient();
+
+            ffmpeg.VideoEncoder = VideoEncoder.NoVideo;
+            ffmpeg.AudioEncoder = AudioEncoder.Copy;
 
             ffmpeg.ConvertFile(inputFilePath, outputFilePath);
         }
