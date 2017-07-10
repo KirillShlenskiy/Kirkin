@@ -103,6 +103,7 @@ namespace Kirkin.Media.FFmpeg
         public void ConvertFile(string inputFilePath, string outputFilePath)
         {
             ProcessStartInfo info = new ProcessStartInfo(FFmpegPath ?? "ffmpeg", GetFFmpegArgString(inputFilePath, outputFilePath)) {
+                CreateNoWindow = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false

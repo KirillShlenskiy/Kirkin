@@ -10,11 +10,13 @@ namespace Kirkin.Tests.Media
         public void TestConvert()
         {
             string inputFilePath = @"C:\temp\video\source.mp4";
-            string outputFilePath = @"C:\temp\video\target.m4a";
+            string outputFilePath = @"C:\temp\video\target.mp4";
 
             FFmpegClient ffmpeg = new FFmpegClient();
 
-            ffmpeg.VideoEncoder = VideoEncoder.NoVideo;
+            ffmpeg.VideoEncoder = VideoEncoder.Libx264Fast;
+            ffmpeg.VideoHeight = 480;
+            ffmpeg.VideoBitrate = 750;
             ffmpeg.AudioEncoder = AudioEncoder.Copy;
 
             ffmpeg.ConvertFile(inputFilePath, outputFilePath);
