@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Kirkin.Mapping.Fluent
@@ -32,6 +33,25 @@ namespace Kirkin.Mapping.Fluent
             if (sourceMembers == null) throw new ArgumentNullException(nameof(sourceMembers));
 
             return new PartiallyConfiguredMapperBuilder<TSource>(sourceMembers);
+        }
+
+        /// <summary>
+        /// Produces an intermediate factory object that can create builder instances
+        /// mapping from the specified dictionary to various target types.
+        /// </summary>
+        public PartiallyConfiguredMapperBuilder<IDictionary<string, TValue>> FromDictionary<TValue>(IDictionary<string, TValue> dictionary)
+        {
+            if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
+
+            MemberFactory<IDictionary<string, TValue>> memberFactory = new MemberFactory<IDictionary<string, TValue>>();
+            Member<IDictionary<string, TValue>>[] members = new Member<IDictionary<string, TValue>>[dictionary.Count];
+            int index = 0;
+            
+            foreach (KeyValuePair<string, TValue> kvp in dictionary) {
+                members[index++] = memberFactory.ReadOnlyMember(kvp.Key, dict => dict[kvp.Key]);
+            }
+
+            return new PartiallyConfiguredMapperBuilder<IDictionary<string, TValue>>(members);
         }
 
         /// <summary>

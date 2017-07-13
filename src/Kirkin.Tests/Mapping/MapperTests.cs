@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Kirkin.Mapping;
 using Kirkin.Mapping.Engine.Compilers;
@@ -625,6 +626,34 @@ namespace Kirkin.Tests.Mapping
 
             Assert.AreEqual(123, d2.ID);
             Assert.Null(d2.Value);
+        }
+
+        [Test]
+        public void DictionaryMapping()
+        {
+            Dictionary<string, object> dictSource = new Dictionary<string, object> {
+                { "ID", 123 },
+                { "Value", "Zzz" }
+            };
+
+            Dummy dummy = Mapper.Builder
+                .FromDictionary(dictSource)
+                .ToPublicInstanceProperties<Dummy>()
+                .BuildMapper()
+                .Map(dictSource);
+
+            Assert.AreEqual(123, dummy.ID);
+            Assert.AreEqual("Zzz", dummy.Value);
+
+            Dictionary<string, object> dictTarget = Mapper.Builder
+                .FromPublicInstanceProperties<Dummy>()
+                .ToDictionary()
+                .BuildMapper()
+                .Map(dummy);
+
+            Assert.AreEqual(2, dictTarget.Count);
+            Assert.AreEqual(123, dictTarget["ID"]);
+            Assert.AreEqual("Zzz", dictTarget["Value"]);
         }
 
         struct Size

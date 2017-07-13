@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Kirkin.Mapping.Fluent
 {
@@ -37,6 +38,24 @@ namespace Kirkin.Mapping.Fluent
             if (targetMembers == null) throw new ArgumentNullException(nameof(targetMembers));
 
             return new MapperBuilder<TSource, TTarget>(SourceMembers, targetMembers);
+        }
+
+        /// <summary>
+        /// Creates a mapper builder which configures mapping from source to a generic dictionary.
+        /// </summary>
+        public MapperBuilder<TSource, Dictionary<string, object>> ToDictionary()
+        {
+            MemberFactory<Dictionary<string, object>> memberFactory = new MemberFactory<Dictionary<string, object>>();
+            Member<Dictionary<string, object>>[] targetMembers = new Member<Dictionary<string, object>>[SourceMembers.Length];
+            
+            for (int i = 0; i < targetMembers.Length; i++)
+            {
+                Member<TSource> sourceMember = SourceMembers[i];
+
+                targetMembers[i] = memberFactory.WriteOnlyMember<object>(sourceMember.Name, (dict, value) => dict.Add(sourceMember.Name, value));
+            }
+
+            return new MapperBuilder<TSource, Dictionary<string, object>>(SourceMembers, targetMembers);
         }
     }
 }

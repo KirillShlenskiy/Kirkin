@@ -88,6 +88,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Mapper`2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MappingException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\Member.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapping\MemberFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\MemberMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\NullableBehaviour.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mapping\PropertyMember.cs" />
