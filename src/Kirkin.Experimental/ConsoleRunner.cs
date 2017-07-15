@@ -122,8 +122,7 @@ namespace Kirkin
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                _process = Process.Start(processStartInfo);
-
+                using (_process = Process.Start(processStartInfo))
                 using (ProcessScope scope = new ProcessScope(_process))
                 {
                     cancellationToken.Register(() => scope.Dispose(), useSynchronizationContext: false);
@@ -158,12 +157,7 @@ namespace Kirkin
                         _process.WaitForExit();
                     }
 
-                    // By now the child process could have been killed and nulled out by the
-                    // OutputDataReceived event handler. Handle this scenario gracefully.
-                    // No need for memory barrier - it is inserted by the await.
-                    Process p = _process;
-
-                    if (p == null)
+                    if (scope.Disposed)
                     {
                         if (!cancellationToken.IsCancellationRequested) {
                             throw new InvalidOperationException("Unexpected runner state. Expecting token to be marked as canceled.");
@@ -171,23 +165,18 @@ namespace Kirkin
 
                         throw new OperationCanceledException("Child process forcibly terminated.", cancellationToken);
                     }
-                    else
+
+                    int result = _process.ExitCode;
+
+                    if (result != 0)
                     {
-                        int result = p.ExitCode;
+                        string error = string.Join("", errors);
 
-                        if (result != 0)
-                        {
-                            string error = string.Join("", errors);
-
-                            if (string.IsNullOrEmpty(error))
-                            {
-                                throw new ConsoleRunnerException(result, "Non-zero exit code.");
-                            }
-                            else
-                            {
-                                throw new ConsoleRunnerException(result, error);
-                            }
+                        if (string.IsNullOrEmpty(error)) {
+                            throw new ConsoleRunnerException(result, "Non-zero exit code.");
                         }
+
+                        throw new ConsoleRunnerException(result, error);
                     }
                 }
             }

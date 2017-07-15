@@ -132,6 +132,7 @@
     <Compile Include="Dependencies\ContainerTests.cs" />
     <Compile Include="Decisions\BestMatchTests.cs" />
     <Compile Include="Diagnostics\ProcessMemoryTests.cs" />
+    <Compile Include="Diagnostics\ProcessScopeTests.cs" />
     <Compile Include="Experimental\CastleCodegenTests.cs" />
     <Compile Include="Experimental\ImmutableArrayFactoryTests.cs" />
     <Compile Include="Experimental\SkipOneAndEnumerateTests.cs" />
