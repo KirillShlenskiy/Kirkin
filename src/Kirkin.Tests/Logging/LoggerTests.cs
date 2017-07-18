@@ -97,7 +97,7 @@ namespace Kirkin.Tests.Logging
         public void LogTimeBetweenEntriesCustomFormat()
         {
             var lines = new List<string>();
-            var logger = Logger.Create(lines.Add).WithFormatters(EntryFormatter.LogTimeBetweenEntries("{0:0}"));
+            var logger = Logger.Create(lines.Add).WithFormatter(EntryFormatter.LogTimeBetweenEntries("{0:0}"));
 
             logger.Log("1"); // Produces 1 line.
             Thread.Sleep(200);
@@ -112,7 +112,7 @@ namespace Kirkin.Tests.Logging
         public void LogTimeBetweenEntriesDefaultFormat()
         {
             var lines = new List<string>();
-            var logger = Logger.Create(lines.Add).WithFormatters(EntryFormatter.LogTimeBetweenEntries());
+            var logger = Logger.Create(lines.Add).WithFormatter(EntryFormatter.LogTimeBetweenEntries());
 
             logger.Log("1"); // Produces 1 line.
             Thread.Sleep(200);
@@ -127,7 +127,7 @@ namespace Kirkin.Tests.Logging
         public void SplitLinesLoggerTest()
         {
             var entries = new List<string>();
-            var logger = Logger.Create(entries.Add).WithFormatters(EntryFormatter.SplitMultilineEntries);
+            var logger = Logger.Create(entries.Add).WithFormatter(EntryFormatter.SplitMultilineEntries);
 
             logger.Log("Line 1" + Environment.NewLine + "Line 2" + Environment.NewLine + "Line 3");
 
@@ -141,7 +141,7 @@ namespace Kirkin.Tests.Logging
         public void TimestampedLoggerTest()
         {
             var entry = default(string);
-            var logger = Logger.Create(s => entry = s).WithFormatters(EntryFormatter.TimestampNonEmptyEntries("HH:mm:ss"));
+            var logger = Logger.Create(s => entry = s).WithFormatter(EntryFormatter.TimestampNonEmptyEntries("HH:mm:ss"));
 
             logger.Log("Entry 1");
 
@@ -192,7 +192,7 @@ namespace Kirkin.Tests.Logging
         {
             // Reimplement timestamp logger.
             var entry = default(string);
-            var logger = Logger.Create(s => entry = s).WithFormatters(EntryFormatter.Transform(s => DateTime.Now.ToString("HH:mm:ss") + " " + s));
+            var logger = Logger.Create(s => entry = s).WithFormatter(EntryFormatter.Transform(s => DateTime.Now.ToString("HH:mm:ss") + " " + s));
 
             logger.Log("Entry 1");
 
@@ -226,9 +226,9 @@ namespace Kirkin.Tests.Logging
             var entry = default(string);
 
             var logger = Logger.Create(s => entry = s)
-                .WithFormatters(EntryFormatter.Transform(s => "1" + s))
-                .WithFormatters(EntryFormatter.Transform(s => "2" + s))
-                .WithFormatters(EntryFormatter.Transform(s => "3" + s));
+                .WithFormatter(EntryFormatter.Transform(s => "1" + s))
+                .WithFormatter(EntryFormatter.Transform(s => "2" + s))
+                .WithFormatter(EntryFormatter.Transform(s => "3" + s));
 
             logger.Log("BOOM");
 
