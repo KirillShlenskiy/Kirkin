@@ -11,11 +11,19 @@ namespace Kirkin.Tests.Experimental
 {
     public class ClrMdTests
     {
+        private const string ProcessName = ""; // Fill out to enable tests;
         private readonly int PID;
 
         public ClrMdTests()
         {
-            PID = Process.GetProcessesByName("ArdexServicesMonitor").Single().Id;
+            if (string.IsNullOrEmpty(ProcessName))
+            {
+                Assert.Ignore("Process name unspecified.");
+            }
+            else
+            {
+                PID = Process.GetProcessesByName(ProcessName).Single().Id;
+            }
         }
 
         [Test]
@@ -42,26 +50,26 @@ namespace Kirkin.Tests.Experimental
             {
                 ClrInfo clrVersion = dataTarget.ClrVersions[0];
                 ClrRuntime runtime = clrVersion.CreateRuntime();
-                Dictionary<string, int> countsByClrType = new Dictionary<string, int>();
+                Dictionary<string, long> totalSizeByClrType = new Dictionary<string, long>();
 
                 foreach (ulong ptr in runtime.Heap.EnumerateObjectAddresses())
                 {
                     ClrType type = runtime.Heap.GetObjectType(ptr);
-                    int count;
+                    long count;
 
-                    if (countsByClrType.TryGetValue(type.Name, out count))
+                    if (totalSizeByClrType.TryGetValue(type.Name, out count))
                     {
-                        count++;
+                        count += (long)type.GetSize(ptr);
                     }
                     else
                     {
-                        count = 0;
+                        count = (long)type.GetSize(ptr);
                     }
 
-                    countsByClrType[type.Name] = count;
+                    totalSizeByClrType[type.Name] = count;
                 }
 
-                foreach (KeyValuePair<string, int> kvp in countsByClrType.OrderByDescending(v => v.Value))
+                foreach (KeyValuePair<string, long> kvp in totalSizeByClrType.OrderByDescending(v => v.Value))
                 {
                     if (kvp.Value < 10) {
                         continue;
