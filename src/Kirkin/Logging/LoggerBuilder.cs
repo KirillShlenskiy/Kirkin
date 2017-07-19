@@ -62,7 +62,9 @@ namespace Kirkin.Logging
             Logger logger = LoggerObj as Logger
                 ?? Logger.Create((Action<string>)LoggerObj);
 
-            return logger.WithFormatters(_formatters.ToArray());
+            return (_formatters.Count == 0)
+                ? logger
+                : Logger.Create(EntryFormatter.DecorateLogEntryDelegateWithFormatters(logger.Log, _formatters));
         }
     }
 }

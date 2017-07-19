@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Kirkin.Logging
 {
@@ -48,17 +49,16 @@ namespace Kirkin.Logging
         #region Fluent API
 
         /// <summary>
-        /// Returns a logger wrapper which applies the given formatters
+        /// Returns a logger wrapper which applies the given formatter
         /// to each logged entry and logs the result to this logger.
         /// </summary>
-        internal Logger WithFormatters(params IEntryFormatter[] formatters)
+        internal Logger WithFormatter(IEntryFormatter formatter)
         {
-            if (formatters == null) throw new ArgumentNullException(nameof(formatters));
-            if (formatters.Length == 0) return this;
+            if (formatter == null) throw new ArgumentNullException(nameof(formatter));
 
             // No need for defensive copy. The array will be discarded.
             return new CustomLogger(
-                entryAction: EntryFormatter.DecorateLogEntryDelegateWithFormatters(Log, formatters)
+                entryAction: EntryFormatter.DecorateLogEntryDelegateWithFormatters(Log, new List<IEntryFormatter> { formatter })
             );
         }
 

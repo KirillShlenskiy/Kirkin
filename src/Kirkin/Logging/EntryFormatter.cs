@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Kirkin.Logging
 {
@@ -11,9 +12,9 @@ namespace Kirkin.Logging
         /// Builds a log entry pipeline where the entry passes through each
         /// of the formatters before hitting the final logEntry delegate.
         /// </summary>
-        internal static Action<string> DecorateLogEntryDelegateWithFormatters(Action<string> logEntry, IEntryFormatter[] formatters)
+        internal static Action<string> DecorateLogEntryDelegateWithFormatters(Action<string> logEntry, List<IEntryFormatter> formatters)
         {
-            for (int i = formatters.Length - 1; i >= 0; i--)
+            for (int i = formatters.Count - 1; i >= 0; i--)
             {
                 Action<string> tmp = logEntry;
                 IEntryFormatter formatter = formatters[i];
