@@ -116,6 +116,7 @@
     <Compile Include="Serialization\XmlSerializer.cs" />
     <Compile Include="Text\Url.cs" />
     <Compile Include="Threading\AsyncAutoResetEvent.cs" />
+    <Compile Include="Threading\AsyncLock.cs" />
     <Compile Include="Threading\AsyncManualResetEvent.cs" />
     <Compile Include="Threading\AsyncSemaphore.cs" />
     <Compile Include="Threading\Atomic.cs" />
