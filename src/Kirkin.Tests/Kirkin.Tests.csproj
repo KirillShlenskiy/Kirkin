@@ -183,6 +183,7 @@
     <Compile Include="StringCompareTests.cs" />
     <Compile Include="Text\TextTests.cs" />
     <Compile Include="Text\UrlUtilTests.cs" />
+    <Compile Include="Threading\AsyncLockTests.cs" />
     <Compile Include="Threading\AsyncManualResetEventTests.cs" />
     <Compile Include="Threading\AsyncSemaphoreTests.cs" />
     <Compile Include="Threading\AtomicValueTests.cs" />

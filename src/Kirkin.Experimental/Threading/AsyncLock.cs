@@ -27,7 +27,7 @@ namespace Kirkin.Threading
     {
         private readonly TaskCompletionSource<bool> _tcs;
 
-        public AsyncLockReleaser(TaskCompletionSource<bool> tcs)
+        internal AsyncLockReleaser(TaskCompletionSource<bool> tcs)
         {
             _tcs = tcs;
         }
