@@ -34,7 +34,7 @@ namespace Kirkin.Threading
 
         public void Dispose()
         {
-            _tcs.SetResult(true);
+            _tcs.TrySetResult(true);
         }
     }
 }
