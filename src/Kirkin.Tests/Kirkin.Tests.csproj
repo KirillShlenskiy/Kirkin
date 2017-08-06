@@ -138,6 +138,7 @@
     <Compile Include="Diagnostics\ProcessMemoryTests.cs" />
     <Compile Include="Diagnostics\ProcessScopeTests.cs" />
     <Compile Include="Experimental\CastleCodegenTests.cs" />
+    <Compile Include="Experimental\ClassStructAsyncCopyPerf.cs" />
     <Compile Include="Experimental\ClrMdTests.cs" />
     <Compile Include="Media\FFmpegClientTests.cs" />
     <Compile Include="Experimental\ImmutableArrayFactoryTests.cs" />
