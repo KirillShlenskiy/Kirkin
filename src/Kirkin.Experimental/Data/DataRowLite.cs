@@ -15,6 +15,22 @@
         /// </summary>
         public object[] ItemArray { get; }
 
+        public object this[int index]
+        {
+            get
+            {
+                return ItemArray[index];
+            }
+        }
+
+        public object this[string columnName]
+        {
+            get
+            {
+                return ItemArray[Table.Columns.ColumnNameToIndexMappings[columnName]];
+            }
+        }
+
         internal DataRowLite(DataTableLite table, object[] itemArray)
         {
             Table = table;

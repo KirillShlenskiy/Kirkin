@@ -29,6 +29,20 @@ namespace Kirkin.Data
 
         public sealed class DataColumnLiteCollection : List<DataColumnLite>
         {
+            private Dictionary<string, int> __columnNameToIndexMappings;
+
+            internal Dictionary<string, int> ColumnNameToIndexMappings
+            {
+                get
+                {
+                    if (__columnNameToIndexMappings == null) {
+                        RefreshColumnOrdinalMappings();
+                    }
+
+                    return __columnNameToIndexMappings;
+                }
+            }
+
             internal DataColumnLiteCollection()
             {
             }
@@ -42,7 +56,21 @@ namespace Kirkin.Data
 
                 Add(column);
 
+                // Invalidate mappings.
+                __columnNameToIndexMappings = null;
+
                 return column;
+            }
+
+            private void RefreshColumnOrdinalMappings()
+            {
+                Dictionary<string, int> dict = new Dictionary<string, int>(Count, StringComparer.OrdinalIgnoreCase);
+
+                for (int i = 0; i < Count; i++) {
+                    dict.Add(this[i].ColumnName, i);
+                }
+
+                __columnNameToIndexMappings = dict;
             }
         }
 
