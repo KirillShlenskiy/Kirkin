@@ -5,6 +5,25 @@ namespace Kirkin.Data.SqlClient
 {
     public static partial class SqlCommandExtensions2
     {
+        public static DataSetLite ExecuteDataSetLite(this SqlCommand command)
+        {
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
+                DataSetLite ds = new DataSetLite();
+
+                while (true)
+                {
+                    ds.Tables.Add(TableFromReader(reader));
+
+                    if (!reader.NextResult()) {
+                        break;
+                    }
+                }
+
+                return ds;
+            }
+        }
+
         public static DataTableLite ExecuteDataTableLite(this SqlCommand command)
         {
             if (command.Connection.State != ConnectionState.Open) {
