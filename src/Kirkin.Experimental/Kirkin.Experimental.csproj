@@ -66,6 +66,10 @@
     <Compile Include="CustomEqualityComparer.cs" />
     <Compile Include="DataAnalysis\IDataAnalyzer.cs" />
     <Compile Include="DataAnalysis\Insight.cs" />
+    <Compile Include="Data\DataColumnLite.cs" />
+    <Compile Include="Data\DataRowLite.cs" />
+    <Compile Include="Data\DataSetLite.cs" />
+    <Compile Include="Data\DataTableLite.cs" />
     <Compile Include="Data\SqlClient\SqlCommandParameterMapping.cs" />
     <Compile Include="Data\SqlClient\SqlServerCommand.cs" />
     <Compile Include="Data\SqlClient\SqlServerConnectionManager.cs" />
