@@ -70,6 +70,7 @@
     <Compile Include="Data\DataRowLite.cs" />
     <Compile Include="Data\DataSetLite.cs" />
     <Compile Include="Data\DataTableLite.cs" />
+    <Compile Include="Data\SqlClient\SqlCommandExtensions.cs" />
     <Compile Include="Data\SqlClient\SqlCommandParameterMapping.cs" />
     <Compile Include="Data\SqlClient\SqlServerCommand.cs" />
     <Compile Include="Data\SqlClient\SqlServerConnectionManager.cs" />
