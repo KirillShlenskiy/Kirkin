@@ -48,16 +48,8 @@ namespace Kirkin.Tests.Data
         [Test]
         public void GrowthLite()
         {
-            DataTableLite dt = new DataTableLite();
-
-            dt.Columns.Add("ID", typeof(int));
-            dt.Columns.Add("Value", typeof(string));
-
             int targetCount = 100000;
-
-            for (int i = 0; i < targetCount; i++) {
-                dt.Rows.Add(i, i.ToString());
-            }
+            DataTableLite dt = CreateDataTableLite(targetCount);
 
             Assert.AreEqual(targetCount, dt.Rows.Count);
 
@@ -71,16 +63,8 @@ namespace Kirkin.Tests.Data
         [Test]
         public void GrowthRegular()
         {
-            DataTable dt = new DataTable();
-
-            dt.Columns.Add("ID", typeof(int));
-            dt.Columns.Add("Value", typeof(string));
-
             int targetCount = 100000;
-
-            for (int i = 0; i < targetCount; i++) {
-                dt.Rows.Add(i, i.ToString());
-            }
+            DataTable dt = CreateDataTableRegular(targetCount);
 
             Assert.AreEqual(targetCount, dt.Rows.Count);
 
@@ -89,6 +73,120 @@ namespace Kirkin.Tests.Data
                 Assert.AreEqual(i, dt.Rows[i][0]);
                 Assert.AreEqual(i.ToString(), dt.Rows[i][1]);
             }
+        }
+
+        [Test]
+        public void IterationPerfLite()
+        {
+            DataTableLite dt = CreateDataTableLite(1000);
+
+            for (int i = 0; i < 10000; i++)
+            {
+                foreach (DataRowLite row in dt.Rows)
+                {
+                }
+            }
+        }
+
+        [Test]
+        public void IterationPerfRegular()
+        {
+            DataTable dt = CreateDataTableRegular(1000);
+
+            for (int i = 0; i < 10000; i++)
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                }
+            }
+        }
+
+        [Test]
+        public void ValueAccessByIndexWithExactTypeLite()
+        {
+            DataTableLite dt = CreateDataTableLite(1);
+            DataRowLite row = dt.Rows[0];
+            int id;
+            string value;
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                id = row.GetValue<int>(0);
+                value = row.GetValue<string>(1);
+            }
+        }
+
+        [Test]
+        public void ValueAccessByIndexWithExactTypeRegular()
+        {
+            DataTable dt = CreateDataTableRegular(1);
+            DataRow row = dt.Rows[0];
+            int id;
+            string value;
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                id = row.Field<int>(0);
+                value = row.Field<string>(1);
+            }
+        }
+
+        [Test]
+        public void ValueAccessByNameWithExactTypeLite()
+        {
+            DataTableLite dt = CreateDataTableLite(1);
+            DataRowLite row = dt.Rows[0];
+            int id;
+            string value;
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                id = row.GetValue<int>("ID");
+                value = row.GetValue<string>("Value");
+            }
+        }
+
+        [Test]
+        public void ValueAccessByNameWithExactTypeRegular()
+        {
+            DataTable dt = CreateDataTableRegular(1);
+            DataRow row = dt.Rows[0];
+            int id;
+            string value;
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                id = row.Field<int>("ID");
+                value = row.Field<string>("Value");
+            }
+        }
+
+        private static DataTableLite CreateDataTableLite(int rowCount)
+        {
+            DataTableLite dt = new DataTableLite();
+
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("Value", typeof(string));
+
+            for (int i = 0; i < rowCount; i++) {
+                dt.Rows.Add(i, i.ToString());
+            }
+
+            return dt;
+        }
+
+        private static DataTable CreateDataTableRegular(int rowCount)
+        {
+            DataTable dt = new DataTable();
+
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("Value", typeof(string));
+
+            for (int i = 0; i < rowCount; i++) {
+                dt.Rows.Add(i, i.ToString());
+            }
+
+            return dt;
         }
     }
 }

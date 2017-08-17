@@ -44,17 +44,17 @@ namespace Kirkin.Data
             _rowIndex = rowIndex;
         }
 
-        public T GetValue<T>(int index)
+        public T GetValue<T>(int columnIndex)
         {
-            return GetValue<T>(Table.Columns[index]);
+            return GetValue<T>(Table.Columns[columnIndex]);
         }
 
-        public T GetValue<T>(string name)
+        public T GetValue<T>(string columnName)
         {
-            return GetValue<T>(Table.Columns[name]);
+            return GetValue<T>(Table.Columns[columnName]);
         }
 
-        private T GetValue<T>(DataColumnLite column)
+        public T GetValue<T>(DataColumnLite column)
         {
             IColumnData untypedData = column.Data;
 
@@ -71,17 +71,17 @@ namespace Kirkin.Data
             return (T)untypedData.Get(_rowIndex);
         }
 
-        public T GetValueOrDefault<T>(int index)
+        public T GetValueOrDefault<T>(int columnIndex)
         {
-            return GetValueOrDefault<T>(Table.Columns[index]);
+            return GetValueOrDefault<T>(Table.Columns[columnIndex]);
         }
 
-        public T GetValueOrDefault<T>(string name)
+        public T GetValueOrDefault<T>(string columnName)
         {
-            return GetValueOrDefault<T>(Table.Columns[name]);
+            return GetValueOrDefault<T>(Table.Columns[columnName]);
         }
 
-        private T GetValueOrDefault<T>(DataColumnLite column)
+        public T GetValueOrDefault<T>(DataColumnLite column)
         {
             IColumnData untypedData = column.Data;
 
@@ -98,17 +98,17 @@ namespace Kirkin.Data
             return (T)untypedData.Get(_rowIndex);
         }
 
-        public bool IsNull(int index)
+        public bool IsNull(int columnIndex)
         {
-            return IsNull(Table.Columns[index]);
+            return IsNull(Table.Columns[columnIndex]);
         }
 
-        public bool IsNull(string name)
+        public bool IsNull(string columnName)
         {
-            return IsNull(Table.Columns[name]);
+            return IsNull(Table.Columns[columnName]);
         }
 
-        private bool IsNull(DataColumnLite column)
+        public bool IsNull(DataColumnLite column)
         {
             return column.Data.IsNull(_rowIndex);
         }
