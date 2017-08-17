@@ -6,12 +6,12 @@ namespace Kirkin.Data
 {
     public sealed class DataColumnLiteCollection : Collection<DataColumnLite>
     {
-        private Dictionary<string, int> _columnNameToIndexMappings;
-
         /// <summary>
         /// Gets the table that this column collection belongs to.
         /// </summary>
-        public DataTableLite Table { get; }
+        internal readonly DataTableLite Table;
+
+        private Dictionary<string, int> _columnNameToIndexMappings;
 
         /// <summary>
         /// Resolves the column with the specified name.

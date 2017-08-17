@@ -263,6 +263,50 @@ namespace Kirkin.Tests.Data
             }
         }
 
+        [Test]
+        public void MemPressureLite()
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            long bytesStarting = GC.GetTotalMemory(false);
+
+            DataTableLite dt = CreateDataTableLite(1000000);
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            long bytesEnding = GC.GetTotalMemory(false);
+
+            Console.WriteLine($"Diff: {bytesEnding - bytesStarting:###,###,##0}.");
+
+            GC.KeepAlive(dt);
+        }
+
+        [Test]
+        public void MemPressureRegular()
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            long bytesStarting = GC.GetTotalMemory(false);
+
+            DataTable dt = CreateDataTableRegular(1000000);
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            long bytesEnding = GC.GetTotalMemory(false);
+
+            Console.WriteLine($"Diff: {bytesEnding - bytesStarting:###,###,##0}.");
+
+            GC.KeepAlive(dt);
+        }
+
         private static DataTableLite CreateDataTableLite(int rowCount)
         {
             DataTableLite dt = new DataTableLite();
