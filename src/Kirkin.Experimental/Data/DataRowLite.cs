@@ -5,7 +5,7 @@ namespace Kirkin.Data
     /// <summary>
     /// Lightweight DataRow-like data structure.
     /// </summary>
-    public sealed class DataRowLite
+    public struct DataRowLite
     {
         private readonly int _rowIndex;
 
@@ -14,27 +14,48 @@ namespace Kirkin.Data
         /// </summary>
         public DataTableLite Table { get; }
 
-        public object this[int index]
+        /// <summary>
+        /// Gets or sets the value of the cell at the specified column index.
+        /// </summary>
+        public object this[int columnIndex]
         {
             get
             {
-                return Table.Columns[index].Data.Get(_rowIndex);
+                return this[Table.Columns[columnIndex]];
             }
             set
             {
-                Table.Columns[index].Data.Set(_rowIndex, value);
+                this[Table.Columns[columnIndex]] = value;
             }
         }
 
-        public object this[string name]
+        /// <summary>
+        /// Gets or sets the value of the cell that belongs to the column with the specified name.
+        /// </summary>
+        public object this[string columnName]
         {
             get
             {
-                return Table.Columns[name].Data.Get(_rowIndex);
+                return this[Table.Columns[columnName]];
             }
             set
             {
-                Table.Columns[name].Data.Set(_rowIndex, value);
+                this[Table.Columns[columnName]] = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the value of the cell that belongs to the specified column.
+        /// </summary>
+        public object this[DataColumnLite column]
+        {
+            get
+            {
+                return column.Data.Get(_rowIndex);
+            }
+            set
+            {
+                column.Data.Set(_rowIndex, value);
             }
         }
 
@@ -44,6 +65,9 @@ namespace Kirkin.Data
             _rowIndex = rowIndex;
         }
 
+        /// <summary>
+        /// Gets the value of the cell at the specified index.
+        /// </summary>
         public T GetValue<T>(int columnIndex)
         {
             return GetValue<T>(Table.Columns[columnIndex]);

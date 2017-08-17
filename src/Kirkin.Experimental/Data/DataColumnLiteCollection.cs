@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Kirkin.Data
 {
-    public sealed class DataColumnLiteCollection : List<DataColumnLite>
+    public sealed class DataColumnLiteCollection : Collection<DataColumnLite>
     {
         private Dictionary<string, int> __columnNameToIndexMappings;
 
@@ -43,10 +44,35 @@ namespace Kirkin.Data
 
             Add(column);
 
-            // Invalidate mappings.
-            __columnNameToIndexMappings = null;
-
             return column;
+        }
+
+        protected override void ClearItems()
+        {
+            base.ClearItems();
+
+            __columnNameToIndexMappings = null;
+        }
+
+        protected override void InsertItem(int index, DataColumnLite item)
+        {
+            base.InsertItem(index, item);
+
+            __columnNameToIndexMappings = null;
+        }
+
+        protected override void RemoveItem(int index)
+        {
+            base.RemoveItem(index);
+
+            __columnNameToIndexMappings = null;
+        }
+
+        protected override void SetItem(int index, DataColumnLite item)
+        {
+            base.SetItem(index, item);
+
+            __columnNameToIndexMappings = null;
         }
 
         private void RefreshColumnOrdinalMappings()

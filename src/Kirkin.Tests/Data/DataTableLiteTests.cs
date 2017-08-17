@@ -161,6 +161,66 @@ namespace Kirkin.Tests.Data
             }
         }
 
+        [Test]
+        public void ValueAccessByIndexBoxedLite()
+        {
+            DataTableLite dt = CreateDataTableLite(1);
+            DataRowLite row = dt.Rows[0];
+            int id;
+            string value;
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                id = (int)row[0];
+                value = (string)row[1];
+            }
+        }
+
+        [Test]
+        public void ValueAccessByIndexBoxedRegular()
+        {
+            DataTable dt = CreateDataTableRegular(1);
+            DataRow row = dt.Rows[0];
+            int id;
+            string value;
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                id = (int)row[0];
+                value = (string)row[1];
+            }
+        }
+
+        [Test]
+        public void ValueAccessByNameBoxedLite()
+        {
+            DataTableLite dt = CreateDataTableLite(1);
+            DataRowLite row = dt.Rows[0];
+            int id;
+            string value;
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                id = (int)row["ID"];
+                value = (string)row["Value"];
+            }
+        }
+
+        [Test]
+        public void ValueAccessByNameBoxedRegular()
+        {
+            DataTable dt = CreateDataTableRegular(1);
+            DataRow row = dt.Rows[0];
+            int id;
+            string value;
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                id = (int)row["ID"];
+                value = (string)row["Value"];
+            }
+        }
+
         private static DataTableLite CreateDataTableLite(int rowCount)
         {
             DataTableLite dt = new DataTableLite();
