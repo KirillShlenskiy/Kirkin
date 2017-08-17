@@ -26,7 +26,7 @@ namespace Kirkin.Data
                     }
                 }
 
-                SetCapacity(value);
+                Array.Resize(ref _array, value);
 
                 _dbNullBits = newDbNullBits;
             }
@@ -40,11 +40,6 @@ namespace Kirkin.Data
         public void Set(int index, T value)
         {
             _array[index] = value;
-        }
-
-        private void SetCapacity(int capacity)
-        {
-            Array.Resize(ref _array, capacity);
         }
 
         public bool IsNull(int index)

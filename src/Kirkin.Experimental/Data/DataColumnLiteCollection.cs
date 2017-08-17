@@ -55,6 +55,8 @@ namespace Kirkin.Data
             base.InsertItem(index, item);
 
             RefreshColumnOrdinalMappings();
+
+            item.Data.Capacity = Table.Rows.Capacity;
         }
 
         protected override void RemoveItem(int index)
@@ -69,6 +71,8 @@ namespace Kirkin.Data
             base.SetItem(index, item);
 
             RefreshColumnOrdinalMappings();
+
+            item.Data.Capacity = Table.Rows.Capacity;
         }
 
         private void RefreshColumnOrdinalMappings()

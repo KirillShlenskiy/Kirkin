@@ -35,6 +35,14 @@ namespace Kirkin.Data
             }
         }
 
+        internal int Capacity
+        {
+            get
+            {
+                return _capacity;
+            }
+        }
+
         /// <summary>
         /// Creates a new row filled with nulls.
         /// </summary>
