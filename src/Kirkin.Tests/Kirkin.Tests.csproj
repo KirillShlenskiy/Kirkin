@@ -198,6 +198,7 @@
     <Compile Include="Utilities\MD5HashTests.cs" />
     <Compile Include="Validation\ValidatorTests.cs" />
     <Compile Include="ValueConversion\ValueConverterTests.cs" />
+    <Compile Include="VariantArrayTests.cs" />
     <Compile Include="VariantTests.cs" />
   </ItemGroup>
   <ItemGroup>

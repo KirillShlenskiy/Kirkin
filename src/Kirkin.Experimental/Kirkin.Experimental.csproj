@@ -139,6 +139,7 @@
     <Compile Include="Transactions\PropertyTrackingTransaction.cs" />
     <Compile Include="Transactions\PropertyTrackingTransaction`.cs" />
     <Compile Include="Variant.cs" />
+    <Compile Include="VariantArray.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Build\Kirkin-NET_45\Kirkin-NET_45.csproj">

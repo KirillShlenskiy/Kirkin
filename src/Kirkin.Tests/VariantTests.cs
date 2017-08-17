@@ -154,7 +154,6 @@ namespace Kirkin.Tests
         public unsafe void CopyViaPointer()
         {
             int value = 123;
-            TypedReference typeRef = __makeref(value);
             void* address = &value;
             int copy = *(int*)address;
 
