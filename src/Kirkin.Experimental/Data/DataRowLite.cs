@@ -5,14 +5,21 @@ namespace Kirkin.Data
     /// <summary>
     /// Lightweight DataRow-like data structure.
     /// </summary>
-    public struct DataRowLite
+    public sealed class DataRowLite
     {
+        private readonly DataColumnLiteCollection _columns;
         private readonly int _rowIndex;
 
         /// <summary>
         /// Table that this row belongs to.
         /// </summary>
-        public DataTableLite Table { get; }
+        public DataTableLite Table
+        {
+            get
+            {
+                return _columns.Table;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the value of the cell at the specified column index.
@@ -21,11 +28,11 @@ namespace Kirkin.Data
         {
             get
             {
-                return this[Table.Columns[columnIndex]];
+                return this[_columns[columnIndex]];
             }
             set
             {
-                this[Table.Columns[columnIndex]] = value;
+                this[_columns[columnIndex]] = value;
             }
         }
 
@@ -36,11 +43,11 @@ namespace Kirkin.Data
         {
             get
             {
-                return this[Table.Columns[columnName]];
+                return this[_columns[columnName]];
             }
             set
             {
-                this[Table.Columns[columnName]] = value;
+                this[_columns[columnName]] = value;
             }
         }
 
@@ -61,23 +68,29 @@ namespace Kirkin.Data
 
         internal DataRowLite(DataTableLite table, int rowIndex)
         {
-            Table = table;
+            _columns = table.Columns;
             _rowIndex = rowIndex;
         }
 
         /// <summary>
-        /// Gets the value of the cell at the specified index.
+        /// Returns the value of the cell at the specified index.
         /// </summary>
         public T GetValue<T>(int columnIndex)
         {
-            return GetValue<T>(Table.Columns[columnIndex]);
+            return GetValue<T>(_columns[columnIndex]);
         }
 
+        /// <summary>
+        /// Returns the value of the cell that belongs to the column with the specified name.
+        /// </summary>
         public T GetValue<T>(string columnName)
         {
-            return GetValue<T>(Table.Columns[columnName]);
+            return GetValue<T>(_columns[columnName]);
         }
 
+        /// <summary>
+        /// Returns or sets the value of the cell that belongs to the specified column.
+        /// </summary>
         public T GetValue<T>(DataColumnLite column)
         {
             IColumnData untypedData = column.Data;
@@ -95,16 +108,25 @@ namespace Kirkin.Data
             return (T)untypedData.Get(_rowIndex);
         }
 
+        /// <summary>
+        /// Returns the value of the cell at the specified index, or default value for type if the value is null.
+        /// </summary>
         public T GetValueOrDefault<T>(int columnIndex)
         {
-            return GetValueOrDefault<T>(Table.Columns[columnIndex]);
+            return GetValueOrDefault<T>(_columns[columnIndex]);
         }
 
+        /// <summary>
+        /// Returns the value of the cell that belongs to the column with the specified name, or default value for type if the value is null.
+        /// </summary>
         public T GetValueOrDefault<T>(string columnName)
         {
-            return GetValueOrDefault<T>(Table.Columns[columnName]);
+            return GetValueOrDefault<T>(_columns[columnName]);
         }
 
+        /// <summary>
+        /// Returns or sets the value of the cell that belongs to the specified column, or default value for type if the value is null.
+        /// </summary>
         public T GetValueOrDefault<T>(DataColumnLite column)
         {
             IColumnData untypedData = column.Data;
@@ -122,16 +144,25 @@ namespace Kirkin.Data
             return (T)untypedData.Get(_rowIndex);
         }
 
+        /// <summary>
+        /// Returns true if the value of the cell at the specified index is null.
+        /// </summary>
         public bool IsNull(int columnIndex)
         {
-            return IsNull(Table.Columns[columnIndex]);
+            return IsNull(_columns[columnIndex]);
         }
 
+        /// <summary>
+        /// Returns true if the value of the cell that belongs to the column with the specified name is null.
+        /// </summary>
         public bool IsNull(string columnName)
         {
-            return IsNull(Table.Columns[columnName]);
+            return IsNull(_columns[columnName]);
         }
 
+        /// <summary>
+        /// Returns true if the value of the cell that belongs to the specified column is null.
+        /// </summary>
         public bool IsNull(DataColumnLite column)
         {
             return column.Data.IsNull(_rowIndex);

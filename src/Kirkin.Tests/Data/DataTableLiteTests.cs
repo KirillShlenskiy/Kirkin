@@ -46,6 +46,48 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
+        public void DataRowLite_GetValue()
+        {
+            DataTableLite dt = new DataTableLite();
+
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("Value", typeof(string));
+
+            dt.Rows.Add(1, "Blah");
+
+            DataRowLite row = dt.Rows[0];
+
+            Assert.AreEqual(1, row.GetValue<int>(0));
+            Assert.AreEqual(1, row.GetValue<int>("id"));
+            Assert.AreEqual(1, row.GetValue<int>(dt.Columns["id"]));
+            Assert.AreEqual("Blah", row.GetValue<string>(1));
+            Assert.AreEqual("Blah", row.GetValue<string>("value"));
+            Assert.AreEqual("Blah", row.GetValue<string>(dt.Columns["value"]));
+
+            Assert.AreEqual(1, row.GetValue<int?>(0));
+        }
+
+        [Test]
+        public void DataRowLite_GetValueNullable()
+        {
+            DataTableLite dt = new DataTableLite();
+
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("Value", typeof(string));
+
+            dt.Rows.Add(1, "Blah");
+
+            DataRowLite row = dt.Rows[0];
+
+            Assert.AreEqual(1, row.GetValue<int?>(0));
+
+            row[0] = DBNull.Value;
+
+            Assert.True(row.IsNull(0));
+            Assert.Null(row.GetValueOrDefault<int?>(0));
+        }
+
+        [Test]
         public void GrowthLite()
         {
             int targetCount = 100000;

@@ -20,7 +20,7 @@
         /// </summary>
         public DataTableLite()
         {
-            Columns = new DataColumnLiteCollection();
+            Columns = new DataColumnLiteCollection(this);
             Rows = new DataRowLiteCollection(this);
         }
     }

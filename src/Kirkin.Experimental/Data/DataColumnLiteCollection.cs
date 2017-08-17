@@ -21,6 +21,11 @@ namespace Kirkin.Data
         }
 
         /// <summary>
+        /// Gets the table that this column collection belongs to.
+        /// </summary>
+        public DataTableLite Table { get; }
+
+        /// <summary>
         /// Resolves the column with the specified name.
         /// </summary>
         public DataColumnLite this[string name]
@@ -31,8 +36,9 @@ namespace Kirkin.Data
             }
         }
 
-        internal DataColumnLiteCollection()
+        internal DataColumnLiteCollection(DataTableLite table)
         {
+            Table = table;
         }
 
         /// <summary>
