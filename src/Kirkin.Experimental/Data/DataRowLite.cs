@@ -56,13 +56,13 @@ namespace Kirkin.Data
 
         private T GetValue<T>(DataColumnLite column)
         {
-            IColumnStorage untypedData = column.Data;
+            IColumnData untypedData = column.Data;
 
             if (untypedData.IsNull(_rowIndex)) {
                 throw new InvalidOperationException("The data is null.");
             }
 
-            ColumnStorage<T> typedData = untypedData as ColumnStorage<T>;
+            ColumnData<T> typedData = untypedData as ColumnData<T>;
 
             if (typedData != null) {
                 return typedData.Get(_rowIndex);
@@ -83,13 +83,13 @@ namespace Kirkin.Data
 
         private T GetValueOrDefault<T>(DataColumnLite column)
         {
-            IColumnStorage untypedData = column.Data;
+            IColumnData untypedData = column.Data;
 
             if (untypedData.IsNull(_rowIndex)) {
                 return default(T);
             }
 
-            ColumnStorage<T> typedData = untypedData as ColumnStorage<T>;
+            ColumnData<T> typedData = untypedData as ColumnData<T>;
 
             if (typedData != null) {
                 return typedData.Get(_rowIndex);

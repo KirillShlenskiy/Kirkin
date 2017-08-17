@@ -20,7 +20,7 @@ namespace Kirkin.Data
         /// <summary>
         /// Column storage.
         /// </summary>
-        internal readonly IColumnStorage Data;
+        internal readonly IColumnData Data;
 
         /// <summary>
         /// Creates a new <see cref="DataColumnLite"/> instance.
@@ -35,11 +35,11 @@ namespace Kirkin.Data
             Data = CreateStorage(dataType);
         }
 
-        private static IColumnStorage CreateStorage(Type type)
+        private static IColumnData CreateStorage(Type type)
         {
-            Type columnStorageType = typeof(ColumnStorage<>).MakeGenericType(type);
+            Type columnStorageType = typeof(ColumnData<>).MakeGenericType(type);
 
-            return (IColumnStorage)Activator.CreateInstance(columnStorageType);
+            return (IColumnData)Activator.CreateInstance(columnStorageType);
         }
     }
 }

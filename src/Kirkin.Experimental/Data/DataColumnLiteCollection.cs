@@ -19,6 +19,9 @@ namespace Kirkin.Data
             }
         }
 
+        /// <summary>
+        /// Resolves the column with the specified name.
+        /// </summary>
         public DataColumnLite this[string name]
         {
             get

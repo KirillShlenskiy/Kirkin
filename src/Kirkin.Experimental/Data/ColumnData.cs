@@ -3,10 +3,10 @@ using System.Collections;
 
 namespace Kirkin.Data
 {
-    internal sealed class ColumnStorage<T> : IColumnStorage
+    internal sealed class ColumnData<T> : IColumnData
     {
         private BitArray _dbNullBits;
-        private T[] _store;
+        private T[] _array;
 
         public int Capacity
         {
@@ -16,7 +16,8 @@ namespace Kirkin.Data
             }
             set
             {
-                BitArray newDbNullBits = new BitArray(value);
+                // Default all null bits to true in order to fill uninitialized rows with DBNulls.
+                BitArray newDbNullBits = new BitArray(value, defaultValue: true);
 
                 if (_dbNullBits != null)
                 {
@@ -33,17 +34,17 @@ namespace Kirkin.Data
 
         public T Get(int index)
         {
-            return _store[index];
+            return _array[index];
         }
 
         public void Set(int index, T value)
         {
-            _store[index] = value;
+            _array[index] = value;
         }
 
         private void SetCapacity(int capacity)
         {
-            Array.Resize(ref _store, capacity);
+            Array.Resize(ref _array, capacity);
         }
 
         public bool IsNull(int index)
@@ -51,7 +52,7 @@ namespace Kirkin.Data
             return _dbNullBits[index];
         }
 
-        object IColumnStorage.Get(int index)
+        object IColumnData.Get(int index)
         {
             if (IsNull(index)) {
                 return DBNull.Value;
@@ -60,7 +61,7 @@ namespace Kirkin.Data
             return Get(index);
         }
 
-        void IColumnStorage.Set(int index, object value)
+        void IColumnData.Set(int index, object value)
         {
             if (value is DBNull)
             {

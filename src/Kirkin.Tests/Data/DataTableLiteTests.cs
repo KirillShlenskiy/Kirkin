@@ -19,8 +19,9 @@ namespace Kirkin.Tests.Data
             dt.Rows.Add(1, "Blah");
             dt.Rows.Add(2, "Zzz");
             dt.Rows.Add(3, DBNull.Value);
+            dt.Rows.AddNewRow();
 
-            Assert.AreEqual(3, dt.Rows.Count);
+            Assert.AreEqual(4, dt.Rows.Count);
 
             Assert.AreEqual(1, dt.Rows[0][0]);
             Assert.AreEqual("Blah", dt.Rows[0][1]);
@@ -36,6 +37,11 @@ namespace Kirkin.Tests.Data
             Assert.AreEqual(DBNull.Value, dt.Rows[2][1]);
             Assert.AreEqual(3, dt.Rows[2]["id"]);
             Assert.AreEqual(DBNull.Value, dt.Rows[2]["value"]);
+
+            Assert.True(dt.Rows[3].IsNull(0));
+            Assert.True(dt.Rows[3].IsNull(1));
+            Assert.AreEqual(DBNull.Value, dt.Rows[3][0]);
+            Assert.AreEqual(DBNull.Value, dt.Rows[3][1]);
         }
     }
 }

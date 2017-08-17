@@ -1,6 +1,6 @@
 ﻿namespace Kirkin.Data
 {
-    internal interface IColumnStorage
+    internal interface IColumnData
     {
         int Capacity { get; set; }
 
