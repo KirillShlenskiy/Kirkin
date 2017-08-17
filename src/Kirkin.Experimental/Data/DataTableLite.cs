@@ -1,7 +1,7 @@
 ﻿namespace Kirkin.Data
 {
     /// <summary>
-    /// Lightweight DataColumn-like data structure.
+    /// Lightweight DataTable-like data structure.
     /// </summary>
     public sealed class DataTableLite
     {

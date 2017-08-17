@@ -6,19 +6,7 @@ namespace Kirkin.Data
 {
     public sealed class DataColumnLiteCollection : Collection<DataColumnLite>
     {
-        private Dictionary<string, int> __columnNameToIndexMappings;
-
-        internal Dictionary<string, int> ColumnNameToIndexMappings
-        {
-            get
-            {
-                if (__columnNameToIndexMappings == null) {
-                    RefreshColumnOrdinalMappings();
-                }
-
-                return __columnNameToIndexMappings;
-            }
-        }
+        private Dictionary<string, int> _columnNameToIndexMappings;
 
         /// <summary>
         /// Gets the table that this column collection belongs to.
@@ -32,13 +20,15 @@ namespace Kirkin.Data
         {
             get
             {
-                return this[ColumnNameToIndexMappings[name]];
+                return this[_columnNameToIndexMappings[name]];
             }
         }
 
         internal DataColumnLiteCollection(DataTableLite table)
         {
             Table = table;
+
+            RefreshColumnOrdinalMappings();
         }
 
         /// <summary>
@@ -57,28 +47,28 @@ namespace Kirkin.Data
         {
             base.ClearItems();
 
-            __columnNameToIndexMappings = null;
+            RefreshColumnOrdinalMappings();
         }
 
         protected override void InsertItem(int index, DataColumnLite item)
         {
             base.InsertItem(index, item);
 
-            __columnNameToIndexMappings = null;
+            RefreshColumnOrdinalMappings();
         }
 
         protected override void RemoveItem(int index)
         {
             base.RemoveItem(index);
 
-            __columnNameToIndexMappings = null;
+            RefreshColumnOrdinalMappings();
         }
 
         protected override void SetItem(int index, DataColumnLite item)
         {
             base.SetItem(index, item);
 
-            __columnNameToIndexMappings = null;
+            RefreshColumnOrdinalMappings();
         }
 
         private void RefreshColumnOrdinalMappings()
@@ -89,7 +79,7 @@ namespace Kirkin.Data
                 dict.Add(this[i].ColumnName, i);
             }
 
-            __columnNameToIndexMappings = dict;
+            _columnNameToIndexMappings = dict;
         }
     }
 }

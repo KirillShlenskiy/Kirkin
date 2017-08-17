@@ -93,19 +93,10 @@ namespace Kirkin.Data
         /// </summary>
         public T GetValue<T>(DataColumnLite column)
         {
-            IColumnData untypedData = column.Data;
+            if (column.Data.IsNull(_rowIndex)) throw new InvalidOperationException("The data is null.");
+            if (column.Data is ColumnData<T> typedData) return typedData.Get(_rowIndex);
 
-            if (untypedData.IsNull(_rowIndex)) {
-                throw new InvalidOperationException("The data is null.");
-            }
-
-            ColumnData<T> typedData = untypedData as ColumnData<T>;
-
-            if (typedData != null) {
-                return typedData.Get(_rowIndex);
-            }
-
-            return (T)untypedData.Get(_rowIndex);
+            return (T)column.Data.Get(_rowIndex);
         }
 
         /// <summary>
@@ -129,19 +120,10 @@ namespace Kirkin.Data
         /// </summary>
         public T GetValueOrDefault<T>(DataColumnLite column)
         {
-            IColumnData untypedData = column.Data;
+            if (column.Data.IsNull(_rowIndex)) return default(T);
+            if (column.Data is ColumnData<T> typedData) return typedData.Get(_rowIndex);
 
-            if (untypedData.IsNull(_rowIndex)) {
-                return default(T);
-            }
-
-            ColumnData<T> typedData = untypedData as ColumnData<T>;
-
-            if (typedData != null) {
-                return typedData.Get(_rowIndex);
-            }
-
-            return (T)untypedData.Get(_rowIndex);
+            return (T)column.Data.Get(_rowIndex);
         }
 
         /// <summary>
