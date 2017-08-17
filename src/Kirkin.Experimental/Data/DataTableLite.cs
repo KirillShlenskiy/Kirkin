@@ -98,6 +98,7 @@ namespace Kirkin.Data
             public DataRowLite Add(params object[] itemArray)
             {
                 if (itemArray == null) throw new ArgumentNullException(nameof(itemArray));
+                if (itemArray.Length != Table.Columns.Count) throw new ArgumentException("Item array length/column number mismatch.");
 
                 if (_capacity == Count)
                 {
@@ -110,7 +111,11 @@ namespace Kirkin.Data
                     _capacity = newCapacity;
                 }
 
-                DataRowLite row = new DataRowLite(Table, Count, itemArray);
+                DataRowLite row = new DataRowLite(Table, Count);
+
+                for (int i = 0; i < itemArray.Length; i++) {
+                    row[i] = itemArray[i];
+                }
 
                 base.Add(row);
 

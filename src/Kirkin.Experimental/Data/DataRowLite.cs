@@ -7,36 +7,22 @@ namespace Kirkin.Data
     /// </summary>
     public sealed class DataRowLite
     {
+        private readonly int _rowIndex;
+
         /// <summary>
         /// Table that this row belongs to.
         /// </summary>
         public DataTableLite Table { get; }
 
-        internal int RowIndex { get; }
-
-        internal object[] ItemArray
-        {
-            get
-            {
-                object[] arr = new object[Table.Columns.Count];
-
-                for (int i = 0; i < arr.Length; i++) {
-                    arr[i] = Table.Columns[i].Data.Get(RowIndex);
-                }
-
-                return arr;
-            }
-        }
-
         public object this[int index]
         {
             get
             {
-                return Table.Columns[index].Data.Get(RowIndex);
+                return Table.Columns[index].Data.Get(_rowIndex);
             }
             set
             {
-                Table.Columns[index].Data.Set(RowIndex, value);
+                Table.Columns[index].Data.Set(_rowIndex, value);
             }
         }
 
@@ -44,22 +30,18 @@ namespace Kirkin.Data
         {
             get
             {
-                return Table.Columns[name].Data.Get(RowIndex);
+                return Table.Columns[name].Data.Get(_rowIndex);
             }
             set
             {
-                Table.Columns[name].Data.Set(RowIndex, value);
+                Table.Columns[name].Data.Set(_rowIndex, value);
             }
         }
 
-        internal DataRowLite(DataTableLite table, int rowIndex, object[] itemArray)
+        internal DataRowLite(DataTableLite table, int rowIndex)
         {
             Table = table;
-            RowIndex = rowIndex;
-
-            for (int i = 0; i < itemArray.Length; i++) {
-                this[i] = itemArray[i];
-            }
+            _rowIndex = rowIndex;
         }
 
         public T GetValue<T>(int index)
@@ -76,17 +58,17 @@ namespace Kirkin.Data
         {
             IColumnStorage untypedData = column.Data;
 
-            if (untypedData.IsNull(RowIndex)) {
+            if (untypedData.IsNull(_rowIndex)) {
                 throw new InvalidOperationException("The data is null.");
             }
 
             ColumnStorage<T> typedData = untypedData as ColumnStorage<T>;
 
             if (typedData != null) {
-                return typedData.Get(RowIndex);
+                return typedData.Get(_rowIndex);
             }
 
-            return (T)untypedData.Get(RowIndex);
+            return (T)untypedData.Get(_rowIndex);
         }
 
         public T GetValueOrDefault<T>(int index)
@@ -103,17 +85,17 @@ namespace Kirkin.Data
         {
             IColumnStorage untypedData = column.Data;
 
-            if (untypedData.IsNull(RowIndex)) {
+            if (untypedData.IsNull(_rowIndex)) {
                 return default(T);
             }
 
             ColumnStorage<T> typedData = untypedData as ColumnStorage<T>;
 
             if (typedData != null) {
-                return typedData.Get(RowIndex);
+                return typedData.Get(_rowIndex);
             }
 
-            return (T)untypedData.Get(RowIndex);
+            return (T)untypedData.Get(_rowIndex);
         }
 
         public bool IsNull(int index)
@@ -128,7 +110,7 @@ namespace Kirkin.Data
 
         private bool IsNull(DataColumnLite column)
         {
-            return column.Data.IsNull(RowIndex);
+            return column.Data.IsNull(_rowIndex);
         }
     }
 }
