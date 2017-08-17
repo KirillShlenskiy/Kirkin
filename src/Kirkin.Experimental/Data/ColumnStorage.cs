@@ -7,6 +7,7 @@ namespace Kirkin.Data
     {
         int Capacity { get; set; }
 
+        bool IsNull(int index);
         object Get(int index);
         void Set(int index, object value);
     }
@@ -41,6 +42,11 @@ namespace Kirkin.Data
         public abstract T Get(int index);
         public abstract void Set(int index, T value);
         protected abstract void SetCapacity(int capacity);
+
+        public bool IsNull(int index)
+        {
+            return _dbNullBits[index];
+        }
 
         object IColumnStorage.Get(int index)
         {
