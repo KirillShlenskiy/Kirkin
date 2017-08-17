@@ -13,17 +13,17 @@ namespace Kirkin
         // Used to encode System.Type values.
         private class ClrType<T> { };
 
+        // Variant storage.
+        [FieldOffset(0)] private readonly int Int32;
+        [FieldOffset(0)] private readonly long Int64;
+        [FieldOffset(0)] private readonly float Float;
+        [FieldOffset(0)] private readonly double Double;
+        [FieldOffset(0)] private readonly DateTime DateTime;
+
         // Stores the Type of the value if the value is of a
         // known primitive type, or the value itself otherwise.
-        [FieldOffset(0)]
+        [FieldOffset(8)]
         private readonly object TypeOrBoxedValue;
-
-        // Variant storage.
-        [FieldOffset(4)] private readonly int Int32;
-        [FieldOffset(4)] private readonly long Int64;
-        [FieldOffset(4)] private readonly float Float;
-        [FieldOffset(4)] private readonly double Double;
-        [FieldOffset(4)] private readonly DateTime DateTime;
 
         /// <summary>
         /// Gets the type of the underlying value.
