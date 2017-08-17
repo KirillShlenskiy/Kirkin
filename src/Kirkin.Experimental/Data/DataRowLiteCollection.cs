@@ -76,12 +76,17 @@ namespace Kirkin.Data
             {
                 int newCapacity = (_capacity == 0) ? DEFAULT_CAPACITY : _capacity * 2;
 
-                foreach (DataColumnLite column in Table.Columns) {
-                    column.Data.Capacity = newCapacity;
-                }
-
-                _capacity = newCapacity;
+                SetCapacity(newCapacity);
             }
+        }
+
+        public void SetCapacity(int newCapacity)
+        {
+            foreach (DataColumnLite column in Table.Columns) {
+                column.Data.Capacity = newCapacity;
+            }
+
+            _capacity = newCapacity;
         }
 
         public void Clear()
@@ -93,13 +98,11 @@ namespace Kirkin.Data
             }
         }
 
-        internal void TrimExcess()
+        public void TrimExcess()
         {
             _rows.TrimExcess();
 
-            foreach (DataColumnLite column in Table.Columns) {
-                column.Data.Capacity = _capacity;
-            }
+            SetCapacity(Count);
         }
 
         public ListEnumerator<DataRowLite> GetEnumerator()

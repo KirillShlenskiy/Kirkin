@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 
 using Kirkin.Data;
 
@@ -42,6 +43,52 @@ namespace Kirkin.Tests.Data
             Assert.True(dt.Rows[3].IsNull(1));
             Assert.AreEqual(DBNull.Value, dt.Rows[3][0]);
             Assert.AreEqual(DBNull.Value, dt.Rows[3][1]);
+        }
+
+        [Test]
+        public void GrowthLite()
+        {
+            DataTableLite dt = new DataTableLite();
+
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("Value", typeof(string));
+
+            int targetCount = 100000;
+
+            for (int i = 0; i < targetCount; i++) {
+                dt.Rows.Add(i, i.ToString());
+            }
+
+            Assert.AreEqual(targetCount, dt.Rows.Count);
+
+            for (int i = 0; i < targetCount; i++)
+            {
+                Assert.AreEqual(i, dt.Rows[i][0]);
+                Assert.AreEqual(i.ToString(), dt.Rows[i][1]);
+            }
+        }
+
+        [Test]
+        public void GrowthRegular()
+        {
+            DataTable dt = new DataTable();
+
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("Value", typeof(string));
+
+            int targetCount = 100000;
+
+            for (int i = 0; i < targetCount; i++) {
+                dt.Rows.Add(i, i.ToString());
+            }
+
+            Assert.AreEqual(targetCount, dt.Rows.Count);
+
+            for (int i = 0; i < targetCount; i++)
+            {
+                Assert.AreEqual(i, dt.Rows[i][0]);
+                Assert.AreEqual(i.ToString(), dt.Rows[i][1]);
+            }
         }
     }
 }
