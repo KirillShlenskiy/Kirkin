@@ -17,6 +17,8 @@ namespace Kirkin.Data
         /// </summary>
         public Type DataType { get; }
 
+        internal IColumnStorage Data { get; }
+
         /// <summary>
         /// Creates a new <see cref="DataColumnLite"/> instance.
         /// </summary>
@@ -27,6 +29,9 @@ namespace Kirkin.Data
 
             ColumnName = name;
             DataType = dataType;
+
+            // TODO: Resolve dynamically.
+            Data = new ArrayColumnStorage<object>();
         }
     }
 }

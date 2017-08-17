@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Collections;
 
 namespace Kirkin.Data
 {
     internal interface IColumnStorage
     {
-        int Count { get; }
         int Capacity { get; set; }
 
         object Get(int index);
@@ -14,56 +13,84 @@ namespace Kirkin.Data
 
     internal abstract class ColumnStorage<T> : IColumnStorage
     {
-        private readonly BitArray _dbNullBits;
-        public abstract int Count { get; }
-        public abstract int Capacity { get; set; }
+        private const int DEFAULT_CAPACITY = 16;
+
+        private BitArray _dbNullBits;
+
+        public int Capacity
+        {
+            get
+            {
+                return _dbNullBits.Count;
+            }
+            set
+            {
+                BitArray newDbNullBits = new BitArray(value);
+
+                if (_dbNullBits != null)
+                {
+                    for (int i = 0; i < _dbNullBits.Count && i < newDbNullBits.Count; i++) {
+                        newDbNullBits[i] = _dbNullBits[i];
+                    }
+                }
+
+                SetCapacity(value);
+
+                _dbNullBits = newDbNullBits;
+            }
+        }
 
         public abstract T Get(int index);
         public abstract void Set(int index, T value);
+        protected abstract void SetCapacity(int capacity);
 
         object IColumnStorage.Get(int index)
         {
+            if (_dbNullBits[index]) {
+                return DBNull.Value;
+            }
+
             return Get(index);
         }
 
         void IColumnStorage.Set(int index, object value)
         {
-            Set(index, (T)value);
+            if (_dbNullBits == null) {
+                Capacity = DEFAULT_CAPACITY;
+            }
+
+            if (value is DBNull)
+            {
+                _dbNullBits[index] = true;
+
+                Set(index, default(T));
+            }
+            else
+            {
+                _dbNullBits[index] = false;
+
+                Set(index, (T)value);
+            }
         }
     }
 
-    internal sealed class ObjectColumnStorage : ColumnStorage<object>
+    internal sealed class ArrayColumnStorage<T> : ColumnStorage<T>
     {
-        private readonly List<object> _store = new List<object>();
+        private T[] _store;
 
-        public override int Count
-        {
-            get
-            {
-                return _store.Count;
-            }
-        }
-
-        public override int Capacity
-        {
-            get
-            {
-                return _store.Capacity;
-            }
-            set
-            {
-                _store.Capacity = value;
-            }
-        }
-
-        public override object Get(int index)
+        public override T Get(int index)
         {
             return _store[index];
         }
 
-        public override void Set(int index, object value)
+        public override void Set(int index, T value)
         {
             _store[index] = value;
+        }
+
+        protected override void SetCapacity(int capacity)
+        {
+            Array.Resize(ref _store, capacity);
         }
     }
 }

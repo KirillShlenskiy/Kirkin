@@ -10,31 +10,42 @@
         /// </summary>
         public DataTableLite Table { get; }
 
-        /// <summary>
-        /// Row cell values.
-        /// </summary>
-        public object[] ItemArray { get; }
+        internal int RowIndex { get; }
+
+        internal object[] ItemArray
+        {
+            get
+            {
+                object[] arr = new object[Table.Columns.Count];
+
+                for (int i = 0; i < arr.Length; i++) {
+                    arr[i] = Table.Columns[i].Data.Get(RowIndex);
+                }
+
+                return arr;
+            }
+        }
 
         public object this[int index]
         {
             get
             {
-                return ItemArray[index];
+                return Table.Columns[index].Data.Get(RowIndex);
             }
-        }
-
-        public object this[string columnName]
-        {
-            get
+            set
             {
-                return ItemArray[Table.Columns.ColumnNameToIndexMappings[columnName]];
+                Table.Columns[index].Data.Set(RowIndex, value);
             }
         }
 
-        internal DataRowLite(DataTableLite table, object[] itemArray)
+        internal DataRowLite(DataTableLite table, int rowIndex, object[] itemArray)
         {
             Table = table;
-            ItemArray = itemArray;
+            RowIndex = rowIndex;
+
+            for (int i = 0; i < itemArray.Length; i++) {
+                this[i] = itemArray[i];
+            }
         }
     }
 }

@@ -90,7 +90,7 @@ namespace Kirkin.Data
             {
                 if (itemArray == null) throw new ArgumentNullException(nameof(itemArray));
 
-                DataRowLite row = new DataRowLite(Table, itemArray);
+                DataRowLite row = new DataRowLite(Table, Count, itemArray);
 
                 base.Add(row);
 

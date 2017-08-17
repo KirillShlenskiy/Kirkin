@@ -66,6 +66,7 @@
     <Compile Include="CustomEqualityComparer.cs" />
     <Compile Include="DataAnalysis\IDataAnalyzer.cs" />
     <Compile Include="DataAnalysis\Insight.cs" />
+    <Compile Include="Data\ColumnStorage.cs" />
     <Compile Include="Data\DataColumnLite.cs" />
     <Compile Include="Data\DataRowLite.cs" />
     <Compile Include="Data\DataSetLite.cs" />
