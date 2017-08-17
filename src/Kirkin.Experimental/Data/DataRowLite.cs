@@ -43,11 +43,11 @@ namespace Kirkin.Data
         {
             get
             {
-                return this[_columns[columnName]];
+                return _columns.GetColumnData(columnName).Get(_rowIndex);
             }
             set
             {
-                this[_columns[columnName]] = value;
+                _columns.GetColumnData(columnName).Set(_rowIndex, value);
             }
         }
 
@@ -77,7 +77,7 @@ namespace Kirkin.Data
         /// </summary>
         public T GetValue<T>(int columnIndex)
         {
-            return GetValue<T>(_columns[columnIndex]);
+            return GetValueImpl<T>(_columns[columnIndex].Data);
         }
 
         /// <summary>
@@ -85,7 +85,8 @@ namespace Kirkin.Data
         /// </summary>
         public T GetValue<T>(string columnName)
         {
-            return GetValue<T>(_columns[columnName]);
+            //return GetValue<T>(_columns[columnName]);
+            return GetValueImpl<T>(_columns.GetColumnData(columnName));
         }
 
         /// <summary>
@@ -93,10 +94,15 @@ namespace Kirkin.Data
         /// </summary>
         public T GetValue<T>(DataColumnLite column)
         {
-            if (column.Data.IsNull(_rowIndex)) throw new InvalidOperationException("The data is null.");
-            if (column.Data is ColumnData<T> typedData) return typedData.Get(_rowIndex);
+            return GetValueImpl<T>(column.Data);
+        }
 
-            return (T)column.Data.Get(_rowIndex);
+        private T GetValueImpl<T>(IColumnData data)
+        {
+            if (data.IsNull(_rowIndex)) throw new InvalidOperationException("The data is null.");
+            if (data is ColumnData<T> typedData) return typedData.Get(_rowIndex);
+
+            return (T)data.Get(_rowIndex);
         }
 
         /// <summary>
@@ -104,7 +110,7 @@ namespace Kirkin.Data
         /// </summary>
         public T GetValueOrDefault<T>(int columnIndex)
         {
-            return GetValueOrDefault<T>(_columns[columnIndex]);
+            return GetValueOrDefaultImpl<T>(_columns[columnIndex].Data);
         }
 
         /// <summary>
@@ -112,7 +118,8 @@ namespace Kirkin.Data
         /// </summary>
         public T GetValueOrDefault<T>(string columnName)
         {
-            return GetValueOrDefault<T>(_columns[columnName]);
+            //return GetValueOrDefault<T>(_columns[columnName]);
+            return GetValueOrDefaultImpl<T>(_columns.GetColumnData(columnName));
         }
 
         /// <summary>
@@ -120,10 +127,15 @@ namespace Kirkin.Data
         /// </summary>
         public T GetValueOrDefault<T>(DataColumnLite column)
         {
-            if (column.Data.IsNull(_rowIndex)) return default(T);
-            if (column.Data is ColumnData<T> typedData) return typedData.Get(_rowIndex);
+            return GetValueOrDefaultImpl<T>(column.Data);
+        }
 
-            return (T)column.Data.Get(_rowIndex);
+        private T GetValueOrDefaultImpl<T>(IColumnData data)
+        {
+            if (data.IsNull(_rowIndex)) return default(T);
+            if (data is ColumnData<T> typedData) return typedData.Get(_rowIndex);
+
+            return (T)data.Get(_rowIndex);
         }
 
         /// <summary>
@@ -131,7 +143,7 @@ namespace Kirkin.Data
         /// </summary>
         public bool IsNull(int columnIndex)
         {
-            return IsNull(_columns[columnIndex]);
+            return IsNullImpl(_columns[columnIndex].Data);
         }
 
         /// <summary>
@@ -139,7 +151,8 @@ namespace Kirkin.Data
         /// </summary>
         public bool IsNull(string columnName)
         {
-            return IsNull(_columns[columnName]);
+            //return IsNull(_columns[columnName]);
+            return IsNullImpl(_columns.GetColumnData(columnName));
         }
 
         /// <summary>
@@ -147,7 +160,12 @@ namespace Kirkin.Data
         /// </summary>
         public bool IsNull(DataColumnLite column)
         {
-            return column.Data.IsNull(_rowIndex);
+            return IsNullImpl(column.Data);
+        }
+
+        private bool IsNullImpl(IColumnData data)
+        {
+            return data.IsNull(_rowIndex);
         }
     }
 }

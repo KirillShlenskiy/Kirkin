@@ -264,6 +264,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
+        [Ignore("Slow")]
         public void MemPressureLite()
         {
             GC.Collect();
@@ -286,6 +287,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
+        [Ignore("Slow")]
         public void MemPressureRegular()
         {
             GC.Collect();

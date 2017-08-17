@@ -12,6 +12,7 @@ namespace Kirkin.Data
         internal readonly DataTableLite Table;
 
         private Dictionary<string, int> _columnNameToIndexMappings;
+        private Dictionary<string, IColumnData> _columnNameToDataMappings;
 
         /// <summary>
         /// Resolves the column with the specified name.
@@ -77,13 +78,23 @@ namespace Kirkin.Data
 
         private void RefreshColumnOrdinalMappings()
         {
-            Dictionary<string, int> dict = new Dictionary<string, int>(Count, StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, int> dict1 = new Dictionary<string, int>(Count, StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, IColumnData> dict2 = new Dictionary<string, IColumnData>(Count, StringComparer.OrdinalIgnoreCase);
 
-            for (int i = 0; i < Count; i++) {
-                dict.Add(this[i].ColumnName, i);
+            for (int i = 0; i < Count; i++)
+            {
+                dict1.Add(this[i].ColumnName, i);
+                dict2.Add(this[i].ColumnName, this[i].Data);
             }
 
-            _columnNameToIndexMappings = dict;
+            _columnNameToIndexMappings = dict1;
+            _columnNameToDataMappings = dict2;
+        }
+
+        internal IColumnData GetColumnData(string columnName)
+        {
+            //return this[_columnNameToIndexMappings[columnName]].Data;
+            return _columnNameToDataMappings[columnName];
         }
     }
 }
