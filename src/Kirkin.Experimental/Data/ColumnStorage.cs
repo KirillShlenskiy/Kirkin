@@ -3,18 +3,10 @@ using System.Collections;
 
 namespace Kirkin.Data
 {
-    internal interface IColumnStorage
-    {
-        int Capacity { get; set; }
-
-        bool IsNull(int index);
-        object Get(int index);
-        void Set(int index, object value);
-    }
-
-    internal abstract class ColumnStorage<T> : IColumnStorage
+    internal sealed class ColumnStorage<T> : IColumnStorage
     {
         private BitArray _dbNullBits;
+        private T[] _store;
 
         public int Capacity
         {
@@ -39,9 +31,20 @@ namespace Kirkin.Data
             }
         }
 
-        public abstract T Get(int index);
-        public abstract void Set(int index, T value);
-        protected abstract void SetCapacity(int capacity);
+        public T Get(int index)
+        {
+            return _store[index];
+        }
+
+        public void Set(int index, T value)
+        {
+            _store[index] = value;
+        }
+
+        private void SetCapacity(int capacity)
+        {
+            Array.Resize(ref _store, capacity);
+        }
 
         public bool IsNull(int index)
         {
@@ -50,7 +53,7 @@ namespace Kirkin.Data
 
         object IColumnStorage.Get(int index)
         {
-            if (_dbNullBits[index]) {
+            if (IsNull(index)) {
                 return DBNull.Value;
             }
 
@@ -62,35 +65,13 @@ namespace Kirkin.Data
             if (value is DBNull)
             {
                 _dbNullBits[index] = true;
-
                 Set(index, default(T));
             }
             else
             {
                 _dbNullBits[index] = false;
-
                 Set(index, (T)value);
             }
-        }
-    }
-
-    internal sealed class ArrayColumnStorage<T> : ColumnStorage<T>
-    {
-        private T[] _store;
-
-        public override T Get(int index)
-        {
-            return _store[index];
-        }
-
-        public override void Set(int index, T value)
-        {
-            _store[index] = value;
-        }
-
-        protected override void SetCapacity(int capacity)
-        {
-            Array.Resize(ref _store, capacity);
         }
     }
 }

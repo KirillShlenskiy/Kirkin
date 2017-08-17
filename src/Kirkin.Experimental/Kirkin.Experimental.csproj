@@ -68,9 +68,12 @@
     <Compile Include="DataAnalysis\Insight.cs" />
     <Compile Include="Data\ColumnStorage.cs" />
     <Compile Include="Data\DataColumnLite.cs" />
+    <Compile Include="Data\DataColumnLiteCollection.cs" />
     <Compile Include="Data\DataRowLite.cs" />
+    <Compile Include="Data\DataRowLiteCollection.cs" />
     <Compile Include="Data\DataSetLite.cs" />
     <Compile Include="Data\DataTableLite.cs" />
+    <Compile Include="Data\IColumnStorage.cs" />
     <Compile Include="Data\SqlClient\SqlCommandExtensions.cs" />
     <Compile Include="Data\SqlClient\SqlCommandParameterMapping.cs" />
     <Compile Include="Data\SqlClient\SqlServerCommand.cs" />
