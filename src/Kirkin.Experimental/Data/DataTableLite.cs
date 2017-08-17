@@ -77,6 +77,7 @@ namespace Kirkin.Data
         public sealed class DataRowLiteCollection : List<DataRowLite>
         {
             private readonly DataTableLite Table;
+            private int _capacity;
 
             internal DataRowLiteCollection(DataTableLite table)
             {
@@ -89,6 +90,17 @@ namespace Kirkin.Data
             public DataRowLite Add(params object[] itemArray)
             {
                 if (itemArray == null) throw new ArgumentNullException(nameof(itemArray));
+
+                if (_capacity == Count)
+                {
+                    int newCapacity = (_capacity == 0) ? 16 : _capacity * 2;
+
+                    foreach (DataColumnLite column in Table.Columns) {
+                        column.Data.Capacity = newCapacity;
+                    }
+
+                    _capacity = newCapacity;
+                }
 
                 DataRowLite row = new DataRowLite(Table, Count, itemArray);
 

@@ -13,8 +13,6 @@ namespace Kirkin.Data
 
     internal abstract class ColumnStorage<T> : IColumnStorage
     {
-        private const int DEFAULT_CAPACITY = 16;
-
         private BitArray _dbNullBits;
 
         public int Capacity
@@ -55,10 +53,6 @@ namespace Kirkin.Data
 
         void IColumnStorage.Set(int index, object value)
         {
-            if (_dbNullBits == null) {
-                Capacity = DEFAULT_CAPACITY;
-            }
-
             if (value is DBNull)
             {
                 _dbNullBits[index] = true;
