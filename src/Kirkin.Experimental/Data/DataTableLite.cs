@@ -43,6 +43,14 @@ namespace Kirkin.Data
                 }
             }
 
+            public DataColumnLite this[string name]
+            {
+                get
+                {
+                    return this[ColumnNameToIndexMappings[name]];
+                }
+            }
+
             internal DataColumnLiteCollection()
             {
             }

@@ -38,6 +38,18 @@
             }
         }
 
+        public object this[string name]
+        {
+            get
+            {
+                return Table.Columns[name].Data.Get(RowIndex);
+            }
+            set
+            {
+                Table.Columns[name].Data.Set(RowIndex, value);
+            }
+        }
+
         internal DataRowLite(DataTableLite table, int rowIndex, object[] itemArray)
         {
             Table = table;
