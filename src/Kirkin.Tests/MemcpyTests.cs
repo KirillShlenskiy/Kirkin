@@ -5,18 +5,18 @@ namespace Kirkin.Tests
     public unsafe class MemcpyTests
     {
         [Test]
-        public void Memcpy_RawCopy()
+        public void Memcpy_RawCopyInt32()
         {
             int a = -1;
             int b = 0;
 
-            Memcpy.CopyBytes(&a, 0, &b, 0, sizeof(int));
+            Memcpy.CopyBytes(&a, &b, sizeof(int));
 
             Assert.AreEqual(-1, b);
         }
 
         [Test]
-        public void Memcpy_Bool()
+        public void Memcpy_RawCopyBool()
         {
             bool value = true;
             int result = 0;
@@ -31,129 +31,87 @@ namespace Kirkin.Tests
         }
 
         [Test]
-        public void Memcpy_8bitStorage()
+        public void Memcpy_ReadWriteInt8()
         {
-            Fixed8 value = new Fixed8();
+            Block8 value = new Block8();
 
-            Memcpy.SetInt32(&value, 0, 1);
+            Memcpy.WriteInt32(&value, 1);
 
-            Assert.AreEqual(1, Memcpy.GetInt32(&value, 0));
+            Assert.AreEqual(1, Memcpy.ReadInt32(&value));
         }
 
         [Test]
-        public void Memcpy_32bitStorage()
+        public void Memcpy_ReadWriteInt32()
         {
-            Fixed32 value = new Fixed32();
+            Block32 value = new Block32();
 
-            Assert.AreEqual(0, Memcpy.GetInt32(&value, 0));
+            Assert.AreEqual(0, Memcpy.ReadInt32(&value));
 
-            Memcpy.SetBytes(&value, 0, new byte[] { 255, 255, 255, 255 });
+            Memcpy.WriteBytes(&value, new byte[] { 255, 255, 255, 255 });
 
-            Assert.AreEqual(-1, Memcpy.GetInt32(&value, 0));
+            Assert.AreEqual(-1, Memcpy.ReadInt32(&value));
         }
 
         [Test]
-        public void Memcpy_64bitStorage()
+        public void Memcpy_ReadWriteInt64()
         {
-            Fixed64 value = new Fixed64(long.MaxValue);
+            Block64 value = new Block64();
 
-            Assert.AreEqual(-1, Memcpy.GetInt32(&value, 0));
-            Assert.AreEqual(int.MaxValue, Memcpy.GetInt32(&value, 4));
+            Assert.AreEqual(0, Memcpy.ReadInt64(&value));
 
-            Memcpy.SetInt32(&value, 4, -1);
+            Memcpy.WriteInt64(&value, long.MaxValue);
 
-            Assert.AreEqual(-1, Memcpy.GetInt64(&value, 0));
+            Assert.AreEqual(-1, Memcpy.ReadInt32(&value));
+            Assert.AreEqual(int.MaxValue, Memcpy.ReadInt32(&value, 4));
+
+            Memcpy.WriteInt32(&value, 4, -1);
+
+            Assert.AreEqual(-1, Memcpy.ReadInt64(&value));
         }
 
-        unsafe static class Memcpy
+        [Test]
+        public void Memcpy_ReadWriteBytes()
         {
-            public static int GetInt32(void* source, int offset) => *(int*)((byte*)source + offset);
-            public static uint GetUInt32(void* source, int offset) => *(uint*)((byte*)source + offset);
-            public static long GetInt64(void* source, int offset) => *(long*)((byte*)source + offset);
-            public static ulong GetUInt64(void* source, int offset) => *(ulong*)((byte*)source + offset);
-            public static void SetInt32(void* target, int offset, int value) => *((int*)((byte*)target + offset)) = value;
-            public static void SetUInt32(void* target, int offset, uint value) => *((uint*)((byte*)target + offset)) = value;
-            public static void SetInt64(void* target, int offset, long value) => *((long*)((byte*)target + offset)) = value;
-            public static void SetUInt64(void* target, int offset, ulong value) => *((ulong*)((byte*)target + offset)) = value;
+            byte[] bytes;
+            int value = 0;
 
-            public static byte[] GetBytes(void* source, int offset, int count)
-            {
-                byte[] result = new byte[count];
-                byte* src = (byte*)source + offset;
+            bytes = Memcpy.ReadBytes(&value, sizeof(int));
 
-                for (int i = 0; i < count; i++) {
-                    result[i] = *src++;
-                }
+            Assert.AreEqual(0, bytes[0]);
+            Assert.AreEqual(0, bytes[1]);
+            Assert.AreEqual(0, bytes[2]);
+            Assert.AreEqual(0, bytes[3]);
 
-                return result;
-            }
+            Memcpy.WriteBytes(&value, new byte[] { 255, 255, 255, 255 });
 
-            public static void SetBytes(void* source, int offset, byte[] bytes)
-            {
-                byte* target = (byte*)source + offset;
+            Assert.AreEqual(-1, Memcpy.ReadInt32(&value));
 
-                for (int i = 0; i < bytes.Length; i++) {
-                    *target++ = bytes[i];
-                }
-            }
+            bytes = Memcpy.ReadBytes(&value, sizeof(int));
 
-            public static void CopyBytes(void* source, int sourceOffset, void* target, int targetOffset, int count)
-            {
-                byte* src = (byte*)source + sourceOffset;
-                byte* tgt = (byte*)target + targetOffset;
-
-                for (int i = 0; i < count; i++) {
-                    *tgt++ = * src++;
-                }
-            }
+            Assert.AreEqual(255, bytes[0]);
+            Assert.AreEqual(255, bytes[1]);
+            Assert.AreEqual(255, bytes[2]);
+            Assert.AreEqual(255, bytes[3]);
         }
 
-        unsafe struct Fixed8
+        unsafe struct Block8
         {
             private fixed byte storage[1];
-
-            public Fixed8(int val)
-            {
-                fixed (byte* s = storage) {
-                    *(int*)s = val;
-                }
-            }
         }
 
-        unsafe struct Fixed16
+        unsafe struct Block16
         {
             private fixed byte storage[2];
-
-            public Fixed16(int val)
-            {
-                fixed (byte* s = storage) {
-                    *(int*)s = val;
-                }
-            }
         }
 
-        unsafe struct Fixed32
+        unsafe struct Block32
         {
             private fixed byte storage[4];
-
-            public Fixed32(int val)
-            {
-                fixed (byte* s = storage) {
-                    *(int*)s = val;
-                }
-            }
         }
 
-        unsafe struct Fixed64
+        unsafe struct Block64
         {
             private fixed byte storage[8];
-
-            public Fixed64(long val)
-            {
-                fixed (byte* s = storage) {
-                    *(long*)s = val;
-                }
-            }
         }
     }
 }
