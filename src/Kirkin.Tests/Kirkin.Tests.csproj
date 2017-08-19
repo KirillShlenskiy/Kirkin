@@ -172,6 +172,7 @@
     <Compile Include="Mapping\ExpressMapperTests.cs" />
     <Compile Include="Mapping\MapperBenchmarks.cs" />
     <Compile Include="Mapping\MapperTests.cs" />
+    <Compile Include="MemcpyTests.cs" />
     <Compile Include="Output.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\MethodInvokerTests.cs" />
