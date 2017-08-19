@@ -98,6 +98,23 @@ namespace Kirkin.Tests
         }
 
         [Test]
+        public void RawCopyBoxedInt32()
+        {
+            object a = -1;
+            object b = 0;
+
+            GCHandle handleA = GCHandle.Alloc(a, GCHandleType.Pinned);
+            GCHandle handleB = GCHandle.Alloc(b, GCHandleType.Pinned);
+
+            RawCopy.CopyBytes((IntPtr*)handleA.AddrOfPinnedObject(), (IntPtr*)handleB.AddrOfPinnedObject(), sizeof(int));
+
+            Assert.AreEqual(-1, b);
+
+            handleA.Free();
+            handleB.Free();
+        }
+
+        [Test]
         public void MutateString()
         {
             string s1 = "Hello world";
