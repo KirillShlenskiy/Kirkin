@@ -146,6 +146,29 @@
         /// </summary>
         public static void CopyBytes(void* source, void* target, int count)
         {
+            if (count % 4 == 0)
+            {
+                // Copy 32-bit chunks.
+                CopyBytes_ChunkSize4(source, target, count / 4);
+            }
+            else
+            {
+                CopyBytes_ChunkSize1(source, target, count);
+            }
+        }
+
+        private static void CopyBytes_ChunkSize4(void* source, void* target, int count)
+        {
+            int* src = (int*)source;
+            int* tgt = (int*)target;
+
+            for (int i = 0; i < count; i++) {
+                *tgt++ = *src++;
+            }
+        }
+
+        private static void CopyBytes_ChunkSize1(void* source, void* target, int count)
+        {
             byte* src = (byte*)source;
             byte* tgt = (byte*)target;
 
@@ -160,6 +183,29 @@
         /// Faster than PInvoking memcpy.
         /// </summary>
         public static void CopyBytes(void* source, int sourceOffset, void* target, int targetOffset, int count)
+        {
+            if (sourceOffset % 4 == 0 && targetOffset % 4 == 0 && count % 4 == 0)
+            {
+                // Copy 32-bit chunks.
+                CopyBytes_ChunkSize4(source, sourceOffset / 4, target, targetOffset / 4, count / 4);
+            }
+            else
+            {
+                CopyBytes_ChunkSize1(source, sourceOffset, target, targetOffset, count);
+            }
+        }
+
+        private static void CopyBytes_ChunkSize4(void* source, int sourceOffset, void* target, int targetOffset, int count)
+        {
+            int* src = (int*)source + sourceOffset;
+            int* tgt = (int*)target + targetOffset;
+
+            for (int i = 0; i < count; i++) {
+                *tgt++ = *src++;
+            }
+        }
+
+        private static void CopyBytes_ChunkSize1(void* source, int sourceOffset, void* target, int targetOffset, int count)
         {
             byte* src = (byte*)source + sourceOffset;
             byte* tgt = (byte*)target + targetOffset;
