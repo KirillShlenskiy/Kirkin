@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 using NUnit.Framework;
 
@@ -135,6 +136,28 @@ namespace Kirkin.Tests
         }
 
         [Test]
+        public void Benchmark_PointerCopy()
+        {
+            int a = -1;
+            int b = 0;
+
+            for (int i = 0; i < 10000000; i++) {
+                *(&b) = *(&a);
+            }
+        }
+
+        [Test]
+        public void Benchmark_DirectAssignment()
+        {
+            int a = -1;
+            int b = 0;
+
+            for (int i = 0; i < 10000000; i++) {
+                b = a;
+            }
+        }
+
+        [Test]
         public void Benchmark_memcpy()
         {
             int a = -1;
@@ -142,6 +165,41 @@ namespace Kirkin.Tests
 
             for (int i = 0; i < 10000000; i++) {
                 memcpy(&b, &a, sizeof(int));
+            }
+        }
+
+        static int[] numbers = new int[10000];
+
+        [Test]
+        public void Benchmark_Array_BlockCopy()
+        {
+            int[] target = new int[numbers.Length];
+
+            for (int i = 0; i < 10000; i++) {
+                Buffer.BlockCopy(numbers, 0, target, 0, sizeof(int) * numbers.Length);
+            }
+        }
+
+        [Test]
+        public void Benchmark_Array_Copy()
+        {
+            int[] target = new int[numbers.Length];
+
+            for (int i = 0; i < 10000; i++) {
+                Array.Copy(numbers, target, numbers.Length);
+            }
+        }
+
+        [Test]
+        public void Benchmark_Array_RawCopy()
+        {
+            int[] target = new int[numbers.Length];
+
+            for (int i = 0; i < 10000; i++)
+            {
+                fixed (void* s = numbers, t = target) {
+                    RawCopy.CopyBytes(s, t, sizeof(int) * numbers.Length);
+                }
             }
         }
 
