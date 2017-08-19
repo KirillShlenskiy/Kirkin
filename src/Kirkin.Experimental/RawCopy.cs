@@ -48,42 +48,42 @@
         /// <summary>
         /// Writes the given 32-bit signed int value at offset 0.
         /// </summary>
-        public static void WriteInt32(void* target, int value) => *((int*)((byte*)target)) = value;
+        public static void WriteInt32(void* target, int value) => *(int*)((byte*)target) = value;
 
         /// <summary>
         /// Writes the given 32-bit signed int value at the specified offset.
         /// </summary>
-        public static void WriteInt32(void* target, int offset, int value) => *((int*)((byte*)target + offset)) = value;
+        public static void WriteInt32(void* target, int offset, int value) => *(int*)((byte*)target + offset) = value;
 
         /// <summary>
         /// Writes the given 32-bit unsigned int value at offset 0.
         /// </summary>
-        public static void WriteUInt32(void* target, uint value) => *((uint*)((byte*)target)) = value;
+        public static void WriteUInt32(void* target, uint value) => *(uint*)((byte*)target) = value;
 
         /// <summary>
         /// Writes the given 32-bit unsigned int value at the specified offset.
         /// </summary>
-        public static void WriteUInt32(void* target, int offset, uint value) => *((uint*)((byte*)target + offset)) = value;
+        public static void WriteUInt32(void* target, int offset, uint value) => *(uint*)((byte*)target + offset) = value;
 
         /// <summary>
         /// Writes the given 64-bit signed int value at offset 0.
         /// </summary>
-        public static void WriteInt64(void* target, long value) => *((long*)((byte*)target)) = value;
+        public static void WriteInt64(void* target, long value) => *(long*)((byte*)target) = value;
 
         /// <summary>
         /// Writes the given 64-bit signed int value at the specified offset.
         /// </summary>
-        public static void WriteInt64(void* target, int offset, long value) => *((long*)((byte*)target + offset)) = value;
+        public static void WriteInt64(void* target, int offset, long value) => *(long*)((byte*)target + offset) = value;
 
         /// <summary>
         /// Writes the given 64-bit unsigned int value at offset 0.
         /// </summary>
-        public static void WriteUInt64(void* target, ulong value) => *((ulong*)((byte*)target)) = value;
+        public static void WriteUInt64(void* target, ulong value) => *(ulong*)((byte*)target) = value;
 
         /// <summary>
         /// Writes the given 64-bit unsigned int value at the specified offset.
         /// </summary>
-        public static void WriteUInt64(void* target, int offset, ulong value) => *((ulong*)((byte*)target + offset)) = value;
+        public static void WriteUInt64(void* target, int offset, ulong value) => *(ulong*)((byte*)target + offset) = value;
 
         /// <summary>
         /// Reads the given number of bytes at offset 0.
