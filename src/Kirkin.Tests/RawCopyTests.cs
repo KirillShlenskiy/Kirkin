@@ -94,6 +94,19 @@ namespace Kirkin.Tests
             Assert.AreEqual(255, bytes[3]);
         }
 
+        [Test]
+        public void MutateString()
+        {
+            string s1 = "Hello world";
+            string s2 = "zzz";
+
+            fixed (char* c1 = s1, c2 = s2) {
+                RawCopy.CopyBytes(c2, c1, 3 * sizeof(char));
+            }
+
+            Assert.AreEqual("zzzlo world", s1);
+        }
+
         unsafe struct Block8
         {
             private fixed byte storage[1];
