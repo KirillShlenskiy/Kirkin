@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System.Runtime.InteropServices;
+
+using NUnit.Framework;
 
 namespace Kirkin.Tests
 {
@@ -105,6 +107,42 @@ namespace Kirkin.Tests
             }
 
             Assert.AreEqual("zzzlo world", s1);
+        }
+
+        [DllImport("msvcrt.dll", EntryPoint = "memcpy", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
+        public static extern void* memcpy(void* dest, void* src, int count);
+
+        [Test]
+        public void Memcpy_Int32Copy()
+        {
+            int a = -1;
+            int b = 0;
+
+            memcpy(&b, &a, sizeof(int));
+
+            Assert.AreEqual(-1, b);
+        }
+
+        [Test]
+        public void Benchmark_RawCopy()
+        {
+            int a = -1;
+            int b = 0;
+
+            for (int i = 0; i < 10000000; i++) {
+                RawCopy.CopyBytes(&a, &b, sizeof(int));
+            }
+        }
+
+        [Test]
+        public void Benchmark_memcpy()
+        {
+            int a = -1;
+            int b = 0;
+
+            for (int i = 0; i < 10000000; i++) {
+                memcpy(&b, &a, sizeof(int));
+            }
         }
 
         unsafe struct Block8

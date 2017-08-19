@@ -142,6 +142,7 @@
         /// <summary>
         /// Copies the given number of bytes from the source location
         /// (starting at offset 0) to the target location (starting at offset 0).
+        /// Faster than PInvoking memcpy.
         /// </summary>
         public static void CopyBytes(void* source, void* target, int count)
         {
@@ -156,6 +157,7 @@
         /// <summary>
         /// Copies the given number of bytes from the source location (starting at
         /// the given offset) to the target location (starting at the given offset).
+        /// Faster than PInvoking memcpy.
         /// </summary>
         public static void CopyBytes(void* source, int sourceOffset, void* target, int targetOffset, int count)
         {
