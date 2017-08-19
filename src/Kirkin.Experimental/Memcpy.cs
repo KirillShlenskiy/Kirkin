@@ -3,7 +3,7 @@
     /// <summary>
     /// Raw memory copy utilities.
     /// </summary>
-    unsafe static class Memcpy
+    unsafe static class RawCopy
     {
         /// <summary>
         /// Reads the 32-bit signed int value at offset 0.

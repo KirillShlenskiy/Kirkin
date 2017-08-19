@@ -2,91 +2,91 @@
 
 namespace Kirkin.Tests
 {
-    public unsafe class MemcpyTests
+    public unsafe class RawCopyTests
     {
         [Test]
-        public void Memcpy_RawCopyInt32()
+        public void RawCopyInt32()
         {
             int a = -1;
             int b = 0;
 
-            Memcpy.CopyBytes(&a, &b, sizeof(int));
+            RawCopy.CopyBytes(&a, &b, sizeof(int));
 
             Assert.AreEqual(-1, b);
         }
 
         [Test]
-        public void Memcpy_RawCopyBool()
+        public void RawCopyBool()
         {
             bool value = true;
             int result = 0;
 
-            Memcpy.CopyBytes(&value, 0, &result, 0, sizeof(bool));
+            RawCopy.CopyBytes(&value, 0, &result, 0, sizeof(bool));
 
             Assert.AreEqual(1, result);
 
-            Memcpy.CopyBytes(&value, 0, &result, 1, sizeof(bool));
+            RawCopy.CopyBytes(&value, 0, &result, 1, sizeof(bool));
 
             Assert.AreEqual(257, result);
         }
 
         [Test]
-        public void Memcpy_ReadWriteInt8()
+        public void ReadWriteInt8()
         {
             Block8 value = new Block8();
 
-            Memcpy.WriteInt32(&value, 1);
+            RawCopy.WriteInt32(&value, 1);
 
-            Assert.AreEqual(1, Memcpy.ReadInt32(&value));
+            Assert.AreEqual(1, RawCopy.ReadInt32(&value));
         }
 
         [Test]
-        public void Memcpy_ReadWriteInt32()
+        public void ReadWriteInt32()
         {
             Block32 value = new Block32();
 
-            Assert.AreEqual(0, Memcpy.ReadInt32(&value));
+            Assert.AreEqual(0, RawCopy.ReadInt32(&value));
 
-            Memcpy.WriteBytes(&value, new byte[] { 255, 255, 255, 255 });
+            RawCopy.WriteBytes(&value, new byte[] { 255, 255, 255, 255 });
 
-            Assert.AreEqual(-1, Memcpy.ReadInt32(&value));
+            Assert.AreEqual(-1, RawCopy.ReadInt32(&value));
         }
 
         [Test]
-        public void Memcpy_ReadWriteInt64()
+        public void ReadWriteInt64()
         {
             Block64 value = new Block64();
 
-            Assert.AreEqual(0, Memcpy.ReadInt64(&value));
+            Assert.AreEqual(0, RawCopy.ReadInt64(&value));
 
-            Memcpy.WriteInt64(&value, long.MaxValue);
+            RawCopy.WriteInt64(&value, long.MaxValue);
 
-            Assert.AreEqual(-1, Memcpy.ReadInt32(&value));
-            Assert.AreEqual(int.MaxValue, Memcpy.ReadInt32(&value, 4));
+            Assert.AreEqual(-1, RawCopy.ReadInt32(&value));
+            Assert.AreEqual(int.MaxValue, RawCopy.ReadInt32(&value, 4));
 
-            Memcpy.WriteInt32(&value, 4, -1);
+            RawCopy.WriteInt32(&value, 4, -1);
 
-            Assert.AreEqual(-1, Memcpy.ReadInt64(&value));
+            Assert.AreEqual(-1, RawCopy.ReadInt64(&value));
         }
 
         [Test]
-        public void Memcpy_ReadWriteBytes()
+        public void ReadWriteBytes()
         {
             byte[] bytes;
             int value = 0;
 
-            bytes = Memcpy.ReadBytes(&value, sizeof(int));
+            bytes = RawCopy.ReadBytes(&value, sizeof(int));
 
             Assert.AreEqual(0, bytes[0]);
             Assert.AreEqual(0, bytes[1]);
             Assert.AreEqual(0, bytes[2]);
             Assert.AreEqual(0, bytes[3]);
 
-            Memcpy.WriteBytes(&value, new byte[] { 255, 255, 255, 255 });
+            RawCopy.WriteBytes(&value, new byte[] { 255, 255, 255, 255 });
 
-            Assert.AreEqual(-1, Memcpy.ReadInt32(&value));
+            Assert.AreEqual(-1, RawCopy.ReadInt32(&value));
 
-            bytes = Memcpy.ReadBytes(&value, sizeof(int));
+            bytes = RawCopy.ReadBytes(&value, sizeof(int));
 
             Assert.AreEqual(255, bytes[0]);
             Assert.AreEqual(255, bytes[1]);
