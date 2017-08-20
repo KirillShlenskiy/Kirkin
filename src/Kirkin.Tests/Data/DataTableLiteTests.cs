@@ -90,17 +90,28 @@ namespace Kirkin.Tests.Data
         [Test]
         public void ClearRows()
         {
-            DataTableLite dt = CreateDataTableLite(5);
+            DataTableLite dt = CreateDataTableLite(5000);
+
+            Assert.True(dt.Rows.Capacity >= 5000);
 
             dt.Rows.Clear();
 
             Assert.AreEqual(0, dt.Rows.Count);
+            Assert.AreEqual(16, dt.Rows.Capacity);
 
-            dt.Rows.Add(123, "Zzz");
+            dt.Rows.Add(123, "Zzz"); // Count = 1;
 
             Assert.AreEqual(123, dt.Rows[0][0]);
             Assert.AreEqual("Zzz", dt.Rows[0][1]);
             Assert.Throws<ArgumentOutOfRangeException>(() => dt.Rows[1]?.ToString());
+
+            for (int i = 0; i < 100; i++) {
+                dt.Rows.Add(i, i.ToString());
+            }
+
+            Assert.AreEqual(101, dt.Rows.Count);
+            Assert.AreEqual(99, dt.Rows[100][0]);
+            Assert.AreEqual("99", dt.Rows[100][1]);
         }
 
         [Test]

@@ -120,9 +120,7 @@ namespace Kirkin.Data
         {
             _rows.Clear();
 
-            foreach (DataColumnLite column in Table.Columns) {
-                column.Data.Capacity = DEFAULT_CAPACITY;
-            }
+            Capacity = DEFAULT_CAPACITY;
         }
 
         public void TrimExcess()
