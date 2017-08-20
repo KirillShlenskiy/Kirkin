@@ -142,6 +142,8 @@
         /// <summary>
         /// Reads the given number of bytes at offset 0.
         /// </summary>
+        /// <param name="source">Source location to copy from.</param>
+        /// <param name="count">Number of bytes to copy.</param>
         public static byte[] ReadBytes(void* source, int count)
         {
             byte[] result = new byte[count];
@@ -157,6 +159,9 @@
         /// <summary>
         /// Reads the given number of bytes at the specified offset.
         /// </summary>
+        /// <param name="source">Source location to copy from.</param>
+        /// <param name="offset">Source location read offset in bytes.</param>
+        /// <param name="count">Number of bytes to copy.</param>
         public static byte[] ReadBytes(void* source, int offset, int count)
         {
             byte[] result = new byte[count];
@@ -172,24 +177,29 @@
         /// <summary>
         /// Writes the given byte array at offset 0.
         /// </summary>
-        public static void WriteBytes(void* source, byte[] bytes)
+        /// <param name="target">Target location to copy to.</param>
+        /// <param name="bytes">Bytes to copy.</param>
+        public static void WriteBytes(void* target, byte[] bytes)
         {
-            byte* target = (byte*)source;
+            byte* dest = (byte*)target;
 
             for (int i = 0; i < bytes.Length; i++) {
-                *target++ = bytes[i];
+                *dest++ = bytes[i];
             }
         }
 
         /// <summary>
         /// Writes the given byte array at the specified offset.
         /// </summary>
-        public static void WriteBytes(void* source, int offset, byte[] bytes)
+        /// <param name="target">Target location to copy to.</param>
+        /// <param name="offset">Target location write offset in bytes.</param>
+        /// <param name="bytes">Bytes to copy.</param>
+        public static void WriteBytes(void* target, int offset, byte[] bytes)
         {
-            byte* target = (byte*)source + offset;
+            byte* dest = (byte*)target + offset;
 
             for (int i = 0; i < bytes.Length; i++) {
-                *target++ = bytes[i];
+                *dest++ = bytes[i];
             }
         }
 
@@ -202,6 +212,9 @@
         /// (starting at offset 0) to the target location (starting at offset 0).
         /// Faster than PInvoking memcpy.
         /// </summary>
+        /// <param name="source">Source memory location to copy from.</param>
+        /// <param name="target">Target memory location to copy to.</param>
+        /// <param name="count">Number of bytes to copy.</param>
         public static void CopyBytes(void* source, void* target, int count)
         {
             if (count % 4 == 0)
@@ -218,20 +231,20 @@
         private static void CopyBytes_ChunkSize4(void* source, void* target, int count)
         {
             int* src = (int*)source;
-            int* tgt = (int*)target;
+            int* dest = (int*)target;
 
             for (int i = 0; i < count; i++) {
-                *tgt++ = *src++;
+                *dest++ = *src++;
             }
         }
 
         private static void CopyBytes_ChunkSize1(void* source, void* target, int count)
         {
             byte* src = (byte*)source;
-            byte* tgt = (byte*)target;
+            byte* dest = (byte*)target;
 
             for (int i = 0; i < count; i++) {
-                *tgt++ = * src++;
+                *dest++ = * src++;
             }
         }
 
@@ -240,6 +253,11 @@
         /// the given offset) to the target location (starting at the given offset).
         /// Faster than PInvoking memcpy.
         /// </summary>
+        /// <param name="source">Source memory location to copy from.</param>
+        /// <param name="sourceOffset">Source location read offset in bytes.</param>
+        /// <param name="target">Target memory location to copy to.</param>
+        /// <param name="targetOffset">Target location write offset in bytes.</param>
+        /// <param name="count">Number of bytes to copy.</param>
         public static void CopyBytes(void* source, int sourceOffset, void* target, int targetOffset, int count)
         {
             if (sourceOffset % 4 == 0 && targetOffset % 4 == 0 && count % 4 == 0)
@@ -256,20 +274,20 @@
         private static void CopyBytes_ChunkSize4(void* source, int sourceOffset, void* target, int targetOffset, int count)
         {
             int* src = (int*)source + sourceOffset;
-            int* tgt = (int*)target + targetOffset;
+            int* dest = (int*)target + targetOffset;
 
             for (int i = 0; i < count; i++) {
-                *tgt++ = *src++;
+                *dest++ = *src++;
             }
         }
 
         private static void CopyBytes_ChunkSize1(void* source, int sourceOffset, void* target, int targetOffset, int count)
         {
             byte* src = (byte*)source + sourceOffset;
-            byte* tgt = (byte*)target + targetOffset;
+            byte* dest = (byte*)target + targetOffset;
 
             for (int i = 0; i < count; i++) {
-                *tgt++ = * src++;
+                *dest++ = * src++;
             }
         }
 
