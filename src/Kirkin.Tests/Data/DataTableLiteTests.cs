@@ -88,7 +88,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void Clear()
+        public void ClearRows()
         {
             DataTableLite dt = CreateDataTableLite(5);
 
@@ -104,7 +104,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void Remove()
+        public void RemoveRow()
         {
             DataTableLite dt = CreateDataTableLite(5);
 
@@ -117,6 +117,36 @@ namespace Kirkin.Tests.Data
             Assert.AreEqual(4, dt.Rows.Count);
             Assert.AreEqual(1, dt.Rows[0][0]);
             Assert.AreEqual("1", dt.Rows[0][1]);
+
+            dt.Rows.Remove(dt.Rows[1]);
+
+            Assert.AreEqual(3, dt.Rows.Count);
+            Assert.AreEqual(1, dt.Rows[0][0]);
+            Assert.AreEqual("1", dt.Rows[0][1]);
+            Assert.AreEqual(3, dt.Rows[1][0]);
+            Assert.AreEqual("3", dt.Rows[1][1]);
+
+            dt.Rows.Remove(dt.Rows[2]);
+
+            Assert.AreEqual(2, dt.Rows.Count);
+            Assert.AreEqual(1, dt.Rows[0][0]);
+            Assert.AreEqual("1", dt.Rows[0][1]);
+            Assert.AreEqual(3, dt.Rows[1][0]);
+            Assert.AreEqual("3", dt.Rows[1][1]);
+
+            // And add one.
+            DataRowLite row = dt.Rows.AddNewRow();
+
+            row[0] = 5;
+            row[1] = "5";
+
+            Assert.AreEqual(3, dt.Rows.Count);
+            Assert.AreEqual(1, dt.Rows[0][0]);
+            Assert.AreEqual("1", dt.Rows[0][1]);
+            Assert.AreEqual(3, dt.Rows[1][0]);
+            Assert.AreEqual("3", dt.Rows[1][1]);
+            Assert.AreEqual(5, dt.Rows[2][0]);
+            Assert.AreEqual("5", dt.Rows[2][1]);
         }
 
         [Test]
