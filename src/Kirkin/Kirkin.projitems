@@ -130,6 +130,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Threading\Tasks\ParallelTasks.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Threading\Tasks\TaskEx.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Threading\Volatile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Timestamp.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\Hash.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\MD5Hash.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\TypeName.cs" />
