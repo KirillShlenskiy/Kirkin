@@ -1,4 +1,6 @@
-﻿namespace Kirkin.Memory
+﻿#if ALLOW_UNSAFE
+
+namespace Kirkin.Memory
 {
     /// <summary>
     /// Raw memory copy utilities.
@@ -288,3 +290,5 @@
         #endregion
     }
 }
+
+#endif

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if ALLOW_UNSAFE
+
+using System;
 using System.Runtime.InteropServices;
 
 namespace Kirkin.Memory
@@ -61,3 +63,5 @@ namespace Kirkin.Memory
         }
     }
 }
+
+#endif
