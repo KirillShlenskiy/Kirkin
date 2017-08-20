@@ -4,9 +4,11 @@ using System.Runtime.InteropServices;
 namespace Kirkin.Memory
 {
     /// <summary>
-    /// Allows pinning the memory of managed reference types.
+    /// Convenience wrapper around <see cref="GCHandle"/> that
+    /// allows pinning the memory of managed reference types.
+    /// Implicitly convertible to a raw pointer.
     /// </summary>
-    internal unsafe struct Pinned : IDisposable
+    public unsafe struct Pinned : IDisposable
     {
         private readonly GCHandle _handle;
 
@@ -51,6 +53,11 @@ namespace Kirkin.Memory
             if (_handle.IsAllocated) {
                 _handle.Free();
             }
+        }
+
+        public static implicit operator void*(Pinned value)
+        {
+            return value.Pointer;
         }
     }
 }

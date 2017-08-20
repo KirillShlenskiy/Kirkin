@@ -107,7 +107,7 @@ namespace Kirkin.Tests.Memory
 
             using (Pinned pinnedA = new Pinned(a))
             using (Pinned pinnedB = new Pinned(b)) {
-                RawCopy.CopyBytes(pinnedA.Pointer, pinnedB.Pointer, sizeof(int));
+                RawCopy.CopyBytes(pinnedA, pinnedB, sizeof(int));
             }
 
             Assert.AreEqual(-1, b);
