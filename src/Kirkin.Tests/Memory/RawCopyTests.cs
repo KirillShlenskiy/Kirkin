@@ -40,9 +40,9 @@ namespace Kirkin.Tests.Memory
         {
             Block8 value = new Block8();
 
-            RawCopy.WriteInt32(&value, 1);
+            RawCopy.RefInt32(&value) = 1;
 
-            Assert.AreEqual(1, RawCopy.ReadInt32(&value));
+            Assert.AreEqual(1, RawCopy.RefInt32(&value));
         }
 
         [Test]
@@ -50,11 +50,11 @@ namespace Kirkin.Tests.Memory
         {
             Block32 value = new Block32();
 
-            Assert.AreEqual(0, RawCopy.ReadInt32(&value));
+            Assert.AreEqual(0, RawCopy.RefInt32(&value));
 
             RawCopy.WriteBytes(&value, new byte[] { 255, 255, 255, 255 });
 
-            Assert.AreEqual(-1, RawCopy.ReadInt32(&value));
+            Assert.AreEqual(-1, RawCopy.RefInt32(&value));
         }
 
         [Test]
@@ -62,16 +62,16 @@ namespace Kirkin.Tests.Memory
         {
             Block64 value = new Block64();
 
-            Assert.AreEqual(0, RawCopy.ReadInt64(&value));
+            Assert.AreEqual(0, RawCopy.RefInt64(&value));
 
-            RawCopy.WriteInt64(&value, long.MaxValue);
+            RawCopy.RefInt64(&value) = long.MaxValue;
 
-            Assert.AreEqual(-1, RawCopy.ReadInt32(&value));
-            Assert.AreEqual(int.MaxValue, RawCopy.ReadInt32(&value, 4));
+            Assert.AreEqual(-1, RawCopy.RefInt32(&value));
+            Assert.AreEqual(int.MaxValue, RawCopy.RefInt32(&value, 4));
 
-            RawCopy.WriteInt32(&value, 4, -1);
+            RawCopy.RefInt32(&value, 4) = -1;
 
-            Assert.AreEqual(-1, RawCopy.ReadInt64(&value));
+            Assert.AreEqual(-1, RawCopy.RefInt64(&value));
         }
 
         [Test]
@@ -89,7 +89,7 @@ namespace Kirkin.Tests.Memory
 
             RawCopy.WriteBytes(&value, new byte[] { 255, 255, 255, 255 });
 
-            Assert.AreEqual(-1, RawCopy.ReadInt32(&value));
+            Assert.AreEqual(-1, RawCopy.RefInt32(&value));
 
             bytes = RawCopy.ReadBytes(&value, sizeof(int));
 
@@ -217,6 +217,39 @@ namespace Kirkin.Tests.Memory
                 fixed (void* s = numbers, t = target) {
                     RawCopy.CopyBytes(s, t, sizeof(int) * numbers.Length);
                 }
+            }
+        }
+
+        [Test]
+        public void Benchmark_Xxx_Ref()
+        {
+            int a = -1;
+            int b = 0;
+
+            for (int i = 0; i < 100000000; i++) {
+                RawCopy.RefInt32(&b) = RawCopy.RefInt32(&a);
+            }
+        }
+
+        [Test]
+        public void Benchmark_Xxx_ReadWrite()
+        {
+            int a = -1;
+            int b = 0;
+
+            for (int i = 0; i < 100000000; i++) {
+                RawCopy.WriteInt32(&b, RawCopy.ReadInt32(&a));
+            }
+        }
+
+        [Test]
+        public void Benchmark_Xxx_ReadWriteValue()
+        {
+            int a = -1;
+            int b = 0;
+
+            for (int i = 0; i < 100000000; i++) {
+                RawCopy.WriteInt32(&b, a);
             }
         }
 

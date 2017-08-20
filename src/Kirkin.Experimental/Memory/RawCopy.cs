@@ -5,6 +5,8 @@
     /// </summary>
     unsafe static class RawCopy
     {
+        #region Read
+
         /// <summary>
         /// Reads the 32-bit signed int value at offset 0.
         /// </summary>
@@ -45,6 +47,10 @@
         /// </summary>
         public static ulong ReadUInt64(void* source, int offset) => *(ulong*)((byte*)source + offset);
 
+        #endregion
+
+        #region Write
+
         /// <summary>
         /// Writes the given 32-bit signed int value at offset 0.
         /// </summary>
@@ -84,6 +90,54 @@
         /// Writes the given 64-bit unsigned int value at the specified offset.
         /// </summary>
         public static void WriteUInt64(void* target, int offset, ulong value) => *(ulong*)((byte*)target + offset) = value;
+
+        #endregion
+
+        #region Refs (read/write)
+
+        /// <summary>
+        /// Returns a reference to the 32-bit signed int value at offset 0.
+        /// </summary>
+        public static ref int RefInt32(void* source) => ref *(int*)((byte*)source);
+
+        /// <summary>
+        /// Returns a reference to the 32-bit signed int value at the specified offset.
+        /// </summary>
+        public static ref int RefInt32(void* source, int offset) => ref *(int*)((byte*)source + offset);
+
+        /// <summary>
+        /// Returns a reference to the 32-bit unsigned int value at offset 0.
+        /// </summary>
+        public static ref uint RefUInt32(void* source) => ref *(uint*)((byte*)source);
+
+        /// <summary>
+        /// Returns a reference to the 32-bit unsigned int value at the specified offset.
+        /// </summary>
+        public static ref uint RefUInt32(void* source, int offset) => ref *(uint*)((byte*)source + offset);
+
+        /// <summary>
+        /// Returns a reference to the 64-bit signed int value at offset 0.
+        /// </summary>
+        public static ref long RefInt64(void* source) => ref *(long*)((byte*)source);
+
+        /// <summary>
+        /// Returns a reference to the 64-bit signed int value at the specified offset.
+        /// </summary>
+        public static ref long RefInt64(void* source, int offset) => ref *(long*)((byte*)source + offset);
+
+        /// <summary>
+        /// Returns a reference to the 64-bit unsigned int value at offset 0.
+        /// </summary>
+        public static ref ulong RefUInt64(void* source) => ref *(ulong*)((byte*)source);
+
+        /// <summary>
+        /// Returns a reference to the 64-bit unsigned int value at the specified offset.
+        /// </summary>
+        public static ref ulong RefUInt64(void* source, int offset) => ref *(ulong*)((byte*)source + offset);
+
+        #endregion
+
+        #region Byte arrays
 
         /// <summary>
         /// Reads the given number of bytes at offset 0.
@@ -138,6 +192,10 @@
                 *target++ = bytes[i];
             }
         }
+
+        #endregion
+
+        #region CopyBytes
 
         /// <summary>
         /// Copies the given number of bytes from the source location
@@ -214,5 +272,7 @@
                 *tgt++ = * src++;
             }
         }
+
+        #endregion
     }
 }
