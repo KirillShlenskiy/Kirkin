@@ -106,12 +106,13 @@ namespace Kirkin.Tests
             GCHandle handleA = GCHandle.Alloc(a, GCHandleType.Pinned);
             GCHandle handleB = GCHandle.Alloc(b, GCHandleType.Pinned);
 
-            RawCopy.CopyBytes((IntPtr*)handleA.AddrOfPinnedObject(), (IntPtr*)handleB.AddrOfPinnedObject(), sizeof(int));
-
-            Assert.AreEqual(-1, b);
+            RawCopy.CopyBytes((void*)handleA.AddrOfPinnedObject(), (void*)handleB.AddrOfPinnedObject(), sizeof(int));
 
             handleA.Free();
             handleB.Free();
+
+            Assert.AreEqual(-1, b);
+            Assert.AreNotSame(a, b);
         }
 
         [Test]
