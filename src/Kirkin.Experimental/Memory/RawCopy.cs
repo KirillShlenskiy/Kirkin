@@ -147,10 +147,9 @@
         public static byte[] ReadBytes(void* source, int count)
         {
             byte[] result = new byte[count];
-            byte* src = (byte*)source;
 
-            for (int i = 0; i < count; i++) {
-                result[i] = *src++;
+            fixed (byte* target = result) {
+                CopyBytes(source, target, count);
             }
 
             return result;
@@ -165,10 +164,9 @@
         public static byte[] ReadBytes(void* source, int offset, int count)
         {
             byte[] result = new byte[count];
-            byte* src = (byte*)source + offset;
 
-            for (int i = 0; i < count; i++) {
-                result[i] = *src++;
+            fixed (byte* target = result) {
+                CopyBytes((byte*)source + offset, target, count);
             }
 
             return result;
@@ -181,10 +179,8 @@
         /// <param name="bytes">Bytes to copy.</param>
         public static void WriteBytes(void* target, byte[] bytes)
         {
-            byte* dest = (byte*)target;
-
-            for (int i = 0; i < bytes.Length; i++) {
-                *dest++ = bytes[i];
+            fixed (byte* source = bytes) {
+                CopyBytes(source, target, bytes.Length);
             }
         }
 
@@ -196,10 +192,8 @@
         /// <param name="bytes">Bytes to copy.</param>
         public static void WriteBytes(void* target, int offset, byte[] bytes)
         {
-            byte* dest = (byte*)target + offset;
-
-            for (int i = 0; i < bytes.Length; i++) {
-                *dest++ = bytes[i];
+            fixed (byte* source = bytes) {
+                CopyBytes(source, (byte*)target + offset, bytes.Length);
             }
         }
 
