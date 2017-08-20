@@ -8,7 +8,7 @@ namespace Kirkin.Tests
     public unsafe class RawCopyTests
     {
         [Test]
-        public void RawCopyInt32()
+        public void RawCopy_Int32()
         {
             int a = -1;
             int b = 0;
@@ -19,7 +19,7 @@ namespace Kirkin.Tests
         }
 
         [Test]
-        public void RawCopyBool()
+        public void RawCopy_Bool()
         {
             bool value = true;
             int result = 0;
@@ -34,7 +34,7 @@ namespace Kirkin.Tests
         }
 
         [Test]
-        public void ReadWriteInt8()
+        public void ReadWrite_Int8()
         {
             Block8 value = new Block8();
 
@@ -44,7 +44,7 @@ namespace Kirkin.Tests
         }
 
         [Test]
-        public void ReadWriteInt32()
+        public void ReadWrite_Int32()
         {
             Block32 value = new Block32();
 
@@ -56,7 +56,7 @@ namespace Kirkin.Tests
         }
 
         [Test]
-        public void ReadWriteInt64()
+        public void ReadWrite_Int64()
         {
             Block64 value = new Block64();
 
@@ -73,7 +73,7 @@ namespace Kirkin.Tests
         }
 
         [Test]
-        public void ReadWriteBytes()
+        public void ReadWrite_Bytes()
         {
             byte[] bytes;
             int value = 0;
@@ -98,18 +98,15 @@ namespace Kirkin.Tests
         }
 
         [Test]
-        public void RawCopyBoxedInt32()
+        public void RawCopy_BoxedInt32()
         {
             object a = -1;
             object b = 0;
 
-            GCHandle handleA = GCHandle.Alloc(a, GCHandleType.Pinned);
-            GCHandle handleB = GCHandle.Alloc(b, GCHandleType.Pinned);
-
-            RawCopy.CopyBytes((void*)handleA.AddrOfPinnedObject(), (void*)handleB.AddrOfPinnedObject(), sizeof(int));
-
-            handleA.Free();
-            handleB.Free();
+            using (Pinned pinnedA = new Pinned(a))
+            using (Pinned pinnedB = new Pinned(b)) {
+                RawCopy.CopyBytes(pinnedA.Pointer, pinnedB.Pointer, sizeof(int));
+            }
 
             Assert.AreEqual(-1, b);
             Assert.AreNotSame(a, b);
