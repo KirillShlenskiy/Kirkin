@@ -1,4 +1,4 @@
-﻿namespace Kirkin
+﻿namespace Kirkin.Memory
 {
     /// <summary>
     /// Raw memory copy utilities.

@@ -111,8 +111,8 @@
     <Compile Include="Media\FFmpeg\FFmpegClient.cs" />
     <Compile Include="Media\FFmpeg\FFmpegException.cs" />
     <Compile Include="Media\FFmpeg\VideoEncoder.cs" />
-    <Compile Include="Pinned.cs" />
-    <Compile Include="RawCopy.cs" />
+    <Compile Include="Memory\Pinned.cs" />
+    <Compile Include="Memory\RawCopy.cs" />
     <Compile Include="NonNullableString.cs" />
     <Compile Include="Optional.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

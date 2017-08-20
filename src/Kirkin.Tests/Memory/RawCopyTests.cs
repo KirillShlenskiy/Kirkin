@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
+using Kirkin.Memory;
+
 using NUnit.Framework;
 
-namespace Kirkin.Tests
+namespace Kirkin.Tests.Memory
 {
     public unsafe class RawCopyTests
     {

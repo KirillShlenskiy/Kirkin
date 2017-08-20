@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Kirkin
+namespace Kirkin.Memory
 {
     /// <summary>
     /// Allows pinning the memory of managed reference types.
