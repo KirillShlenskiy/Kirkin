@@ -130,6 +130,7 @@
     <Compile Include="Cryptography\AES256EncryptionTests.cs" />
     <Compile Include="CustomEqualityComparerTests.cs" />
     <Compile Include="Data\DataRecordExtensionsTests.cs" />
+    <Compile Include="Data\DataRowEmbeddedStorageExperiment.cs" />
     <Compile Include="Data\DataTableLiteTests.cs" />
     <Compile Include="Data\SqlClient\SqlServerDataImportTests.cs" />
     <Compile Include="Data\SqlClient\SqlServerEngineTests.cs" />
