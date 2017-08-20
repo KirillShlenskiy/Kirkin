@@ -253,6 +253,26 @@ namespace Kirkin.Tests.Memory
             }
         }
 
+        [Test]
+        public void MutateReadOnlyStruct()
+        {
+            Immutable immutable = new Immutable(123);
+
+            RawCopy.RefInt32(&immutable) = 321;
+
+            Assert.AreEqual(321, immutable.Value);
+        }
+
+        struct Immutable
+        {
+            public readonly int Value;
+
+            public Immutable(int value)
+            {
+                Value = value;
+            }
+        }
+
         unsafe struct Block8
         {
             private fixed byte storage[1];
