@@ -240,7 +240,7 @@ namespace Kirkin.Memory
             byte* dest = (byte*)target;
 
             for (int i = 0; i < count; i++) {
-                *dest++ = * src++;
+                *dest++ = *src++;
             }
         }
 
@@ -283,7 +283,7 @@ namespace Kirkin.Memory
             byte* dest = (byte*)target + targetOffset;
 
             for (int i = 0; i < count; i++) {
-                *dest++ = * src++;
+                *dest++ = *src++;
             }
         }
 
