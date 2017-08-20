@@ -66,7 +66,11 @@ namespace Kirkin
             if (text.Length == 0) throw new ArgumentException("Text cannot be empty."); // In line with framework's standard Parse methods.
 
             // Rebuild string.
+#if ALLOW_UNSAFE
             char* chars = stackalloc char[text.Length];
+#else
+            char[] chars = new char[text.Length];
+#endif
             int length = 0;
 
             // Remove "0x" from start.
@@ -187,7 +191,7 @@ namespace Kirkin
             return value == 0 ? "" : value.ToString("X");
         }
 
-        #region Interlocked operations
+#region Interlocked operations
 
         // TODO: InterlockedRead, InterlockedAdd.
 
@@ -225,37 +229,9 @@ namespace Kirkin
             return new Timestamp(Interlocked.Decrement(ref location.Value));
         }
 
-        #endregion
+#endregion
 
-        #region Volatile operations
-
-        // TODO: Remove?
-
-        /// <summary>
-        /// Reads the value of the specified field. On systems that require it, inserts a
-        //  memory barrier that prevents the processor from reordering memory operations
-        //  as follows: If a read or write appears after this method in the code, the processor
-        //  cannot move it before this method.
-        /// </summary>
-        internal static Timestamp VolatileRead(ref Timestamp location)
-        {
-            return new Timestamp(Volatile.Read(ref location.Value));
-        }
-
-        /// <summary>
-        /// Writes the specified value to the specified field. On systems that require it,
-        //  inserts a memory barrier that prevents the processor from reordering memory operations
-        //  as follows: If a memory operation appears before this method in the code, the
-        //  processor cannot move it after this method.
-        /// </summary>
-        internal static void VolatileWrite(ref Timestamp location, Timestamp value)
-        {
-            Volatile.Write(ref location.Value, value.Value);
-        }
-
-        #endregion
-
-        #region Operators
+#region Operators
 
         /// <summary>
         /// Returns the value of this instance as a signed 64-bit integer.
@@ -335,6 +311,6 @@ namespace Kirkin
             return new Timestamp(timestamp.ToUInt64() - 1);
         }
 
-        #endregion
+#endregion
     }
 }
