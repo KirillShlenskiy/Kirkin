@@ -41,6 +41,14 @@ namespace Kirkin.Data
             {
                 return _capacity;
             }
+            set
+            {
+                foreach (DataColumnLite column in Table.Columns) {
+                    column.Data.Capacity = value;
+                }
+
+                _capacity = value;
+            }
         }
 
         /// <summary>
@@ -84,17 +92,28 @@ namespace Kirkin.Data
             {
                 int newCapacity = (_capacity == 0) ? DEFAULT_CAPACITY : _capacity * 2;
 
-                SetCapacity(newCapacity);
+                Capacity = newCapacity;
             }
         }
 
-        public void SetCapacity(int newCapacity)
+        public void Remove(DataRowLite row)
         {
-            foreach (DataColumnLite column in Table.Columns) {
-                column.Data.Capacity = newCapacity;
+            int index = _rows.IndexOf(row);
+
+            if (index == -1) {
+                throw new ArgumentException("The row does not belong to this collection.");
             }
 
-            _capacity = newCapacity;
+            foreach (DataColumnLite column in Table.Columns) {
+                column.Data.Remove(index);
+            }
+
+            _rows.RemoveAt(index);
+
+            // Fix up the indexes of the following rows.
+            for (int i = index; i < _rows.Count; i++) {
+                _rows[i]._rowIndex = i;
+            }
         }
 
         public void Clear()
@@ -110,7 +129,7 @@ namespace Kirkin.Data
         {
             _rows.TrimExcess();
 
-            SetCapacity(Count);
+            Capacity = Count;
         }
 
         public ListEnumerator<DataRowLite> GetEnumerator()

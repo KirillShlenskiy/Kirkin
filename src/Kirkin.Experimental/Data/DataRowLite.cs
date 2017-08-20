@@ -8,7 +8,7 @@ namespace Kirkin.Data
     public sealed class DataRowLite
     {
         private readonly DataColumnLiteCollection _columns;
-        private readonly int _rowIndex;
+        internal int _rowIndex;
 
         /// <summary>
         /// Table that this row belongs to.

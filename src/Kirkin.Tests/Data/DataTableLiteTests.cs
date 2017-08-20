@@ -100,10 +100,23 @@ namespace Kirkin.Tests.Data
 
             Assert.AreEqual(123, dt.Rows[0][0]);
             Assert.AreEqual("Zzz", dt.Rows[0][1]);
+            Assert.Throws<ArgumentOutOfRangeException>(() => dt.Rows[1]?.ToString());
+        }
 
-            DataRowLite r;
+        [Test]
+        public void Remove()
+        {
+            DataTableLite dt = CreateDataTableLite(5);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => r = dt.Rows[1]);
+            Assert.AreEqual(5, dt.Rows.Count);
+            Assert.AreEqual(0, dt.Rows[0][0]);
+            Assert.AreEqual("0", dt.Rows[0][1]);
+
+            dt.Rows.Remove(dt.Rows[0]);
+
+            Assert.AreEqual(4, dt.Rows.Count);
+            Assert.AreEqual(1, dt.Rows[0][0]);
+            Assert.AreEqual("1", dt.Rows[0][1]);
         }
 
         [Test]

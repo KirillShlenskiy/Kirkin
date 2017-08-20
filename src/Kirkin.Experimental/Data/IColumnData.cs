@@ -7,5 +7,6 @@
         bool IsNull(int index);
         object Get(int index);
         void Set(int index, object value);
+        void Remove(int index);
     }
 }

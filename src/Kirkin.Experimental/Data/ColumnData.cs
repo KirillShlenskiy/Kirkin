@@ -42,6 +42,17 @@ namespace Kirkin.Data
             _array[index] = value;
         }
 
+        public void Remove(int index)
+        {
+            for (int i = index + 1; i < _dbNullBits.Length; i++) {
+                _dbNullBits[i - 1] = _dbNullBits[i];
+            }
+
+            for (int i = index + 1; i < _array.Length; i++) {
+                _array[i - 1] = _array[i];
+            }
+        }
+
         public bool IsNull(int index)
         {
             return _dbNullBits[index];
