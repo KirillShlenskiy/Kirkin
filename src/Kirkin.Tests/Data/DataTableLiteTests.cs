@@ -88,6 +88,25 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
+        public void Clear()
+        {
+            DataTableLite dt = CreateDataTableLite(5);
+
+            dt.Rows.Clear();
+
+            Assert.AreEqual(0, dt.Rows.Count);
+
+            dt.Rows.Add(123, "Zzz");
+
+            Assert.AreEqual(123, dt.Rows[0][0]);
+            Assert.AreEqual("Zzz", dt.Rows[0][1]);
+
+            DataRowLite r;
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => r = dt.Rows[1]);
+        }
+
+        [Test]
         public void GrowthLite()
         {
             int targetCount = 100000;
@@ -264,7 +283,6 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        [Ignore("Slow")]
         public void MemPressureLite()
         {
             GC.Collect();
@@ -273,7 +291,7 @@ namespace Kirkin.Tests.Data
 
             long bytesStarting = GC.GetTotalMemory(false);
 
-            DataTableLite dt = CreateDataTableLite(1000000);
+            DataTableLite dt = CreateDataTableLite(100000);
 
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -287,7 +305,6 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        [Ignore("Slow")]
         public void MemPressureRegular()
         {
             GC.Collect();
@@ -296,7 +313,7 @@ namespace Kirkin.Tests.Data
 
             long bytesStarting = GC.GetTotalMemory(false);
 
-            DataTable dt = CreateDataTableRegular(1000000);
+            DataTable dt = CreateDataTableRegular(100000);
 
             GC.Collect();
             GC.WaitForPendingFinalizers();

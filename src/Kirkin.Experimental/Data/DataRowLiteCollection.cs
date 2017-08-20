@@ -102,7 +102,7 @@ namespace Kirkin.Data
             _rows.Clear();
 
             foreach (DataColumnLite column in Table.Columns) {
-                column.Data.Capacity = 0;
+                column.Data.Capacity = DEFAULT_CAPACITY;
             }
         }
 
