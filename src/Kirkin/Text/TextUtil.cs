@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Kirkin.Text
@@ -14,7 +13,7 @@ namespace Kirkin.Text
         /// a non-letter character converted to uppercase, with the rest of the characters
         /// converted to lowercase if necessary. Does not work well for acronyms.
         /// </summary>
-        public unsafe static string CapitalizeFirstLetterOfEachWord(string text)
+        public static string CapitalizeFirstLetterOfEachWord(string text)
         {
             if (text == null) throw new ArgumentNullException(nameof(text));
             if (text.Length == 0) return text;
