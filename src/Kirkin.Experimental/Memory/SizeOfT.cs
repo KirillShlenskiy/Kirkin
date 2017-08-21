@@ -18,8 +18,8 @@ namespace Kirkin.Memory
         private static readonly Type SizeOfTDynamicContainer = BuildDynamicSizeOfTContainerType();
 
         /// <summary>
-        /// Similar to <see cref="System.Runtime.InteropServices.Marshal.SizeOf(Type)"/>, but works on managed types too.
-        /// Original comment (by Joe Duffy):
+        /// Similar to <see cref="System.Runtime.InteropServices.Marshal.SizeOf(Type)"/>,
+        /// but works on managed types too. Original comment (by Joe Duffy):
         /// Computes the size of any type T. This includes managed object types
         /// which C# complains about (because it is architecture dependent).
         /// </summary>
