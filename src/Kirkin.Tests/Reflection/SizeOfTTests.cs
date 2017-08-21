@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 
 using NUnit.Framework;
 
@@ -12,6 +13,34 @@ namespace Kirkin.Tests.Reflection
         public void SizeOfInt32()
         {
             Assert.AreEqual(4, SizeOfT.Get<int>());
+        }
+
+        struct Dummy
+        {
+            public int ID;
+            public string Value;
+        }
+
+        [Test]
+        public void SizeOfDummy()
+        {
+            Assert.AreEqual(Marshal.SizeOf(typeof(Dummy)), SizeOfT.Get<Dummy>());
+        }
+
+        [Test]
+        public void Perf()
+        {
+            for (int i = 0; i < 1000000; i++) {
+                SizeOfT.Get<int>();
+            }
+        }
+
+        [Test]
+        public void PerfMarshal()
+        {
+            for (int i = 0; i < 1000000; i++) {
+                Marshal.SizeOf(typeof(int));
+            }
         }
 
         // Interpreted version of Joe Duffy's PtrUtils from https://github.com/joeduffy/slice.net/blob/master/src/PtrUtils.il.
@@ -42,10 +71,20 @@ namespace Kirkin.Tests.Reflection
 
             public static int Get<T>()
             {
-                MethodInfo method = SizeOfTContainer.GetMethod("SizeOf", BindingFlags.Static | BindingFlags.Public);
-                MethodInfo genericMethod = method.MakeGenericMethod(typeof(T));
+                return _Get<T>.Compiled();
+            }
 
-                return (int)genericMethod.Invoke(null, null);
+            static class _Get<T>
+            {
+                public static readonly Func<int> Compiled = CompileDelegate();
+
+                private static Func<int> CompileDelegate()
+                {
+                    MethodInfo method = SizeOfTContainer.GetMethod("SizeOf", BindingFlags.Static | BindingFlags.Public);
+                    MethodInfo genericMethod = method.MakeGenericMethod(typeof(T));
+
+                    return (Func<int>)Delegate.CreateDelegate(typeof(Func<int>), genericMethod);
+                }
             }
         }
     }
