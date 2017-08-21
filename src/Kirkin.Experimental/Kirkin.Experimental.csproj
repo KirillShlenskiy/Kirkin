@@ -113,6 +113,7 @@
     <Compile Include="Media\FFmpeg\VideoEncoder.cs" />
     <Compile Include="Memory\Pinned.cs" />
     <Compile Include="Memory\RawCopy.cs" />
+    <Compile Include="Memory\SizeOfT.cs" />
     <Compile Include="NonNullableString.cs" />
     <Compile Include="Optional.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
