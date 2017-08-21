@@ -60,7 +60,11 @@ namespace Kirkin
         /// <summary>
         /// Parses the given timestamp value. Can handle values starting with "0x" and values containing hyphens.
         /// </summary>
+#if ALLOW_UNSAFE
         public static unsafe Timestamp Parse(string text)
+#else
+        public static Timestamp Parse(string text)
+#endif
         {
             if (text == null) throw new ArgumentNullException(nameof(text));
             if (text.Length == 0) throw new ArgumentException("Text cannot be empty."); // In line with framework's standard Parse methods.
