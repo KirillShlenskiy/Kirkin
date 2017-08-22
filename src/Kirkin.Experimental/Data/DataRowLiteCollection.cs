@@ -52,7 +52,7 @@ namespace Kirkin.Data
         }
 
         /// <summary>
-        /// Creates a new row filled with nulls.
+        /// Creates a new row filled with nulls and adds it to the table.
         /// </summary>
         public DataRowLite AddNewRow()
         {
