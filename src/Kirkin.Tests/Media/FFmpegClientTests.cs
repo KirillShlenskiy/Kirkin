@@ -7,6 +7,7 @@ namespace Kirkin.Tests.Media
     public class FFmpegClientTests
     {
         [Test]
+        [Ignore("Requires specific setup")]
         public void TestConvert()
         {
             string inputFilePath = @"C:\temp\video\source.mp4";
