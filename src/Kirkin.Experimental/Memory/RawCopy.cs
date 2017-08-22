@@ -288,6 +288,19 @@ namespace Kirkin.Memory
         }
 
         #endregion
+
+        #region SizeOf<T>
+
+        /// <summary>
+        /// Similar to <see cref="System.Runtime.InteropServices.Marshal.SizeOf(Type)"/>,
+        /// but works for any type T (including managed types).
+        /// </summary>
+        public static int SizeOf<T>()
+        {
+            return SizeOfT.Get<T>();
+        }
+
+        #endregion
     }
 }
 

@@ -19,7 +19,7 @@ namespace Kirkin.Memory
 
         /// <summary>
         /// Similar to <see cref="System.Runtime.InteropServices.Marshal.SizeOf(Type)"/>,
-        /// but works on managed types too. Original comment (by Joe Duffy):
+        /// but works for any type T (including managed types). Original comment (by Joe Duffy):
         /// Computes the size of any type T. This includes managed object types
         /// which C# complains about (because it is architecture dependent).
         /// </summary>
