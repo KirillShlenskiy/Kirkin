@@ -9,16 +9,13 @@ namespace Kirkin.Text
     public static class TextUtil
     {
         /// <summary>
-        /// Returns the given string with the first
-        /// character and every character following
-        /// a non-letter character converted to
-        /// uppercase, with the rest of the characters
-        /// converted to lowercase if necessary.
-        /// Does not work well for acronyms.
+        /// Returns the given string with the first character and every character following
+        /// a non-letter character converted to uppercase, with the rest of the characters
+        /// converted to lowercase if necessary. Does not work well for acronyms.
         /// </summary>
         public static string CapitalizeFirstLetterOfEachWord(string text)
         {
-            if (text == null) throw new ArgumentNullException("text");
+            if (text == null) throw new ArgumentNullException(nameof(text));
             if (text.Length == 0) return text;
 
             char prevChar = default(char);
@@ -43,6 +40,8 @@ namespace Kirkin.Text
         /// </remarks>
         public static string NormalizeLineBreaks(string input)
         {
+            if (input == null) throw new ArgumentNullException(nameof(input));
+
             // Allow 10% as a rough guess of how much the string may grow.
             // If we're wrong we'll either waste space or have extra copies -
             // it will still work.
@@ -82,6 +81,9 @@ namespace Kirkin.Text
         /// </summary>
         public static string RemoveText(string input, string textToRemove, StringComparison comparisonType)
         {
+            if (input == null) throw new ArgumentNullException(nameof(input));
+            if (textToRemove == null) throw new ArgumentNullException(nameof(textToRemove));
+
             while (true)
             {
                 int index = input.IndexOf(textToRemove, comparisonType);
@@ -100,6 +102,8 @@ namespace Kirkin.Text
         /// </summary>
         public static string SplitOnCaps(string input)
         {
+            if (input == null) throw new ArgumentNullException(nameof(input));
+
             StringBuilder sb = new StringBuilder();
 
             foreach (char c in input)

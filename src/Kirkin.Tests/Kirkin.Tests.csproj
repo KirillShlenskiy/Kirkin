@@ -181,6 +181,7 @@
     <Compile Include="Reflection\MethodTests.cs" />
     <Compile Include="Reflection\PropertyAccessorTests.cs" />
     <Compile Include="Reflection\PropertyAccessorFactoryTests.cs" />
+    <Compile Include="Reflection\SizeOfTTests.cs" />
     <Compile Include="Refs\ObservableRefTests.cs" />
     <Compile Include="Refs\RefTests.cs" />
     <Compile Include="Scratchpad.cs" />
@@ -202,7 +203,6 @@
     <Compile Include="Utilities\MD5HashTests.cs" />
     <Compile Include="Validation\ValidatorTests.cs" />
     <Compile Include="ValueConversion\ValueConverterTests.cs" />
-    <Compile Include="VariantArrayTests.cs" />
     <Compile Include="VariantTests.cs" />
   </ItemGroup>
   <ItemGroup>
