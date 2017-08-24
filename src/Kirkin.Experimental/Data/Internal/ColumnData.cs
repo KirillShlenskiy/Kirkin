@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections;
 
-namespace Kirkin.Data
+namespace Kirkin.Data.Internal
 {
+    /// <summary>
+    /// Column data container implementation.
+    /// </summary>
     internal sealed class ColumnData<T> : IColumnData
     {
         private BitArray _dbNullBits;

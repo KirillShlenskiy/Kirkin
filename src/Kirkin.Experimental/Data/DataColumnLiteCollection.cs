@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
+using Kirkin.Data.Internal;
+
 namespace Kirkin.Data
 {
     public sealed class DataColumnLiteCollection : Collection<DataColumnLite>

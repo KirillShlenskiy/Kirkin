@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Kirkin.Data.Internal;
+
 namespace Kirkin.Data
 {
     /// <summary>

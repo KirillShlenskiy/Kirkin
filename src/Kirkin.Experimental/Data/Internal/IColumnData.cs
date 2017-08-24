@@ -1,5 +1,8 @@
-﻿namespace Kirkin.Data
+﻿namespace Kirkin.Data.Internal
 {
+    /// <summary>
+    /// Non-generic column data container contract.
+    /// </summary>
     internal interface IColumnData
     {
         int Capacity { get; set; }
