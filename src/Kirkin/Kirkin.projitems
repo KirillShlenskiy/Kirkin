@@ -148,6 +148,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Validation\ValidatorProxy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ValueConversion\ValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ValueConversion\ValueConverterBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Void.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WeakEvents.cs" />
   </ItemGroup>
 </Project>
