@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security;
 
 using Kirkin.Memory;
 
@@ -127,6 +128,7 @@ namespace Kirkin.Tests.Memory
             Assert.AreEqual("zzzlo world", s1);
         }
 
+        [SuppressUnmanagedCodeSecurity]
         [DllImport("msvcrt.dll", EntryPoint = "memcpy", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
         public static extern void* memcpy(void* dest, void* src, int count);
 
