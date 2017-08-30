@@ -223,6 +223,19 @@ namespace Kirkin.Tests.Memory
         }
 
         [Test]
+        public void Benchmark_Array_memcpy()
+        {
+            int[] target = new int[numbers.Length];
+
+            for (int i = 0; i < 10000; i++)
+            {
+                fixed (void* s = numbers, t = target) {
+                    memcpy(t, s, sizeof(int) * numbers.Length);
+                }
+            }
+        }
+
+        [Test]
         public void Benchmark_Xxx_Ref()
         {
             int a = -1;
