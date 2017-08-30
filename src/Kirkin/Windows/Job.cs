@@ -87,6 +87,9 @@ namespace Kirkin.Windows
             }
         }
 
+        /// <summary>
+        /// Releases the resources held by this object.
+        /// </summary>
         ~Job()
         {
             Dispose(false);
