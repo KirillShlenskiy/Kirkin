@@ -80,6 +80,7 @@
     <Compile Include="Decisions\Internal\ProjectPreference.cs" />
     <Compile Include="Decisions\IPreference.cs" />
     <Compile Include="Decisions\Preference.cs" />
+    <Compile Include="Diagnostics\ChildProcess.cs" />
     <Compile Include="Diagnostics\Diag.cs" />
     <Compile Include="Diagnostics\NoDebuggerAttachedException.cs" />
     <Compile Include="Diagnostics\ProcessMemory.cs" />
@@ -135,7 +136,6 @@
     <Compile Include="Transactions\PropertyTrackingTransaction.cs" />
     <Compile Include="Transactions\PropertyTrackingTransaction`.cs" />
     <Compile Include="Variant.cs" />
-    <Compile Include="Windows\Job.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Build\Kirkin-NET_45\Kirkin-NET_45.csproj">

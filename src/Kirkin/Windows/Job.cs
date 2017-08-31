@@ -12,7 +12,7 @@ namespace Kirkin.Windows
     /// <summary>
     /// Managed wrapper over Win32 job functionality.
     /// </summary>
-    public sealed class Job : IDisposable
+    internal sealed class Job : IDisposable
     {
         private readonly IntPtr _jobHandle;
         private bool _disposed;
