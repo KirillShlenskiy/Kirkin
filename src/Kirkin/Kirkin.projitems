@@ -58,6 +58,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\TextFormatter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Cryptography\AES256Encryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Cryptography\ICryptoKernel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\DataColumnLite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\DataColumnLiteCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\DataRowLite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\DataRowLiteCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\DataSetLite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\DataTableLite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\Internal\ColumnData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\Internal\IColumnData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\SqlClient\SqlCommandExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\SqlClient\SqlServerDataImport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\SqlClient\SqlServerTableBuilder.cs" />
