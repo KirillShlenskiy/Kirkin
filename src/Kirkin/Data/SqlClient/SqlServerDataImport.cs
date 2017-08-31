@@ -13,11 +13,24 @@ namespace Kirkin.Data.SqlClient
     public class SqlServerDataImport
     {
         private static readonly SqlServerTableBuilder DefaultSqlServerTableBuilder = new SqlServerTableBuilder();
+        
+        // SqlConnection or connection string.
+        private readonly object ConnectionObj;
 
         /// <summary>
         /// Connection string specified when this instance was created.
         /// </summary>
-        public string ConnectionString { get; }
+        public string ConnectionString
+        {
+            get
+            {
+                if (ConnectionObj is SqlConnection connection) {
+                    return connection.ConnectionString;
+                }
+
+                return (string)ConnectionObj;
+            }
+        }
 
         /// <summary>
         /// Creates a new <see cref="SqlServerDataImport"/> instance with the given connection string.
@@ -26,7 +39,17 @@ namespace Kirkin.Data.SqlClient
         {
             if (string.IsNullOrEmpty(connectionString)) throw new ArgumentException("Connection string cannot be null or empty.");
 
-            ConnectionString = connectionString;
+            ConnectionObj = connectionString;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="SqlServerDataImport"/> instance with the given <see cref="SqlConnection"/>.
+        /// </summary>
+        public SqlServerDataImport(SqlConnection connection)
+        {
+            if (connection == null) throw new ArgumentNullException(nameof(connection));
+
+            ConnectionObj = connection;
         }
 
         /// <summary>
@@ -53,9 +76,13 @@ namespace Kirkin.Data.SqlClient
             sql.AppendLine();
             sql.Append(createTableSql);
 
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            SqlConnection connection = GetSqlConnection(out bool needToDisposeConnection);
+
+            try
             {
-                connection.Open();
+                if (connection.State != ConnectionState.Open) {
+                    connection.Open();
+                }
 
                 using (SqlCommand command = new SqlCommand(sql.ToString(), connection)) {
                     command.ExecuteNonQuery();
@@ -71,6 +98,29 @@ namespace Kirkin.Data.SqlClient
                     }
                 }
             }
+            finally
+            {
+                if (needToDisposeConnection) {
+                    connection.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Resolves the <see cref="SqlConnection"/> instance to be used by this import.
+        /// </summary>
+        protected virtual SqlConnection GetSqlConnection(out bool needToDispose)
+        {
+            if (ConnectionObj is SqlConnection connection)
+            {
+                needToDispose = false;
+
+                return connection;
+            }
+
+            needToDispose = true;
+
+            return new SqlConnection((string)ConnectionObj);
         }
 
         /// <summary>
