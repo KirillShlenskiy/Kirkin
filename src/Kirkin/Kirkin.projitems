@@ -73,6 +73,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Dependencies\Container.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dependencies\DisposableRegistrationException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dependencies\ResolutionFailedException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Diagnostics\ChildProcess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Diagnostics\MiniProfiler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Diagnostics\ProcessScope.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Functional\Disposable.cs" />

@@ -9,6 +9,7 @@ namespace Kirkin.Diagnostics
     /// killed if <see cref="IDisposable.Dispose"/> is called before the scope is marked as completed.
     /// Also terminates the process if the current <see cref="AppDomain"/> exits before the scope is completed.
     /// </summary>
+    [Obsolete("May not reliably kill the associated process. Consider using ChildProcess instead.")]
     public sealed class ProcessScope : IDisposable
     {
         const int STATE_ACTIVE = 0;
