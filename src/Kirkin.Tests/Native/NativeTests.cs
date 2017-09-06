@@ -14,7 +14,11 @@ namespace Kirkin.Tests.Native
 
         static class NativeMethods
         {
+#if DEBUG
             [DllImport(@"..\..\..\Debug\Kirkin.Native.dll")]
+#else
+            [DllImport(@"..\..\..\Release\Kirkin.Native.dll")]
+#endif
             public static extern int Add(int a, int b);
         }
     }
