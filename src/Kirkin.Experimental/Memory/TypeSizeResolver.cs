@@ -5,6 +5,7 @@
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 using System;
+using System.Collections.Concurrent;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -13,8 +14,9 @@ namespace Kirkin.Memory
     /// <summary>
     /// Type size helpers.
     /// </summary>
-    internal static class SizeOfT
+    internal static class TypeSizeResolver
     {
+        private static readonly ConcurrentDictionary<Type, int> KnownTypeSizes = new ConcurrentDictionary<Type, int>();
         private static readonly Type SizeOfTDynamicContainer = BuildDynamicSizeOfTContainerType();
 
         /// <summary>
@@ -23,29 +25,27 @@ namespace Kirkin.Memory
         /// Computes the size of any type T. This includes managed object types
         /// which C# complains about (because it is architecture dependent).
         /// </summary>
-        public static int Get<T>()
+        public static int GetSize(Type type)
         {
-            return _Get<T>.Compiled();
+            return KnownTypeSizes.TryGetValue(type, out int size)
+                ? size
+                : GetSizeSlow(type);
         }
 
-        static class _Get<T>
+        private static int GetSizeSlow(Type type)
         {
-            public static readonly Func<int> Compiled = CompileDelegate();
+            MethodInfo method = SizeOfTDynamicContainer.GetMethod("SizeOf", BindingFlags.Static | BindingFlags.Public);
+            MethodInfo genericMethod = method.MakeGenericMethod(type);
 
-            private static Func<int> CompileDelegate()
-            {
-                MethodInfo method = SizeOfTDynamicContainer.GetMethod("SizeOf", BindingFlags.Static | BindingFlags.Public);
-                MethodInfo genericMethod = method.MakeGenericMethod(typeof(T));
+            int size = (int)genericMethod.Invoke(null, null);
 
-                return (Func<int>)Delegate.CreateDelegate(typeof(Func<int>), genericMethod);
-            }
+            return KnownTypeSizes.GetOrAdd(type, size);
         }
 
         private static Type BuildDynamicSizeOfTContainerType()
         {
-            AppDomain domain = AppDomain.CurrentDomain;
             AssemblyName assemblyName = new AssemblyName("Hacks");
-            AssemblyBuilder assemBuilder = domain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
+            AssemblyBuilder assemBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
             ModuleBuilder modBuilder = assemBuilder.DefineDynamicModule("Hacks");
             TypeBuilder typeBuilder = modBuilder.DefineType("PtrUtils", TypeAttributes.Public | TypeAttributes.Class);
 

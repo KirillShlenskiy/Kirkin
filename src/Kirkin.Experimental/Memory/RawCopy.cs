@@ -1,5 +1,7 @@
 ﻿#if ALLOW_UNSAFE
 
+using System;
+
 namespace Kirkin.Memory
 {
     /// <summary>
@@ -297,7 +299,18 @@ namespace Kirkin.Memory
         /// </summary>
         public static int SizeOf<T>()
         {
-            return SizeOfT.Get<T>();
+            return TypeSizeResolver.GetSize(typeof(T));
+        }
+
+        /// <summary>
+        /// Similar to <see cref="System.Runtime.InteropServices.Marshal.SizeOf(Type)"/>,
+        /// but works for any type T (including managed types).
+        /// </summary>
+        public static int SizeOf(Type type)
+        {
+            if (type == null) throw new ArgumentNullException(nameof(type));
+
+            return TypeSizeResolver.GetSize(type);
         }
 
         #endregion

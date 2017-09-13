@@ -11,7 +11,8 @@ namespace Kirkin.Tests.Reflection
         [Test]
         public void SizeOfInt32()
         {
-            Assert.AreEqual(4, SizeOfT.Get<int>());
+            Assert.AreEqual(4, RawCopy.SizeOf<int>());
+            Assert.AreEqual(4, RawCopy.SizeOf(typeof(int)));
         }
 
         struct Dummy
@@ -23,14 +24,14 @@ namespace Kirkin.Tests.Reflection
         [Test]
         public void SizeOfDummy()
         {
-            Assert.AreEqual(Marshal.SizeOf(typeof(Dummy)), SizeOfT.Get<Dummy>());
+            Assert.AreEqual(Marshal.SizeOf(typeof(Dummy)), RawCopy.SizeOf<Dummy>());
         }
 
         [Test]
-        public void Perf()
+        public void Perf() // 21
         {
             for (int i = 0; i < 1000000; i++) {
-                SizeOfT.Get<int>();
+                RawCopy.SizeOf(typeof(int));
             }
         }
 
