@@ -2,6 +2,7 @@
 
 using Kirkin.Mapping.Fluent;
 using Kirkin.Reflection;
+using Kirkin.Utilities;
 
 namespace Kirkin.Mapping
 {
@@ -22,7 +23,7 @@ namespace Kirkin.Mapping
         public static TTarget Map<TSource, TTarget>(this Mapper<TSource, TTarget> mapper, TSource source)
             where TTarget : new()
         {
-            return mapper.Map(source, new TTarget());
+            return mapper.Map(source, ObjectFactory.Create<TTarget>());
         }
 
         #endregion
