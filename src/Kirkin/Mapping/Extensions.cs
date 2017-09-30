@@ -23,7 +23,7 @@ namespace Kirkin.Mapping
         public static TTarget Map<TSource, TTarget>(this Mapper<TSource, TTarget> mapper, TSource source)
             where TTarget : new()
         {
-            return mapper.Map(source, ObjectFactory.Create<TTarget>());
+            return mapper.Map(source, ObjectFactory.CreateInstance<TTarget>());
         }
 
         #endregion

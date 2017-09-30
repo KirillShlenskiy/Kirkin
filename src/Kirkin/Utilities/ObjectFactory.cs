@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Linq.Expressions;
 
+#if !NET_40
+using System.Runtime.CompilerServices;
+#endif
+
 namespace Kirkin.Utilities
 {
     /// <summary>
@@ -11,7 +15,10 @@ namespace Kirkin.Utilities
         /// <summary>
         /// Efficient substitute for "new T()" in constrained generic methods.
         /// </summary>
-        public static T Create<T>()
+#if !NET_40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static T CreateInstance<T>()
             where T : new()
         {
             return ObjectFactoryImpl<T>.Instance();
