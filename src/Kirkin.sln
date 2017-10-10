@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirkin.Tests", "Kirkin.Tests\Kirkin.Tests.csproj", "{79EDDF89-8B87-43FB-9B9B-A27E7EAD74EA}"
 EndProject
@@ -86,14 +86,14 @@ Global
 		{3F7562A4-86CB-4172-A7D1-FB0C6E2545EF}.Release|x64.Build.0 = Release|Any CPU
 		{3F7562A4-86CB-4172-A7D1-FB0C6E2545EF}.Release|x86.ActiveCfg = Release|Any CPU
 		{3F7562A4-86CB-4172-A7D1-FB0C6E2545EF}.Release|x86.Build.0 = Release|Any CPU
-		{7EB1CF3F-5FBB-42D8-84A0-9E9B8248B67E}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{7EB1CF3F-5FBB-42D8-84A0-9E9B8248B67E}.Debug|Any CPU.Build.0 = Debug|Win32
+		{7EB1CF3F-5FBB-42D8-84A0-9E9B8248B67E}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{7EB1CF3F-5FBB-42D8-84A0-9E9B8248B67E}.Debug|Any CPU.Build.0 = Debug|x64
 		{7EB1CF3F-5FBB-42D8-84A0-9E9B8248B67E}.Debug|x64.ActiveCfg = Debug|x64
 		{7EB1CF3F-5FBB-42D8-84A0-9E9B8248B67E}.Debug|x64.Build.0 = Debug|x64
 		{7EB1CF3F-5FBB-42D8-84A0-9E9B8248B67E}.Debug|x86.ActiveCfg = Debug|Win32
 		{7EB1CF3F-5FBB-42D8-84A0-9E9B8248B67E}.Debug|x86.Build.0 = Debug|Win32
-		{7EB1CF3F-5FBB-42D8-84A0-9E9B8248B67E}.Release|Any CPU.ActiveCfg = Release|Win32
-		{7EB1CF3F-5FBB-42D8-84A0-9E9B8248B67E}.Release|Any CPU.Build.0 = Release|Win32
+		{7EB1CF3F-5FBB-42D8-84A0-9E9B8248B67E}.Release|Any CPU.ActiveCfg = Release|x64
+		{7EB1CF3F-5FBB-42D8-84A0-9E9B8248B67E}.Release|Any CPU.Build.0 = Release|x64
 		{7EB1CF3F-5FBB-42D8-84A0-9E9B8248B67E}.Release|x64.ActiveCfg = Release|x64
 		{7EB1CF3F-5FBB-42D8-84A0-9E9B8248B67E}.Release|x64.Build.0 = Release|x64
 		{7EB1CF3F-5FBB-42D8-84A0-9E9B8248B67E}.Release|x86.ActiveCfg = Release|Win32

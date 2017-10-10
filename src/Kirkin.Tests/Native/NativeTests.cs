@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -9,9 +10,9 @@ namespace Kirkin.Tests.Native
     public class NativeTests
     {
 #if DEBUG
-        const string DLL_PATH = @"..\..\..\Debug\Kirkin.Native.dll";
+        const string DLL_PATH = @"..\..\..\x64\Debug\Kirkin.Native.dll";
 #else
-        const string DLL_PATH = @"..\..\..\Release\Kirkin.Native.dll";
+        const string DLL_PATH = @"..\..\..\x64\Release\Kirkin.Native.dll";
 #endif
 
         [Test]
@@ -24,6 +25,10 @@ namespace Kirkin.Tests.Native
 
         private static void SkipTestIfNativeDllDoesntExist()
         {
+            if (!Environment.Is64BitProcess) {
+                throw new IgnoreException("Kirkin.Native requires a 64-bit host process.");
+            }
+
             Assembly assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
             string root = Path.GetDirectoryName(assembly.Location);
             string dllPath = Path.Combine(root, DLL_PATH);
