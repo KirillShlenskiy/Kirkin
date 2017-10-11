@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection.Emit;
+using System.Threading;
 
 using NUnit.Framework;
 
@@ -85,9 +86,11 @@ namespace Kirkin.Tests.Experimental
                 .Compile();
         }
 
+        static int _createInstanceCount;
+
         private static Func<T> CreateFactoryViaDynamicMethod<T>()
         {
-            DynamicMethod method = new DynamicMethod("CreateInstance", typeof(T), null);
+            DynamicMethod method = new DynamicMethod("<CreateInstance>_" + Interlocked.Increment(ref _createInstanceCount), typeof(T), null);
 
             // Emit "return new T()".
             ILGenerator ilGenerator = method.GetILGenerator();
