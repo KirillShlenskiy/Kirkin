@@ -196,7 +196,7 @@
     <Compile Include="TimestampTests.cs" />
     <Compile Include="Transactions\PropertyTrackingTransactionTests.cs" />
     <Compile Include="Reflection\PropertyListTests.cs" />
-    <Compile Include="Utilities\FactoryBenchmarks.cs" />
+    <Compile Include="Experimental\ObjectFactoryBenchmarks.cs" />
     <Compile Include="Utilities\MD5HashTests.cs" />
     <Compile Include="Validation\ValidatorTests.cs" />
     <Compile Include="ValueConversion\ValueConverterTests.cs" />

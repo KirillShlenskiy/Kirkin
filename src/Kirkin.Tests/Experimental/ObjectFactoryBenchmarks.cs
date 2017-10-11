@@ -4,9 +4,9 @@ using System.Reflection.Emit;
 
 using NUnit.Framework;
 
-namespace Kirkin.Tests.Utilities
+namespace Kirkin.Tests.Experimental
 {
-    public class FactoryBenchmarks
+    public class ObjectFactoryBenchmarks
     {
         public class DummyClass
         {
@@ -16,7 +16,7 @@ namespace Kirkin.Tests.Utilities
         {
         }
 
-        static FactoryBenchmarks()
+        static ObjectFactoryBenchmarks()
         {
             CreateFactoryViaDynamicMethod<DummyClass>();
             CreateFactoryViaExpression<DummyClass>();
