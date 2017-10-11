@@ -22,8 +22,10 @@ namespace Kirkin.Tests.Utilities
             CreateFactoryViaExpression<DummyClass>();
         }
 
+        #region Tests
+
         [Test]
-        public void ExpressionFactory()
+        public void ExpressionFactoryClass()
         {
             for (int i = 0; i < 500; i++)
             {
@@ -34,17 +36,20 @@ namespace Kirkin.Tests.Utilities
             }
         }
 
-        private static Func<T> CreateFactoryViaExpression<T>()
+        [Test]
+        public void ExpressionFactoryStruct()
         {
-            NewExpression newExpr = Expression.New(typeof(T));
+            for (int i = 0; i < 500; i++)
+            {
+                Func<DummyStruct> factory = CreateFactoryViaExpression<DummyStruct>();
+                DummyStruct instance = factory.Invoke();
 
-            return Expression
-                .Lambda<Func<T>>(newExpr)
-                .Compile();
+                Assert.NotNull(instance);
+            }
         }
 
         [Test]
-        public void DynamicMethodFactory()
+        public void DynamicMethodFactoryClass()
         {
             for (int i = 0; i < 500; i++)
             {
@@ -55,6 +60,31 @@ namespace Kirkin.Tests.Utilities
             }
         }
 
+        [Test]
+        public void DynamicMethodFactoryStruct()
+        {
+            for (int i = 0; i < 500; i++)
+            {
+                Func<DummyStruct> factory = CreateFactoryViaDynamicMethod<DummyStruct>();
+                DummyStruct instance = factory.Invoke();
+
+                Assert.NotNull(instance);
+            }
+        }
+
+        #endregion
+
+        #region Implementation
+
+        private static Func<T> CreateFactoryViaExpression<T>()
+        {
+            NewExpression newExpr = Expression.New(typeof(T));
+
+            return Expression
+                .Lambda<Func<T>>(newExpr)
+                .Compile();
+        }
+
         private static Func<T> CreateFactoryViaDynamicMethod<T>()
         {
             DynamicMethod method = new DynamicMethod("CreateInstance", typeof(T), null);
@@ -62,13 +92,13 @@ namespace Kirkin.Tests.Utilities
 
             if (typeof(T).IsValueType)
             {
+                // return default(T);
                 ilGenerator.DeclareLocal(typeof(T));
-                ilGenerator.Emit(OpCodes.Ldloca_S, 0);
-                ilGenerator.Emit(OpCodes.Initobj, typeof(T));
                 ilGenerator.Emit(OpCodes.Ldloc_0);
             }
             else
             {
+                // return new T();
                 ilGenerator.Emit(OpCodes.Newobj, typeof(T).GetConstructor(Type.EmptyTypes));
             }
 
@@ -76,5 +106,7 @@ namespace Kirkin.Tests.Utilities
 
             return (Func<T>)method.CreateDelegate(typeof(Func<T>));
         }
+
+        #endregion
     }
 }
