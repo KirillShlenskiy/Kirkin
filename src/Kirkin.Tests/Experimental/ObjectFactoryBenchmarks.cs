@@ -88,17 +88,20 @@ namespace Kirkin.Tests.Experimental
         private static Func<T> CreateFactoryViaDynamicMethod<T>()
         {
             DynamicMethod method = new DynamicMethod("CreateInstance", typeof(T), null);
+
+            // Emit "return new T()".
             ILGenerator ilGenerator = method.GetILGenerator();
 
             if (typeof(T).IsValueType)
             {
-                // return default(T);
-                ilGenerator.DeclareLocal(typeof(T));
+                ilGenerator.DeclareLocal(typeof(T)); // Local index 0.
+
+                ilGenerator.Emit(OpCodes.Ldloca, 0);
+                ilGenerator.Emit(OpCodes.Initobj, typeof(T));
                 ilGenerator.Emit(OpCodes.Ldloc_0);
             }
             else
             {
-                // return new T();
                 ilGenerator.Emit(OpCodes.Newobj, typeof(T).GetConstructor(Type.EmptyTypes));
             }
 
