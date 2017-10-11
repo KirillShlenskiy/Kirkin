@@ -142,7 +142,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Timestamp.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\Hash.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\MD5Hash.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utilities\ObjectFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FastActivator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\TypeName.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\CustomValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\ISideEffect.cs" />

@@ -5,12 +5,12 @@ using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 #endif
 
-namespace Kirkin.Utilities
+namespace Kirkin
 {
     /// <summary>
     /// Object factory utilities.
     /// </summary>
-    public static class ObjectFactory
+    public static class FastActivator
     {
         /// <summary>
         /// Efficient substitute for "new T()" in constrained generic methods.
@@ -21,10 +21,10 @@ namespace Kirkin.Utilities
         public static T CreateInstance<T>()
             where T : new()
         {
-            return ObjectFactoryImpl<T>.Instance();
+            return Factory<T>.Instance();
         }
 
-        private static class ObjectFactoryImpl<T>
+        static class Factory<T>
         {
             // Cached "return new T()" delegate.
             public static readonly Func<T> Instance = CreateFactory();

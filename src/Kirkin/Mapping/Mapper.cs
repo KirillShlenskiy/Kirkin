@@ -1,5 +1,4 @@
 ﻿using Kirkin.Mapping.Fluent;
-using Kirkin.Utilities;
 
 namespace Kirkin.Mapping
 {
@@ -25,7 +24,7 @@ namespace Kirkin.Mapping
         public static T Clone<T>(T source)
             where T : new()
         {
-            return DefaultMappers.RelaxedMapper<T, T>.Instance.Map(source, ObjectFactory.CreateInstance<T>());
+            return DefaultMappers.RelaxedMapper<T, T>.Instance.Map(source, FastActivator.CreateInstance<T>());
         }
 
         /// <summary>
@@ -52,7 +51,7 @@ namespace Kirkin.Mapping
         public static TTarget MapAllSourceMembers<TSource, TTarget>(TSource source)
             where TTarget : new()
         {
-            return MapAllSourceMembers(source, ObjectFactory.CreateInstance<TTarget>());
+            return MapAllSourceMembers(source, FastActivator.CreateInstance<TTarget>());
         }
 
         /// <summary>
@@ -72,7 +71,7 @@ namespace Kirkin.Mapping
         public static TTarget MapAllTargetMembers<TSource, TTarget>(TSource source)
             where TTarget : new()
         {
-            return MapAllTargetMembers(source, ObjectFactory.CreateInstance<TTarget>());
+            return MapAllTargetMembers(source, FastActivator.CreateInstance<TTarget>());
         }
 
         /// <summary>
@@ -92,7 +91,7 @@ namespace Kirkin.Mapping
         public static TTarget MapRelaxed<TSource, TTarget>(TSource source)
             where TTarget : new()
         {
-            return MapRelaxed(source, ObjectFactory.CreateInstance<TTarget>());
+            return MapRelaxed(source, FastActivator.CreateInstance<TTarget>());
         }
 
         /// <summary>
@@ -112,7 +111,7 @@ namespace Kirkin.Mapping
         public static TTarget MapStrict<TSource, TTarget>(TSource source)
             where TTarget : new()
         {
-            return MapStrict(source, ObjectFactory.CreateInstance<TTarget>());
+            return MapStrict(source, FastActivator.CreateInstance<TTarget>());
         }
 
         /// <summary>
