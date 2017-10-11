@@ -16,10 +16,16 @@ namespace Kirkin.Tests.Utilities
         {
         }
 
+        static FactoryBenchmarks()
+        {
+            CreateFactoryViaDynamicMethod<DummyClass>();
+            CreateFactoryViaExpression<DummyClass>();
+        }
+
         [Test]
         public void ExpressionFactory()
         {
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 500; i++)
             {
                 Func<DummyClass> factory = CreateFactoryViaExpression<DummyClass>();
                 DummyClass instance = factory.Invoke();
@@ -40,7 +46,7 @@ namespace Kirkin.Tests.Utilities
         [Test]
         public void DynamicMethodFactory()
         {
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 500; i++)
             {
                 Func<DummyClass> factory = CreateFactoryViaDynamicMethod<DummyClass>();
                 DummyClass instance = factory.Invoke();
@@ -54,7 +60,18 @@ namespace Kirkin.Tests.Utilities
             DynamicMethod method = new DynamicMethod("CreateInstance", typeof(T), null);
             ILGenerator ilGenerator = method.GetILGenerator();
 
-            ilGenerator.Emit(OpCodes.Newobj, typeof(T).GetConstructor(Type.EmptyTypes));
+            if (typeof(T).IsValueType)
+            {
+                ilGenerator.DeclareLocal(typeof(T));
+                ilGenerator.Emit(OpCodes.Ldloca_S, 0);
+                ilGenerator.Emit(OpCodes.Initobj, typeof(T));
+                ilGenerator.Emit(OpCodes.Ldloc_0);
+            }
+            else
+            {
+                ilGenerator.Emit(OpCodes.Newobj, typeof(T).GetConstructor(Type.EmptyTypes));
+            }
+
             ilGenerator.Emit(OpCodes.Ret);
 
             return (Func<T>)method.CreateDelegate(typeof(Func<T>));
