@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !NETSTANDARD2_0
+
+using System;
 using System.Reflection;
 using System.Threading;
 
@@ -75,3 +77,5 @@ namespace Kirkin
         }
     }
 }
+
+#endif
