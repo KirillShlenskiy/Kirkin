@@ -138,6 +138,7 @@
     <Compile Include="Experimental\CastleCodegenTests.cs" />
     <Compile Include="Experimental\ClassStructAsyncCopyPerf.cs" />
     <Compile Include="Experimental\ClrMdTests.cs" />
+    <Compile Include="LambdaTests.cs" />
     <Compile Include="Media\FFmpegClientTests.cs" />
     <Compile Include="Experimental\ImmutableArrayFactoryTests.cs" />
     <Compile Include="Experimental\SkipOneAndEnumerateTests.cs" />
