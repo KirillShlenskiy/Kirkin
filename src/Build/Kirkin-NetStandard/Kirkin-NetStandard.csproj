@@ -7,10 +7,16 @@
     <Authors />
     <Version>1.0.1</Version>
     <PackageId>Kirkin</PackageId>
+    <AssemblyName>Kirkin</AssemblyName>
+    <RootNamespace>Kirkin</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\Kirkin.xml</DocumentationFile>
   </PropertyGroup>
 
   <Import Project="..\..\Kirkin\Kirkin.projitems" Label="Shared" />
