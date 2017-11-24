@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
-using System.Reflection;
+
+using Kirkin.Linq.Expressions;
 
 using NUnit.Framework;
 
@@ -53,7 +54,10 @@ namespace Kirkin.Tests
                 }
             };
 
-            Func<int> func = Lambda.ResolveAllCapturesViaCopy(() => x + y + int.Parse(z) + container.Containee.Value);
+            Func<int> func = Lambda.ResolveAllCapturesViaCopy(
+                // Will be rewritten as 1 + 3 + int.Parse("3") + 4.
+                () => x + y + int.Parse(z) + container.Containee.Value
+            );
 
             Assert.AreEqual(10, func());
 
@@ -86,54 +90,9 @@ namespace Kirkin.Tests
         {
             public static Func<T> ResolveAllCapturesViaCopy<T>(Expression<Func<T>> expr)
             {
-                Expression newBody = ConstantResolutionVisitor.Instance.Visit(expr.Body);
-
-                if (newBody == expr.Body) {
-                    return expr.Compile(); // Unmodified.
-                }
-
-                return Expression
-                    .Lambda<Func<T>>(newBody)
+                return ExpressionUtil
+                    .ResolveAllFieldAndPropertyValuesAsConstants(expr)
                     .Compile();
-            }
-
-            sealed class ConstantResolutionVisitor : ExpressionVisitor
-            {
-                internal static readonly ConstantResolutionVisitor Instance = new ConstantResolutionVisitor();
-
-                protected override Expression VisitMember(MemberExpression node)
-                {
-                    ConstantExpression constExpr = node.Expression as ConstantExpression;
-
-                    if (node.Expression is MemberExpression memberExpr)
-                    {
-                        Expression memberValueExpr = VisitMember(memberExpr); // Reduce.
-
-                        if (memberValueExpr is ConstantExpression newConstExpr)
-                        {
-                            constExpr = newConstExpr;
-                        }
-                        else
-                        {
-                            return memberValueExpr;
-                        }
-                    }
-
-                    if (constExpr != null)
-                    {
-                        object obj = constExpr.Value;
-
-                        if (node.Member is PropertyInfo prop) {
-                            return Expression.Constant(prop.GetValue(obj));
-                        }
-
-                        if (node.Member is FieldInfo field) {
-                            return Expression.Constant(field.GetValue(obj));
-                        }
-                    }
-
-                    return base.VisitMember(node);
-                }
             }
         }
     }

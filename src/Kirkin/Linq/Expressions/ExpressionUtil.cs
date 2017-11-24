@@ -237,6 +237,61 @@ namespace Kirkin.Linq.Expressions
             return Expression.Lambda<Func<T, bool>>(Expression.Not(expr.Body), expr.Parameters);
         }
 
+        /// <summary>
+        /// Rewrites the given expression replacing all field and member
+        /// access sub-expressions with their actual values (as constants).
+        /// </summary>
+        internal static Expression<TDelegate> ResolveAllFieldAndPropertyValuesAsConstants<TDelegate>(Expression<TDelegate> expr)
+        {
+            Expression newBody = ResolveAllFieldAndPropertyValuesAsConstantsVisitor.Instance.Visit(expr.Body);
+
+            if (newBody == expr.Body) {
+                return expr; // Unmodified.
+            }
+
+            return Expression.Lambda<TDelegate>(newBody);
+        }
+
+        sealed class ResolveAllFieldAndPropertyValuesAsConstantsVisitor : ExpressionVisitor
+        {
+            internal static readonly ResolveAllFieldAndPropertyValuesAsConstantsVisitor Instance
+                = new ResolveAllFieldAndPropertyValuesAsConstantsVisitor();
+
+            protected override Expression VisitMember(MemberExpression node)
+            {
+                ConstantExpression constExpr = node.Expression as ConstantExpression;
+
+                if (node.Expression is MemberExpression memberExpr)
+                {
+                    Expression memberValueExpr = VisitMember(memberExpr); // Reduce.
+
+                    if (memberValueExpr is ConstantExpression newConstExpr)
+                    {
+                        constExpr = newConstExpr;
+                    }
+                    else
+                    {
+                        return memberValueExpr;
+                    }
+                }
+
+                if (constExpr != null)
+                {
+                    object obj = constExpr.Value;
+
+                    if (node.Member is PropertyInfo prop) {
+                        return Expression.Constant(prop.GetValue(obj));
+                    }
+
+                    if (node.Member is FieldInfo field) {
+                        return Expression.Constant(field.GetValue(obj));
+                    }
+                }
+
+                return base.VisitMember(node);
+            }
+        }
+
         #endregion
     }
 }
