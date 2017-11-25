@@ -275,9 +275,9 @@ namespace Kirkin.Linq.Expressions
                     }
                 }
 
-                if (constExpr != null)
+                if (constExpr != null || node.Expression == null) // node.Expiression = null means static member access.
                 {
-                    object obj = constExpr.Value;
+                    object obj = constExpr?.Value;
 
                     if (node.Member is PropertyInfo prop) {
                         return Expression.Constant(prop.GetValue(obj));
