@@ -238,8 +238,8 @@ namespace Kirkin.Linq.Expressions
         }
 
         /// <summary>
-        /// Rewrites the given expression replacing all field and member
-        /// access sub-expressions with their actual values (as constants).
+        /// Rewrites the given expression replacing all field and member access
+        /// sub-expressions with their actual values (as constant expressions).
         /// </summary>
         internal static Expression<TDelegate> ResolveAllFieldAndPropertyValuesAsConstants<TDelegate>(Expression<TDelegate> expr)
         {
