@@ -280,7 +280,7 @@ namespace Kirkin.Linq.Expressions
                     object obj = constExpr?.Value;
 
                     if (node.Member is PropertyInfo prop) {
-                        return Expression.Constant(prop.GetValue(obj));
+                        return Expression.Constant(prop.GetValue(obj, null));
                     }
 
                     if (node.Member is FieldInfo field) {
