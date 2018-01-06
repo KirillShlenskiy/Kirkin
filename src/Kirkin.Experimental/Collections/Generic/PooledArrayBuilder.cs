@@ -1,39 +1,8 @@
 ﻿using System;
-using System.Threading;
+using System.Buffers;
 
 namespace Kirkin.Collections.Generic
 {
-    internal sealed class ArrayPool<T>
-    {
-        public static readonly ArrayPool<T> Shared = new ArrayPool<T>(2048);
-        private T[] AvailableBuffer;
-
-        public int BufferSize { get; }
-
-        public ArrayPool(int defaultSize)
-        {
-            BufferSize = defaultSize;
-        }
-
-        public T[] Borrow()
-        {
-            return Interlocked.Exchange(ref AvailableBuffer, null) ?? new T[BufferSize];
-        }
-
-        public void MarkAsReturned(T[] buffer)
-        {
-            if (buffer.Length == BufferSize) {
-                Interlocked.CompareExchange(ref AvailableBuffer, buffer, null);
-            }
-        }
-
-        public bool MayNeedReturning(T[] buffer)
-        {
-            return AvailableBuffer == null
-                && buffer.Length == BufferSize;
-        }
-    }
-
     /// <summary>
     /// Mutable **value** type which provides basic array
     /// builder functionality with minimal allocations.
@@ -41,10 +10,17 @@ namespace Kirkin.Collections.Generic
     /// </summary>
     internal struct PooledArrayBuilder<T>
     {
+        private const int DefaultCapacity = 8;
         private static readonly ArrayPool<T> BufferPool = ArrayPool<T>.Shared;
 
         private T[] items;
         private int count;
+
+        public PooledArrayBuilder(int capacity)
+        {
+            items = BufferPool.Rent(capacity);
+            count = 0;
+        }
 
         /// <summary>
         /// Gets the number of items already in the builder.
@@ -67,7 +43,7 @@ namespace Kirkin.Collections.Generic
         {
             if (items == null)
             {
-                items = BufferPool.Borrow();
+                items = BufferPool.Rent(DefaultCapacity);
             }
             else if (items.Length == count)
             {
@@ -85,7 +61,7 @@ namespace Kirkin.Collections.Generic
             T[] newItems = new T[count * 2];
 
             Array.Copy(items, 0, newItems, 0, count);
-            BufferPool.MarkAsReturned(items);
+            BufferPool.Return(items);
 
             items = newItems;
         }
@@ -95,7 +71,7 @@ namespace Kirkin.Collections.Generic
         /// Throws if the underlying array is not
         /// initialized or its capacity exceeded.
         /// </summary>
-        public void UnsafeAdd(T item)
+        public void FastAdd(T item)
         {
             items[count++] = item;
         }
@@ -106,7 +82,7 @@ namespace Kirkin.Collections.Generic
         public T[] ToArray()
         {
             if (count == 0) return Array<T>.Empty;
-            if (items.Length == count && !BufferPool.MayNeedReturning(items)) return items;
+            //if (items.Length == count && !BufferPool.MayNeedReturning(items)) return items;
 
             return ToArraySlow();
         }
@@ -119,7 +95,7 @@ namespace Kirkin.Collections.Generic
             T[] result = new T[count];
 
             Array.Copy(items, 0, result, 0, count);
-            BufferPool.MarkAsReturned(items);
+            BufferPool.Return(items);
 
             return result;
         }
