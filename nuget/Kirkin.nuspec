@@ -18,6 +18,6 @@
     <file src="..\src\Build\Kirkin-NET_45\bin\Release\Kirkin.dll" target="lib\net45" />
     <file src="..\src\Build\Kirkin-NET_45\bin\Release\Kirkin.xml" target="lib\net45" />
     <file src="..\src\Build\Kirkin-NetStandard\bin\Release\netstandard2.0\Kirkin.dll" target="lib\netstandard2.0" />
-    <file src="..\src\Build\Kirkin-NETStandard\bin\Release\netstandard2.0\Kirkin.xml" target="lib\netstandard2.0" />
+    <file src="..\src\Build\Kirkin-NetStandard\bin\Release\netstandard2.0\Kirkin.xml" target="lib\netstandard2.0" />
   </files>
 </package>
