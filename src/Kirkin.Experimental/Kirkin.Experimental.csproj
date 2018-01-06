@@ -45,10 +45,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Buffers\ArrayPool.cs" />
-    <Compile Include="Buffers\ArrayPoolBucket.cs" />
-    <Compile Include="Buffers\DefaultArrayPool.cs" />
-    <Compile Include="Buffers\Utilities.cs" />
     <Compile Include="Caching\InFlightKeyValueCache.cs" />
     <Compile Include="Caching\IValueFactoryContainer.cs" />
     <Compile Include="Caching\FileCache.cs" />
