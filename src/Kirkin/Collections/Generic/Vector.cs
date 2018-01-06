@@ -44,6 +44,7 @@ namespace Kirkin.Collections.Generic
     /// This is not original work.
     /// Large chunks are borrowed from System.Collections.Immutable.ImmutableArray{T}.
     /// </remarks>
+    [Obsolete("Use ImmutableArray instead.")]
     public static class Vector
     {
         #region Factory methods
@@ -157,7 +158,8 @@ namespace Kirkin.Collections.Generic
     /// </summary>
     /// <remarks>
     /// Portable alternative to System.Collections.Immutable.ImmutableArray{T}.
-    /// </remarks>
+    /// </remarks>-
+    [Obsolete("Use ImmutableArray<T> instead.")]
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public struct Vector<T>
         : IList<T>, IEquatable<Vector<T>>
@@ -575,6 +577,8 @@ namespace Kirkin.Collections.Generic
         #endregion
     }
 }
+
+#pragma warning disable CS0618 // Type or member is obsolete
 
 namespace System.Linq
 {
@@ -1134,3 +1138,5 @@ namespace System.Linq
         }
     }
 }
+
+#pragma warning restore CS0618 // Type or member is obsolete
