@@ -1,14 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+
+using Kirkin.Linq.Expressions;
 
 namespace Kirkin.DataAnalysis
 {
     public sealed class PropertyValueSet
     {
+        public static PropertyValueSet FromCollection<TElement, TValue>(IEnumerable<TElement> collection, Expression<Func<TElement, TValue>> selector)
+        {
+            PropertyInfo property = ExpressionUtil.Property(selector);
+            Func<TElement, TValue> compiledSelector = selector.Compile();
+
+            return new PropertyValueSet {
+                Property = property,
+                Values = collection
+                    .Select(compiledSelector)
+                    .GroupBy(v => v, (v, occurrences) => new ValueCount { Value = v, Count = occurrences.Count() })
+                    .ToArray()
+            };
+        }
+
         public PropertyInfo Property { get; set; }
         public ValueCount[] Values { get; set; }
 
@@ -94,9 +109,9 @@ namespace Kirkin.DataAnalysis
 
         private static IDataAnalyzer ResolveAnalyzer(PropertyValueSet stat)
         {
-            if (stat.Values.Length <= 10) {
-                return new EnumAnalyzer();
-            }
+            //if (stat.Values.Length <= 10) {
+            //    return new EnumAnalyzer();
+            //}
 
             Type propertyType = stat.Property.PropertyType;
 
