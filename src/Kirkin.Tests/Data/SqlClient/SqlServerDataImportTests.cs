@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 
 using Kirkin.Data;
@@ -16,12 +17,12 @@ namespace Kirkin.Tests.Data.SqlClient
             IntegratedSecurity = true
         }.ToString();
 
-        //public SqlServerDataImportTests()
-        //{
-        //    if (!Environment.MachineName.Equals("KIRKINPUTER", StringComparison.OrdinalIgnoreCase)) {
-        //        Assert.Ignore("This test only runs on KIRKINPUTER.");
-        //    }
-        //}
+        public SqlServerDataImportTests()
+        {
+            if (!Environment.MachineName.Equals("KIRKINPUTER", StringComparison.OrdinalIgnoreCase)) {
+                Assert.Ignore("This test only runs on KIRKINPUTER.");
+            }
+        }
 
         [Test]
         public void BasicTestConnectionString()
