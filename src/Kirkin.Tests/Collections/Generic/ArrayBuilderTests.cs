@@ -19,6 +19,8 @@ namespace Kirkin.Tests.Collections.Generic
         {
             new ArrayBuilder<int>().Add(1);
             new ArrayBuilder<int>(1).FastAdd(1);
+            new PooledArrayBuilder<int>().Add(1);
+            new PooledArrayBuilder<int>(1).FastAdd(1);
             new List<int>().Add(1);
             ImmutableArray.Create(1);
         }
@@ -52,9 +54,35 @@ namespace Kirkin.Tests.Collections.Generic
         }
 
         [Test]
+        public void AddManyBenchmarkArrayBuilderPooled()
+        {
+            var builder = new PooledArrayBuilder<int>();
+
+            for (int i = 0; i < NumIterations; i++)
+            {
+                builder.Add(i);
+            }
+
+            builder.ToArray();
+        }
+
+        [Test]
         public void AddManyBenchmarkArrayBuilderWithCapacity()
         {
             var builder = new ArrayBuilder<int>(NumIterations);
+
+            for (int i = 0; i < NumIterations; i++)
+            {
+                builder.FastAdd(i);
+            }
+
+            builder.ToArray();
+        }
+
+        [Test]
+        public void AddManyBenchmarkArrayBuilderWithCapacityPooled()
+        {
+            var builder = new PooledArrayBuilder<int>(NumIterations);
 
             for (int i = 0; i < NumIterations; i++)
             {
@@ -131,9 +159,35 @@ namespace Kirkin.Tests.Collections.Generic
         }
 
         [Test]
+        public void AddManyBenchmarkLinqViaBuilderAddPooled()
+        {
+            var builder = new PooledArrayBuilder<int>();
+
+            foreach (var i in PreallocatedItems)
+            {
+                builder.Add(i);
+            }
+
+            builder.ToArray();
+        }
+
+        [Test]
         public void AddManyBenchmarkLinqViaBuilderAddWithCapacity()
         {
             var builder = new ArrayBuilder<int>(NumIterations);
+
+            foreach (var i in PreallocatedItems)
+            {
+                builder.FastAdd(i);
+            }
+
+            builder.ToArray();
+        }
+
+        [Test]
+        public void AddManyBenchmarkLinqViaBuilderAddWithCapacityPooled()
+        {
+            var builder = new PooledArrayBuilder<int>(NumIterations);
 
             foreach (var i in PreallocatedItems)
             {
@@ -192,11 +246,33 @@ namespace Kirkin.Tests.Collections.Generic
         }
 
         [Test]
+        public void AddOneBenchmarkArrayBuilderPooled()
+        {
+            for (int i = 0; i < NumIterations; i++)
+            {
+                var builder = new PooledArrayBuilder<int>();
+
+                builder.Add(i);
+            }
+        }
+
+        [Test]
         public void AddOneBenchmarkArrayBuilderWithCapacity()
         {
             for (int i = 0; i < NumIterations; i++)
             {
                 var builder = new ArrayBuilder<int>(1);
+
+                builder.FastAdd(i);
+            }
+        }
+
+        [Test]
+        public void AddOneBenchmarkArrayBuilderWithCapacityPooled()
+        {
+            for (int i = 0; i < NumIterations; i++)
+            {
+                var builder = new PooledArrayBuilder<int>(1);
 
                 builder.FastAdd(i);
             }
