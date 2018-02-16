@@ -191,6 +191,20 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
+        public void ColumnExists()
+        {
+            DataTableLite table = new DataTableLite();
+
+            Assert.False(table.Columns.Exists("zzz"));
+            Assert.False(table.Columns.Exists("ZZZ"));
+
+            table.Columns.Add("zzz", typeof(int));
+
+            Assert.True(table.Columns.Exists("zzz"));
+            Assert.True(table.Columns.Exists("ZZZ"));
+        }
+
+        [Test]
         public void IterationPerfLite()
         {
             DataTableLite dt = CreateDataTableLite(1000);

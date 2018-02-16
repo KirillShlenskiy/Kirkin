@@ -46,6 +46,14 @@ namespace Kirkin.Data
             return column;
         }
 
+        /// <summary>
+        /// Returns true if a column with the given name is present in the collection.
+        /// </summary>
+        public bool Exists(string name)
+        {
+            return _columnNameToIndexMappings.ContainsKey(name);
+        }
+
         protected override void ClearItems()
         {
             base.ClearItems();
