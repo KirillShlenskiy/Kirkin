@@ -3,7 +3,7 @@
     /// <summary>
     /// Lightweight DataTable-like data structure.
     /// </summary>
-    public sealed class DataTableLite
+    public class DataTableLite
     {
         /// <summary>
         /// Collection of column definitions in this table.
@@ -22,6 +22,14 @@
         {
             Columns = new DataColumnLiteCollection(this);
             Rows = new DataRowLiteCollection(this);
+        }
+
+        /// <summary>
+        /// New row instance factory method.
+        /// </summary>
+        protected internal virtual DataRowLite CreateNewRow()
+        {
+            return new DataRowLite(this);
         }
     }
 }

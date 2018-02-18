@@ -7,9 +7,11 @@ namespace Kirkin.Data
     /// <summary>
     /// Lightweight DataRow-like data structure.
     /// </summary>
-    public sealed class DataRowLite
+    public class DataRowLite
     {
         private readonly DataColumnLiteCollection _columns;
+
+        // Set when this instance is added to the row collection.
         internal int _rowIndex;
 
         /// <summary>
@@ -68,10 +70,9 @@ namespace Kirkin.Data
             }
         }
 
-        internal DataRowLite(DataTableLite table, int rowIndex)
+        internal DataRowLite(DataTableLite table)
         {
             _columns = table.Columns;
-            _rowIndex = rowIndex;
         }
 
         /// <summary>

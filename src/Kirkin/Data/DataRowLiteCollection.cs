@@ -58,7 +58,9 @@ namespace Kirkin.Data
         {
             EnsureSufficientCapacityForAdd();
 
-            DataRowLite row = new DataRowLite(Table, Count);
+            DataRowLite row = Table.CreateNewRow();
+
+            row._rowIndex = Count;
 
             _rows.Add(row);
 
@@ -75,7 +77,9 @@ namespace Kirkin.Data
 
             EnsureSufficientCapacityForAdd();
 
-            DataRowLite row = new DataRowLite(Table, Count);
+            DataRowLite row = Table.CreateNewRow();
+
+            row._rowIndex = Count;
 
             for (int i = 0; i < itemArray.Length; i++) {
                 row[i] = itemArray[i];
