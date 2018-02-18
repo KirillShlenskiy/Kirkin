@@ -10,6 +10,11 @@ namespace Kirkin.Data
     public sealed class DataColumnLite
     {
         /// <summary>
+        /// Table which this column belongs to.
+        /// </summary>
+        private DataTableLite _table;
+
+        /// <summary>
         /// Name of the column. Cannot be null.
         /// </summary>
         public string ColumnName { get; }
@@ -42,6 +47,16 @@ namespace Kirkin.Data
             Type columnStorageType = typeof(ColumnData<>).MakeGenericType(type);
 
             return (IColumnData)Activator.CreateInstance(columnStorageType);
+        }
+
+        internal void SetOwner(DataTableLite table)
+        {
+            if (_table != null && table != _table) {
+                throw new InvalidOperationException("The column already belongs to another table.");
+            }
+
+            _table = table;
+            Data.Capacity = table.Rows.Count;
         }
     }
 }

@@ -79,11 +79,11 @@ namespace Kirkin.Data
         /// </summary>
         protected override void InsertItem(int index, DataColumnLite item)
         {
+            item.SetOwner(Table);
+
             base.InsertItem(index, item);
 
             RefreshColumnOrdinalMappings();
-
-            item.Data.Capacity = Table.Rows.Capacity;
         }
 
         /// <summary>
@@ -101,11 +101,11 @@ namespace Kirkin.Data
         /// </summary>
         protected override void SetItem(int index, DataColumnLite item)
         {
+            item.SetOwner(Table);
+
             base.SetItem(index, item);
 
             RefreshColumnOrdinalMappings();
-
-            item.Data.Capacity = Table.Rows.Capacity;
         }
 
         private void RefreshColumnOrdinalMappings()
