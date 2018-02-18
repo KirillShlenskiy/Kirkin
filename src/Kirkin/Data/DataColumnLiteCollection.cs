@@ -13,7 +13,8 @@ namespace Kirkin.Data
         /// </summary>
         internal readonly DataTableLite Table;
 
-        private Dictionary<string, DataColumnLite> _columnMappings;
+        private Dictionary<string, DataColumnLite> _columnMappingsFast;
+        private Dictionary<string, DataColumnLite> _columnMappingsSlow;
 
         /// <summary>
         /// Resolves the column with the specified name.
@@ -22,7 +23,12 @@ namespace Kirkin.Data
         {
             get
             {
-                return _columnMappings[name];
+                // This is the trick the DataTable System.Data.DataColumnCollection uses.
+                // Case-sensitive lookup is vastly faster than non-case-sensitive, so we'll use
+                // it first, and if it fails - fall back to the costly non-case-sensitive lookup.
+                return _columnMappingsFast.TryGetValue(name, out DataColumnLite column)
+                    ? column
+                    : _columnMappingsSlow[name];
             }
         }
 
@@ -50,7 +56,8 @@ namespace Kirkin.Data
         /// </summary>
         public bool Contains(string name)
         {
-            return _columnMappings.ContainsKey(name);
+            return _columnMappingsFast.ContainsKey(name)
+                || _columnMappingsSlow.ContainsKey(name);
         }
 
         protected override void ClearItems()
@@ -87,22 +94,24 @@ namespace Kirkin.Data
 
         private void RefreshColumnOrdinalMappings()
         {
-            Dictionary<string, DataColumnLite> dict = new Dictionary<string, DataColumnLite>(Count, StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, DataColumnLite> columnMappingsFast = new Dictionary<string, DataColumnLite>(Count);
+            Dictionary<string, DataColumnLite> columnMappingsSlow = new Dictionary<string, DataColumnLite>(Count, StringComparer.OrdinalIgnoreCase);
 
             for (int i = 0; i < Count; i++)
             {
                 DataColumnLite column = this[i];
 
-                dict.Add(column.ColumnName, column);
+                columnMappingsFast.Add(column.ColumnName, column);
+                columnMappingsSlow.Add(column.ColumnName, column);
             }
 
-            _columnMappings = dict;
+            _columnMappingsFast = columnMappingsFast;
+            _columnMappingsSlow = columnMappingsSlow;
         }
 
         internal IColumnData GetColumnData(string columnName)
         {
-            //return this[_columnNameToIndexMappings[columnName]].Data;
-            return _columnMappings[columnName].Data;
+            return this[columnName].Data;
         }
     }
 }
