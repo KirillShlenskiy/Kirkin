@@ -291,6 +291,36 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
+        public void ValueAccessByNameWithExactTypeLite16Columns()
+        {
+            DataTableLite dt = CreateDataTableLite(1, 14);
+            DataRowLite row = dt.Rows[0];
+            int id;
+            string value;
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                id = row.GetValue<int>("ID");
+                value = row.GetValue<string>("Value");
+            }
+        }
+
+        [Test]
+        public void ValueAccessByNameWithExactTypeRegular16Columns()
+        {
+            DataTable dt = CreateDataTableRegular(1, 14);
+            DataRow row = dt.Rows[0];
+            int id;
+            string value;
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                id = row.Field<int>("ID");
+                value = row.Field<string>("Value");
+            }
+        }
+
+        [Test]
         public void ValueAccessByIndexBoxedLite()
         {
             DataTableLite dt = CreateDataTableLite(1);
