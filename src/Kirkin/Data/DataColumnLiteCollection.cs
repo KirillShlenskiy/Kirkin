@@ -13,8 +13,7 @@ namespace Kirkin.Data
         /// </summary>
         internal readonly DataTableLite Table;
 
-        private Dictionary<string, int> _columnNameToIndexMappings;
-        private Dictionary<string, IColumnData> _columnNameToDataMappings;
+        private Dictionary<string, DataColumnLite> _columnMappings;
 
         /// <summary>
         /// Resolves the column with the specified name.
@@ -23,7 +22,7 @@ namespace Kirkin.Data
         {
             get
             {
-                return this[_columnNameToIndexMappings[name]];
+                return _columnMappings[name];
             }
         }
 
@@ -49,9 +48,9 @@ namespace Kirkin.Data
         /// <summary>
         /// Returns true if a column with the given name is present in the collection.
         /// </summary>
-        public bool Exists(string name)
+        public bool Contains(string name)
         {
-            return _columnNameToIndexMappings.ContainsKey(name);
+            return _columnMappings.ContainsKey(name);
         }
 
         protected override void ClearItems()
@@ -88,23 +87,22 @@ namespace Kirkin.Data
 
         private void RefreshColumnOrdinalMappings()
         {
-            Dictionary<string, int> dict1 = new Dictionary<string, int>(Count, StringComparer.OrdinalIgnoreCase);
-            Dictionary<string, IColumnData> dict2 = new Dictionary<string, IColumnData>(Count, StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, DataColumnLite> dict = new Dictionary<string, DataColumnLite>(Count, StringComparer.OrdinalIgnoreCase);
 
             for (int i = 0; i < Count; i++)
             {
-                dict1.Add(this[i].ColumnName, i);
-                dict2.Add(this[i].ColumnName, this[i].Data);
+                DataColumnLite column = this[i];
+
+                dict.Add(column.ColumnName, column);
             }
 
-            _columnNameToIndexMappings = dict1;
-            _columnNameToDataMappings = dict2;
+            _columnMappings = dict;
         }
 
         internal IColumnData GetColumnData(string columnName)
         {
             //return this[_columnNameToIndexMappings[columnName]].Data;
-            return _columnNameToDataMappings[columnName];
+            return _columnMappings[columnName].Data;
         }
     }
 }

@@ -195,13 +195,13 @@ namespace Kirkin.Tests.Data
         {
             DataTableLite table = new DataTableLite();
 
-            Assert.False(table.Columns.Exists("zzz"));
-            Assert.False(table.Columns.Exists("ZZZ"));
+            Assert.False(table.Columns.Contains("zzz"));
+            Assert.False(table.Columns.Contains("ZZZ"));
 
             table.Columns.Add("zzz", typeof(int));
 
-            Assert.True(table.Columns.Exists("zzz"));
-            Assert.True(table.Columns.Exists("ZZZ"));
+            Assert.True(table.Columns.Contains("zzz"));
+            Assert.True(table.Columns.Contains("ZZZ"));
         }
 
         [Test]
