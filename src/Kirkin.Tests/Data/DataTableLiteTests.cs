@@ -231,7 +231,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void ValueAccessByIndexWithExactTypeLite()
+        public void ValueAccessByIndex_WithExactType_Lite()
         {
             DataTableLite dt = CreateDataTableLite(1);
             DataRowLite row = dt.Rows[0];
@@ -246,7 +246,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void ValueAccessByIndexWithExactTypeRegular()
+        public void ValueAccessByIndex_WithExactType_Regular()
         {
             DataTable dt = CreateDataTableRegular(1);
             DataRow row = dt.Rows[0];
@@ -261,7 +261,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void ValueAccessByNameWithExactTypeLite()
+        public void ValueAccessByNameWithExactType_Lite()
         {
             DataTableLite dt = CreateDataTableLite(1);
             DataRowLite row = dt.Rows[0];
@@ -276,7 +276,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void ValueAccessByNameWithExactTypeRegular()
+        public void ValueAccessByNameWithExactType_Regular()
         {
             DataTable dt = CreateDataTableRegular(1);
             DataRow row = dt.Rows[0];
@@ -291,7 +291,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void ValueAccessByNameWithExactTypeLite16Columns()
+        public void ValueAccessByNameWithExactType_16Columns_Lite()
         {
             DataTableLite dt = CreateDataTableLite(1, 14);
             DataRowLite row = dt.Rows[0];
@@ -306,7 +306,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void ValueAccessByNameWithExactTypeRegular16Columns()
+        public void ValueAccessByNameWithExactType_16Columns_Regular()
         {
             DataTable dt = CreateDataTableRegular(1, 14);
             DataRow row = dt.Rows[0];
@@ -321,7 +321,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void ValueAccessByIndexBoxedLite()
+        public void ValueAccessByIndex_Boxed_Lite()
         {
             DataTableLite dt = CreateDataTableLite(1);
             DataRowLite row = dt.Rows[0];
@@ -336,7 +336,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void ValueAccessByIndexBoxedRegular()
+        public void ValueAccessByIndex_Boxed_Regular()
         {
             DataTable dt = CreateDataTableRegular(1);
             DataRow row = dt.Rows[0];
@@ -351,7 +351,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void ValueAccessByNameBoxedLite()
+        public void ValueAccessByName_Boxed_Lite()
         {
             DataTableLite dt = CreateDataTableLite(1);
             DataRowLite row = dt.Rows[0];
@@ -366,7 +366,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void ValueAccessByNameBoxedLiteCaseMismatch()
+        public void ValueAccessByName_Boxed_CaseMismatch_Lite()
         {
             DataTableLite dt = CreateDataTableLite(1);
             DataRowLite row = dt.Rows[0];
@@ -381,7 +381,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void ValueAccessByNameBoxedRegular()
+        public void ValueAccessByName_Boxed_Regular()
         {
             DataTable dt = CreateDataTableRegular(1);
             DataRow row = dt.Rows[0];
@@ -396,7 +396,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void ValueAccessByNameBoxedRegularCaseMismatch()
+        public void ValueAccessByName_Boxed_CaseMismatch_Regular()
         {
             DataTable dt = CreateDataTableRegular(1);
             DataRow row = dt.Rows[0];
@@ -411,7 +411,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void ValueAccessByNameBoxedLite16Columns()
+        public void ValueAccessByName_Boxed_16Columns_Lite()
         {
             DataTableLite dt = CreateDataTableLite(1, 14);
             DataRowLite row = dt.Rows[0];
@@ -426,7 +426,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void ValueAccessByNameBoxedLite16ColumnsCaseMismatch()
+        public void ValueAccessByName_Boxed_16Columns_CaseMismatch_Lite()
         {
             DataTableLite dt = CreateDataTableLite(1, 14);
             DataRowLite row = dt.Rows[0];
@@ -441,7 +441,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void ValueAccessByNameBoxedRegular16Columns()
+        public void ValueAccessByName_Boxed_16Columns_Regular()
         {
             DataTable dt = CreateDataTableRegular(1, 14);
             DataRow row = dt.Rows[0];
@@ -456,7 +456,7 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
-        public void ValueAccessByNameBoxedRegular16ColumnsCaseMismatch()
+        public void ValueAccessByName_Boxed_16Columns_CaseMismatch_Regular()
         {
             DataTable dt = CreateDataTableRegular(1, 14);
             DataRow row = dt.Rows[0];
