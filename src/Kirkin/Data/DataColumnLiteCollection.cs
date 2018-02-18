@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
+using Kirkin.Collections.Generic.Enumerators;
 using Kirkin.Data.Internal;
 
 namespace Kirkin.Data
@@ -128,6 +129,14 @@ namespace Kirkin.Data
         internal IColumnData GetColumnData(string columnName)
         {
             return this[columnName].Data;
+        }
+
+        /// <summary>
+        /// Returns the struct enumerator over the underlying collection.
+        /// </summary>
+        public new ListEnumerator<DataColumnLite> GetEnumerator()
+        {
+            return new ListEnumerator<DataColumnLite>((List<DataColumnLite>)Items);
         }
     }
 }
