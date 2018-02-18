@@ -366,6 +366,21 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
+        public void ValueAccessByNameBoxedLiteCaseMismatch()
+        {
+            DataTableLite dt = CreateDataTableLite(1);
+            DataRowLite row = dt.Rows[0];
+            int id;
+            string value;
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                id = (int)row["id"];
+                value = (string)row["value"];
+            }
+        }
+
+        [Test]
         public void ValueAccessByNameBoxedRegular()
         {
             DataTable dt = CreateDataTableRegular(1);
@@ -377,6 +392,21 @@ namespace Kirkin.Tests.Data
             {
                 id = (int)row["ID"];
                 value = (string)row["Value"];
+            }
+        }
+
+        [Test]
+        public void ValueAccessByNameBoxedRegularCaseMismatch()
+        {
+            DataTable dt = CreateDataTableRegular(1);
+            DataRow row = dt.Rows[0];
+            int id;
+            string value;
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                id = (int)row["id"];
+                value = (string)row["value"];
             }
         }
 
@@ -396,6 +426,21 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
+        public void ValueAccessByNameBoxedLite16ColumnsCaseMismatch()
+        {
+            DataTableLite dt = CreateDataTableLite(1, 14);
+            DataRowLite row = dt.Rows[0];
+            int id;
+            string value;
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                id = (int)row["id"];
+                value = (string)row["value"];
+            }
+        }
+
+        [Test]
         public void ValueAccessByNameBoxedRegular16Columns()
         {
             DataTable dt = CreateDataTableRegular(1, 14);
@@ -407,6 +452,21 @@ namespace Kirkin.Tests.Data
             {
                 id = (int)row["ID"];
                 value = (string)row["Value"];
+            }
+        }
+
+        [Test]
+        public void ValueAccessByNameBoxedRegular16ColumnsCaseMismatch()
+        {
+            DataTable dt = CreateDataTableRegular(1, 14);
+            DataRow row = dt.Rows[0];
+            int id;
+            string value;
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                id = (int)row["id"];
+                value = (string)row["value"];
             }
         }
 

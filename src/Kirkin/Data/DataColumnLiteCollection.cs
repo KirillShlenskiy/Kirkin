@@ -6,6 +6,9 @@ using Kirkin.Data.Internal;
 
 namespace Kirkin.Data
 {
+    /// <summary>
+    /// <see cref="DataColumnLite"/> collection.
+    /// </summary>
     public sealed class DataColumnLiteCollection : Collection<DataColumnLite>
     {
         /// <summary>
@@ -23,9 +26,10 @@ namespace Kirkin.Data
         {
             get
             {
-                // This is the trick the DataTable System.Data.DataColumnCollection uses.
-                // Case-sensitive lookup is vastly faster than non-case-sensitive, so we'll use
-                // it first, and if it fails - fall back to the costly non-case-sensitive lookup.
+                // This is the trick System.Data.DataColumnCollection uses.
+                // Case-sensitive lookup is much faster than non-case-sensitive
+                // lookup, so we'll run it first, and if we don't succeed - use
+                // the more costly non-case-sensitive lookup as fallback.
                 return _columnMappingsFast.TryGetValue(name, out DataColumnLite column)
                     ? column
                     : _columnMappingsSlow[name];
@@ -60,6 +64,9 @@ namespace Kirkin.Data
                 || _columnMappingsSlow.ContainsKey(name);
         }
 
+        /// <summary>
+        /// Removes all elements from the collection.
+        /// </summary>
         protected override void ClearItems()
         {
             base.ClearItems();
@@ -67,6 +74,9 @@ namespace Kirkin.Data
             RefreshColumnOrdinalMappings();
         }
 
+        /// <summary>
+        /// Inserts an element into the collection at the specified index.
+        /// </summary>
         protected override void InsertItem(int index, DataColumnLite item)
         {
             base.InsertItem(index, item);
@@ -76,6 +86,9 @@ namespace Kirkin.Data
             item.Data.Capacity = Table.Rows.Capacity;
         }
 
+        /// <summary>
+        /// Removes the element at the specified index from the collection.
+        /// </summary>
         protected override void RemoveItem(int index)
         {
             base.RemoveItem(index);
@@ -83,6 +96,9 @@ namespace Kirkin.Data
             RefreshColumnOrdinalMappings();
         }
 
+        /// <summary>
+        /// Replaces the element at the specified index.
+        /// </summary>
         protected override void SetItem(int index, DataColumnLite item)
         {
             base.SetItem(index, item);
