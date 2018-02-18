@@ -351,6 +351,36 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
+        public void ValueAccessByNameBoxedLite16Columns()
+        {
+            DataTableLite dt = CreateDataTableLite(1, 14);
+            DataRowLite row = dt.Rows[0];
+            int id;
+            string value;
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                id = (int)row["ID"];
+                value = (string)row["Value"];
+            }
+        }
+
+        [Test]
+        public void ValueAccessByNameBoxedRegular16Columns()
+        {
+            DataTable dt = CreateDataTableRegular(1, 14);
+            DataRow row = dt.Rows[0];
+            int id;
+            string value;
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                id = (int)row["ID"];
+                value = (string)row["Value"];
+            }
+        }
+
+        [Test]
         public void MemPressureLite()
         {
             GC.Collect();
@@ -394,7 +424,7 @@ namespace Kirkin.Tests.Data
             GC.KeepAlive(dt);
         }
 
-        private static DataTableLite CreateDataTableLite(int rowCount)
+        private static DataTableLite CreateDataTableLite(int rowCount, int additionalColumns = 0)
         {
             DataTableLite dt = new DataTableLite();
 
@@ -405,10 +435,14 @@ namespace Kirkin.Tests.Data
                 dt.Rows.Add(i, i.ToString());
             }
 
+            for (int i = 0; i < additionalColumns; i++) {
+                dt.Columns.Add($"Col{i + 1}", typeof(int));
+            }
+
             return dt;
         }
 
-        private static DataTable CreateDataTableRegular(int rowCount)
+        private static DataTable CreateDataTableRegular(int rowCount, int additionalColumns = 0)
         {
             DataTable dt = new DataTable();
 
@@ -417,6 +451,10 @@ namespace Kirkin.Tests.Data
 
             for (int i = 0; i < rowCount; i++) {
                 dt.Rows.Add(i, i.ToString());
+            }
+
+            for (int i = 0; i < additionalColumns; i++) {
+                dt.Columns.Add($"Col{i + 1}", typeof(int));
             }
 
             return dt;
