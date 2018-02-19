@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle("Kirkin")]
 [assembly: AssemblyProduct("Kirkin")]
 [assembly: AssemblyCompany("Kirill Shlenskiy")]
-[assembly: AssemblyVersion("1.1.0")]
+[assembly: AssemblyVersion("1.2.0")]
 #endif
 
 // Allow unit testing internal members.
