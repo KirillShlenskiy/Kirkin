@@ -514,6 +514,38 @@ namespace Kirkin.Tests.Data
             GC.KeepAlive(dt);
         }
 
+        [Test]
+        public void DeleteRow()
+        {
+            DataTableLite table = CreateDataTableLite(10);
+
+            Assert.AreEqual(10, table.Rows.Count);
+
+            for (int i = 0; i < table.Rows.Count; i++) {
+                Assert.AreEqual(i, table.Rows[i][0]);
+            }
+
+            table.Rows.Remove(table.Rows[0]);
+
+            Assert.AreEqual(9, table.Rows.Count);
+
+            for (int i = 0; i < table.Rows.Count; i++) {
+                Assert.AreEqual(i + 1, table.Rows[i][0]);
+            }
+
+            table.Rows.Remove(table.Rows[4]);
+
+            Assert.AreEqual(8, table.Rows.Count);
+            Assert.AreEqual(1, table.Rows[0][0]);
+            Assert.AreEqual(2, table.Rows[1][0]);
+            Assert.AreEqual(3, table.Rows[2][0]);
+            Assert.AreEqual(4, table.Rows[3][0]);
+            Assert.AreEqual(6, table.Rows[4][0]);
+            Assert.AreEqual(7, table.Rows[5][0]);
+            Assert.AreEqual(8, table.Rows[6][0]);
+            Assert.AreEqual(9, table.Rows[7][0]);
+        }
+
         private static DataTableLite CreateDataTableLite(int rowCount, int additionalColumns = 0)
         {
             DataTableLite dt = new DataTableLite();
