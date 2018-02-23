@@ -552,6 +552,22 @@ namespace Kirkin.Tests.Data
             for (int i = 0; i < table.Rows.Count; i++) {
                 Assert.AreEqual(i + 1, table.Rows[i][0]);
             }
+
+            table.Rows.Insert(9, 10, "Inserted at the end");
+
+            Assert.AreEqual(10, table.Rows.Count);
+
+            for (int i = 0; i < table.Rows.Count; i++) {
+                Assert.AreEqual(i + 1, table.Rows[i][0]);
+            }
+
+            table.Rows.Add(11, "Added at the end");
+
+            Assert.AreEqual(11, table.Rows.Count);
+
+            for (int i = 0; i < table.Rows.Count; i++) {
+                Assert.AreEqual(i + 1, table.Rows[i][0]);
+            }
         }
 
         private static DataTableLite CreateDataTableLite(int rowCount, int additionalColumns = 0)
