@@ -75,17 +75,40 @@ namespace Kirkin.Data
             if (itemArray == null) throw new ArgumentNullException(nameof(itemArray));
             if (itemArray.Length != Table.Columns.Count) throw new ArgumentException("Item array length/column number mismatch.");
 
+            return Insert(_rows.Count, itemArray);
+        }
+
+        /// <summary>
+        /// Creates a new row from the given item array and inserts it into the table at the given index.
+        /// </summary>
+        public DataRowLite Insert(int index, params object[] itemArray)
+        {
+            if (itemArray == null) throw new ArgumentNullException(nameof(itemArray));
+            if (itemArray.Length != Table.Columns.Count) throw new ArgumentException("Item array length/column number mismatch.");
+
             EnsureSufficientCapacityForAdd();
 
             DataRowLite row = Table.CreateNewRow();
 
-            row._rowIndex = Count;
+            row._rowIndex = index;
 
+            _rows.Insert(index, row);
+
+            // Fix up the indexes of all following rows.
+            for (int i = index + 1; i < _rows.Count; i++) {
+                _rows[i]._rowIndex = i;
+            }
+
+            // Move the data one level down.
+            for (int i = _rows.Count - 1; i > index; i--)
+            for (int j = 0; j < Table.Columns.Count; j++) {
+                _rows[i][j] = _rows[i - 1][j];
+            }
+
+            // Fill the new row.
             for (int i = 0; i < itemArray.Length; i++) {
                 row[i] = itemArray[i];
             }
-
-            _rows.Add(row);
 
             return row;
         }

@@ -544,6 +544,14 @@ namespace Kirkin.Tests.Data
             Assert.AreEqual(7, table.Rows[5][0]);
             Assert.AreEqual(8, table.Rows[6][0]);
             Assert.AreEqual(9, table.Rows[7][0]);
+
+            table.Rows.Insert(4, 5, "Re-inserted");
+
+            Assert.AreEqual(9, table.Rows.Count);
+
+            for (int i = 0; i < table.Rows.Count; i++) {
+                Assert.AreEqual(i + 1, table.Rows[i][0]);
+            }
         }
 
         private static DataTableLite CreateDataTableLite(int rowCount, int additionalColumns = 0)
