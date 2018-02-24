@@ -1,40 +1,30 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 using Kirkin.Collections.Generic.Enumerators;
 
 namespace Kirkin.Data
 {
-    public sealed class DataRowLiteCollection : IEnumerable<DataRowLite>
+    /// <summary>
+    /// Row collection.
+    /// </summary>
+    public sealed class DataRowLiteCollection : Collection<DataRowLite>
     {
         private const int DEFAULT_CAPACITY = 16;
 
         private readonly DataTableLite Table;
-        private List<DataRowLite> _rows = new List<DataRowLite>(DEFAULT_CAPACITY);
         private int _capacity;
 
         internal DataRowLiteCollection(DataTableLite table)
+            : base(new List<DataRowLite>(DEFAULT_CAPACITY))
         {
             Table = table;
         }
 
-        public DataRowLite this[int index]
-        {
-            get
-            {
-                return _rows[index];
-            }
-        }
-
-        public int Count
-        {
-            get
-            {
-                return _rows.Count;
-            }
-        }
-
+        /// <summary>
+        /// Gets or sets the capacity of the data storage arrays.
+        /// </summary>
         internal int Capacity
         {
             get
@@ -62,7 +52,7 @@ namespace Kirkin.Data
 
             row._rowIndex = Count;
 
-            _rows.Add(row);
+            base.Add(row);
 
             return row;
         }
@@ -75,7 +65,32 @@ namespace Kirkin.Data
             if (itemArray == null) throw new ArgumentNullException(nameof(itemArray));
             if (itemArray.Length != Table.Columns.Count) throw new ArgumentException("Item array length/column number mismatch.");
 
-            return Insert(_rows.Count, itemArray);
+            return Insert(Count, itemArray);
+        }
+
+        /// <summary>
+        /// Inserts a row into the collection at the specified index.
+        /// </summary>
+        protected override void InsertItem(int index, DataRowLite item)
+        {
+            if (item.Table != Table) {
+                throw new ArgumentException("The given row does not belong to this table.");
+            }
+
+            base.InsertItem(index, item);
+
+            item._rowIndex = index;
+
+            // Fix up the indexes of all following rows.
+            for (int i = index + 1; i < Count; i++) {
+                this[i]._rowIndex = i;
+            }
+
+            // Move the data one level down.
+            for (int i = Count - 1; i > index; i--)
+            for (int j = 0; j < Table.Columns.Count; j++) {
+                this[i][j] = this[i - 1][j];
+            }
         }
 
         /// <summary>
@@ -90,20 +105,7 @@ namespace Kirkin.Data
 
             DataRowLite row = Table.CreateNewRow();
 
-            row._rowIndex = index;
-
-            _rows.Insert(index, row);
-
-            // Fix up the indexes of all following rows.
-            for (int i = index + 1; i < _rows.Count; i++) {
-                _rows[i]._rowIndex = i;
-            }
-
-            // Move the data one level down.
-            for (int i = _rows.Count - 1; i > index; i--)
-            for (int j = 0; j < Table.Columns.Count; j++) {
-                _rows[i][j] = _rows[i - 1][j];
-            }
+            InsertItem(index, row);
 
             // Fill the new row.
             for (int i = 0; i < itemArray.Length; i++) {
@@ -113,20 +115,11 @@ namespace Kirkin.Data
             return row;
         }
 
-        private void EnsureSufficientCapacityForAdd()
+        /// <summary>
+        /// Removes the row at the specified index of the collection.
+        /// </summary>
+        protected override void RemoveItem(int index)
         {
-            if (_rows.Count == _capacity)
-            {
-                int newCapacity = (_capacity == 0) ? DEFAULT_CAPACITY : _capacity * 2;
-
-                Capacity = newCapacity;
-            }
-        }
-
-        public void Remove(DataRowLite row)
-        {
-            int index = _rows.IndexOf(row);
-
             if (index == -1) {
                 throw new ArgumentException("The row does not belong to this collection.");
             }
@@ -135,41 +128,68 @@ namespace Kirkin.Data
                 column.Data.Remove(index);
             }
 
-            _rows.RemoveAt(index);
+            base.RemoveItem(index);
 
             // Fix up the indexes of the following rows.
-            for (int i = index; i < _rows.Count; i++) {
-                _rows[i]._rowIndex = i;
+            for (int i = index; i < Count; i++) {
+                this[i]._rowIndex = i;
             }
         }
 
-        public void Clear()
+        /// <summary>
+        /// Removes all rows from the collection.
+        /// </summary>
+        protected override void ClearItems()
         {
-            _rows.Clear();
+            foreach (DataRowLite row in this) {
+                row._rowIndex = -1;
+            }
+
+            base.ClearItems();
 
             Capacity = DEFAULT_CAPACITY;
         }
 
+        /// <summary>
+        /// Suppressed.
+        /// </summary>
+        protected override void SetItem(int index, DataRowLite item)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Sets the capacity to the actual number of elements in the collection.
+        /// </summary>
         public void TrimExcess()
         {
-            _rows.TrimExcess();
+            List<DataRowLite> items = (List<DataRowLite>)Items;
+
+            items.TrimExcess();
 
             Capacity = Count;
         }
 
+        /// <summary>
+        /// Returns a fast struct enumerator over this collection.
+        /// </summary>
+        /// <returns></returns>
         public ListEnumerator<DataRowLite> GetEnumerator()
         {
-            return new ListEnumerator<DataRowLite>(_rows);
+            return new ListEnumerator<DataRowLite>((List<DataRowLite>)Items);
         }
 
-        IEnumerator<DataRowLite> IEnumerable<DataRowLite>.GetEnumerator()
+        /// <summary>
+        /// Doubles the capacity of the data arrays if needed.
+        /// </summary>
+        private void EnsureSufficientCapacityForAdd()
         {
-            return _rows.GetEnumerator();
-        }
+            if (Count == _capacity)
+            {
+                int newCapacity = (_capacity == 0) ? DEFAULT_CAPACITY : _capacity * 2;
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _rows.GetEnumerator();
+                Capacity = newCapacity;
+            }
         }
     }
 }
