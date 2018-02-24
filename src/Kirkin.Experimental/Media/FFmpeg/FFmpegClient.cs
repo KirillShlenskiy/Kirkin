@@ -109,8 +109,7 @@ namespace Kirkin.Media.FFmpeg
                 UseShellExecute = false
             };
 
-            using (Process process = Process.Start(info))
-            using (ProcessScope scope = new ProcessScope(process))
+            using (Process process = ChildProcess.Start(info))
             {
                 process.EnableRaisingEvents = true;
 
@@ -149,8 +148,6 @@ namespace Kirkin.Media.FFmpeg
 
                     throw new FFmpegException($"FFMpeg exited with code {process.ExitCode}. {errorText?.TrimStart(' ', ':')}", process.ExitCode);
                 }
-
-                scope.Complete();
             }
         }
 
