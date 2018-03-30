@@ -174,7 +174,7 @@ namespace Kirkin.Data
         /// Returns a fast struct enumerator over this collection.
         /// </summary>
         /// <returns></returns>
-        public ListEnumerator<DataRowLite> GetEnumerator()
+        public new ListEnumerator<DataRowLite> GetEnumerator()
         {
             return new ListEnumerator<DataRowLite>((List<DataRowLite>)Items);
         }
