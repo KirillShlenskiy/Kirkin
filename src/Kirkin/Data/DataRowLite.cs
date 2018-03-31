@@ -172,6 +172,36 @@ namespace Kirkin.Data
         }
 
         /// <summary>
+        /// Sets the value of the cell at the specified index to null.
+        /// </summary>
+        public void SetNull(int columnIndex)
+        {
+            SetNullImpl(_columns[columnIndex].Data);
+        }
+
+        /// <summary>
+        /// Sets the value of the cell that belongs to the column with the specified name to null.
+        /// </summary>
+        public void SetNull(string columnName)
+        {
+            //return GetValue<T>(_columns[columnName]);
+            SetNullImpl(_columns.GetColumnData(columnName));
+        }
+
+        /// <summary>
+        /// Sets the value of the cell that belongs to the specified column to null.
+        /// </summary>
+        public void SetNull(DataColumnLite column)
+        {
+            SetNullImpl(column.Data);
+        }
+
+        private void SetNullImpl(IColumnData data)
+        {
+            data.SetNull(_rowIndex);
+        }
+
+        /// <summary>
         /// Sets the value of the cell at the specified index.
         /// </summary>
         public void SetValue<T>(int columnIndex, T value)

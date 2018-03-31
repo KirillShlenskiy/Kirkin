@@ -77,10 +77,12 @@ namespace Kirkin.Tests.Data
 
             DataRowLite row = dt.Rows.AddNewRow();
 
+            Assert.True(row.IsNull("ID"));
             Assert.AreEqual(DBNull.Value, row["ID"]);
 
             row.SetValue("ID", 1);
 
+            Assert.False(row.IsNull("ID"));
             Assert.AreEqual(1, row["ID"]);
 
             row.SetValue(0, 2);
@@ -90,6 +92,11 @@ namespace Kirkin.Tests.Data
             row.SetValue(dt.Columns["ID"], 3);
 
             Assert.AreEqual(3, row["ID"]);
+
+            row.SetNull("ID");
+
+            Assert.True(row.IsNull("ID"));
+            Assert.AreEqual(DBNull.Value, row["ID"]);
         }
 
         [Test]
