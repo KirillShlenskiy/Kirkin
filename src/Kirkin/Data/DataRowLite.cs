@@ -200,7 +200,7 @@ namespace Kirkin.Data
         {
             if (data is ColumnData<T> typedData)
             {
-                typedData.Set(_rowIndex, value);
+                typedData.SetValue(_rowIndex, value);
             }
             else
             {

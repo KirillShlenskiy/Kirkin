@@ -40,8 +40,15 @@ namespace Kirkin.Data.Internal
             return _array[index];
         }
 
-        public void Set(int index, T value)
+        public void SetNull(int index)
         {
+            _dbNullBits[index] = true;
+            _array[index] = default(T);
+        }
+
+        public void SetValue(int index, T value)
+        {
+            _dbNullBits[index] = false;
             _array[index] = value;
         }
 
@@ -74,13 +81,11 @@ namespace Kirkin.Data.Internal
         {
             if (value is DBNull)
             {
-                _dbNullBits[index] = true;
-                Set(index, default(T));
+                SetNull(index);
             }
             else
             {
-                _dbNullBits[index] = false;
-                Set(index, (T)value);
+                SetValue(index, (T)value);
             }
         }
     }
