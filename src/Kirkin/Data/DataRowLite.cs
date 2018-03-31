@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 using Kirkin.Data.Internal;
 
@@ -9,6 +10,8 @@ namespace Kirkin.Data
     /// </summary>
     public class DataRowLite
     {
+        #region Fields, properties, constructor
+
         private readonly DataColumnLiteCollection _columns;
 
         // Set when this instance is added to the row collection.
@@ -74,6 +77,10 @@ namespace Kirkin.Data
         {
             _columns = table.Columns;
         }
+
+        #endregion
+
+        #region GetValue
 
         /// <summary>
         /// Returns the value of the cell at the specified index.
@@ -141,6 +148,10 @@ namespace Kirkin.Data
             return (T)data.Get(_rowIndex);
         }
 
+        #endregion
+
+        #region IsNull
+
         /// <summary>
         /// Returns true if the value of the cell at the specified index is null.
         /// </summary>
@@ -171,6 +182,10 @@ namespace Kirkin.Data
             return data.IsNull(_rowIndex);
         }
 
+        #endregion
+
+        #region SetNull
+
         /// <summary>
         /// Sets the value of the cell at the specified index to null.
         /// </summary>
@@ -200,6 +215,10 @@ namespace Kirkin.Data
         {
             data.SetNull(_rowIndex);
         }
+
+        #endregion
+
+        #region SetValue
 
         /// <summary>
         /// Sets the value of the cell at the specified index.
@@ -237,5 +256,39 @@ namespace Kirkin.Data
                 data.Set(_rowIndex, value);
             }
         }
+
+        #endregion
+
+        #region ToString
+
+        /// <summary>
+        /// Returns a string representation of the row and its data.
+        /// </summary>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append('[');
+            sb.Append(_rowIndex);
+            sb.Append(']');
+            sb.Append(' ');
+
+            for (int i = 0; i < Table.Columns.Count; i++)
+            {
+                if (i != 0) {
+                    sb.Append(", ");
+                }
+
+                DataColumnLite column = Table.Columns[i];
+
+                sb.Append(column.ColumnName);
+                sb.Append(": ");
+                sb.Append(IsNull(column) ? "<null>" : this[column].ToString());
+            }
+
+            return sb.ToString();
+        }
+
+        #endregion
     }
 }
