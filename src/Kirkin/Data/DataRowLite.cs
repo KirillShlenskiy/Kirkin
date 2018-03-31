@@ -93,7 +93,7 @@ namespace Kirkin.Data
         }
 
         /// <summary>
-        /// Returns or sets the value of the cell that belongs to the specified column.
+        /// Returns the value of the cell that belongs to the specified column.
         /// </summary>
         public T GetValue<T>(DataColumnLite column)
         {
@@ -126,7 +126,7 @@ namespace Kirkin.Data
         }
 
         /// <summary>
-        /// Returns or sets the value of the cell that belongs to the specified column, or default value for type if the value is null.
+        /// Returns the value of the cell that belongs to the specified column, or default value for type if the value is null.
         /// </summary>
         public T GetValueOrDefault<T>(DataColumnLite column)
         {
@@ -169,6 +169,43 @@ namespace Kirkin.Data
         private bool IsNullImpl(IColumnData data)
         {
             return data.IsNull(_rowIndex);
+        }
+
+        /// <summary>
+        /// Sets the value of the cell at the specified index.
+        /// </summary>
+        public void SetValue<T>(int columnIndex, T value)
+        {
+            SetValueImpl(_columns[columnIndex].Data, value);
+        }
+
+        /// <summary>
+        /// Sets the value of the cell that belongs to the column with the specified name.
+        /// </summary>
+        public void SetValue<T>(string columnName, T value)
+        {
+            //return GetValue<T>(_columns[columnName]);
+            SetValueImpl(_columns.GetColumnData(columnName), value);
+        }
+
+        /// <summary>
+        /// Sets the value of the cell that belongs to the specified column.
+        /// </summary>
+        public void SetValue<T>(DataColumnLite column, T value)
+        {
+            SetValueImpl(column.Data, value);
+        }
+
+        private void SetValueImpl<T>(IColumnData data, T value)
+        {
+            if (data is ColumnData<T> typedData)
+            {
+                typedData.Set(_rowIndex, value);
+            }
+            else
+            {
+                data.Set(_rowIndex, value);
+            }
         }
     }
 }
