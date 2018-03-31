@@ -68,6 +68,31 @@ namespace Kirkin.Tests.Data
         }
 
         [Test]
+        public void DataRowLite_SetValue()
+        {
+            DataTableLite dt = new DataTableLite();
+
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("Value", typeof(string));
+
+            DataRowLite row = dt.Rows.AddNewRow();
+
+            Assert.AreEqual(DBNull.Value, row["ID"]);
+
+            row.SetValue("ID", 1);
+
+            Assert.AreEqual(1, row["ID"]);
+
+            row.SetValue(0, 2);
+
+            Assert.AreEqual(2, row["ID"]);
+
+            row.SetValue(dt.Columns["ID"], 3);
+
+            Assert.AreEqual(3, row["ID"]);
+        }
+
+        [Test]
         public void DataRowLite_GetValueNullable()
         {
             DataTableLite dt = new DataTableLite();
