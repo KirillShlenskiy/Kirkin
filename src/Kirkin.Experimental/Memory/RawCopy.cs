@@ -314,6 +314,29 @@ namespace Kirkin.Memory
         }
 
         #endregion
+
+        #region String utils
+
+        /// <summary>
+        /// Fills the given string with zeroes. Errors if the string is interned.
+        /// </summary>
+        public static unsafe void EraseString(string value)
+        {
+            if (string.IsInterned(value) != null) {
+                throw new ArgumentException("Cannot erase interned strings.");
+            }
+
+            using (Pinned pinned = new Pinned(value))
+            {
+                char* chars = (char*)pinned.Pointer;
+
+                for (int i = 0; i < value.Length; i++) {
+                    *chars++ = (char)0;
+                }
+            }
+        }
+
+        #endregion
     }
 }
 

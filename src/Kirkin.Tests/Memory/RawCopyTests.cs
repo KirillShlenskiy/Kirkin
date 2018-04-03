@@ -278,6 +278,19 @@ namespace Kirkin.Tests.Memory
             Assert.AreEqual(321, immutable.Value);
         }
 
+        [Test]
+        public unsafe void EraseString()
+        {
+            string value = new string('z', 5);
+
+            RawCopy.EraseString(value);
+            Assert.AreEqual(5, value.Length);
+
+            foreach (char c in value) {
+                Assert.AreEqual('\0', c);
+            }
+        }
+
         struct Immutable
         {
             public readonly int Value;
