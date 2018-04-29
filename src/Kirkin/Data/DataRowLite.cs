@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 using Kirkin.Data.Internal;
 
@@ -9,6 +10,8 @@ namespace Kirkin.Data
     /// </summary>
     public class DataRowLite
     {
+        #region Fields, properties, constructor
+
         private readonly DataColumnLiteCollection _columns;
 
         // Set when this instance is added to the row collection.
@@ -75,6 +78,10 @@ namespace Kirkin.Data
             _columns = table.Columns;
         }
 
+        #endregion
+
+        #region GetValue
+
         /// <summary>
         /// Returns the value of the cell at the specified index.
         /// </summary>
@@ -93,7 +100,7 @@ namespace Kirkin.Data
         }
 
         /// <summary>
-        /// Returns or sets the value of the cell that belongs to the specified column.
+        /// Returns the value of the cell that belongs to the specified column.
         /// </summary>
         public T GetValue<T>(DataColumnLite column)
         {
@@ -126,7 +133,7 @@ namespace Kirkin.Data
         }
 
         /// <summary>
-        /// Returns or sets the value of the cell that belongs to the specified column, or default value for type if the value is null.
+        /// Returns the value of the cell that belongs to the specified column, or default value for type if the value is null.
         /// </summary>
         public T GetValueOrDefault<T>(DataColumnLite column)
         {
@@ -140,6 +147,10 @@ namespace Kirkin.Data
 
             return (T)data.Get(_rowIndex);
         }
+
+        #endregion
+
+        #region IsNull
 
         /// <summary>
         /// Returns true if the value of the cell at the specified index is null.
@@ -170,5 +181,114 @@ namespace Kirkin.Data
         {
             return data.IsNull(_rowIndex);
         }
+
+        #endregion
+
+        #region SetNull
+
+        /// <summary>
+        /// Sets the value of the cell at the specified index to null.
+        /// </summary>
+        public void SetNull(int columnIndex)
+        {
+            SetNullImpl(_columns[columnIndex].Data);
+        }
+
+        /// <summary>
+        /// Sets the value of the cell that belongs to the column with the specified name to null.
+        /// </summary>
+        public void SetNull(string columnName)
+        {
+            //return GetValue<T>(_columns[columnName]);
+            SetNullImpl(_columns.GetColumnData(columnName));
+        }
+
+        /// <summary>
+        /// Sets the value of the cell that belongs to the specified column to null.
+        /// </summary>
+        public void SetNull(DataColumnLite column)
+        {
+            SetNullImpl(column.Data);
+        }
+
+        private void SetNullImpl(IColumnData data)
+        {
+            data.SetNull(_rowIndex);
+        }
+
+        #endregion
+
+        #region SetValue
+
+        /// <summary>
+        /// Sets the value of the cell at the specified index.
+        /// </summary>
+        public void SetValue<T>(int columnIndex, T value)
+        {
+            SetValueImpl(_columns[columnIndex].Data, value);
+        }
+
+        /// <summary>
+        /// Sets the value of the cell that belongs to the column with the specified name.
+        /// </summary>
+        public void SetValue<T>(string columnName, T value)
+        {
+            //return GetValue<T>(_columns[columnName]);
+            SetValueImpl(_columns.GetColumnData(columnName), value);
+        }
+
+        /// <summary>
+        /// Sets the value of the cell that belongs to the specified column.
+        /// </summary>
+        public void SetValue<T>(DataColumnLite column, T value)
+        {
+            SetValueImpl(column.Data, value);
+        }
+
+        private void SetValueImpl<T>(IColumnData data, T value)
+        {
+            if (data is ColumnData<T> typedData)
+            {
+                typedData.SetValue(_rowIndex, value);
+            }
+            else
+            {
+                data.Set(_rowIndex, value);
+            }
+        }
+
+        #endregion
+
+        #region ToString
+
+        /// <summary>
+        /// Returns a string representation of the row and its data.
+        /// </summary>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append('[');
+            sb.Append(_rowIndex);
+            sb.Append(']');
+            sb.Append(' ');
+
+            for (int i = 0; i < Table.Columns.Count; i++)
+            {
+                if (i != 0) {
+                    sb.Append(", ");
+                }
+
+                DataColumnLite column = Table.Columns[i];
+
+                sb.Append(column.ColumnName);
+                sb.Append(": ");
+                sb.Append(IsNull(column) ? "<null>" : this[column].ToString());
+            }
+
+            return sb.ToString();
+        }
+
+        #endregion
     }
 }
