@@ -74,15 +74,25 @@ namespace Kirkin.Cryptography
 
                         // Result format: 32 bits of salt bit size, 32 bits of SHA1 iteration count,
                         // 256 bits of salt, 128 bits of IV, 128 (or more) bits of encrypted text.
-                        byte[][] resultSlices = {
-                            BitConverter.GetBytes(saltBitSize),
-                            BitConverter.GetBytes(HashIterations),
-                            saltBytes,
-                            ivBytes,
-                            encryptedTextBytes
-                        };
+                        byte[] finalResult = new byte[
+                            sizeof(int) + sizeof(int) + saltBytes.Length + ivBytes.Length + encryptedTextBytes.Length
+                        ];
 
-                        return Concat(resultSlices);
+                        int offset = 0;
+
+                        void WriteResult(byte[] arr)
+                        {
+                            Array.Copy(arr, 0, finalResult, offset, arr.Length);
+                            offset += arr.Length;
+                        }
+
+                        WriteResult(BitConverter.GetBytes(saltBitSize));
+                        WriteResult(BitConverter.GetBytes(HashIterations));
+                        WriteResult(saltBytes);
+                        WriteResult(ivBytes);
+                        WriteResult(encryptedTextBytes);
+
+                        return finalResult;
                     }
                 }
             }
@@ -122,30 +132,6 @@ namespace Kirkin.Cryptography
                     return streamReader.ReadToEnd();
                 }
             }
-        }
-
-        /// <summary>
-        /// Concatenates the given byte arrays.
-        /// </summary>
-        private static byte[] Concat(byte[][] arrays)
-        {
-            int length = 0;
-
-            foreach (byte[] array in arrays) {
-                length += array.Length;
-            }
-
-            byte[] result = new byte[length];
-            int offset = 0;
-
-            foreach (byte[] array in arrays)
-            {
-                Array.Copy(array, 0, result, offset, array.Length);
-
-                offset += array.Length;
-            }
-
-            return result;
         }
     }
 }
