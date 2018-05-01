@@ -10,7 +10,9 @@ namespace Kirkin.CommandLine
         /// </summary>
         internal static bool IsHelpSwitch(string arg, IEqualityComparer<string> equalityComparer)
         {
-            return equalityComparer.Equals(arg, "--help") || equalityComparer.Equals(arg, "/?");
+            return equalityComparer.Equals(arg, "--help")
+                || equalityComparer.Equals(arg, "-?")
+                || equalityComparer.Equals(arg, "/?");
         }
 
         /// <summary>
