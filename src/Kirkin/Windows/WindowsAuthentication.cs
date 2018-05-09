@@ -4,7 +4,6 @@ using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Security.Claims;
 using System.Security.Principal;
 
 using Kirkin.Collections.Generic;
@@ -52,7 +51,7 @@ namespace Kirkin.Windows
 
         static GenericPrincipal ExtractPrincipal(WindowsIdentity windowsIdentity)
         {
-            ClaimsIdentity identity = new GenericIdentity(windowsIdentity.Name);
+            GenericIdentity identity = new GenericIdentity(windowsIdentity.Name);
             ArrayBuilder<string> groupNames = new ArrayBuilder<string>();
 
             if (windowsIdentity.Groups != null)
