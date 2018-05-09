@@ -37,9 +37,9 @@ namespace Kirkin.Windows
                     throw new SecurityException("Authentication failed.", new Win32Exception());
                 }
 
-                WindowsIdentity identity = new WindowsIdentity(token);
-
-                return ExtractPrincipal(identity);
+                using (WindowsIdentity windowsIdentity = new WindowsIdentity(token)) {
+                    return ExtractGenericPrincipal(windowsIdentity);
+                }
             }
             finally
             {
@@ -49,7 +49,7 @@ namespace Kirkin.Windows
             }
         }
 
-        static GenericPrincipal ExtractPrincipal(WindowsIdentity windowsIdentity)
+        static GenericPrincipal ExtractGenericPrincipal(WindowsIdentity windowsIdentity)
         {
             GenericIdentity identity = new GenericIdentity(windowsIdentity.Name);
             ArrayBuilder<string> groupNames = new ArrayBuilder<string>();
