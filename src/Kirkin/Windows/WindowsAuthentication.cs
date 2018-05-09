@@ -2,6 +2,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Principal;
@@ -33,23 +34,23 @@ namespace Kirkin.Windows
 
             try
             {
-                if (!LogonUserEx(userName, domainName, password, LOGON32_LOGON_NETWORK, LOGON32_PROVIDER_DEFAULT, out token, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero)) {
+                if (!ADVAPI32.LogonUserEx(userName, domainName, password, LOGON32_LOGON_NETWORK, LOGON32_PROVIDER_DEFAULT, out token, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero)) {
                     throw new SecurityException("Authentication failed.", new Win32Exception());
                 }
 
                 using (WindowsIdentity windowsIdentity = new WindowsIdentity(token)) {
-                    return ExtractGenericPrincipal(windowsIdentity);
+                    return GenericPrincipalFromWindowsIdentity(windowsIdentity);
                 }
             }
             finally
             {
                 if (token != IntPtr.Zero) {
-                    CloseHandle(token);
+                    Kernel32.CloseHandle(token);
                 }
             }
         }
 
-        static GenericPrincipal ExtractGenericPrincipal(WindowsIdentity windowsIdentity)
+        static GenericPrincipal GenericPrincipalFromWindowsIdentity(WindowsIdentity windowsIdentity)
         {
             GenericIdentity identity = new GenericIdentity(windowsIdentity.Name);
             ArrayBuilder<string> groupNames = new ArrayBuilder<string>();
@@ -67,26 +68,38 @@ namespace Kirkin.Windows
             return new GenericPrincipal(identity, groupNames.ToArray());
         }
 
-        // P/Invoke.
+        #region Platform Invoke
+
         const int LOGON32_LOGON_NETWORK = 3;
         const int LOGON32_PROVIDER_DEFAULT = 0;
 
-        [DllImport("advapi32.dll", SetLastError = true)]
-            static extern bool LogonUserEx(
-            string lpszUsername,
-            string lpszDomain,
-            string lpszPassword,
-            int dwLogonType,
-            int dwLogonProvider,
-            out IntPtr phToken,
-            IntPtr ppLogonSid,
-            IntPtr ppProfileBuffer,
-            IntPtr pdwProfileLength,
-            IntPtr pQuotaLimits
-        );
+        static class ADVAPI32
+        {
+            [DllImport("advapi32.dll", SetLastError = true)]
+            internal static extern bool LogonUserEx(
+                string lpszUsername,
+                string lpszDomain,
+                string lpszPassword,
+                int dwLogonType,
+                int dwLogonProvider,
+                out IntPtr phToken,
+                IntPtr ppLogonSid,
+                IntPtr ppProfileBuffer,
+                IntPtr pdwProfileLength,
+                IntPtr pQuotaLimits
+            );
+        }
 
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        static extern bool CloseHandle(IntPtr handle);
+        static class Kernel32
+        {
+            [DllImport("kernel32.dll", SetLastError = true)]
+            [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+            [SuppressUnmanagedCodeSecurity]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            internal static extern bool CloseHandle(IntPtr handle);
+        }
+
+        #endregion
     }
 }
 
