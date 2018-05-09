@@ -1,4 +1,4 @@
-﻿#if !__MOBILE__
+﻿#if !__MOBILE__ && !NETSTANDARD2_0
 
 using System;
 using System.ComponentModel;

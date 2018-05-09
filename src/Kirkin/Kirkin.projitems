@@ -161,5 +161,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Void.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WeakEvents.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Windows\Job.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Windows\WindowsAuthentication.cs" />
   </ItemGroup>
 </Project>
