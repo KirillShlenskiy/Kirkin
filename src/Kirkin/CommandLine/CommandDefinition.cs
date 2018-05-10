@@ -53,7 +53,7 @@ namespace Kirkin.CommandLine
             OptionsByShortName = new Dictionary<string, ICommandParameterDefinition>(stringEqualityComparer);
         }
 
-        internal void OnExecuted(ICommand command, IDictionary<string, object> args)
+        internal void OnExecuted(ICommand command, CommandArguments args)
         {
             if (Executed != null)
             {
@@ -236,7 +236,7 @@ namespace Kirkin.CommandLine
                 }
             }
 
-            return new DefaultCommand(this, argValues);
+            return new DefaultCommand(this, new CommandArguments(this, argValues));
         }
 
         private void RegisterOption(ICommandParameterDefinition option)

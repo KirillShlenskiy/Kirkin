@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Kirkin.CommandLine.Commands
+﻿namespace Kirkin.CommandLine.Commands
 {
     /// <summary>
     /// Immutable facade over <see cref="CommandDefinition"/>.
@@ -17,9 +15,9 @@ namespace Kirkin.CommandLine.Commands
             }
         }
 
-        public IDictionary<string, object> Arguments { get; }
+        public CommandArguments Arguments { get; }
 
-        internal DefaultCommand(CommandDefinition definition, IDictionary<string, object> arguments)
+        internal DefaultCommand(CommandDefinition definition, CommandArguments arguments)
         {
             _definition = definition;
             Arguments = arguments;

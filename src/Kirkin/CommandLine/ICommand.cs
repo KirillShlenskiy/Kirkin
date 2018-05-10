@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Kirkin.CommandLine
+﻿namespace Kirkin.CommandLine
 {
     /// <summary>
     /// Parsed console command.
@@ -15,7 +13,7 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Parsed arguments.
         /// </summary>
-        IDictionary<string, object> Arguments { get; }
+        CommandArguments Arguments { get; }
 
         /// <summary>
         /// Populates any related parameter values and executes the command.

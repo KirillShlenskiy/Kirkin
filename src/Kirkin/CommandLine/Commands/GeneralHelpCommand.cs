@@ -11,6 +11,8 @@ namespace Kirkin.CommandLine.Commands
     {
         private readonly CommandLineParser Parser;
 
+        public CommandArguments Arguments { get; }
+
         public string Name
         {
             get
@@ -22,9 +24,8 @@ namespace Kirkin.CommandLine.Commands
         internal GeneralHelpCommand(CommandLineParser parser)
         {
             Parser = parser;
+            Arguments = new CommandArguments(null);
         }
-
-        public IDictionary<string, object> Arguments { get; } = new Dictionary<string, object>();
 
         public void Execute()
         {

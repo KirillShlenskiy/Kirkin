@@ -33,8 +33,8 @@ namespace Kirkin.Tests.CommandLine
 
                 sync.Executed += (s, e) =>
                 {
-                    subscription = (string)e.Args["subscription"];
-                    validate = (bool)e.Args["validate"];
+                    subscription = e.Args.GetOption("subscription");
+                    validate = e.Args.GetSwitch("validate");
                 };
             });
 
@@ -83,9 +83,9 @@ namespace Kirkin.Tests.CommandLine
             {
                 ICommand command = parser.Parse("zzz --fizz 1 /buzz ultra --holy-moly".Split(' '));
 
-                Assert.AreEqual("1", (string)command.Arguments["fizz"]);
-                Assert.AreEqual("ultra", (string)command.Arguments["buzz"]);
-                Assert.True((bool)command.Arguments["holy-moly"]);
+                Assert.AreEqual("1", command.Arguments.GetOption("fizz"));
+                Assert.AreEqual("ultra", command.Arguments.GetOption("buzz"));
+                Assert.True(command.Arguments.GetSwitch("holy-moly"));
             }
         }
 
@@ -102,8 +102,10 @@ namespace Kirkin.Tests.CommandLine
 
             ICommand command = parser.Parse("sync extra --validate".Split(' '));
 
-            Assert.AreEqual("extra", (string)command.Arguments["subscription"]);
-            Assert.True((bool)command.Arguments["validate"]);
+            Assert.AreEqual("extra", (string)command.Arguments.All["subscription"]);
+            Assert.AreEqual("extra", command.Arguments.GetParameter());
+            Assert.True((bool)command.Arguments.All["validate"]);
+            Assert.True(command.Arguments.GetSwitch("validate"));
         }
 
         [Test]
@@ -121,19 +123,19 @@ namespace Kirkin.Tests.CommandLine
             {
                 ICommand command = parser.Parse("sync --validate --log zzz.txt".Split(' '));
 
-                Assert.Null(command.Arguments["subscription"]);
+                Assert.Null(command.Arguments.All["subscription"]);
             }
 
             {
                 ICommand command = parser.Parse("sync main --log zzz.txt".Split(' '));
 
-                Assert.False((bool)command.Arguments["validate"]);
+                Assert.False((bool)command.Arguments.All["validate"]);
             }
 
             {
                 ICommand command = parser.Parse("sync main --validate".Split(' '));
 
-                Assert.Null(command.Arguments["log"]);
+                Assert.Null(command.Arguments.All["log"]);
             }
         }
 
@@ -151,7 +153,7 @@ namespace Kirkin.Tests.CommandLine
             {
                 ICommand command = parser.Parse("sync --log zzz.txt".Split(' '));
 
-                Assert.AreEqual("zzz.txt", command.Arguments["log"]);
+                Assert.AreEqual("zzz.txt", command.Arguments.All["log"]);
             }
 
             //{
@@ -200,9 +202,9 @@ namespace Kirkin.Tests.CommandLine
 
                 hello.Executed += (s, e) =>
                 {
-                    parameterValue = string.Join(", ", (string[])e.Args["names"]);
-                    switchValue = (bool)e.Args["switch"];
-                    optionValue = string.Join(", ", (string[])e.Args["colors"]);
+                    parameterValue = string.Join(", ", (string[])e.Args.All["names"]);
+                    switchValue = (bool)e.Args.All["switch"];
+                    optionValue = string.Join(", ", (string[])e.Args.All["colors"]);
                 };
             });
 
@@ -290,9 +292,9 @@ namespace Kirkin.Tests.CommandLine
 
             ICommand command = definition.Parse("Stu Dru Gru --hru".Split(' '));
 
-            Assert.True((bool)command.Arguments["hru"]);
+            Assert.True((bool)command.Arguments.All["hru"]);
 
-            Console.WriteLine(string.Join(", ", (string[])command.Arguments["names"]));
+            Console.WriteLine(string.Join(", ", (string[])command.Arguments.All["names"]));
         }
     }
 }

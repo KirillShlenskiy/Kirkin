@@ -11,6 +11,8 @@ namespace Kirkin.CommandLine.Commands
     {
         private readonly CommandDefinition Definition;
 
+        public CommandArguments Arguments { get; }
+
         public string Name
         {
             get
@@ -22,9 +24,8 @@ namespace Kirkin.CommandLine.Commands
         internal CommandHelpCommand(CommandDefinition definition)
         {
             Definition = definition;
+            Arguments = new CommandArguments(definition);
         }
-
-        public IDictionary<string, object> Arguments { get; } = new Dictionary<string, object>();
 
         public void Execute()
         {

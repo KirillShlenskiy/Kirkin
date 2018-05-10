@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Kirkin.CommandLine
 {
@@ -17,12 +16,12 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Command argument values.
         /// </summary>
-        public IDictionary<string, object> Args { get; }
+        public CommandArguments Args { get; }
 
         /// <summary>
         /// Creates a new <see cref="CommandExecutedEventArgs"/> instance.
         /// </summary>
-        internal CommandExecutedEventArgs(ICommand command, IDictionary<string, object> args)
+        internal CommandExecutedEventArgs(ICommand command, CommandArguments args)
         {
             if (command == null) throw new ArgumentNullException(nameof(command));
             if (args == null) throw new ArgumentNullException(nameof(args));
