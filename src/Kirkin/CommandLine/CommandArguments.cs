@@ -14,12 +14,20 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// All command arguments.
         /// </summary>
+#if NET_40
         public IDictionary<string, object> All { get; }
-        
+#else
+        public IReadOnlyDictionary<string, object> All { get; }
+#endif
+
         /// <summary>
         /// Creates a new <see cref="CommandArguments"/> instance.
         /// </summary>
+#if NET_40
         internal CommandArguments(CommandDefinition command, IDictionary<string, object> all = null)
+#else
+        internal CommandArguments(CommandDefinition command, IReadOnlyDictionary<string, object> all = null)
+#endif
         {
             Command = command;
             All = all ?? EmptyArgDictionary;
