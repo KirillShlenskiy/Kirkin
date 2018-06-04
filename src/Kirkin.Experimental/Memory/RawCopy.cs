@@ -12,6 +12,16 @@ namespace Kirkin.Memory
         #region Read
 
         /// <summary>
+        /// Reads the value of the given type at byte offset 0.
+        /// </summary>
+        public static T Read<T>(void* source) where T : unmanaged => *(T*)((byte*)source);
+
+        /// <summary>
+        /// Reads the value of the given type at the specified byte offset.
+        /// </summary>
+        public static T Read<T>(void* source, int offset) where T : unmanaged => *(T*)((byte*)source + offset);
+
+        /// <summary>
         /// Reads the 32-bit signed int value at offset 0.
         /// </summary>
         public static int ReadInt32(void* source) => *(int*)((byte*)source);
@@ -56,6 +66,16 @@ namespace Kirkin.Memory
         #region Write
 
         /// <summary>
+        /// Writest the given value at byte offset 0.
+        /// </summary>
+        public static void Write<T>(void* target, T value) where T : unmanaged => *(T*)((byte*)target) = value;
+
+        /// <summary>
+        /// Writest the given value at the specified byte offset.
+        /// </summary>
+        public static void Write<T>(void* target, int offset, T value) where T : unmanaged => *(T*)((byte*)target + offset) = value;
+
+        /// <summary>
         /// Writes the given 32-bit signed int value at offset 0.
         /// </summary>
         public static void WriteInt32(void* target, int value) => *(int*)((byte*)target) = value;
@@ -98,6 +118,16 @@ namespace Kirkin.Memory
         #endregion
 
         #region Refs (read/write)
+
+        /// <summary>
+        /// Returns a reference to the value of the given type at byte offset 0.
+        /// </summary>
+        public static ref T Ref<T>(void* source) where T : unmanaged => ref *(T*)((byte*)source);
+
+        /// <summary>
+        /// Returns a reference to the value of the given type at the specified byte offset.
+        /// </summary>
+        public static ref T Ref<T>(void* source, int offset) where T : unmanaged => ref *(T*)((byte*)source + offset);
 
         /// <summary>
         /// Returns a reference to the 32-bit signed int value at offset 0.
