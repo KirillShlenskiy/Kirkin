@@ -3,9 +3,8 @@
 namespace Kirkin.Collections.Generic
 {
     /// <summary>
-    /// Mutable **value** type which provides basic array
+    /// Mutable value type which provides basic array
     /// builder functionality with minimal allocations.
-    /// This is a mutable struct. Use with caution and avoid copy.
     /// </summary>
     /// <remarks>
     /// Usage guidelines:
@@ -15,7 +14,7 @@ namespace Kirkin.Collections.Generic
     /// - Rich array builder functionality required: use <see cref="System.Collections.Generic.List{T}"/>.
     /// - Extreme perf essential: do not use <see cref="ArrayBuilder{T}"/>. Use T[], int counter and <see cref="Array.Resize{T}(ref T[], int)"/> as needed.
     /// </remarks>
-    public struct ArrayBuilder<T>
+    public ref struct ArrayBuilder<T>
     {
         private const int DefaultCapacity = 8;
 
