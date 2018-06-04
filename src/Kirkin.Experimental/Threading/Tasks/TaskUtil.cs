@@ -27,7 +27,7 @@ namespace Kirkin.Threading.Tasks
         /// <summary>
         /// Creates a <see cref="Task"/> in a completed or canceled state.
         /// </summary>
-        public static Task CreateCompletedTask(bool canceled = false, TaskCreationOptions creationOptions = TaskCreationOptions.None, CancellationToken ct = default(CancellationToken))
+        public static Task CreateCompletedTask(bool canceled = false, TaskCreationOptions creationOptions = TaskCreationOptions.None, CancellationToken ct = default)
         {
             return CompletedTaskFactory.Factory(canceled, creationOptions, ct);
         }
@@ -35,7 +35,7 @@ namespace Kirkin.Threading.Tasks
         /// <summary>
         /// Creates a <see cref="Task"/> in a completed or canceled state, with the given result.
         /// </summary>
-        public static Task<TResult> CreateCompletedTask<TResult>(bool canceled = false, TResult result = default(TResult), TaskCreationOptions creationOptions = TaskCreationOptions.None, CancellationToken ct = default(CancellationToken))
+        public static Task<TResult> CreateCompletedTask<TResult>(bool canceled = false, TResult result = default, TaskCreationOptions creationOptions = TaskCreationOptions.None, CancellationToken ct = default)
         {
             return CompletedTaskFactory<TResult>.Factory(canceled, result, creationOptions, ct);
         }

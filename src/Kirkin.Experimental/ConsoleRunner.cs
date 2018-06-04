@@ -61,7 +61,7 @@ namespace Kirkin
         /// </summary>
         public void Run()
         {
-            Task t = RunImpl(false, default(CancellationToken));
+            Task t = RunImpl(false);
 
             if (!t.IsCompleted) {
                 throw new InvalidOperationException("Expecting RunImpl to have completed synchronously.");
@@ -74,21 +74,13 @@ namespace Kirkin
         /// <summary>
         /// Runs the console app process.
         /// </summary>
-        public Task RunAsync()
-        {
-            return RunImpl(true, default(CancellationToken));
-        }
-
-        /// <summary>
-        /// Runs the console app process.
-        /// </summary>
-        public Task RunAsync(CancellationToken cancellationToken)
+        public Task RunAsync(CancellationToken cancellationToken = default)
         {
             return RunImpl(true, cancellationToken);
         }
 
         // Implementation.
-        private async Task RunImpl(bool async, CancellationToken cancellationToken)
+        private async Task RunImpl(bool async, CancellationToken cancellationToken = default)
         {
             ThrowIfDisposed();
 

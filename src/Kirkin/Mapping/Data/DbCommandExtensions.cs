@@ -104,7 +104,7 @@ namespace Kirkin.Mapping.Data
         public static async Task<TEntity[]> ExecuteEntitiesAsync<TEntity>(this DbCommand command, // Cannot use IDbCommand as it does not support TPL async.
                                                                           bool allowUnmappedSourceMembers = true, 
                                                                           bool allowUnmappedTargetMembers = false,
-                                                                          CancellationToken cancellationToken = default(CancellationToken))
+                                                                          CancellationToken cancellationToken = default)
             where TEntity : new()
         {
             if (command.Connection != null && command.Connection.State == ConnectionState.Closed) {
@@ -143,7 +143,7 @@ namespace Kirkin.Mapping.Data
         /// <param name="cancellationToken">Cancellation token to be checked throughout the operation.</param>
         public static async Task<TEntity[]> ExecuteEntitiesAsync<TEntity>(this DbCommand command, // Cannot use IDbCommand as it does not support TPL async.
                                                                           Action<MapperBuilder<IDataRecord, TEntity>> configAction,
-                                                                          CancellationToken cancellationToken = default(CancellationToken))
+                                                                          CancellationToken cancellationToken = default)
             where TEntity : new()
         {
             if (configAction == null) throw new ArgumentNullException(nameof(configAction));

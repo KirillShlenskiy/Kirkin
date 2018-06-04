@@ -46,7 +46,7 @@ namespace Kirkin.Threading
         /// Asynchronously waits to enter the <see cref="AsyncSemaphore"/>,
         /// while observing the given <see cref="CancellationToken"/>.
         /// </summary>
-        public Task WaitAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public Task WaitAsync(CancellationToken cancellationToken = default)
         {
             lock (Waiters)
             {

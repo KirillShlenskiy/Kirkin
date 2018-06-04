@@ -70,7 +70,7 @@ namespace Kirkin.Monitoring
         /// <summary>
         /// Starts monitoring the file optionally checking the given cancellation token.
         /// </summary>
-        public async Task MonitorAsync(CancellationToken ct = default(CancellationToken))
+        public async Task MonitorAsync(CancellationToken ct = default)
         {
             // 0 to read from start.
             // FileInfo.Length to read new entries only.

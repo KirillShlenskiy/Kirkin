@@ -260,7 +260,7 @@ namespace Kirkin.Collections.Async
                     // TrySetResult will not do anything
                     // for waiters which have been cancelled.
                     // They will simply be removed from the queue.
-                    waiter.TrySetResult(default(TakeResult<T>));
+                    waiter.TrySetResult(default);
                 }
             }
         }

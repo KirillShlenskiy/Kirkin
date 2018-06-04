@@ -21,7 +21,7 @@ namespace Kirkin.IO
         /// Copies data from source to target stream. Unlike the default Stream.CopyToAsync implementation,
         /// performs reads from the source stream and writes to target stream in parallel.
         /// </summary>
-        public static async Task ParallelCopyAsync(Stream source, Stream target, int bufferSize = DefaultCopyBufferSize, CancellationToken ct = default(CancellationToken))
+        public static async Task ParallelCopyAsync(Stream source, Stream target, int bufferSize = DefaultCopyBufferSize, CancellationToken ct = default)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
             if (target == null) throw new ArgumentNullException(nameof(target));

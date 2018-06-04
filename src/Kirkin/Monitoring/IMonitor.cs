@@ -18,6 +18,6 @@ namespace Kirkin.Monitoring
         /// <summary>
         /// Starts monitoring the file optionally checking the given cancellation token.
         /// </summary>
-        Task MonitorAsync(CancellationToken ct = default(CancellationToken));
+        Task MonitorAsync(CancellationToken ct = default);
     }
 }
