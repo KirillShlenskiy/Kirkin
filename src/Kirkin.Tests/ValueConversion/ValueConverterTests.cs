@@ -18,6 +18,7 @@ namespace Kirkin.Tests.ValueConversion
         {
             Assert.AreEqual(123, ValueConverter.Default.Convert<int>("123"));
             Assert.AreEqual(123, ValueConverter.Default.Convert("123", typeof(int)));
+            Assert.AreEqual("123", ValueConverter.Default.Convert(123, typeof(string)));
         }
 
         [Test]

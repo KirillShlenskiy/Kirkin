@@ -3,8 +3,6 @@ using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
 
-using Kirkin.Linq.Expressions;
-
 namespace Kirkin.ValueConversion
 {
     /// <summary>
@@ -31,6 +29,9 @@ namespace Kirkin.ValueConversion
 
         #region Conversion delegate resolution
 
+        private static readonly MethodInfo OpenGenericConvertMethod
+            = typeof(ValueConverter).GetMethod(nameof(Convert), new[] { typeof(object) });
+
         private readonly ConcurrentDictionary<Type, Func<object, object>> ConvertDelegatesByReturnType
             = new ConcurrentDictionary<Type, Func<object, object>>();
 
@@ -43,7 +44,7 @@ namespace Kirkin.ValueConversion
 
         private Func<object, object> ResolveConvertDelegateSlow(Type type)
         {
-            MethodInfo interpretMethod = ExpressionUtil.InstanceMethod<ValueConverter>(vc => vc.Convert<int>(null));
+            MethodInfo interpretMethod = OpenGenericConvertMethod.MakeGenericMethod(type);
 
             // Lambda expression:
             // (object value) => (object)this.Convert<T>(value);
