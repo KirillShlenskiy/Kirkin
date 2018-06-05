@@ -202,7 +202,7 @@ namespace Kirkin.Tests.CommandLine
 
                 hello.Executed += (s, e) =>
                 {
-                    parameterValue = string.Join(", ", (string[])e.Args.All["names"]);
+                    parameterValue = string.Join(", ", e.Args.GetParameterList());
                     switchValue = (bool)e.Args.All["switch"];
                     optionValue = string.Join(", ", (string[])e.Args.All["colors"]);
                 };

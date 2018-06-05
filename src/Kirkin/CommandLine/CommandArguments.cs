@@ -46,6 +46,18 @@ namespace Kirkin.CommandLine
         }
 
         /// <summary>
+        /// Returns the command's main parameter value list.
+        /// </summary>
+        public string[] GetParameterList()
+        {
+            if (Command?.Parameter == null) {
+                throw new InvalidOperationException("The command does not define a parameter.");
+            }
+
+            return (string[])All[Command.Parameter.Name];
+        }
+
+        /// <summary>
         /// Returns the value of the given option.
         /// </summary>
         public string GetOption(string name)
