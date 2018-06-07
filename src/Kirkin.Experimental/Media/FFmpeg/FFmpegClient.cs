@@ -109,7 +109,7 @@ namespace Kirkin.Media.FFmpeg
                 UseShellExecute = false
             };
 
-            using (Process process = ChildProcess.Start(info))
+            using (Process process = ChildProcess.Start(info, out bool associated))
             {
                 process.EnableRaisingEvents = true;
 

@@ -18,39 +18,60 @@ namespace Kirkin.Diagnostics
         /// the associated process is killed as well. Calling Dispose on
         /// the returned <see cref="Process"/> instance also kills it.
         /// </summary>
-        public static Process Start(ProcessStartInfo startInfo)
+        /// <param name="startInfo">Process start params.</param>
+        /// <param name="associated">True if the child process' lifetime has been tied to this process.</param>
+        public static Process Start(ProcessStartInfo startInfo, out bool associated)
         {
             if (startInfo == null) throw new ArgumentNullException(nameof(startInfo));
 
-            Job job = null;
-            ChildProcessImpl childProcess = new ChildProcessImpl();
+            ChildProcessImpl childProcess = new ChildProcessImpl {
+                StartInfo = startInfo
+            };
 
             try
             {
-                childProcess.StartInfo = startInfo;
-
-                if (childProcess.Start())
+                if (!childProcess.Start())
                 {
-                    job = new Job();
-
-                    job.EnlistProcess(childProcess);
-
-                    childProcess.Job = job; // Job != null indicates success.
-
-                    return childProcess;
-                }
-            }
-            finally
-            {
-                if (childProcess.Job == null)
-                {
-                    // Child process may continue running after Dispose if adding it to a job failed.
                     childProcess.Dispose();
-                    job?.Dispose();
+
+                    throw new InvalidOperationException("Unable to start process.");
                 }
             }
+            catch // Start may throw.
+            {
+                childProcess.Dispose();
 
-            return null;
+                throw;
+            }
+
+            Job job = null;
+
+            try
+            {
+                job = new Job();
+
+                if (job.TryEnlistProcess(childProcess)) {
+                    childProcess.Job = job; // Job != null indicates success.
+                }
+            }
+            catch
+            {
+                // Job creation has failed. We don't want to throw as the
+                // caller might want to do something with the Process object.
+            }
+
+            if (childProcess.Job == null)
+            {
+                job?.Dispose();
+
+                associated = false;
+            }
+            else
+            {
+                associated = true;
+            }
+
+            return childProcess;
         }
 
         sealed class ChildProcessImpl : Process
