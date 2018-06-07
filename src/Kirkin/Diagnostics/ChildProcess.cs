@@ -60,7 +60,7 @@ namespace Kirkin.Diagnostics
             protected override void Dispose(bool disposing)
             {
                 base.Dispose(disposing);
-                Job.Dispose();
+                Job?.Dispose();
             }
         }
     }
