@@ -12,7 +12,7 @@ namespace Kirkin.Windows
     /// <summary>
     /// Managed wrapper over Win32 job functionality.
     /// </summary>
-    internal sealed class Job : IDisposable
+    public sealed class Job : IDisposable
     {
         private readonly IntPtr _jobHandle;
         private bool _disposed;
@@ -61,9 +61,18 @@ namespace Kirkin.Windows
         /// </summary>
         public void EnlistProcess(Process process)
         {
-            if (!Kernel32.AssignProcessToJobObject(_jobHandle, process.Handle)) {
+            if (!TryEnlistProcess(process)) {
                 throw new Win32Exception();
             }
+        }
+
+        /// <summary>
+        /// Ties the lifetime of the given process to the lifetime of the current process.
+        /// If the current process terminates, the operating system will kill the associated process too.
+        /// </summary>
+        public bool TryEnlistProcess(Process process)
+        {
+            return Kernel32.AssignProcessToJobObject(_jobHandle, process.Handle);
         }
 
         /// <summary>
