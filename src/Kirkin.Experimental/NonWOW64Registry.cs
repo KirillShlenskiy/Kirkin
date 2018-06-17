@@ -5,7 +5,7 @@ using Microsoft.Win32;
 namespace Kirkin
 {
     /// <summary>
-    /// Registry access proxy which does not use WOW6432Node even if running in a 32-bit process.
+    /// Registry proxy which does not use WOW6432Node even if running in a 32-bit process.
     /// </summary>
     public static class NonWOW64Registry
     {
@@ -14,6 +14,19 @@ namespace Kirkin
         private static RegistryKey _currentUser;
         private static RegistryKey _localMachine;
 
+        private static RegistryView RegistryView
+        {
+            get
+            {
+                return Environment.Is64BitOperatingSystem
+                    ? RegistryView.Registry64
+                    : RegistryView.Default;
+            }
+        }
+
+        /// <summary>
+        /// HKEY_CURRENT_USER base key.
+        /// </summary>
         public static RegistryKey CurrentUser
         {
             get
@@ -22,14 +35,8 @@ namespace Kirkin
                 {
                     lock (_lock)
                     {
-                        if (_currentUser == null)
-                        {
-                            RegistryView view = RegistryView.Default;
-
-                            if (Environment.Is64BitOperatingSystem)
-                                view = RegistryView.Registry64;// Force non-WOW6432Node access even if running as x86.
-
-                            _currentUser = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, view);
+                        if (_currentUser == null) {
+                            _currentUser = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView);
                         }
                     }
                 }
@@ -38,6 +45,9 @@ namespace Kirkin
             }
         }
 
+        // <summary>
+        /// HKEY_LOCAL_MACHINE base key.
+        /// </summary>
         public static RegistryKey LocalMachine
         {
             get
@@ -46,14 +56,8 @@ namespace Kirkin
                 {
                     lock (_lock)
                     {
-                        if (_localMachine == null)
-                        {
-                            RegistryView view = RegistryView.Default;
-
-                            if (Environment.Is64BitOperatingSystem)
-                                view = RegistryView.Registry64;// Force non-WOW6432Node access even if running as x86.
-
-                            _localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view);
+                        if (_localMachine == null) {
+                            _localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView);
                         }
                     }
                 }
@@ -62,11 +66,14 @@ namespace Kirkin
             }
         }
 
+        /// <summary>
+        /// Gets a value from a registry key.
+        /// </summary>
         public static object GetValue(string keyName, string valueName, object defaultValue)
         {
-            string hiveName = HiveNameFromFullPath(keyName);
+            SplitPath(keyName, out string hiveName, out string subKeyName);
+
             RegistryKey baseKey = BaseKeyFromHive(GetRegistryHive(hiveName));
-            string subKeyName = SubKeyNameFromFullPath(keyName);
 
             using (RegistryKey key = baseKey.OpenSubKey(subKeyName, writable: false))
             {
@@ -76,26 +83,38 @@ namespace Kirkin
             }
         }
 
+        /// <summary>
+        /// Writes a value to a registry key.
+        /// </summary>
+        public static void SetValue(string keyName, string valueName, object value)
+        {
+            SetValue(keyName, valueName, value, RegistryValueKind.Unknown);
+        }
+
+        /// <summary>
+        /// Writes a value to a registry key.
+        /// </summary>
         public static void SetValue(string keyName, string valueName, object value, RegistryValueKind valueKind)
         {
-            string hiveName = HiveNameFromFullPath(keyName);
+            SplitPath(keyName, out string hiveName, out string subKeyName);
+
             RegistryKey baseKey = BaseKeyFromHive(GetRegistryHive(hiveName));
-            string subKeyName = SubKeyNameFromFullPath(keyName);
-            RegistryKey key = null;
 
-            try
-            {
-                key = baseKey.OpenSubKey(subKeyName, writable: true);
-
-                if (key == null)
-                    key = baseKey.CreateSubKey(subKeyName);
-
+            using (RegistryKey key = baseKey.OpenSubKey(subKeyName, writable: true) ?? baseKey.CreateSubKey(subKeyName)) {
                 key.SetValue(valueName, value);
             }
-            finally
-            {
-                key?.Dispose();
+        }
+
+        private static void SplitPath(string registryPath, out string hiveName, out string subKeyName)
+        {
+            int firstDelimiterIndex = registryPath.IndexOf('\\');
+
+            if (firstDelimiterIndex == -1) {
+                throw new FormatException("Malformed registry path.");
             }
+
+            hiveName = registryPath.Substring(0, firstDelimiterIndex);
+            subKeyName = registryPath.Substring(firstDelimiterIndex + 1);
         }
 
         private static RegistryKey BaseKeyFromHive(RegistryHive hive)
@@ -104,28 +123,6 @@ namespace Kirkin
             if (hive == RegistryHive.CurrentUser) return CurrentUser;
 
             throw new ArgumentException($"Unhandled registry hive: '{hive}'.");
-        }
-
-        private static string HiveNameFromFullPath(string registryPath)
-        {
-            int firstDelimiterIndex = registryPath.IndexOf('\\');
-
-            if (firstDelimiterIndex == -1) {
-                throw new FormatException("Malformed registry path.");
-            }
-
-            return registryPath.Substring(0, firstDelimiterIndex);
-        }
-
-        private static string SubKeyNameFromFullPath(string registryPath)
-        {
-            int firstDelimiterIndex = registryPath.IndexOf('\\');
-
-            if (firstDelimiterIndex == -1) {
-                throw new FormatException("Malformed registry path.");
-            }
-
-            return registryPath.Substring(firstDelimiterIndex + 1);
         }
 
         private static RegistryHive GetRegistryHive(string name)
