@@ -116,6 +116,7 @@
     <Compile Include="Refs\ObservableRef.cs" />
     <Compile Include="Refs\Ref.cs" />
     <Compile Include="Refs\ValueRef.cs" />
+    <Compile Include="NonWOW64Registry.cs" />
     <Compile Include="Serialization\Serializer.cs" />
     <Compile Include="Serialization\XmlSerializer.cs" />
     <Compile Include="Text\Url.cs" />
