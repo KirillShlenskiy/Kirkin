@@ -32,149 +32,37 @@ namespace Kirkin
         /// <summary>
         /// HKEY_CURRENT_USER base key.
         /// </summary>
-        public static RegistryKey CurrentUser
-        {
-            get
-            {
-                if (_currentUser == null)
-                {
-                    lock (_lock)
-                    {
-                        if (_currentUser == null) {
-                            _currentUser = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView);
-                        }
-                    }
-                }
-
-                return _currentUser;
-            }
-        }
+        public static RegistryKey CurrentUser => GetBaseKey(ref _currentUser, RegistryHive.CurrentUser);
 
         /// <summary>
         /// HKEY_LOCAL_MACHINE base key.
         /// </summary>
-        public static RegistryKey LocalMachine
-        {
-            get
-            {
-                if (_localMachine == null)
-                {
-                    lock (_lock)
-                    {
-                        if (_localMachine == null) {
-                            _localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView);
-                        }
-                    }
-                }
-
-                return _localMachine;
-            }
-        }
+        public static RegistryKey LocalMachine => GetBaseKey(ref _localMachine, RegistryHive.LocalMachine);
 
         /// <summary>
         /// HKEY_CLASSES_ROOT base key.
         /// </summary>
-        public static RegistryKey ClassesRoot
-        {
-            get
-            {
-                if (_classesRoot == null)
-                {
-                    lock (_lock)
-                    {
-                        if (_classesRoot == null) {
-                            _classesRoot = RegistryKey.OpenBaseKey(RegistryHive.ClassesRoot, RegistryView);
-                        }
-                    }
-                }
-
-                return _classesRoot;
-            }
-        }
+        public static RegistryKey ClassesRoot => GetBaseKey(ref _classesRoot, RegistryHive.ClassesRoot);
 
         /// <summary>
         /// HKEY_USERS base key.
         /// </summary>
-        public static RegistryKey Users
-        {
-            get
-            {
-                if (_users == null)
-                {
-                    lock (_lock)
-                    {
-                        if (_users == null) {
-                            _users = RegistryKey.OpenBaseKey(RegistryHive.Users, RegistryView);
-                        }
-                    }
-                }
-
-                return _users;
-            }
-        }
+        public static RegistryKey Users => GetBaseKey(ref _users, RegistryHive.Users);
 
         /// <summary>
         /// HKEY_PERFORMANCE_DATA base key.
         /// </summary>
-        public static RegistryKey PerformanceData
-        {
-            get
-            {
-                if (_performanceData == null)
-                {
-                    lock (_lock)
-                    {
-                        if (_performanceData == null) {
-                            _performanceData = RegistryKey.OpenBaseKey(RegistryHive.PerformanceData, RegistryView);
-                        }
-                    }
-                }
-
-                return _performanceData;
-            }
-        }
+        public static RegistryKey PerformanceData => GetBaseKey(ref _performanceData, RegistryHive.PerformanceData);
 
         /// <summary>
         /// HKEY_CURRENT_CONFIG base key.
         /// </summary>
-        public static RegistryKey CurrentConfig
-        {
-            get
-            {
-                if (_currentConfig == null)
-                {
-                    lock (_lock)
-                    {
-                        if (_currentConfig == null) {
-                            _currentConfig = RegistryKey.OpenBaseKey(RegistryHive.CurrentConfig, RegistryView);
-                        }
-                    }
-                }
-
-                return _currentConfig;
-            }
-        }
+        public static RegistryKey CurrentConfig => GetBaseKey(ref _currentConfig, RegistryHive.CurrentConfig);
 
         /// <summary>
         /// HKEY_CURRENT_CONFIG base key.
         /// </summary>
-        public static RegistryKey DynData
-        {
-            get
-            {
-                if (_dynData == null)
-                {
-                    lock (_lock)
-                    {
-                        if (_dynData == null) {
-                            _dynData = RegistryKey.OpenBaseKey(RegistryHive.DynData, RegistryView);
-                        }
-                    }
-                }
-
-                return _dynData;
-            }
-        }
+        public static RegistryKey DynData => GetBaseKey(ref _dynData, RegistryHive.DynData);
 
         /// <summary>
         /// Gets a value from a registry key.
@@ -213,6 +101,21 @@ namespace Kirkin
             using (RegistryKey key = baseKey.OpenSubKey(subKeyName, writable: true) ?? baseKey.CreateSubKey(subKeyName)) {
                 key.SetValue(valueName, value);
             }
+        }
+
+        private static RegistryKey GetBaseKey(ref RegistryKey location, RegistryHive hive)
+        {
+            if (location == null)
+            {
+                lock (_lock)
+                {
+                    if (location == null) {
+                        location = RegistryKey.OpenBaseKey(hive, RegistryView);
+                    }
+                }
+            }
+
+            return location;
         }
 
         private static void SplitPath(string registryPath, out string hiveName, out string subKeyName)
