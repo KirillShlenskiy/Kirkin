@@ -13,6 +13,11 @@ namespace Kirkin
 
         private static RegistryKey _currentUser;
         private static RegistryKey _localMachine;
+        private static RegistryKey _classesRoot;
+        private static RegistryKey _users;
+        private static RegistryKey _performanceData;
+        private static RegistryKey _currentConfig;
+        private static RegistryKey _dynData;
 
         private static RegistryView RegistryView
         {
@@ -45,7 +50,7 @@ namespace Kirkin
             }
         }
 
-        // <summary>
+        /// <summary>
         /// HKEY_LOCAL_MACHINE base key.
         /// </summary>
         public static RegistryKey LocalMachine
@@ -67,6 +72,111 @@ namespace Kirkin
         }
 
         /// <summary>
+        /// HKEY_CLASSES_ROOT base key.
+        /// </summary>
+        public static RegistryKey ClassesRoot
+        {
+            get
+            {
+                if (_classesRoot == null)
+                {
+                    lock (_lock)
+                    {
+                        if (_classesRoot == null) {
+                            _classesRoot = RegistryKey.OpenBaseKey(RegistryHive.ClassesRoot, RegistryView);
+                        }
+                    }
+                }
+
+                return _classesRoot;
+            }
+        }
+
+        /// <summary>
+        /// HKEY_USERS base key.
+        /// </summary>
+        public static RegistryKey Users
+        {
+            get
+            {
+                if (_users == null)
+                {
+                    lock (_lock)
+                    {
+                        if (_users == null) {
+                            _users = RegistryKey.OpenBaseKey(RegistryHive.Users, RegistryView);
+                        }
+                    }
+                }
+
+                return _users;
+            }
+        }
+
+        /// <summary>
+        /// HKEY_PERFORMANCE_DATA base key.
+        /// </summary>
+        public static RegistryKey PerformanceData
+        {
+            get
+            {
+                if (_performanceData == null)
+                {
+                    lock (_lock)
+                    {
+                        if (_performanceData == null) {
+                            _performanceData = RegistryKey.OpenBaseKey(RegistryHive.PerformanceData, RegistryView);
+                        }
+                    }
+                }
+
+                return _performanceData;
+            }
+        }
+
+        /// <summary>
+        /// HKEY_CURRENT_CONFIG base key.
+        /// </summary>
+        public static RegistryKey CurrentConfig
+        {
+            get
+            {
+                if (_currentConfig == null)
+                {
+                    lock (_lock)
+                    {
+                        if (_currentConfig == null) {
+                            _currentConfig = RegistryKey.OpenBaseKey(RegistryHive.CurrentConfig, RegistryView);
+                        }
+                    }
+                }
+
+                return _currentConfig;
+            }
+        }
+
+        /// <summary>
+        /// HKEY_CURRENT_CONFIG base key.
+        /// </summary>
+        public static RegistryKey DynData
+        {
+            get
+            {
+                if (_dynData == null)
+                {
+                    lock (_lock)
+                    {
+                        if (_dynData == null) {
+                            _dynData = RegistryKey.OpenBaseKey(RegistryHive.DynData, RegistryView);
+                        }
+                    }
+                }
+
+                return _dynData;
+            }
+        }
+
+        /// <summary>
         /// Gets a value from a registry key.
         /// </summary>
         public static object GetValue(string keyName, string valueName, object defaultValue)
@@ -77,7 +187,7 @@ namespace Kirkin
 
             using (RegistryKey key = baseKey.OpenSubKey(subKeyName, writable: false))
             {
-                // Preserve My.Computer.Registry.GetValue semantics: return Nothing
+                // VB.Net My.Computer.Registry.GetValue semantics: return null
                 // (instead of the defaultValue provided) if the key does not exist.
                 return key?.GetValue(valueName, defaultValue);
             }
@@ -129,6 +239,11 @@ namespace Kirkin
         {
             if (string.Equals(name, "HKEY_LOCAL_MACHINE", StringComparison.OrdinalIgnoreCase)) return RegistryHive.LocalMachine;
             if (string.Equals(name, "HKEY_CURRENT_USER", StringComparison.OrdinalIgnoreCase)) return RegistryHive.CurrentUser;
+            if (string.Equals(name, "HKEY_CLASSES_ROOT", StringComparison.OrdinalIgnoreCase)) return RegistryHive.ClassesRoot;
+            if (string.Equals(name, "HKEY_USERS", StringComparison.OrdinalIgnoreCase)) return RegistryHive.Users;
+            if (string.Equals(name, "HKEY_PERFORMANCE_DATA", StringComparison.OrdinalIgnoreCase)) return RegistryHive.PerformanceData;
+            if (string.Equals(name, "HKEY_CURRENT_CONFIG", StringComparison.OrdinalIgnoreCase)) return RegistryHive.CurrentConfig;
+            if (string.Equals(name, "HKEY_DYN_DATA", StringComparison.OrdinalIgnoreCase)) return RegistryHive.DynData;
 
             throw new ArgumentException($"Unknown registry hive: '{name}'.");
         }
