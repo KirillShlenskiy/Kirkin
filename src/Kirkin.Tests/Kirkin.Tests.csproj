@@ -183,6 +183,7 @@
     <Compile Include="Mapping\MapperTests.cs" />
     <Compile Include="Memory\RawCopyTests.cs" />
     <Compile Include="Native\NativeTests.cs" />
+    <Compile Include="NonWOW64RegistryTests.cs" />
     <Compile Include="Output.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\MethodInvokerTests.cs" />
