@@ -296,5 +296,23 @@ namespace Kirkin.Tests.CommandLine
 
             Console.WriteLine(string.Join(", ", (string[])command.Arguments.All["names"]));
         }
+
+        [Test]
+        public void PositionalArgs()
+        {
+            CommandDefinition definition = new CommandDefinition();
+
+            definition.DefineOption("a");
+            definition.DefineOption("b");
+            definition.DefineSwitch("c");
+            definition.DefineOption("d");
+
+            ICommand command = definition.Parse("aaa bbb --c --d ddd".Split(' '));
+
+            Assert.AreEqual("aaa", command.Arguments.GetOption("a"));
+            Assert.AreEqual("bbb", command.Arguments.GetOption("b"));
+            Assert.True(command.Arguments.GetSwitch("c"));
+            Assert.AreEqual("ddd", command.Arguments.GetOption("d"));
+        }
     }
 }

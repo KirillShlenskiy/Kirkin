@@ -212,16 +212,40 @@ namespace Kirkin.CommandLine
                 }
                 else
                 {
-                    // Parameter.
-                    if (Parameter == null) {
-                        throw new InvalidOperationException($"Command '{Name}' does not define a parameter.");
-                    }
+                    // Parameter or positional args.
+                    if (Parameter == null)
+                    {
+                        // Positional args.
+                        int lastPositionalArgIndex = -1;
 
-                    if (!seenParameters.Add(Parameter)) {
-                        throw new InvalidOperationException("Duplicate parameter value.");
-                    }
+                        while (chunk.Count != 0)
+                        {
+                            if (lastPositionalArgIndex > Options.Count - 1) {
+                                throw new InvalidOperationException("Too many positional args.");
+                            }
 
-                    argValues.Add(Parameter.Name, Parameter.ParseArgs(chunk));
+                            ICommandParameterDefinition opt = Options[++lastPositionalArgIndex];
+
+                            if (opt.SupportsMultipleValues) {
+                                throw new NotSupportedException("Multi-valued positional args not supported.");
+                            }
+
+                            // Parse single arg.
+                            List<string> singleArg = new List<string> { chunk[0] };
+
+                            seenParameters.Add(opt);
+                            chunk.RemoveAt(0);
+                            argValues.Add(opt.Name, opt.ParseArgs(singleArg));
+                        }
+                    }
+                    else
+                    {
+                        if (!seenParameters.Add(Parameter)) {
+                            throw new InvalidOperationException("Duplicate parameter value.");
+                        }
+
+                        argValues.Add(Parameter.Name, Parameter.ParseArgs(chunk));
+                    }
                 }
             }
 
