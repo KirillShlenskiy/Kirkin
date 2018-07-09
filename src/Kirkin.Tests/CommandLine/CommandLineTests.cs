@@ -298,7 +298,7 @@ namespace Kirkin.Tests.CommandLine
         }
 
         [Test]
-        public void PositionalArgs()
+        public void PositionalArgsNoParam()
         {
             CommandDefinition definition = new CommandDefinition();
 
@@ -313,6 +313,39 @@ namespace Kirkin.Tests.CommandLine
             Assert.AreEqual("bbb", command.Arguments.GetOption("b"));
             Assert.True(command.Arguments.GetSwitch("c"));
             Assert.AreEqual("ddd", command.Arguments.GetOption("d"));
+        }
+
+        [Test]
+        public void PositionalArgsWithParam()
+        {
+            CommandDefinition definition = new CommandDefinition();
+
+            definition.DefineParameter("a");
+            definition.DefineOption("b");
+            definition.DefineSwitch("c");
+            definition.DefineOption("d");
+
+            ICommand command = definition.Parse("aaa bbb --c --d ddd".Split(' '));
+
+            Assert.AreEqual("aaa", command.Arguments.GetParameter());
+            Assert.AreEqual("bbb", command.Arguments.GetOption("b"));
+            Assert.True(command.Arguments.GetSwitch("c"));
+            Assert.AreEqual("ddd", command.Arguments.GetOption("d"));
+        }
+
+        [Test]
+        public void PositionalArgsFailForMultiValues()
+        {
+            CommandDefinition definition = new CommandDefinition();
+
+            definition.DefineOption("a");
+            definition.DefineOptionList("b");
+
+            ICommand command = definition.Parse(new[] { "aaa" });
+
+            Assert.AreEqual("aaa", command.Arguments.GetOption("a"));
+
+            Assert.Throws<ArgumentException>(() => definition.Parse(new[] { "aaa", "bbb" }));
         }
     }
 }

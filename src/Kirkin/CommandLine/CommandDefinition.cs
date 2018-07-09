@@ -213,29 +213,37 @@ namespace Kirkin.CommandLine
                 else
                 {
                     // Parameter or positional args.
-                    if (Parameter == null)
+                    if (Parameter == null || !Parameter.SupportsMultipleValues && chunk.Count > 1)
                     {
                         // Positional args.
+                        List<ICommandParameterDefinition> positionalParams = new List<ICommandParameterDefinition>();
+
+                        if (Parameter != null) {
+                            positionalParams.Add(Parameter);
+                        }
+
+                        positionalParams.AddRange(Options);
+
                         int lastPositionalArgIndex = -1;
 
                         while (chunk.Count != 0)
                         {
-                            if (lastPositionalArgIndex > Options.Count - 1) {
+                            if (lastPositionalArgIndex > positionalParams.Count - 1) {
                                 throw new InvalidOperationException("Too many positional args.");
                             }
 
-                            ICommandParameterDefinition opt = Options[++lastPositionalArgIndex];
+                            ICommandParameterDefinition option = positionalParams[++lastPositionalArgIndex];
 
-                            if (opt.SupportsMultipleValues) {
-                                throw new NotSupportedException("Multi-valued positional args not supported.");
+                            if (option.SupportsMultipleValues) {
+                                throw new ArgumentException("Multi-valued positional args not supported.");
                             }
 
                             // Parse single arg.
                             List<string> singleArg = new List<string> { chunk[0] };
 
-                            seenParameters.Add(opt);
+                            seenParameters.Add(option);
                             chunk.RemoveAt(0);
-                            argValues.Add(opt.Name, opt.ParseArgs(singleArg));
+                            argValues.Add(option.Name, option.ParseArgs(singleArg));
                         }
                     }
                     else
