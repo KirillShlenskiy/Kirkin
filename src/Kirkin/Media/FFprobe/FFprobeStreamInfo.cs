@@ -1,4 +1,6 @@
-﻿using System.Xml.Serialization;
+﻿#if !NETSTANDARD2_0
+
+using System.Xml.Serialization;
 
 namespace Kirkin.Media.FFprobe
 {
@@ -27,3 +29,5 @@ namespace Kirkin.Media.FFprobe
         public int BitRate { get; set; }
     }
 }
+
+#endif

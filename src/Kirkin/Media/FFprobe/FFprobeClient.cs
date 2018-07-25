@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !NETSTANDARD2_0
+
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Xml.Serialization;
@@ -76,3 +78,5 @@ namespace Kirkin.Media.FFprobe
         }
     }
 }
+
+#endif

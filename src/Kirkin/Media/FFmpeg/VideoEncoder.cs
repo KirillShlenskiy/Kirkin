@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !NETSTANDARD2_0
+
+using System;
 
 namespace Kirkin.Media.FFmpeg
 {
@@ -95,3 +97,5 @@ namespace Kirkin.Media.FFmpeg
         }
     }
 }
+
+#endif

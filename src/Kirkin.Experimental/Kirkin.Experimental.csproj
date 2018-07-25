@@ -99,12 +99,6 @@
     <Compile Include="Mapping\DelegateMember.cs" />
     <Compile Include="Mapping\ExpressionMember.cs" />
     <Compile Include="Mapping\Member.cs" />
-    <Compile Include="Media\FFmpeg\AudioEncoder.cs" />
-    <Compile Include="Media\FFmpeg\FFmpegClient.cs" />
-    <Compile Include="Media\FFmpeg\FFmpegException.cs" />
-    <Compile Include="Media\FFmpeg\VideoEncoder.cs" />
-    <Compile Include="Media\FFprobe\FFprobeClient.cs" />
-    <Compile Include="Media\FFprobe\FFprobeStreamInfo.cs" />
     <Compile Include="Memory\Pinned.cs" />
     <Compile Include="Memory\RawCopy.cs" />
     <Compile Include="Memory\TypeSizeResolver.cs" />

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !NETSTANDARD2_0
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -215,3 +217,5 @@ namespace Kirkin.Media.FFmpeg
         }
     }
 }
+
+#endif
