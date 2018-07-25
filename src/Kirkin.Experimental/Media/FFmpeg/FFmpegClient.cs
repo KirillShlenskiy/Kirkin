@@ -90,7 +90,7 @@ namespace Kirkin.Media.FFmpeg
         /// <summary>
         /// Creates a new ffmpeg wrapper instance with the given ffmpeg.exe path.
         /// </summary>
-        private FFmpegClient(string ffmpegPath)
+        public FFmpegClient(string ffmpegPath)
         {
             FFmpegPath = ffmpegPath;
         }
