@@ -302,10 +302,10 @@ namespace Kirkin.Tests.CommandLine
         {
             CommandDefinition definition = new CommandDefinition();
 
-            definition.DefineOption("a");
-            definition.DefineOption("b");
-            definition.DefineSwitch("c");
-            definition.DefineOption("d");
+            definition.DefineOption("a", positional: true);
+            definition.DefineOption("b", positional: true);
+            definition.DefineSwitch("c", positional: true);
+            definition.DefineOption("d", positional: true);
 
             ICommand command = definition.Parse("aaa bbb --c --d ddd".Split(' '));
 
@@ -321,9 +321,9 @@ namespace Kirkin.Tests.CommandLine
             CommandDefinition definition = new CommandDefinition();
 
             definition.DefineParameter("a");
-            definition.DefineOption("b");
-            definition.DefineSwitch("c");
-            definition.DefineOption("d");
+            definition.DefineOption("b", positional: true);
+            definition.DefineSwitch("c", positional: true);
+            definition.DefineOption("d", positional: true);
 
             ICommand command = definition.Parse("aaa bbb --c --d ddd".Split(' '));
 
@@ -338,14 +338,35 @@ namespace Kirkin.Tests.CommandLine
         {
             CommandDefinition definition = new CommandDefinition();
 
-            definition.DefineOption("a");
-            definition.DefineOptionList("b");
+            definition.DefineOption("a", positional: true);
+            definition.DefineOptionList("b", positional: true);
 
             ICommand command = definition.Parse(new[] { "aaa" });
 
             Assert.AreEqual("aaa", command.Arguments.GetOption("a"));
 
             Assert.Throws<ArgumentException>(() => definition.Parse(new[] { "aaa", "bbb" }));
+        }
+
+        [Test]
+        public void MixedPositionalAndNonPositionalArgs()
+        {
+            CommandDefinition definition = new CommandDefinition();
+
+            definition.DefineOption("a", positional: true);
+            definition.DefineOption("b", positional: false);
+            definition.DefineOption("c", positional: true);
+
+            ICommand command = definition.Parse("aaa ccc".Split(' '));
+
+            Assert.AreEqual("aaa", command.Arguments.GetOption("a"));
+            Assert.AreEqual("ccc", command.Arguments.GetOption("c"));
+
+            command = definition.Parse("aaa ccc --b bbb".Split(' '));
+
+            Assert.AreEqual("aaa", command.Arguments.GetOption("a"));
+            Assert.AreEqual("bbb", command.Arguments.GetOption("b"));
+            Assert.AreEqual("ccc", command.Arguments.GetOption("c"));
         }
 
         [Test]

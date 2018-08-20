@@ -25,6 +25,11 @@ namespace Kirkin.CommandLine.Parameters
         public abstract bool SupportsMultipleValues { get; }
 
         /// <summary>
+        /// Specifies whether this parameter can be resolved by its position in addition to than name.
+        /// </summary>
+        public bool IsPositionalParameter { get; }
+
+        /// <summary>
         /// Human-readable parameter description.
         /// </summary>
         public string Help { get; }
@@ -32,7 +37,7 @@ namespace Kirkin.CommandLine.Parameters
         /// <summary>
         /// Creates a new <see cref="CommandParameterBase{T}"/> instance.
         /// </summary>
-        internal CommandParameterBase(string name, string shortName, string help)
+        internal CommandParameterBase(string name, string shortName, string help, bool isPositionalParameter)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Parameter name cannot be empty.");
 
@@ -45,6 +50,7 @@ namespace Kirkin.CommandLine.Parameters
             Name = name;
             ShortName = shortName;
             Help = help;
+            IsPositionalParameter = isPositionalParameter;
         }
 
         /// <summary>

@@ -21,6 +21,11 @@
         bool SupportsMultipleValues { get; }
 
         /// <summary>
+        /// Specifies whether this parameter can be resolved by its position in addition to its name.
+        /// </summary>
+        bool IsPositionalParameter { get; }
+
+        /// <summary>
         /// Human-readable parameter description.
         /// </summary>
         string Help { get; }
