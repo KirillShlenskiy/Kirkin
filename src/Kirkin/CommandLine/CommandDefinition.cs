@@ -313,7 +313,7 @@ namespace Kirkin.CommandLine
             foreach (ICommandParameter option in Options)
             {
                 sb.Append(" [");
-                sb.Append(option);
+                sb.Append((option as IParameterFormattable)?.ToShortString() ?? option.ToString());
                 sb.Append(']');
             }
 

@@ -181,7 +181,7 @@ namespace Kirkin.Tests.CommandLine
                 sync.DefineOption("log", shortName: "l");
             });
 
-            Assert.AreEqual("sync <subscription> [-v|--validate] [-l|--log <arg>]", parser.CommandDefinitions[0].ToString());
+            Assert.AreEqual("sync <subscription> [-v] [-l <arg>]", parser.CommandDefinitions[0].ToString());
         }
 
         [Test]
@@ -315,8 +315,8 @@ namespace Kirkin.Tests.CommandLine
             string expected = @"Usage: Kirkin command <aaa> [-b <arg>] [-c].
 
     <aaa>              Does the zzz thing.
-    -b, --bbb <arg>    Does the uuu thing, which is totally different to the
-                       aaa thing. Totally.
+    -b, --bbb <arg>    Does the uuu thing, which is totally different to
+                       the aaa thing. Totally.
     -c, --ccc          Does the ccc thing.
 ";
             Assert.AreEqual(expected, ((IHelpCommand)command).RenderHelpText());

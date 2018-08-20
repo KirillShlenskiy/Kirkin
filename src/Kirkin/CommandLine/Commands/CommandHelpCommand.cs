@@ -57,7 +57,7 @@ namespace Kirkin.CommandLine.Commands
 
             parameters.AddRange(Definition.Options);
 
-            Dictionary<string, string> dictionary = parameters.ToDictionary(p => p.ToString(), p => p.Help);
+            Dictionary<string, string> dictionary = parameters.ToDictionary(p => (p as IParameterFormattable)?.ToLongString() ?? p.ToString(), p => p.Help);
 
             TextFormatter.FormatAsTable(dictionary, sb);
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Kirkin.CommandLine.Parameters
 {
     internal sealed class OptionCommandParameter
-        : CommandParameterBase<string>
+        : CommandParameterBase<string>, IParameterFormattable
     {
         public override bool SupportsMultipleValues
         {
@@ -34,6 +34,20 @@ namespace Kirkin.CommandLine.Parameters
             return string.IsNullOrEmpty(ShortName)
                 ? $"--{Name} <arg>"
                 : $"-{ShortName}|--{Name} <arg>";
+        }
+
+        string IParameterFormattable.ToShortString()
+        {
+            return !string.IsNullOrEmpty(ShortName)
+                ? $"-{ShortName} <arg>"
+                : $"--{Name} <arg>";
+        }
+
+        string IParameterFormattable.ToLongString()
+        {
+            return string.IsNullOrEmpty(ShortName)
+                ? $"--{Name} <arg>"
+                : $"-{ShortName}, --{Name} <arg>";
         }
     }
 }
