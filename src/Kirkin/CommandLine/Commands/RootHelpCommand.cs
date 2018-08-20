@@ -78,7 +78,7 @@ namespace Kirkin.CommandLine.Commands
             sb.AppendLine($"Usage: {executableName} <command> [<args>].");
             sb.AppendLine();
 
-            IEnumerable<CommandDefinition> commandDefinitions = Parser.CommandDefinitions;
+            IEnumerable<ICommandDefinition> commandDefinitions = Parser.CommandDefinitions;
             Dictionary<string, string> dictionary = commandDefinitions.ToDictionary(d => d.Name, d => d.Help, Parser.StringEqualityComparer);
 
             TextFormatter.FormatAsTable(dictionary, sb);

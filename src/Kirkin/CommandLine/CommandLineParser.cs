@@ -9,9 +9,9 @@ namespace Kirkin.CommandLine
     /// <summary>
     /// Command line argument parser.
     /// </summary>
-    public sealed class CommandLineParser
+    public sealed class CommandLineParser : ICommandList
     {
-        private Dictionary<string, CommandDefinition> _commandDefinitions = new Dictionary<string, CommandDefinition>(StringComparer.Ordinal);
+        private Dictionary<string, ICommandDefinition> _commandDefinitions = new Dictionary<string, ICommandDefinition>(StringComparer.Ordinal);
 
         /// <summary>
         /// Equality comparer used by the parser to resolve commands and their arguments.
@@ -39,7 +39,7 @@ namespace Kirkin.CommandLine
                     throw new InvalidOperationException("Cannot change default string equality comparer once commands have been defined.");
                 }
 
-                _commandDefinitions = new Dictionary<string, CommandDefinition>(value ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+                _commandDefinitions = new Dictionary<string, ICommandDefinition>(value ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
             }
         }
 
@@ -47,9 +47,9 @@ namespace Kirkin.CommandLine
         /// Returns the collection of command definitions supported by this parser.
         /// </summary>
 #if NET_40
-        public IEnumerable<CommandDefinition> CommandDefinitions
+        public IEnumerable<ICommandDefinition> CommandDefinitions
 #else
-        public IReadOnlyList<CommandDefinition> CommandDefinitions
+        public IReadOnlyList<ICommandDefinition> CommandDefinitions
 #endif
         {
             get
@@ -63,6 +63,9 @@ namespace Kirkin.CommandLine
         /// </summary>
         public bool ShowAppDetailsInHelp { get; set; }
 
+        string ICommandDefinition.Name => throw new NotSupportedException();
+        string ICommandDefinition.Help => throw new NotSupportedException();
+
         /// <summary>
         /// Defines a command with the given name.
         /// </summary>
@@ -71,10 +74,30 @@ namespace Kirkin.CommandLine
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command name cannot be empty.");
 
             if (_commandDefinitions.ContainsKey(name)) {
-                throw new InvalidOperationException($"Command '{name}' already defined.");
+                throw new InvalidOperationException($"Command or command group '{name}' already defined.");
             }
 
             CommandDefinition definition = new CommandDefinition(name, StringEqualityComparer);
+
+            configureAction(definition);
+
+            _commandDefinitions.Add(name, definition);
+        }
+
+        /// <summary>
+        /// Defines a group of commands with the given name.
+        /// </summary>
+        public void DefineCommandGroup(string name, Action<ICommandList> configureAction)
+        {
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command group name cannot be empty.");
+
+            if (_commandDefinitions.ContainsKey(name)) {
+                throw new InvalidOperationException($"Command or command group '{name}' already defined.");
+            }
+
+            CommandLineParser definition = new CommandLineParser {
+                CaseInsensitive = CaseInsensitive
+            };
 
             configureAction(definition);
 
@@ -94,7 +117,7 @@ namespace Kirkin.CommandLine
                 return new RootHelpCommand(this);
             }
 
-            if (_commandDefinitions.TryGetValue(commandName, out CommandDefinition definition))
+            if (_commandDefinitions.TryGetValue(commandName, out ICommandDefinition definition))
             {
                 // Always skip first element.
                 string[] argsMinusFirstElement = new string[args.Length - 1];

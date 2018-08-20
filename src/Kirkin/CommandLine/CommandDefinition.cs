@@ -10,7 +10,7 @@ namespace Kirkin.CommandLine
     /// <summary>
     /// Builder type used to configure commands.
     /// </summary>
-    public sealed class CommandDefinition
+    public sealed class CommandDefinition : ICommandDefinition
     {
         // Every command has zero or one parameter ("sync ==>extra<== --validate --log zzz.txt"),
         // and zero or more options/switches ("sync extra ==>--validate --log zzz.txt<==").
