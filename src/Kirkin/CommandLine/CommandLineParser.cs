@@ -10,7 +10,7 @@ namespace Kirkin.CommandLine
     /// <summary>
     /// Command line argument parser.
     /// </summary>
-    public sealed class CommandLineParser : ICommandContainer
+    public sealed class CommandLineParser : ICommandDefinitionContainer
     {
         private Dictionary<string, CommandDefinition> _commandDefinitions = new Dictionary<string, CommandDefinition>(StringComparer.Ordinal);
 

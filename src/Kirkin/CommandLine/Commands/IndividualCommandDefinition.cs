@@ -115,7 +115,7 @@ namespace Kirkin.CommandLine.Commands
         /// <summary>
         /// Parses the given args collection and produces a ready-to-use <see cref="ICommand"/> instance.
         /// </summary>
-        public override ICommand Parse(string[] args)
+        internal override ICommand Parse(string[] args)
         {
             if (args == null) throw new ArgumentNullException(nameof(args));
 

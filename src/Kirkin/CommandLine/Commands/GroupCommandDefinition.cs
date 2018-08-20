@@ -8,7 +8,7 @@ namespace Kirkin.CommandLine.Commands
     /// <summary>
     /// Container for multiple logically grouped commands.
     /// </summary>
-    public sealed class GroupCommandDefinition : CommandDefinition, ICommandContainer
+    public sealed class GroupCommandDefinition : CommandDefinition, ICommandDefinitionContainer
     {
         private readonly CommandLineParser Parser;
 
@@ -20,7 +20,6 @@ namespace Kirkin.CommandLine.Commands
 #else
         public IReadOnlyList<CommandDefinition> CommandDefinitions => Parser.CommandDefinitions;
 #endif
-
         internal IEqualityComparer<string> StringEqualityComparer => Parser.StringEqualityComparer;
 
         internal GroupCommandDefinition(string name, CommandDefinition parent, bool caseInsensitive)
@@ -51,7 +50,7 @@ namespace Kirkin.CommandLine.Commands
         /// <summary>
         /// Parses the command line args and returns the configured, ready-to-execute command.
         /// </summary>
-        public override ICommand Parse(string[] args)
+        internal override ICommand Parse(string[] args)
         {
             if (args.Length == 0 || (args.Length == 1 && CommandSyntax.IsHelpSwitch(args[0], StringEqualityComparer))) {
                 return new CommandGroupHelpCommand(this);

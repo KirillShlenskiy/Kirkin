@@ -8,7 +8,7 @@ namespace Kirkin.CommandLine
     /// <summary>
     /// Mutable command list builder.
     /// </summary>
-    public interface ICommandContainer
+    internal interface ICommandDefinitionContainer
     {
         /// <summary>
         /// Returns the collection of command definitions supported by this parser.

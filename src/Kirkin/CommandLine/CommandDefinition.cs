@@ -38,7 +38,7 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Parses the given args collection and produces a ready-to-use <see cref="ICommand"/> instance.
         /// </summary>
-        public abstract ICommand Parse(string[] args);
+        internal abstract ICommand Parse(string[] args);
 
         private protected abstract IHelpCommand CreateHelpCommand();
     }
