@@ -20,13 +20,19 @@ namespace Kirkin.CommandLine
         public string Help { get; set; }
 
         /// <summary>
+        /// Parent command specified when this instance was created.
+        /// </summary>
+        internal CommandDefinitionBase Parent { get; }
+
+        /// <summary>
         /// Creates a new <see cref="CommandDefinitionBase"/> instance.
         /// </summary>
-        protected CommandDefinitionBase(string name)
+        private protected CommandDefinitionBase(string name, CommandDefinitionBase parent)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 
             Name = name;
+            Parent = parent;
         }
 
         /// <summary>

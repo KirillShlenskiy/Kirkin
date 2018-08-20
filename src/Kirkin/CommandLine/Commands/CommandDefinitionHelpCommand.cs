@@ -46,7 +46,18 @@ namespace Kirkin.CommandLine.Commands
             Assembly entryAssembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
             string executableName = Path.GetFileNameWithoutExtension(entryAssembly.Location);
 
-            sb.AppendLine($"Usage: {executableName} {Definition}.");
+            sb.Append($"Usage: {executableName} ");
+
+            CommandDefinitionBase parent = Definition.Parent;
+
+            while (parent != null)
+            {
+                sb.Append($"{parent.Name} ");
+
+                parent = parent.Parent;
+            }
+
+            sb.AppendLine($"{Definition}.");
             sb.AppendLine();
 
             List<ICommandParameter> parameters = new List<ICommandParameter>();

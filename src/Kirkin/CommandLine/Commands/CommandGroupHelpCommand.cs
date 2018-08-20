@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -46,7 +44,20 @@ namespace Kirkin.CommandLine.Commands
             Assembly entryAssembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
             string executableName = Path.GetFileNameWithoutExtension(entryAssembly.Location);
 
-            return $"Usage: {executableName} {Definition} <command>.";
+            sb.Append($"Usage: {executableName} ");
+
+            CommandDefinitionBase parent = Definition.Parent;
+
+            while (parent != null)
+            {
+                sb.Append($"{parent.Name} ");
+
+                parent = parent.Parent;
+            }
+
+            sb.AppendLine($"{Definition} <command>.");
+
+            return sb.ToString();
         }
     }
 }

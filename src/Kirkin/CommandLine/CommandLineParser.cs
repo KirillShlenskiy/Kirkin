@@ -68,13 +68,18 @@ namespace Kirkin.CommandLine
         /// </summary>
         public void DefineCommand(string name, Action<CommandDefinition> configureAction)
         {
+            DefineCommand(name, null, configureAction);
+        }
+
+        internal void DefineCommand(string name, CommandDefinitionBase parent, Action<CommandDefinition> configureAction)
+        {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command name cannot be empty.");
 
             if (_commandDefinitions.ContainsKey(name)) {
                 throw new InvalidOperationException($"Command or command group '{name}' already defined.");
             }
 
-            CommandDefinition definition = new CommandDefinition(name, StringEqualityComparer);
+            CommandDefinition definition = new CommandDefinition(name, parent, StringEqualityComparer);
 
             configureAction(definition);
 
@@ -86,13 +91,18 @@ namespace Kirkin.CommandLine
         /// </summary>
         public void DefineCommandGroup(string name, Action<CommandGroupDefinition> configureAction)
         {
+            DefineCommandGroup(name, null, configureAction);
+        }
+
+        internal void DefineCommandGroup(string name, CommandDefinitionBase parent, Action<CommandGroupDefinition> configureAction)
+        {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command group name cannot be empty.");
 
             if (_commandDefinitions.ContainsKey(name)) {
                 throw new InvalidOperationException($"Command or command group '{name}' already defined.");
             }
 
-            CommandGroupDefinition definition = new CommandGroupDefinition(name, CaseInsensitive);
+            CommandGroupDefinition definition = new CommandGroupDefinition(name, parent, CaseInsensitive);
 
             configureAction(definition);
 

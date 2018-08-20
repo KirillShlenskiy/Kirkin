@@ -11,8 +11,8 @@ namespace Kirkin.CommandLine
     {
         private readonly CommandLineParser Parser;
 
-        internal CommandGroupDefinition(string name, bool caseInsensitive)
-            : base(name)
+        internal CommandGroupDefinition(string name, CommandDefinitionBase parent, bool caseInsensitive)
+            : base(name, parent)
         {
             Parser = new CommandLineParser { CaseInsensitive = caseInsensitive };
         }
@@ -22,7 +22,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public void DefineCommand(string name, Action<CommandDefinition> configureAction)
         {
-            Parser.DefineCommand(name, configureAction);
+            Parser.DefineCommand(name, this, configureAction);
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public void DefineCommandGroup(string name, Action<CommandGroupDefinition> configureAction)
         {
-            Parser.DefineCommandGroup(name, configureAction);
+            Parser.DefineCommandGroup(name, this, configureAction);
         }
 
         /// <summary>

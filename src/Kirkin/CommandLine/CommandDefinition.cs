@@ -28,12 +28,12 @@ namespace Kirkin.CommandLine
         /// Creates a new standalone <see cref="CommandDefinition"/> instance.
         /// </summary>
         public CommandDefinition(bool caseInsensitive = false)
-            : this("", caseInsensitive ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal)
+            : this("", null, caseInsensitive ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal)
         {
         }
 
-        internal CommandDefinition(string name, IEqualityComparer<string> stringEqualityComparer)
-            : base(name)
+        internal CommandDefinition(string name, CommandDefinitionBase parent, IEqualityComparer<string> stringEqualityComparer)
+            : base(name, parent)
         {
             if (name.StartsWith("-")) throw new ArgumentException("Command name cannot start with a '-'.");
             if (name.StartsWith("/")) throw new ArgumentException("Command name cannot start with a '/'.");
