@@ -31,23 +31,50 @@ namespace Kirkin.CommandLine.Parameters
 
         public override string ToString()
         {
-            return string.IsNullOrEmpty(ShortName)
-                ? $"--{Name} <arg>"
-                : $"-{ShortName}|--{Name} <arg>";
+            if (IsPositionalParameter)
+            {
+                return string.IsNullOrEmpty(ShortName)
+                    ? $"[--{Name}] <arg>"
+                    : $"[-{ShortName}|--{Name}] <arg>";
+            }
+            else
+            {
+                return string.IsNullOrEmpty(ShortName)
+                    ? $"--{Name} <arg>"
+                    : $"-{ShortName}|--{Name} <arg>";
+            }
         }
 
         string IParameterFormattable.ToShortString()
         {
-            return !string.IsNullOrEmpty(ShortName)
-                ? $"-{ShortName} <arg>"
-                : $"--{Name} <arg>";
+            if (IsPositionalParameter)
+            {
+                return !string.IsNullOrEmpty(ShortName)
+                    ? $"[-{ShortName}] <arg>"
+                    : $"[--{Name}] <arg>";
+            }
+            else
+            {
+                return !string.IsNullOrEmpty(ShortName)
+                    ? $"-{ShortName} <arg>"
+                    : $"--{Name} <arg>";
+            }
         }
 
         string IParameterFormattable.ToLongString()
         {
-            return string.IsNullOrEmpty(ShortName)
-                ? $"--{Name} <arg>"
-                : $"-{ShortName}, --{Name} <arg>";
+            if (IsPositionalParameter)
+            {
+                return string.IsNullOrEmpty(ShortName)
+                    ? $"[--{Name}] <arg>"
+                    : $"[-{ShortName}, --{Name}] <arg>";
+            }
+            else
+            {
+                return string.IsNullOrEmpty(ShortName)
+                    ? $"--{Name} <arg>"
+                    : $"-{ShortName}, --{Name} <arg>";
+            }
         }
     }
 }
