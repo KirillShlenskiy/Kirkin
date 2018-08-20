@@ -7,9 +7,9 @@ using System.Text;
 
 namespace Kirkin.CommandLine.Commands
 {
-    internal sealed class CommandHelpCommand : IHelpCommand
+    internal sealed class CommandGroupHelpCommand : IHelpCommand
     {
-        private readonly CommandDefinition Definition;
+        private readonly CommandGroupDefinition Definition;
 
         public CommandArguments Arguments { get; }
 
@@ -21,10 +21,10 @@ namespace Kirkin.CommandLine.Commands
             }
         }
 
-        internal CommandHelpCommand(CommandDefinition definition)
+        internal CommandGroupHelpCommand(CommandGroupDefinition definition)
         {
             Definition = definition;
-            Arguments = new CommandArguments(definition);
+            Arguments = new CommandArguments(null);
         }
 
         public void Execute()
@@ -46,22 +46,7 @@ namespace Kirkin.CommandLine.Commands
             Assembly entryAssembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
             string executableName = Path.GetFileNameWithoutExtension(entryAssembly.Location);
 
-            sb.AppendLine($"Usage: {executableName} {Definition}.");
-            sb.AppendLine();
-
-            List<ICommandParameter> parameters = new List<ICommandParameter>();
-
-            if (Definition.Parameter != null) {
-                parameters.Add(Definition.Parameter);
-            }
-
-            parameters.AddRange(Definition.Options);
-
-            Dictionary<string, string> dictionary = parameters.ToDictionary(p => (p as IParameterFormattable)?.ToLongString() ?? p.ToString(), p => p.Help);
-
-            TextFormatter.FormatAsTable(dictionary, sb);
-
-            return sb.ToString();
+            return $"Usage: {executableName} {Definition} <command>.";
         }
     }
 }

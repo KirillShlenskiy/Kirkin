@@ -10,7 +10,7 @@ namespace Kirkin.CommandLine
     /// <summary>
     /// Builder type used to configure commands.
     /// </summary>
-    public sealed class CommandDefinition : ICommandDefinition
+    public sealed class CommandDefinition : CommandDefinitionBase
     {
         // Every command has zero or one parameter ("sync ==>extra<== --validate --log zzz.txt"),
         // and zero or more options/switches ("sync extra ==>--validate --log zzz.txt<==").
@@ -18,16 +18,6 @@ namespace Kirkin.CommandLine
         internal readonly List<ICommandParameterDefinition> Options = new List<ICommandParameterDefinition>();
         private readonly Dictionary<string, ICommandParameterDefinition> OptionsByFullName;
         private readonly Dictionary<string, ICommandParameterDefinition> OptionsByShortName;
-
-        /// <summary>
-        /// The name of the command being configured.
-        /// </summary>
-        public string Name { get; }
-
-        /// <summary>
-        /// Human-readable command description.
-        /// </summary>
-        public string Help { get; set; }
 
         /// <summary>
         /// Raised when <see cref="ICommand.Execute"/> is called on the command.
@@ -43,12 +33,11 @@ namespace Kirkin.CommandLine
         }
 
         internal CommandDefinition(string name, IEqualityComparer<string> stringEqualityComparer)
+            : base(name)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
             if (name.StartsWith("-")) throw new ArgumentException("Command name cannot start with a '-'.");
             if (name.StartsWith("/")) throw new ArgumentException("Command name cannot start with a '/'.");
 
-            Name = name;
             OptionsByFullName = new Dictionary<string, ICommandParameterDefinition>(stringEqualityComparer);
             OptionsByShortName = new Dictionary<string, ICommandParameterDefinition>(stringEqualityComparer);
         }
@@ -126,14 +115,14 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Parses the given args collection and produces a ready-to-use <see cref="ICommand"/> instance.
         /// </summary>
-        public ICommand Parse(string[] args)
+        public override ICommand Parse(string[] args)
         {
             if (args == null) throw new ArgumentNullException(nameof(args));
 
             IEqualityComparer<string> stringEqualityComparer = OptionsByFullName.Comparer;
 
             if (args.Length == 1 && CommandSyntax.IsHelpSwitch(args[0], stringEqualityComparer)) {
-                return new CommandHelpCommand(this);
+                return new CommandDefinitionHelpCommand(this);
             }
 
             List<List<string>> tokenGroups = new List<List<string>>();
@@ -293,6 +282,11 @@ namespace Kirkin.CommandLine
             }
 
             Options.Add(option);
+        }
+
+        private protected override IHelpCommand CreateHelpCommand()
+        {
+            return new CommandDefinitionHelpCommand(this);
         }
 
         /// <summary>

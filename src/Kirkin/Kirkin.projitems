@@ -39,11 +39,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Specialized\UndoRedoCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandArguments.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandDefinition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandDefinitionBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandExecutedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandGroupDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandLineParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandSyntax.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\CommandHelpCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\CommandDefinitionHelpCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\CommandGroupHelpCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\DefaultCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\RootHelpCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\IHelpCommand.cs" />

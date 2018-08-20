@@ -1,33 +1,49 @@
 ﻿using System;
 
+using Kirkin.CommandLine.Commands;
+
 namespace Kirkin.CommandLine
 {
-    internal sealed class CommandGroupDefinition : ICommandDefinition, ICommandListBuilder
+    /// <summary>
+    /// Container for multiple logically grouped commands.
+    /// </summary>
+    public sealed class CommandGroupDefinition : CommandDefinitionBase, ICommandListBuilder
     {
         private readonly CommandLineParser Parser;
 
-        public string Name { get; }
-        public string Help { get; set; }
-
         internal CommandGroupDefinition(string name, bool caseInsensitive)
+            : base(name)
         {
-            Name = name;
             Parser = new CommandLineParser { CaseInsensitive = caseInsensitive };
         }
 
+        /// <summary>
+        /// Defines a command with the given name.
+        /// </summary>
         public void DefineCommand(string name, Action<CommandDefinition> configureAction)
         {
             Parser.DefineCommand(name, configureAction);
         }
 
-        public void DefineCommandGroup(string name, Action<ICommandListBuilder> configureAction)
+        /// <summary>
+        /// Defines a group of commands with the given name.
+        /// </summary>
+        public void DefineCommandGroup(string name, Action<CommandGroupDefinition> configureAction)
         {
             Parser.DefineCommandGroup(name, configureAction);
         }
 
-        public ICommand Parse(string[] args)
+        /// <summary>
+        /// Parses the command line args and returns the configured, ready-to-execute command.
+        /// </summary>
+        public override ICommand Parse(string[] args)
         {
             return Parser.Parse(args);
+        }
+
+        private protected override IHelpCommand CreateHelpCommand()
+        {
+            return new CommandGroupHelpCommand(this);
         }
     }
 }

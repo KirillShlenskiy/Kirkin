@@ -84,7 +84,7 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Defines a group of commands with the given name.
         /// </summary>
-        public void DefineCommandGroup(string name, Action<ICommandListBuilder> configureAction)
+        public void DefineCommandGroup(string name, Action<CommandGroupDefinition> configureAction)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command group name cannot be empty.");
 
