@@ -38,20 +38,20 @@
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\Vector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Specialized\UndoRedoCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandArguments.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\CommandDefinition.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandDefinitionBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\IndividualCommandDefinition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandExecutedEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\CommandGroupDefinition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\GroupCommandDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandLineParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandSyntax.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\CommandDefinitionHelpCommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\CommandGroupHelpCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\Help\CommandDefinitionHelpCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\Help\CommandGroupHelpCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\DefaultCommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\RootHelpCommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\IHelpCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\Help\RootHelpCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\Help\IHelpCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ConsoleFormatter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommandListBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommandContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommandParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\IParameterFormattable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ParameterFormat.cs" />
@@ -175,5 +175,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)WeakEvents.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Windows\Job.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Windows\WindowsAuthentication.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)CommandLine\Commands\Help\" />
   </ItemGroup>
 </Project>

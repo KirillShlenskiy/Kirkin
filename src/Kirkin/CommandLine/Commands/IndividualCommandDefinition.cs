@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
+using Kirkin.CommandLine.Commands.Help;
 using Kirkin.CommandLine.Parameters;
 
 namespace Kirkin.CommandLine.Commands
@@ -9,7 +10,7 @@ namespace Kirkin.CommandLine.Commands
     /// <summary>
     /// Builder type used to configure commands.
     /// </summary>
-    public sealed class CommandDefinition : CommandDefinitionBase
+    public sealed class IndividualCommandDefinition : CommandDefinition
     {
         // Every command has zero or one parameter ("sync ==>extra<== --validate --log zzz.txt"),
         // and zero or more options/switches ("sync extra ==>--validate --log zzz.txt<==").
@@ -24,14 +25,14 @@ namespace Kirkin.CommandLine.Commands
         public event EventHandler<CommandExecutedEventArgs> Executed;
 
         /// <summary>
-        /// Creates a new standalone <see cref="CommandDefinition"/> instance.
+        /// Creates a new standalone <see cref="IndividualCommandDefinition"/> instance.
         /// </summary>
-        public CommandDefinition(bool caseInsensitive = false)
+        public IndividualCommandDefinition(bool caseInsensitive = false)
             : this("", null, caseInsensitive ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal)
         {
         }
 
-        internal CommandDefinition(string name, CommandDefinitionBase parent, IEqualityComparer<string> stringEqualityComparer)
+        internal IndividualCommandDefinition(string name, CommandDefinition parent, IEqualityComparer<string> stringEqualityComparer)
             : base(name, parent)
         {
             if (name.StartsWith("-")) throw new ArgumentException("Command name cannot start with a '-'.");

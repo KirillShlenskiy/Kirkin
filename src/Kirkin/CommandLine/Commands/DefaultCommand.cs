@@ -1,11 +1,11 @@
 ﻿namespace Kirkin.CommandLine.Commands
 {
     /// <summary>
-    /// Immutable facade over <see cref="CommandDefinition"/>.
+    /// Immutable facade over <see cref="IndividualCommandDefinition"/>.
     /// </summary>
     internal sealed class DefaultCommand : ICommand
     {
-        private readonly CommandDefinition _definition;
+        private readonly IndividualCommandDefinition _definition;
 
         public string Name
         {
@@ -17,7 +17,7 @@
 
         public CommandArguments Arguments { get; }
 
-        internal DefaultCommand(CommandDefinition definition, CommandArguments arguments)
+        internal DefaultCommand(IndividualCommandDefinition definition, CommandArguments arguments)
         {
             _definition = definition;
             Arguments = arguments;

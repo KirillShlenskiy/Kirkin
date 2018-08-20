@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Kirkin.CommandLine.Commands.Help;
+
 namespace Kirkin.CommandLine.Commands
 {
     /// <summary>
     /// Container for multiple logically grouped commands.
     /// </summary>
-    public sealed class CommandGroupDefinition : CommandDefinitionBase, ICommandListBuilder
+    public sealed class GroupCommandDefinition : CommandDefinition, ICommandContainer
     {
         private readonly CommandLineParser Parser;
 
@@ -14,14 +16,14 @@ namespace Kirkin.CommandLine.Commands
         /// Returns the collection of command definitions supported by this parser.
         /// </summary>
 #if NET_40
-        public IEnumerable<CommandDefinitionBase> CommandDefinitions => Parser.CommandDefinitions;
+        public IEnumerable<CommandDefinition> CommandDefinitions => Parser.CommandDefinitions;
 #else
-        public IReadOnlyList<CommandDefinitionBase> CommandDefinitions => Parser.CommandDefinitions;
+        public IReadOnlyList<CommandDefinition> CommandDefinitions => Parser.CommandDefinitions;
 #endif
 
         internal IEqualityComparer<string> StringEqualityComparer => Parser.StringEqualityComparer;
 
-        internal CommandGroupDefinition(string name, CommandDefinitionBase parent, bool caseInsensitive)
+        internal GroupCommandDefinition(string name, CommandDefinition parent, bool caseInsensitive)
             : base(name, parent)
         {
             Parser = new CommandLineParser {
@@ -33,7 +35,7 @@ namespace Kirkin.CommandLine.Commands
         /// <summary>
         /// Defines a command with the given name.
         /// </summary>
-        public void DefineCommand(string name, Action<CommandDefinition> configureAction)
+        public void DefineCommand(string name, Action<IndividualCommandDefinition> configureAction)
         {
             Parser.DefineCommand(name, configureAction);
         }
@@ -41,7 +43,7 @@ namespace Kirkin.CommandLine.Commands
         /// <summary>
         /// Defines a group of commands with the given name.
         /// </summary>
-        public void DefineCommandGroup(string name, Action<CommandGroupDefinition> configureAction)
+        public void DefineCommandGroup(string name, Action<GroupCommandDefinition> configureAction)
         {
             Parser.DefineCommandGroup(name, configureAction);
         }

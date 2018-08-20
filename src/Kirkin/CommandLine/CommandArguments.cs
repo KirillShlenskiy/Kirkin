@@ -11,7 +11,7 @@ namespace Kirkin.CommandLine
     public sealed class CommandArguments
     {
         static readonly Dictionary<string, object> EmptyArgDictionary = new Dictionary<string, object>();
-        private readonly CommandDefinition Command;
+        private readonly IndividualCommandDefinition Command;
 
         /// <summary>
         /// All command arguments.
@@ -26,9 +26,9 @@ namespace Kirkin.CommandLine
         /// Creates a new <see cref="CommandArguments"/> instance.
         /// </summary>
 #if NET_40
-        internal CommandArguments(CommandDefinition command, IDictionary<string, object> all = null)
+        internal CommandArguments(IndividualCommandDefinition command, IDictionary<string, object> all = null)
 #else
-        internal CommandArguments(CommandDefinition command, IReadOnlyDictionary<string, object> all = null)
+        internal CommandArguments(IndividualCommandDefinition command, IReadOnlyDictionary<string, object> all = null)
 #endif
         {
             Command = command;

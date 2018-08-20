@@ -2,6 +2,7 @@
 
 using Kirkin.CommandLine;
 using Kirkin.CommandLine.Commands;
+using Kirkin.CommandLine.Commands.Help;
 
 using NUnit.Framework;
 
@@ -325,7 +326,7 @@ namespace Kirkin.Tests.CommandLine
         [Test]
         public void ParseSingleCommand()
         {
-            CommandDefinition definition = new CommandDefinition();
+            IndividualCommandDefinition definition = new IndividualCommandDefinition();
 
             definition.DefineParameterList("names");
             definition.DefineSwitch("hru");
@@ -340,7 +341,7 @@ namespace Kirkin.Tests.CommandLine
         [Test]
         public void PositionalArgsNoParam()
         {
-            CommandDefinition definition = new CommandDefinition();
+            IndividualCommandDefinition definition = new IndividualCommandDefinition();
 
             definition.DefineOption("a", positional: true);
             definition.DefineOption("b", positional: true);
@@ -358,7 +359,7 @@ namespace Kirkin.Tests.CommandLine
         [Test]
         public void PositionalArgsWithParam()
         {
-            CommandDefinition definition = new CommandDefinition();
+            IndividualCommandDefinition definition = new IndividualCommandDefinition();
 
             definition.DefineParameter("a");
             definition.DefineOption("b", positional: true);
@@ -376,7 +377,7 @@ namespace Kirkin.Tests.CommandLine
         [Test]
         public void PositionalArgsFailForMultiValues()
         {
-            CommandDefinition definition = new CommandDefinition();
+            IndividualCommandDefinition definition = new IndividualCommandDefinition();
 
             definition.DefineOption("a", positional: true);
             definition.DefineOptionList("b", positional: true);
@@ -391,7 +392,7 @@ namespace Kirkin.Tests.CommandLine
         [Test]
         public void MixedPositionalAndNonPositionalArgs()
         {
-            CommandDefinition definition = new CommandDefinition();
+            IndividualCommandDefinition definition = new IndividualCommandDefinition();
 
             definition.DefineOption("a", positional: true);
             definition.DefineOption("b", positional: false);

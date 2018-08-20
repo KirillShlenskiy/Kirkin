@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Kirkin.CommandLine.Commands;
+using Kirkin.CommandLine.Commands.Help;
 
 namespace Kirkin.CommandLine
 {
     /// <summary>
     /// Command line argument parser.
     /// </summary>
-    public sealed class CommandLineParser : ICommandListBuilder
+    public sealed class CommandLineParser : ICommandContainer
     {
-        private Dictionary<string, CommandDefinitionBase> _commandDefinitions = new Dictionary<string, CommandDefinitionBase>(StringComparer.Ordinal);
+        private Dictionary<string, CommandDefinition> _commandDefinitions = new Dictionary<string, CommandDefinition>(StringComparer.Ordinal);
 
         /// <summary>
         /// Equality comparer used by the parser to resolve commands and their arguments.
@@ -24,7 +25,7 @@ namespace Kirkin.CommandLine
             }
         }
 
-        internal CommandDefinitionBase Parent;
+        internal CommandDefinition Parent;
 
         /// <summary>
         /// Equality comparer used by the parser to resolve commands and their arguments.
@@ -41,7 +42,7 @@ namespace Kirkin.CommandLine
                     throw new InvalidOperationException("Cannot change default string equality comparer once commands have been defined.");
                 }
 
-                _commandDefinitions = new Dictionary<string, CommandDefinitionBase>(value ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+                _commandDefinitions = new Dictionary<string, CommandDefinition>(value ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
             }
         }
 
@@ -49,9 +50,9 @@ namespace Kirkin.CommandLine
         /// Returns the collection of command definitions supported by this parser.
         /// </summary>
 #if NET_40
-        public IEnumerable<CommandDefinitionBase> CommandDefinitions
+        public IEnumerable<CommandDefinition> CommandDefinitions
 #else
-        public IReadOnlyList<CommandDefinitionBase> CommandDefinitions
+        public IReadOnlyList<CommandDefinition> CommandDefinitions
 #endif
         {
             get
@@ -68,7 +69,7 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Defines a command with the given name.
         /// </summary>
-        public void DefineCommand(string name, Action<CommandDefinition> configureAction)
+        public void DefineCommand(string name, Action<IndividualCommandDefinition> configureAction)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command name cannot be empty.");
 
@@ -76,7 +77,7 @@ namespace Kirkin.CommandLine
                 throw new InvalidOperationException($"Command or command group '{name}' already defined.");
             }
 
-            CommandDefinition definition = new CommandDefinition(name, Parent, StringEqualityComparer);
+            IndividualCommandDefinition definition = new IndividualCommandDefinition(name, Parent, StringEqualityComparer);
 
             configureAction(definition);
 
@@ -86,7 +87,7 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Defines a group of commands with the given name.
         /// </summary>
-        public void DefineCommandGroup(string name, Action<CommandGroupDefinition> configureAction)
+        public void DefineCommandGroup(string name, Action<GroupCommandDefinition> configureAction)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command group name cannot be empty.");
 
@@ -94,7 +95,7 @@ namespace Kirkin.CommandLine
                 throw new InvalidOperationException($"Command or command group '{name}' already defined.");
             }
 
-            CommandGroupDefinition definition = new CommandGroupDefinition(name, Parent, CaseInsensitive);
+            GroupCommandDefinition definition = new GroupCommandDefinition(name, Parent, CaseInsensitive);
 
             configureAction(definition);
 
@@ -114,7 +115,7 @@ namespace Kirkin.CommandLine
                 return new RootHelpCommand(this);
             }
 
-            if (_commandDefinitions.TryGetValue(commandName, out CommandDefinitionBase definition))
+            if (_commandDefinitions.TryGetValue(commandName, out CommandDefinition definition))
             {
                 // Always skip first element.
                 string[] argsMinusFirstElement = new string[args.Length - 1];

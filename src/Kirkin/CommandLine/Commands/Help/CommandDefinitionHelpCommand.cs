@@ -5,11 +5,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Kirkin.CommandLine.Commands
+namespace Kirkin.CommandLine.Commands.Help
 {
     internal sealed class CommandDefinitionHelpCommand : IHelpCommand
     {
-        private readonly CommandDefinition Definition;
+        private readonly IndividualCommandDefinition Definition;
 
         public CommandArguments Arguments { get; }
 
@@ -21,7 +21,7 @@ namespace Kirkin.CommandLine.Commands
             }
         }
 
-        internal CommandDefinitionHelpCommand(CommandDefinition definition)
+        internal CommandDefinitionHelpCommand(IndividualCommandDefinition definition)
         {
             Definition = definition;
             Arguments = new CommandArguments(definition);
@@ -48,7 +48,7 @@ namespace Kirkin.CommandLine.Commands
 
             sb.Append($"Usage: {executableName} ");
 
-            CommandDefinitionBase parent = Definition.Parent;
+            CommandDefinition parent = Definition.Parent;
 
             while (parent != null)
             {

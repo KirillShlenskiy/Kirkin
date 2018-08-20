@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Kirkin.CommandLine.Commands
+namespace Kirkin.CommandLine.Commands.Help
 {
     /// <summary>
     /// Root-level app help command.
@@ -78,7 +78,7 @@ namespace Kirkin.CommandLine.Commands
             sb.AppendLine($"Usage: {executableName} <command> [<args>].");
             sb.AppendLine();
 
-            IEnumerable<CommandDefinitionBase> commandDefinitions = Parser.CommandDefinitions;
+            IEnumerable<CommandDefinition> commandDefinitions = Parser.CommandDefinitions;
             Dictionary<string, string> dictionary = commandDefinitions.ToDictionary(d => d.Name, d => d.Help, Parser.StringEqualityComparer);
 
             TextFormatter.FormatAsTable(dictionary, sb);

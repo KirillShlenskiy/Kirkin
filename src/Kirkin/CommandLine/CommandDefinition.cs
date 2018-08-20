@@ -1,13 +1,13 @@
 ﻿using System;
 
-using Kirkin.CommandLine.Commands;
+using Kirkin.CommandLine.Commands.Help;
 
 namespace Kirkin.CommandLine
 {
     /// <summary>
     /// Command definition.
     /// </summary>
-    public abstract class CommandDefinitionBase
+    public abstract class CommandDefinition
     {
         /// <summary>
         /// The name of the command being configured.
@@ -22,12 +22,12 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Parent command specified when this instance was created.
         /// </summary>
-        internal CommandDefinitionBase Parent { get; }
+        internal CommandDefinition Parent { get; }
 
         /// <summary>
-        /// Creates a new <see cref="CommandDefinitionBase"/> instance.
+        /// Creates a new <see cref="CommandDefinition"/> instance.
         /// </summary>
-        private protected CommandDefinitionBase(string name, CommandDefinitionBase parent)
+        private protected CommandDefinition(string name, CommandDefinition parent)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 
