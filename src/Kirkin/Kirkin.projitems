@@ -51,7 +51,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\IHelpCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ConsoleFormatter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommandDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommandListBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommandParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\IParameterFormattable.cs" />

@@ -11,7 +11,7 @@ namespace Kirkin.CommandLine
     /// </summary>
     public sealed class CommandLineParser : ICommandListBuilder
     {
-        private Dictionary<string, ICommandDefinition> _commandDefinitions = new Dictionary<string, ICommandDefinition>(StringComparer.Ordinal);
+        private Dictionary<string, CommandDefinitionBase> _commandDefinitions = new Dictionary<string, CommandDefinitionBase>(StringComparer.Ordinal);
 
         /// <summary>
         /// Equality comparer used by the parser to resolve commands and their arguments.
@@ -41,7 +41,7 @@ namespace Kirkin.CommandLine
                     throw new InvalidOperationException("Cannot change default string equality comparer once commands have been defined.");
                 }
 
-                _commandDefinitions = new Dictionary<string, ICommandDefinition>(value ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+                _commandDefinitions = new Dictionary<string, CommandDefinitionBase>(value ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
             }
         }
 
@@ -49,9 +49,9 @@ namespace Kirkin.CommandLine
         /// Returns the collection of command definitions supported by this parser.
         /// </summary>
 #if NET_40
-        public IEnumerable<ICommandDefinition> CommandDefinitions
+        public IEnumerable<CommandDefinitionBase> CommandDefinitions
 #else
-        public IReadOnlyList<ICommandDefinition> CommandDefinitions
+        public IReadOnlyList<CommandDefinitionBase> CommandDefinitions
 #endif
         {
             get
@@ -114,7 +114,7 @@ namespace Kirkin.CommandLine
                 return new RootHelpCommand(this);
             }
 
-            if (_commandDefinitions.TryGetValue(commandName, out ICommandDefinition definition))
+            if (_commandDefinitions.TryGetValue(commandName, out CommandDefinitionBase definition))
             {
                 // Always skip first element.
                 string[] argsMinusFirstElement = new string[args.Length - 1];

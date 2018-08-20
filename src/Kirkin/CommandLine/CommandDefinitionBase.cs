@@ -7,7 +7,7 @@ namespace Kirkin.CommandLine
     /// <summary>
     /// Command definition.
     /// </summary>
-    public abstract class CommandDefinitionBase : ICommandDefinition
+    public abstract class CommandDefinitionBase
     {
         /// <summary>
         /// The name of the command being configured.

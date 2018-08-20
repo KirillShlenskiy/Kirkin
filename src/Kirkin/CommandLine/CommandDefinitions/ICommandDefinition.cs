@@ -1,4 +1,4 @@
-﻿namespace Kirkin.CommandLine
+﻿namespace Kirkin.CommandLine.CommandDefinitions
 {
     /// <summary>
     /// Basic command defintion.

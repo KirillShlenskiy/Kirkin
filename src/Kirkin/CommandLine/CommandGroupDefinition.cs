@@ -16,9 +16,9 @@ namespace Kirkin.CommandLine
         /// Returns the collection of command definitions supported by this parser.
         /// </summary>
 #if NET_40
-        public IEnumerable<ICommandDefinition> CommandDefinitions => Parser.CommandDefinitions;
+        public IEnumerable<CommandDefinitionBase> CommandDefinitions => Parser.CommandDefinitions;
 #else
-        public IReadOnlyList<ICommandDefinition> CommandDefinitions => Parser.CommandDefinitions;
+        public IReadOnlyList<CommandDefinitionBase> CommandDefinitions => Parser.CommandDefinitions;
 #endif
 
         internal IEqualityComparer<string> StringEqualityComparer => Parser.StringEqualityComparer;
