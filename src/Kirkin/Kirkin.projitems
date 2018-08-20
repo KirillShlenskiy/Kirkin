@@ -38,10 +38,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\Vector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Specialized\UndoRedoCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandArguments.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandDefinition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\CommandDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandDefinitionBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandExecutedEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandGroupDefinition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\CommandGroupDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandLineParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandSyntax.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\CommandDefinitionHelpCommand.cs" />

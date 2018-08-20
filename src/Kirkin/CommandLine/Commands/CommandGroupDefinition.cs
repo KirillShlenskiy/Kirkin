@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Kirkin.CommandLine.Commands;
-
-namespace Kirkin.CommandLine
+namespace Kirkin.CommandLine.Commands
 {
     /// <summary>
     /// Container for multiple logically grouped commands.

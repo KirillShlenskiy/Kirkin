@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-using Kirkin.CommandLine.Commands;
 using Kirkin.CommandLine.Parameters;
 
-namespace Kirkin.CommandLine
+namespace Kirkin.CommandLine.Commands
 {
     /// <summary>
     /// Builder type used to configure commands.
