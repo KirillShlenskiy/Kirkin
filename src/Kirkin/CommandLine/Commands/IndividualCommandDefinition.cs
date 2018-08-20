@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using Kirkin.CommandLine.Commands.Help;
@@ -18,6 +19,17 @@ namespace Kirkin.CommandLine.Commands
         internal readonly List<ICommandParameterDefinition> Options = new List<ICommandParameterDefinition>();
         private readonly Dictionary<string, ICommandParameterDefinition> OptionsByFullName;
         private readonly Dictionary<string, ICommandParameterDefinition> OptionsByShortName;
+
+        /// <summary>
+        /// Gets all parameters defined by this command.
+        /// </summary>
+        public IEnumerable<ICommandParameter> Parameters
+        {
+            get
+            {
+                return EnumerateParameterDefinitions();
+            }
+        }
 
         /// <summary>
         /// Raised when <see cref="ICommand.Execute"/> is called on the command.
@@ -113,6 +125,18 @@ namespace Kirkin.CommandLine.Commands
         }
 
         /// <summary>
+        /// Enumerates all parameters defined by this command.
+        /// </summary>
+        internal IEnumerable<ICommandParameterDefinition> EnumerateParameterDefinitions()
+        {
+            if (Parameter != null) yield return Parameter;
+
+            foreach (ICommandParameterDefinition option in Options) {
+                yield return option;
+            }
+        }
+
+        /// <summary>
         /// Parses the given args collection and produces a ready-to-use <see cref="ICommand"/> instance.
         /// </summary>
         internal override ICommand Parse(string[] args)
@@ -205,18 +229,9 @@ namespace Kirkin.CommandLine.Commands
                     if (Parameter == null || !Parameter.SupportsMultipleValues && chunk.Count > 1)
                     {
                         // Positional args.
-                        List<ICommandParameterDefinition> positionalParams = new List<ICommandParameterDefinition>();
-
-                        if (Parameter != null) {
-                            positionalParams.Add(Parameter);
-                        }
-
-                        foreach (ICommandParameterDefinition option in Options)
-                        {
-                            if (option.IsPositionalParameter) {
-                                positionalParams.Add(option);
-                            }
-                        }
+                        List<ICommandParameterDefinition> positionalParams = EnumerateParameterDefinitions()
+                            .Where(d => d.IsPositionalParameter)
+                            .ToList();
 
                         int lastPositionalArgIndex = -1;
 
@@ -251,14 +266,10 @@ namespace Kirkin.CommandLine.Commands
                 }
             }
 
-            if (Parameter != null && !seenParameters.Contains(Parameter)) {
-                argValues.Add(Parameter.Name, Parameter.GetDefaultValue());
-            }
-
-            foreach (ICommandParameterDefinition option in Options)
+            foreach (ICommandParameterDefinition param in EnumerateParameterDefinitions())
             {
-                if (!seenParameters.Contains(option)) {
-                    argValues.Add(option.Name, option.GetDefaultValue());
+                if (!seenParameters.Contains(param)) {
+                    argValues.Add(param.Name, param.GetDefaultValue());
                 }
             }
 

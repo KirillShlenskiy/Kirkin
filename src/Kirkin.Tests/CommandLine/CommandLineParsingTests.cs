@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace Kirkin.Tests.CommandLine
 {
-    public class CommandLineTests
+    public class CommandLineParsingTests
     {
         [Test]
         public void BasicCommandLineParsing()
@@ -345,7 +345,7 @@ namespace Kirkin.Tests.CommandLine
 
             definition.DefineOption("a", positional: true);
             definition.DefineOption("b", positional: true);
-            definition.DefineSwitch("c", positional: true);
+            definition.DefineSwitch("c");
             definition.DefineOption("d", positional: true);
 
             ICommand command = definition.Parse("aaa bbb --c --d ddd".Split(' '));
@@ -363,7 +363,7 @@ namespace Kirkin.Tests.CommandLine
 
             definition.DefineParameter("a");
             definition.DefineOption("b", positional: true);
-            definition.DefineSwitch("c", positional: true);
+            definition.DefineSwitch("c");
             definition.DefineOption("d", positional: true);
 
             ICommand command = definition.Parse("aaa bbb --c --d ddd".Split(' '));

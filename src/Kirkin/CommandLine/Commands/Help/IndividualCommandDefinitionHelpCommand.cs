@@ -60,15 +60,9 @@ namespace Kirkin.CommandLine.Commands.Help
             sb.AppendLine($"{Definition}.");
             sb.AppendLine();
 
-            List<ICommandParameter> parameters = new List<ICommandParameter>();
-
-            if (Definition.Parameter != null) {
-                parameters.Add(Definition.Parameter);
-            }
-
-            parameters.AddRange(Definition.Options);
-
-            Dictionary<string, string> dictionary = parameters.ToDictionary(p => (p as IParameterFormattable)?.ToLongString() ?? p.ToString(), p => p.Help);
+            Dictionary<string, string> dictionary = Definition
+                .EnumerateParameterDefinitions()
+                .ToDictionary(p => (p as IParameterFormattable)?.ToLongString() ?? p.ToString(), p => p.Help);
 
             TextFormatter.FormatAsTable(dictionary, sb);
 

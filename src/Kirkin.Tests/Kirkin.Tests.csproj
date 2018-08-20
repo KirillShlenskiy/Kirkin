@@ -131,7 +131,7 @@
     <Compile Include="Collections\Generic\UndoRedoCollectionTests.cs" />
     <Compile Include="Collections\Generic\VectorTests.cs" />
     <Compile Include="Collections\Specialized\SingleElementReadOnlyListTests.cs" />
-    <Compile Include="CommandLine\CommandLineTests.cs" />
+    <Compile Include="CommandLine\CommandLineParsingTests.cs" />
     <Compile Include="ConsoleRunnerTests.cs" />
     <Compile Include="Cryptography\AES256EncryptionTests.cs" />
     <Compile Include="CustomEqualityComparerTests.cs" />
