@@ -37,7 +37,7 @@ namespace Kirkin.CommandLine.Parameters
         /// <summary>
         /// Creates a new <see cref="CommandParameterBase{T}"/> instance.
         /// </summary>
-        internal CommandParameterBase(string name, string shortName, string help, bool isPositionalParameter)
+        internal CommandParameterBase(string name, string shortName, bool isPositionalParameter, string help)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Parameter name cannot be empty.");
 
@@ -49,8 +49,8 @@ namespace Kirkin.CommandLine.Parameters
 
             Name = name;
             ShortName = shortName;
-            Help = help;
             IsPositionalParameter = isPositionalParameter;
+            Help = help;
         }
 
         /// <summary>

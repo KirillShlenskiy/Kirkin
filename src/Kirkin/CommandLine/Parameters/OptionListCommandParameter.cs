@@ -15,8 +15,8 @@ namespace Kirkin.CommandLine.Parameters
             }
         }
 
-        internal OptionListCommandParameter(string name, string shortName, string help, bool isPositionalParameter)
-            : base(name, shortName, help, isPositionalParameter)
+        internal OptionListCommandParameter(string name, string shortName, bool isPositionalParameter, string help)
+            : base(name, shortName, isPositionalParameter, help)
         {
         }
 

@@ -15,7 +15,7 @@ namespace Kirkin.CommandLine.Parameters
         }
 
         internal CommandParameter(string name, string help)
-            : base(name, null, isPositionalParameter: true, help: help)
+            : base(name, null, true, help)
         {
         }
 
