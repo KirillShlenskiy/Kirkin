@@ -13,7 +13,7 @@
         /// <summary>
         /// Human-readable command description.
         /// </summary>
-        string Help { get; }
+        string Help { get; set; }
 
         /// <summary>
         /// Parses the given args collection and produces a ready-to-use <see cref="ICommand"/> instance.

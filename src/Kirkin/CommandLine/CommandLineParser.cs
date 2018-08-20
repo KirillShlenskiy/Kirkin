@@ -9,7 +9,7 @@ namespace Kirkin.CommandLine
     /// <summary>
     /// Command line argument parser.
     /// </summary>
-    public sealed class CommandLineParser : ICommandList
+    public sealed class CommandLineParser : ICommandListBuilder
     {
         private Dictionary<string, ICommandDefinition> _commandDefinitions = new Dictionary<string, ICommandDefinition>(StringComparer.Ordinal);
 
@@ -63,9 +63,6 @@ namespace Kirkin.CommandLine
         /// </summary>
         public bool ShowAppDetailsInHelp { get; set; }
 
-        string ICommandDefinition.Name => throw new NotSupportedException();
-        string ICommandDefinition.Help => throw new NotSupportedException();
-
         /// <summary>
         /// Defines a command with the given name.
         /// </summary>
@@ -87,7 +84,7 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Defines a group of commands with the given name.
         /// </summary>
-        public void DefineCommandGroup(string name, Action<ICommandList> configureAction)
+        public void DefineCommandGroup(string name, Action<ICommandListBuilder> configureAction)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command group name cannot be empty.");
 
@@ -95,9 +92,7 @@ namespace Kirkin.CommandLine
                 throw new InvalidOperationException($"Command or command group '{name}' already defined.");
             }
 
-            CommandLineParser definition = new CommandLineParser {
-                CaseInsensitive = CaseInsensitive
-            };
+            CommandGroupDefinition definition = new CommandGroupDefinition(name, CaseInsensitive);
 
             configureAction(definition);
 

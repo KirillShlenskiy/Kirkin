@@ -418,5 +418,20 @@ namespace Kirkin.Tests.CommandLine
 
             parser.Parse("--help").Execute();
         }
+
+        [Test]
+        public void NestedCommandGroups()
+        {
+            CommandLineParser parser = new CommandLineParser();
+            bool bExecuted = false;
+
+            parser.DefineCommandGroup("aaa", builder => builder.DefineCommand("bbb", cmd => cmd.Executed += (s, e) => bExecuted = true));
+
+            ICommand command = parser.Parse("aaa bbb".Split(' '));
+
+            command.Execute();
+
+            Assert.True(bExecuted);
+        }
     }
 }

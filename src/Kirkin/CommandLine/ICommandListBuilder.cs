@@ -5,7 +5,7 @@ namespace Kirkin.CommandLine
     /// <summary>
     /// Mutable command list builder.
     /// </summary>
-    public interface ICommandList : ICommandDefinition
+    public interface ICommandListBuilder
     {
         /// <summary>
         /// Defines a command with the given name.
@@ -15,6 +15,6 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Defines a group of commands with the given name.
         /// </summary>
-        void DefineCommandGroup(string name, Action<ICommandList> configureAction);
+        void DefineCommandGroup(string name, Action<ICommandListBuilder> configureAction);
     }
 }
