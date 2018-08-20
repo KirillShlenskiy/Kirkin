@@ -270,6 +270,21 @@ namespace Kirkin.Tests.CommandLine
             // Not help commands:
             Assert.Throws<InvalidOperationException>(() => parser.Parse(new string[0]));
             Assert.Throws<InvalidOperationException>(() => parser.Parse(""));
+        }
+
+        [Test]
+        public void CommandHelpLongText()
+        {
+            CommandLineParser parser = new CommandLineParser();
+
+            parser.DefineCommand("command", c =>
+            {
+                c.DefineParameter("aaa", help: "Does the zzz thing.");
+                c.DefineOption("bbb", help: "Does the uuu thing, which is totally different to the aaa thing. Totally.");
+                c.DefineSwitch("ccc", help: "Does the ccc thing.");
+            });
+
+            ICommand command = parser.Parse("command --help".Split(' '));
 
             // Check text.
             string expected = @"Usage: Kirkin command <aaa> [--bbb <arg>] [--ccc].
@@ -278,6 +293,31 @@ namespace Kirkin.Tests.CommandLine
     --bbb <arg>    Does the uuu thing, which is totally different to the
                    aaa thing. Totally.
     --ccc          Does the ccc thing.
+";
+            Assert.AreEqual(expected, ((IHelpCommand)command).RenderHelpText());
+        }
+
+        [Test]
+        public void CommandHelpShortText()
+        {
+            CommandLineParser parser = new CommandLineParser();
+
+            parser.DefineCommand("command", c =>
+            {
+                c.DefineParameter("aaa", help: "Does the zzz thing.");
+                c.DefineOption("bbb", "b", help: "Does the uuu thing, which is totally different to the aaa thing. Totally.");
+                c.DefineSwitch("ccc", "c", help: "Does the ccc thing.");
+            });
+
+            ICommand command = parser.Parse("command --help".Split(' '));
+
+            // Check text.
+            string expected = @"Usage: Kirkin command <aaa> [-b <arg>] [-c].
+
+    <aaa>              Does the zzz thing.
+    -b, --bbb <arg>    Does the uuu thing, which is totally different to the
+                       aaa thing. Totally.
+    -c, --ccc          Does the ccc thing.
 ";
             Assert.AreEqual(expected, ((IHelpCommand)command).RenderHelpText());
         }
