@@ -441,14 +441,21 @@ namespace Kirkin.Tests.CommandLine
 
             parser.DefineCommandGroup("aaa", group =>
             {
-                group.Help = "group aaa";
+                group.Help = "group aaa.";
 
-                group.DefineCommand("bbb", cmd => cmd.Help = "command bbb");
+                group.DefineCommand("bbb", cmd => cmd.Help = "command bbb.");
+                group.DefineCommand("ccc", cmd => cmd.Help = "command ccc.");
             });
 
             ICommand command = parser.Parse("aaa --help".Split(' '));
 
-            Console.WriteLine(((IHelpCommand)command).RenderHelpText());
+            string expected = @"Usage: Kirkin aaa <command>.
+
+    bbb    command bbb.
+    ccc    command ccc.
+";
+
+            Assert.AreEqual(expected, ((IHelpCommand)command).RenderHelpText());
         }
     }
 }

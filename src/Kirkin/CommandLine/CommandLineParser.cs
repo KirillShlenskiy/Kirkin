@@ -24,6 +24,8 @@ namespace Kirkin.CommandLine
             }
         }
 
+        internal CommandDefinitionBase Parent;
+
         /// <summary>
         /// Equality comparer used by the parser to resolve commands and their arguments.
         /// </summary>
@@ -68,18 +70,13 @@ namespace Kirkin.CommandLine
         /// </summary>
         public void DefineCommand(string name, Action<CommandDefinition> configureAction)
         {
-            DefineCommand(name, null, configureAction);
-        }
-
-        internal void DefineCommand(string name, CommandDefinitionBase parent, Action<CommandDefinition> configureAction)
-        {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command name cannot be empty.");
 
             if (_commandDefinitions.ContainsKey(name)) {
                 throw new InvalidOperationException($"Command or command group '{name}' already defined.");
             }
 
-            CommandDefinition definition = new CommandDefinition(name, parent, StringEqualityComparer);
+            CommandDefinition definition = new CommandDefinition(name, Parent, StringEqualityComparer);
 
             configureAction(definition);
 
@@ -91,18 +88,13 @@ namespace Kirkin.CommandLine
         /// </summary>
         public void DefineCommandGroup(string name, Action<CommandGroupDefinition> configureAction)
         {
-            DefineCommandGroup(name, null, configureAction);
-        }
-
-        internal void DefineCommandGroup(string name, CommandDefinitionBase parent, Action<CommandGroupDefinition> configureAction)
-        {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command group name cannot be empty.");
 
             if (_commandDefinitions.ContainsKey(name)) {
                 throw new InvalidOperationException($"Command or command group '{name}' already defined.");
             }
 
-            CommandGroupDefinition definition = new CommandGroupDefinition(name, parent, CaseInsensitive);
+            CommandGroupDefinition definition = new CommandGroupDefinition(name, Parent, CaseInsensitive);
 
             configureAction(definition);
 

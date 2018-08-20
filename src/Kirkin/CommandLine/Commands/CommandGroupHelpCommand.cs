@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -55,7 +57,12 @@ namespace Kirkin.CommandLine.Commands
                 parent = parent.Parent;
             }
 
-            sb.AppendLine($"{Definition} <command>.");
+            sb.AppendLine($"{Definition}.");
+            sb.AppendLine();
+
+            Dictionary<string, string> dictionary = Definition.CommandDefinitions.ToDictionary(d => d.Name, d => d.Help, Definition.StringEqualityComparer);
+
+            TextFormatter.FormatAsTable(dictionary, sb);
 
             return sb.ToString();
         }
