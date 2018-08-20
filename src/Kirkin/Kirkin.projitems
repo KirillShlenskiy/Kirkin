@@ -41,11 +41,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\IndividualCommandDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandExecutedEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\GroupCommandDefinition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\CommandCollectionDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandLineParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandSyntax.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\Help\CommandDefinitionHelpCommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\Help\CommandGroupHelpCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\Help\IndividualCommandDefinitionHelpCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\Help\CommandCollectionDefinitionHelpCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\DefaultCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\Help\RootHelpCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\Help\IHelpCommand.cs" />

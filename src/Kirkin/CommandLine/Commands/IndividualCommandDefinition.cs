@@ -122,7 +122,7 @@ namespace Kirkin.CommandLine.Commands
             IEqualityComparer<string> stringEqualityComparer = OptionsByFullName.Comparer;
 
             if (args.Length == 1 && CommandSyntax.IsHelpSwitch(args[0], stringEqualityComparer)) {
-                return new CommandDefinitionHelpCommand(this);
+                return new IndividualCommandDefinitionHelpCommand(this);
             }
 
             List<List<string>> tokenGroups = new List<List<string>>();
@@ -286,7 +286,7 @@ namespace Kirkin.CommandLine.Commands
 
         private protected override IHelpCommand CreateHelpCommand()
         {
-            return new CommandDefinitionHelpCommand(this);
+            return new IndividualCommandDefinitionHelpCommand(this);
         }
 
         /// <summary>

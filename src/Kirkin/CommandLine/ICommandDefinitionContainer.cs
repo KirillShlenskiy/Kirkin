@@ -26,6 +26,6 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Defines a group of commands with the given name.
         /// </summary>
-        void DefineCommandGroup(string name, Action<GroupCommandDefinition> configureAction);
+        void DefineCommandCollection(string name, Action<CommandCollectionDefinition> configureAction);
     }
 }

@@ -265,8 +265,8 @@ namespace Kirkin.Tests.CommandLine
 
             command.Execute();
 
-            Assert.True(parser.Parse("command --help".Split(' ')) is CommandDefinitionHelpCommand);
-            Assert.True(parser.Parse("command /?".Split(' ')) is CommandDefinitionHelpCommand);
+            Assert.True(parser.Parse("command --help".Split(' ')) is IndividualCommandDefinitionHelpCommand);
+            Assert.True(parser.Parse("command /?".Split(' ')) is IndividualCommandDefinitionHelpCommand);
 
             // Not help commands:
             Assert.Throws<InvalidOperationException>(() => parser.Parse(new string[0]));
@@ -426,7 +426,7 @@ namespace Kirkin.Tests.CommandLine
             CommandLineParser parser = new CommandLineParser();
             bool bExecuted = false;
 
-            parser.DefineCommandGroup("aaa", builder => builder.DefineCommand("bbb", cmd => cmd.Executed += (s, e) => bExecuted = true));
+            parser.DefineCommandCollection("aaa", builder => builder.DefineCommand("bbb", cmd => cmd.Executed += (s, e) => bExecuted = true));
 
             ICommand command = parser.Parse("aaa bbb".Split(' '));
 
@@ -440,7 +440,7 @@ namespace Kirkin.Tests.CommandLine
         {
             CommandLineParser parser = new CommandLineParser();
 
-            parser.DefineCommandGroup("aaa", group =>
+            parser.DefineCommandCollection("aaa", group =>
             {
                 group.Help = "group aaa.";
 

@@ -87,7 +87,7 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Defines a group of commands with the given name.
         /// </summary>
-        public void DefineCommandGroup(string name, Action<GroupCommandDefinition> configureAction)
+        public void DefineCommandCollection(string name, Action<CommandCollectionDefinition> configureAction)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command group name cannot be empty.");
 
@@ -95,7 +95,7 @@ namespace Kirkin.CommandLine
                 throw new InvalidOperationException($"Command or command group '{name}' already defined.");
             }
 
-            GroupCommandDefinition definition = new GroupCommandDefinition(name, Parent, CaseInsensitive);
+            CommandCollectionDefinition definition = new CommandCollectionDefinition(name, Parent, CaseInsensitive);
 
             configureAction(definition);
 

@@ -7,9 +7,9 @@ using System.Text;
 
 namespace Kirkin.CommandLine.Commands.Help
 {
-    internal sealed class CommandGroupHelpCommand : IHelpCommand
+    internal sealed class IndividualCommandDefinitionHelpCommand : IHelpCommand
     {
-        private readonly GroupCommandDefinition Definition;
+        private readonly IndividualCommandDefinition Definition;
 
         public CommandArguments Arguments { get; }
 
@@ -21,10 +21,10 @@ namespace Kirkin.CommandLine.Commands.Help
             }
         }
 
-        internal CommandGroupHelpCommand(GroupCommandDefinition definition)
+        internal IndividualCommandDefinitionHelpCommand(IndividualCommandDefinition definition)
         {
             Definition = definition;
-            Arguments = new CommandArguments(null);
+            Arguments = new CommandArguments(definition);
         }
 
         public void Execute()
@@ -60,7 +60,15 @@ namespace Kirkin.CommandLine.Commands.Help
             sb.AppendLine($"{Definition}.");
             sb.AppendLine();
 
-            Dictionary<string, string> dictionary = Definition.CommandDefinitions.ToDictionary(d => d.Name, d => d.Help, Definition.StringEqualityComparer);
+            List<ICommandParameter> parameters = new List<ICommandParameter>();
+
+            if (Definition.Parameter != null) {
+                parameters.Add(Definition.Parameter);
+            }
+
+            parameters.AddRange(Definition.Options);
+
+            Dictionary<string, string> dictionary = parameters.ToDictionary(p => (p as IParameterFormattable)?.ToLongString() ?? p.ToString(), p => p.Help);
 
             TextFormatter.FormatAsTable(dictionary, sb);
 

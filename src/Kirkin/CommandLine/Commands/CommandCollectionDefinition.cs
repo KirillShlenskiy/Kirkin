@@ -8,7 +8,7 @@ namespace Kirkin.CommandLine.Commands
     /// <summary>
     /// Container for multiple logically grouped commands.
     /// </summary>
-    public sealed class GroupCommandDefinition : CommandDefinition, ICommandDefinitionContainer
+    public sealed class CommandCollectionDefinition : CommandDefinition, ICommandDefinitionContainer
     {
         private readonly CommandLineParser Parser;
 
@@ -22,7 +22,7 @@ namespace Kirkin.CommandLine.Commands
 #endif
         internal IEqualityComparer<string> StringEqualityComparer => Parser.StringEqualityComparer;
 
-        internal GroupCommandDefinition(string name, CommandDefinition parent, bool caseInsensitive)
+        internal CommandCollectionDefinition(string name, CommandDefinition parent, bool caseInsensitive)
             : base(name, parent)
         {
             Parser = new CommandLineParser {
@@ -42,9 +42,9 @@ namespace Kirkin.CommandLine.Commands
         /// <summary>
         /// Defines a group of commands with the given name.
         /// </summary>
-        public void DefineCommandGroup(string name, Action<GroupCommandDefinition> configureAction)
+        public void DefineCommandCollection(string name, Action<CommandCollectionDefinition> configureAction)
         {
-            Parser.DefineCommandGroup(name, configureAction);
+            Parser.DefineCommandCollection(name, configureAction);
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Kirkin.CommandLine.Commands
         internal override ICommand Parse(string[] args)
         {
             if (args.Length == 0 || (args.Length == 1 && CommandSyntax.IsHelpSwitch(args[0], StringEqualityComparer))) {
-                return new CommandGroupHelpCommand(this);
+                return new CommandCollectionDefinitionHelpCommand(this);
             }
 
             return Parser.Parse(args);
@@ -61,7 +61,7 @@ namespace Kirkin.CommandLine.Commands
 
         private protected override IHelpCommand CreateHelpCommand()
         {
-            return new CommandGroupHelpCommand(this);
+            return new CommandCollectionDefinitionHelpCommand(this);
         }
 
         /// <summary>
