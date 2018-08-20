@@ -14,8 +14,8 @@ namespace Kirkin.CommandLine.Parameters
             }
         }
 
-        internal SwitchCommandParameter(string name, string shortName, bool isPositionalParameter, string help)
-            : base(name, shortName, isPositionalParameter, help)
+        internal SwitchCommandParameter(string name, string shortName, string help)
+            : base(name, shortName, false, help)
         {
         }
 

@@ -103,9 +103,9 @@ namespace Kirkin.CommandLine.Commands
         /// <summary>
         /// Defines a boolean switch, i.e. "--validate" or "/validate true".
         /// </summary>
-        public ICommandParameter DefineSwitch(string name, string shortName = null, bool positional = false, string help = null)
+        public ICommandParameter DefineSwitch(string name, string shortName = null, string help = null)
         {
-            SwitchCommandParameter option = new SwitchCommandParameter(name, shortName, positional, help);
+            SwitchCommandParameter option = new SwitchCommandParameter(name, shortName, help);
 
             RegisterOption(option);
 
