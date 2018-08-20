@@ -230,8 +230,8 @@ namespace Kirkin.Tests.CommandLine
 
             command.Execute();
 
-            Assert.True(parser.Parse("--help") is GeneralHelpCommand);
-            Assert.True(parser.Parse("/?") is GeneralHelpCommand);
+            Assert.True(parser.Parse("--help") is RootHelpCommand);
+            Assert.True(parser.Parse("/?") is RootHelpCommand);
 
             // Not help commands:
             Assert.Throws<InvalidOperationException>(() => parser.Parse(new string[0]));
@@ -346,6 +346,16 @@ namespace Kirkin.Tests.CommandLine
             Assert.AreEqual("aaa", command.Arguments.GetOption("a"));
 
             Assert.Throws<ArgumentException>(() => definition.Parse(new[] { "aaa", "bbb" }));
+        }
+
+        [Test]
+        public void AppDetailsInHelpCommand()
+        {
+            CommandLineParser parser = new CommandLineParser();
+
+            parser.ShowAppDetailsInHelp = true;
+
+            parser.Parse("--help").Execute();
         }
     }
 }

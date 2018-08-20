@@ -44,7 +44,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandSyntax.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\CommandHelpCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\DefaultCommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\GeneralHelpCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\RootHelpCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\IHelpCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ConsoleFormatter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommand.cs" />

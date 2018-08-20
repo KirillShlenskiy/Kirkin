@@ -59,6 +59,11 @@ namespace Kirkin.CommandLine
         }
 
         /// <summary>
+        /// If true, basic app details such as name and version will be printed when the help command is invoked.
+        /// </summary>
+        public bool ShowAppDetailsInHelp { get; set; }
+
+        /// <summary>
         /// Defines a command with the given name.
         /// </summary>
         public void DefineCommand(string name, Action<CommandDefinition> configureAction)
@@ -86,7 +91,7 @@ namespace Kirkin.CommandLine
             string commandName = args.Length == 0 ? "" : args[0];
 
             if (args.Length == 1 && CommandSyntax.IsHelpSwitch(commandName, StringEqualityComparer)) {
-                return new GeneralHelpCommand(this);
+                return new RootHelpCommand(this);
             }
 
             if (_commandDefinitions.TryGetValue(commandName, out CommandDefinition definition))
