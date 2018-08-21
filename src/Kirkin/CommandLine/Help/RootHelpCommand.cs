@@ -60,7 +60,7 @@ namespace Kirkin.CommandLine.Help
             if (Parser.ShowAppDetailsInHelp)
             {
                 AssemblyName info = entryAssembly.GetName();
-                string version = GetAttribute<AssemblyVersionAttribute>(entryAssembly)?.Version ?? info.Version.ToString();
+                string version = info.Version.Revision == 0 ? info.Version.ToString(3) : info.Version.ToString();
                 AssemblyDescriptionAttribute description = GetAttribute<AssemblyDescriptionAttribute>(entryAssembly);
 
                 if (description != null)

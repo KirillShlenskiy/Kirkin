@@ -416,7 +416,7 @@ namespace Kirkin.Tests.CommandLine
 
             parser.ShowAppDetailsInHelp = true;
 
-            parser.Parse("--help").Execute();
+            Console.WriteLine(((IHelpCommand)parser.Parse("--help")).RenderHelpText());
         }
 
         [Test]
