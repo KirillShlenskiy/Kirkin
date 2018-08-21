@@ -34,7 +34,7 @@ namespace Kirkin.CommandLine.Parameters
 
         public override string ToString()
         {
-            return $"<{Name} 1> <{Name} 2> ...";
+            return $"<{Name}>...";
         }
     }
 }

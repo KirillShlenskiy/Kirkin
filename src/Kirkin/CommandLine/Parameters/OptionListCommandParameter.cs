@@ -37,14 +37,14 @@ namespace Kirkin.CommandLine.Parameters
             if (IsPositionalParameter)
             {
                 return string.IsNullOrEmpty(ShortName)
-                    ? $"[--{Name}] <arg 1> <arg 2> ..."
-                    : $"[-{ShortName}|--{Name}] <arg 1> <arg 2> ...";
+                    ? $"[--{Name}] <arg>..."
+                    : $"[-{ShortName}|--{Name}] <arg>...";
             }
             else
             {
                 return string.IsNullOrEmpty(ShortName)
-                    ? $"--{Name} <arg 1> <arg 2> ..."
-                    : $"-{ShortName}|--{Name} <arg 1> <arg 2> ...";
+                    ? $"--{Name} <arg>..."
+                    : $"-{ShortName}|--{Name} <arg>...";
             }
         }
 
@@ -53,14 +53,14 @@ namespace Kirkin.CommandLine.Parameters
             if (IsPositionalParameter)
             {
                 return !string.IsNullOrEmpty(ShortName)
-                    ? $"[-{ShortName}] <arg 1> <arg 2> ..."
-                    : $"[--{Name}] <arg 1> <arg 2> ...";
+                    ? $"[-{ShortName}] <arg>..."
+                    : $"[--{Name}] <arg>...";
             }
             else
             {
                 return !string.IsNullOrEmpty(ShortName)
-                    ? $"-{ShortName} <arg 1> <arg 2> ..."
-                    : $"--{Name} <arg 1> <arg 2> ...";
+                    ? $"-{ShortName} <arg>..."
+                    : $"--{Name} <arg>...";
             }
         }
 
@@ -69,14 +69,14 @@ namespace Kirkin.CommandLine.Parameters
             if (IsPositionalParameter)
             {
                 return string.IsNullOrEmpty(ShortName)
-                    ? $"[--{Name}] <arg 1> <arg 2> ..."
-                    : $"[-{ShortName}, --{Name}] <arg 1> <arg 2> ...";
+                    ? $"[--{Name}] <arg>..."
+                    : $"[-{ShortName}, --{Name}] <arg>...";
             }
             else
             {
                 return string.IsNullOrEmpty(ShortName)
-                    ? $"--{Name} <arg 1> <arg 2> ..."
-                    : $"-{ShortName}, --{Name} <arg 1> <arg 2> ...";
+                    ? $"--{Name} <arg>..."
+                    : $"-{ShortName}, --{Name} <arg>...";
             }
             
         }
