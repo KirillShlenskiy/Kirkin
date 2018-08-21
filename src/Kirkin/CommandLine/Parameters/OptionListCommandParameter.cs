@@ -20,14 +20,14 @@ namespace Kirkin.CommandLine.Parameters
         {
         }
 
-        public override string[] GetDefaultValue()
+        public override string[] GetDefaultValueImpl()
         {
             return Array<string>.Empty;
         }
 
-        public override string[] ParseArgs(List<string> args)
+        public override string[] ParseArgsImpl(List<string> args)
         {
-            if (args.Count == 0) return GetDefaultValue();
+            if (args.Count == 0) return GetDefaultValueImpl();
 
             return args.ToArray();
         }

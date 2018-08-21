@@ -15,19 +15,23 @@ namespace Kirkin.CommandLine.Commands
     {
         // Every command has zero or one parameter ("sync ==>extra<== --validate --log zzz.txt"),
         // and zero or more options/switches ("sync extra ==>--validate --log zzz.txt<==").
-        internal ICommandParameterDefinition Parameter { get; private set; }
-        internal readonly List<ICommandParameterDefinition> Options = new List<ICommandParameterDefinition>();
-        private readonly Dictionary<string, ICommandParameterDefinition> OptionsByFullName;
-        private readonly Dictionary<string, ICommandParameterDefinition> OptionsByShortName;
+        internal CommandParameter Parameter { get; private set; }
+        internal readonly List<CommandParameter> Options = new List<CommandParameter>();
+        private readonly Dictionary<string, CommandParameter> OptionsByFullName;
+        private readonly Dictionary<string, CommandParameter> OptionsByShortName;
 
         /// <summary>
-        /// Gets all parameters defined by this command.
+        /// Gets all parameters and options defined by this command.
         /// </summary>
-        public IEnumerable<ICommandParameter> Parameters
+        public IEnumerable<CommandParameter> Parameters
         {
             get
             {
-                return EnumerateParameterDefinitions();
+                if (Parameter != null) yield return Parameter;
+
+                foreach (CommandParameter option in Options) {
+                    yield return option;
+                }
             }
         }
 
@@ -50,8 +54,8 @@ namespace Kirkin.CommandLine.Commands
             if (name.StartsWith("-")) throw new ArgumentException("Command name cannot start with a '-'.");
             if (name.StartsWith("/")) throw new ArgumentException("Command name cannot start with a '/'.");
 
-            OptionsByFullName = new Dictionary<string, ICommandParameterDefinition>(stringEqualityComparer);
-            OptionsByShortName = new Dictionary<string, ICommandParameterDefinition>(stringEqualityComparer);
+            OptionsByFullName = new Dictionary<string, CommandParameter>(stringEqualityComparer);
+            OptionsByShortName = new Dictionary<string, CommandParameter>(stringEqualityComparer);
         }
 
         internal void OnExecuted(ICommand command, CommandArguments args)
@@ -65,11 +69,11 @@ namespace Kirkin.CommandLine.Commands
         }
 
         /// <summary>
-        /// Defines a string parameter (unqualified value immediately following command name).
+        /// Defines the main string parameter (unqualified value immediately following command name).
         /// </summary>
-        public ICommandParameter DefineParameter(string name, string help = null)
+        public CommandParameter DefineParameter(string name, string help = null)
         {
-            CommandParameter parameter = new CommandParameter(name, help);
+            MainCommandParameter parameter = new MainCommandParameter(name, help);
 
             Parameter = parameter;
 
@@ -79,7 +83,7 @@ namespace Kirkin.CommandLine.Commands
         /// <summary>
         /// Defines a string parameter list (unqualified values immediately following command name).
         /// </summary>
-        public ICommandParameter DefineParameterList(string name, string help = null)
+        public CommandParameter DefineParameterList(string name, string help = null)
         {
             CommandParameterList parameterList = new CommandParameterList(name, help);
 
@@ -91,7 +95,7 @@ namespace Kirkin.CommandLine.Commands
         /// <summary>
         /// Defines a string option, i.e. "--subscription main" or "-s main" or "/subscription main".
         /// </summary>
-        public ICommandParameter DefineOption(string name, string shortName = null, bool positional = false, string help = null)
+        public CommandParameter DefineOption(string name, string shortName = null, bool positional = false, string help = null)
         {
             OptionCommandParameter option = new OptionCommandParameter(name, shortName, positional, help);
 
@@ -103,7 +107,7 @@ namespace Kirkin.CommandLine.Commands
         /// <summary>
         /// Defines a string option, i.e. "--colours red green" or "-s red green".
         /// </summary>
-        public ICommandParameter DefineOptionList(string name, string shortName = null, bool positional = false, string help = null)
+        public CommandParameter DefineOptionList(string name, string shortName = null, bool positional = false, string help = null)
         {
             OptionListCommandParameter optionList = new OptionListCommandParameter(name, shortName, positional, help);
 
@@ -115,25 +119,13 @@ namespace Kirkin.CommandLine.Commands
         /// <summary>
         /// Defines a boolean switch, i.e. "--validate" or "/validate true".
         /// </summary>
-        public ICommandParameter DefineSwitch(string name, string shortName = null, string help = null)
+        public CommandParameter DefineSwitch(string name, string shortName = null, string help = null)
         {
             SwitchCommandParameter option = new SwitchCommandParameter(name, shortName, help);
 
             RegisterOption(option);
 
             return option;
-        }
-
-        /// <summary>
-        /// Enumerates all parameters defined by this command.
-        /// </summary>
-        internal IEnumerable<ICommandParameterDefinition> EnumerateParameterDefinitions()
-        {
-            if (Parameter != null) yield return Parameter;
-
-            foreach (ICommandParameterDefinition option in Options) {
-                yield return option;
-            }
         }
 
         /// <summary>
@@ -177,7 +169,7 @@ namespace Kirkin.CommandLine.Commands
                 }
             }
 
-            HashSet<ICommandParameter> seenParameters = new HashSet<ICommandParameter>();
+            HashSet<CommandParameter> seenParameters = new HashSet<CommandParameter>();
             Dictionary<string, object> argValues = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
             foreach (List<string> chunk in tokenGroups)
@@ -185,7 +177,7 @@ namespace Kirkin.CommandLine.Commands
                 if (chunk[0].StartsWith("-") || chunk[0].StartsWith("/"))
                 {
                     // Option.
-                    ICommandParameterDefinition option = null;
+                    CommandParameter option = null;
 
                     if (chunk[0].StartsWith("--"))
                     {
@@ -229,7 +221,7 @@ namespace Kirkin.CommandLine.Commands
                     if (Parameter == null || !Parameter.SupportsMultipleValues && chunk.Count > 1)
                     {
                         // Positional args.
-                        List<ICommandParameterDefinition> positionalParams = EnumerateParameterDefinitions()
+                        List<CommandParameter> positionalParams = Parameters
                             .Where(d => d.IsPositionalParameter)
                             .ToList();
 
@@ -241,7 +233,7 @@ namespace Kirkin.CommandLine.Commands
                                 throw new InvalidOperationException("Too many positional args.");
                             }
 
-                            ICommandParameterDefinition option = positionalParams[lastPositionalArgIndex];
+                            CommandParameter option = positionalParams[lastPositionalArgIndex];
 
                             if (option.SupportsMultipleValues) {
                                 throw new ArgumentException("Multi-valued positional args not supported.");
@@ -266,7 +258,7 @@ namespace Kirkin.CommandLine.Commands
                 }
             }
 
-            foreach (ICommandParameterDefinition param in EnumerateParameterDefinitions())
+            foreach (CommandParameter param in Parameters)
             {
                 if (!seenParameters.Contains(param)) {
                     argValues.Add(param.Name, param.GetDefaultValue());
@@ -276,7 +268,7 @@ namespace Kirkin.CommandLine.Commands
             return new DefaultCommand(this, new CommandArguments(this, argValues));
         }
 
-        private void RegisterOption(ICommandParameterDefinition option)
+        private void RegisterOption(CommandParameter option)
         {
             if (OptionsByFullName.ContainsKey(option.Name)) {
                 throw new InvalidOperationException($"Duplicate option name: '{option.Name}'.");
@@ -315,7 +307,7 @@ namespace Kirkin.CommandLine.Commands
                 sb.Append(Parameter);
             }
 
-            foreach (ICommandParameter option in Options)
+            foreach (CommandParameter option in Options)
             {
                 sb.Append(" [");
                 sb.Append((option as IParameterFormattable)?.ToShortString() ?? option.ToString());

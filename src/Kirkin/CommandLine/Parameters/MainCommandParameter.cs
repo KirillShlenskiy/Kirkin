@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace Kirkin.CommandLine.Parameters
 {
-    internal sealed class CommandParameter
-        : CommandParameterBase<string>, ICommandParameter
+    internal sealed class MainCommandParameter
+        : CommandParameterBase<string>
     {
         public override bool SupportsMultipleValues
         {
@@ -14,12 +14,12 @@ namespace Kirkin.CommandLine.Parameters
             }
         }
 
-        internal CommandParameter(string name, string help)
+        internal MainCommandParameter(string name, string help)
             : base(name, null, true, help)
         {
         }
 
-        public override string ParseArgs(List<string> args)
+        public override string ParseArgsImpl(List<string> args)
         {
             if (args.Count == 0) return null;
             if (args.Count > 1) throw new InvalidOperationException("Multiple parameter values are not supported.");

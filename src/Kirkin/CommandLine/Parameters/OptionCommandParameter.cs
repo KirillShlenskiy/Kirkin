@@ -19,7 +19,7 @@ namespace Kirkin.CommandLine.Parameters
         {
         }
 
-        public override string ParseArgs(List<string> args)
+        public override string ParseArgsImpl(List<string> args)
         {
             // If the option is specified, we want a value
             // different from the default (which is null).

@@ -19,7 +19,7 @@ namespace Kirkin.CommandLine.Parameters
         {
         }
 
-        public override bool ParseArgs(List<string> args)
+        public override bool ParseArgsImpl(List<string> args)
         {
             if (args.Count > 1) throw new InvalidOperationException($"Multiple argument values are not supported for switch '{Name}'.");
 
