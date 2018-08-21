@@ -110,7 +110,9 @@ namespace Kirkin.CommandLine
 
             string commandName = args.Length == 0 ? "" : args[0];
 
-            if (args.Length == 1 && CommandSyntax.IsHelpSwitch(commandName, StringEqualityComparer)) {
+            if (args.Length == 0 || (args.Length == 1 &&
+                (commandName == string.Empty || CommandSyntax.IsHelpSwitch(commandName, StringEqualityComparer))))
+            {
                 return new RootHelpCommand(this);
             }
 

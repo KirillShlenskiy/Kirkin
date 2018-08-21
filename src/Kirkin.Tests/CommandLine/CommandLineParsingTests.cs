@@ -232,10 +232,8 @@ namespace Kirkin.Tests.CommandLine
 
             Assert.True(parser.Parse("--help") is RootHelpCommand);
             Assert.True(parser.Parse("/?") is RootHelpCommand);
-
-            // Not help commands:
-            Assert.Throws<InvalidOperationException>(() => parser.Parse(new string[0]));
-            Assert.Throws<InvalidOperationException>(() => parser.Parse(""));
+            Assert.True(parser.Parse(new string[0]) is RootHelpCommand);
+            Assert.True(parser.Parse("") is RootHelpCommand);
 
             // Check text.
             string expected = @"Usage: Kirkin <command> [<args>].
@@ -266,10 +264,7 @@ namespace Kirkin.Tests.CommandLine
 
             Assert.True(parser.Parse("command --help".Split(' ')) is IndividualCommandDefinitionHelpCommand);
             Assert.True(parser.Parse("command /?".Split(' ')) is IndividualCommandDefinitionHelpCommand);
-
-            // Not help commands:
-            Assert.Throws<InvalidOperationException>(() => parser.Parse(new string[0]));
-            Assert.Throws<InvalidOperationException>(() => parser.Parse(""));
+            Assert.True(parser.Parse("command -?".Split(' ')) is IndividualCommandDefinitionHelpCommand);
         }
 
         [Test]
