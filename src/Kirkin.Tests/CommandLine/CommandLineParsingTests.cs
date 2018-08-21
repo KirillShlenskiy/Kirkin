@@ -445,6 +445,13 @@ namespace Kirkin.Tests.CommandLine
 
                 collection.DefineCommand("bbb", cmd => cmd.Help = "command bbb.");
                 collection.DefineCommand("ccc", cmd => cmd.Help = "command ccc.");
+
+                collection.DefineCommandCollection("ddd", ddd =>
+                {
+                    ddd.Help = "command group ddd.";
+
+                    ddd.DefineCommand("eee", cmd => cmd.Help = "command eee.");
+                });
             });
 
             ICommand command = parser.Parse("aaa --help".Split(' '));
@@ -453,9 +460,31 @@ namespace Kirkin.Tests.CommandLine
 
     bbb    command bbb.
     ccc    command ccc.
+    ddd    command group ddd.
 ";
-
             Assert.AreEqual(expected, ((IHelpCommand)command).RenderHelpText());
+
+            command = parser.Parse("aaa bbb --help".Split(' '));
+
+            Assert.AreEqual(
+                "Usage: Kirkin aaa bbb." + Environment.NewLine + Environment.NewLine,
+                ((IHelpCommand)command).RenderHelpText()
+            );
+
+            command = parser.Parse("aaa ddd --help".Split(' '));
+
+            expected = @"Usage: Kirkin aaa ddd <command>.
+
+    eee    command eee.
+";
+            Assert.AreEqual(expected, ((IHelpCommand)command).RenderHelpText());
+
+            command = parser.Parse("aaa ddd eee --help".Split(' '));
+
+            Assert.AreEqual(
+                "Usage: Kirkin aaa ddd eee." + Environment.NewLine + Environment.NewLine,
+                ((IHelpCommand)command).RenderHelpText()
+            );
         }
     }
 }

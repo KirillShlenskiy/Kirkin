@@ -27,7 +27,7 @@ namespace Kirkin.CommandLine
         {
             Parser = new CommandLineParser {
                 CaseInsensitive = caseInsensitive,
-                Parent = parent
+                Parent = this
             };
         }
 

@@ -48,13 +48,10 @@ namespace Kirkin.CommandLine.Help
 
             sb.Append($"Usage: {executableName} ");
 
-            CommandDefinition parent = Definition.Parent;
+            string parents = string.Join(" ", EnumerateParentNames().Reverse());
 
-            while (parent != null)
-            {
-                sb.Append($"{parent.Name} ");
-
-                parent = parent.Parent;
+            if (!string.IsNullOrEmpty(parents)) {
+                sb.Append($"{parents} ");
             }
 
             sb.AppendLine($"{Definition}.");
@@ -68,6 +65,18 @@ namespace Kirkin.CommandLine.Help
             TextFormatter.FormatAsTable(dictionary, sb);
 
             return sb.ToString();
+        }
+
+        private IEnumerable<string> EnumerateParentNames()
+        {
+            CommandDefinition parent = Definition.Parent;
+
+            while (parent != null)
+            {
+                yield return parent.Name;
+
+                parent = parent.Parent;
+            }
         }
     }
 }
