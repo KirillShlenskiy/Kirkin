@@ -12,9 +12,9 @@ namespace Kirkin.CommandLine
         /// Returns the collection of command definitions supported by this parser.
         /// </summary>
 #if NET_40
-        IEnumerable<CommandDefinition> CommandDefinitions { get; }
+        IEnumerable<CommandDefinition> Commands { get; }
 #else
-        IReadOnlyList<CommandDefinition> CommandDefinitions { get; }
+        IReadOnlyList<CommandDefinition> Commands { get; }
 #endif
         /// <summary>
         /// Defines a command with the given name.

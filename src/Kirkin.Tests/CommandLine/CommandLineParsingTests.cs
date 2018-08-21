@@ -181,7 +181,7 @@ namespace Kirkin.Tests.CommandLine
                 sync.AddOption("log", shortName: "l");
             });
 
-            Assert.AreEqual("sync <subscription> [-v] [-l <arg>]", parser.CommandDefinitions[0].ToString());
+            Assert.AreEqual("sync <subscription> [-v] [-l <arg>]", parser.Commands[0].ToString());
         }
 
         [Test]

@@ -60,7 +60,7 @@ namespace Kirkin.CommandLine.Help
             sb.AppendLine($"{Definition}.");
             sb.AppendLine();
 
-            Dictionary<string, string> dictionary = Definition.CommandDefinitions.ToDictionary(d => d.Name, d => d.Help, Definition.StringEqualityComparer);
+            Dictionary<string, string> dictionary = Definition.Commands.ToDictionary(d => d.Name, d => d.Help, Definition.StringEqualityComparer);
 
             TextFormatter.FormatAsTable(dictionary, sb);
 
