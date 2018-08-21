@@ -4,7 +4,7 @@ using Kirkin.Collections.Generic;
 
 namespace Kirkin.CommandLine.Parameters
 {
-    internal sealed class CommandParameterList
+    internal sealed class MainCommandParameterList
         : CommandParameterBase<string[]>
     {
         public override bool SupportsMultipleValues
@@ -15,7 +15,7 @@ namespace Kirkin.CommandLine.Parameters
             }
         }
 
-        public CommandParameterList(string name, string help)
+        public MainCommandParameterList(string name, string help)
             : base(name, null, true, help)
         {
         }

@@ -57,7 +57,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ParameterFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\MainCommandParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\CommandParameterBase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\CommandParameterList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\MainCommandParameterList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\OptionCommandParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\OptionListCommandParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\SwitchCommandParameter.cs" />

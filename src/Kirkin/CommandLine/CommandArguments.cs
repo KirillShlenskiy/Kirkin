@@ -40,11 +40,11 @@ namespace Kirkin.CommandLine
         /// </summary>
         public string GetParameter()
         {
-            if (Command?.Parameter == null) {
+            if (Command?.MainParameter == null) {
                 throw new InvalidOperationException("The command does not define a parameter.");
             }
 
-            return (string)All[Command.Parameter.Name];
+            return (string)All[Command.MainParameter.Name];
         }
 
         /// <summary>
@@ -52,11 +52,11 @@ namespace Kirkin.CommandLine
         /// </summary>
         public string[] GetParameterList()
         {
-            if (Command?.Parameter == null) {
+            if (Command?.MainParameter == null) {
                 throw new InvalidOperationException("The command does not define a parameter.");
             }
 
-            return (string[])All[Command.Parameter.Name];
+            return (string[])All[Command.MainParameter.Name];
         }
 
         /// <summary>

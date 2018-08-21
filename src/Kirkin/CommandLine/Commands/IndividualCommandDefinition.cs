@@ -15,7 +15,7 @@ namespace Kirkin.CommandLine.Commands
     {
         // Every command has zero or one parameter ("sync ==>extra<== --validate --log zzz.txt"),
         // and zero or more options/switches ("sync extra ==>--validate --log zzz.txt<==").
-        internal CommandParameter Parameter { get; private set; }
+        internal CommandParameter MainParameter { get; private set; }
         internal readonly List<CommandParameter> Options = new List<CommandParameter>();
         private readonly Dictionary<string, CommandParameter> OptionsByFullName;
         private readonly Dictionary<string, CommandParameter> OptionsByShortName;
@@ -27,7 +27,7 @@ namespace Kirkin.CommandLine.Commands
         {
             get
             {
-                if (Parameter != null) yield return Parameter;
+                if (MainParameter != null) yield return MainParameter;
 
                 foreach (CommandParameter option in Options) {
                     yield return option;
@@ -58,36 +58,26 @@ namespace Kirkin.CommandLine.Commands
             OptionsByShortName = new Dictionary<string, CommandParameter>(stringEqualityComparer);
         }
 
-        internal void OnExecuted(ICommand command, CommandArguments args)
-        {
-            if (Executed != null)
-            {
-                CommandExecutedEventArgs e = new CommandExecutedEventArgs(command, args);
-
-                Executed(command, e);
-            }
-        }
-
         /// <summary>
         /// Defines the main string parameter (unqualified value immediately following command name).
         /// </summary>
-        public CommandParameter DefineParameter(string name, string help = null)
+        public CommandParameter AddParameter(string name, string help = null)
         {
             MainCommandParameter parameter = new MainCommandParameter(name, help);
 
-            Parameter = parameter;
+            MainParameter = parameter;
 
             return parameter;
         }
 
         /// <summary>
-        /// Defines a string parameter list (unqualified values immediately following command name).
+        /// Defines the main string parameter list (unqualified values immediately following command name).
         /// </summary>
-        public CommandParameter DefineParameterList(string name, string help = null)
+        public CommandParameter AddParameterList(string name, string help = null)
         {
-            CommandParameterList parameterList = new CommandParameterList(name, help);
+            MainCommandParameterList parameterList = new MainCommandParameterList(name, help);
 
-            Parameter = parameterList;
+            MainParameter = parameterList;
 
             return parameterList;
         }
@@ -95,7 +85,7 @@ namespace Kirkin.CommandLine.Commands
         /// <summary>
         /// Defines a string option, i.e. "--subscription main" or "-s main" or "/subscription main".
         /// </summary>
-        public CommandParameter DefineOption(string name, string shortName = null, bool positional = false, string help = null)
+        public CommandParameter AddOption(string name, string shortName = null, bool positional = false, string help = null)
         {
             OptionCommandParameter option = new OptionCommandParameter(name, shortName, positional, help);
 
@@ -107,7 +97,7 @@ namespace Kirkin.CommandLine.Commands
         /// <summary>
         /// Defines a string option, i.e. "--colours red green" or "-s red green".
         /// </summary>
-        public CommandParameter DefineOptionList(string name, string shortName = null, bool positional = false, string help = null)
+        public CommandParameter AddOptionList(string name, string shortName = null, bool positional = false, string help = null)
         {
             OptionListCommandParameter optionList = new OptionListCommandParameter(name, shortName, positional, help);
 
@@ -119,7 +109,7 @@ namespace Kirkin.CommandLine.Commands
         /// <summary>
         /// Defines a boolean switch, i.e. "--validate" or "/validate true".
         /// </summary>
-        public CommandParameter DefineSwitch(string name, string shortName = null, string help = null)
+        public CommandParameter AddSwitch(string name, string shortName = null, string help = null)
         {
             SwitchCommandParameter option = new SwitchCommandParameter(name, shortName, help);
 
@@ -218,7 +208,7 @@ namespace Kirkin.CommandLine.Commands
                 else
                 {
                     // Parameter or positional args.
-                    if (Parameter == null || !Parameter.SupportsMultipleValues && chunk.Count > 1)
+                    if (MainParameter == null || !MainParameter.SupportsMultipleValues && chunk.Count > 1)
                     {
                         // Positional args.
                         List<CommandParameter> positionalParams = Parameters
@@ -249,11 +239,11 @@ namespace Kirkin.CommandLine.Commands
                     }
                     else
                     {
-                        if (!seenParameters.Add(Parameter)) {
+                        if (!seenParameters.Add(MainParameter)) {
                             throw new InvalidOperationException("Duplicate parameter value.");
                         }
 
-                        argValues.Add(Parameter.Name, Parameter.ParseArgs(chunk));
+                        argValues.Add(MainParameter.Name, MainParameter.ParseArgs(chunk));
                     }
                 }
             }
@@ -287,6 +277,16 @@ namespace Kirkin.CommandLine.Commands
             Options.Add(option);
         }
 
+        internal void OnExecuted(ICommand command, CommandArguments args)
+        {
+            if (Executed != null)
+            {
+                CommandExecutedEventArgs e = new CommandExecutedEventArgs(command, args);
+
+                Executed(command, e);
+            }
+        }
+
         private protected override IHelpCommand CreateHelpCommand()
         {
             return new IndividualCommandDefinitionHelpCommand(this);
@@ -301,10 +301,10 @@ namespace Kirkin.CommandLine.Commands
 
             sb.Append(Name);
 
-            if (Parameter != null)
+            if (MainParameter != null)
             {
                 sb.Append(' ');
-                sb.Append(Parameter);
+                sb.Append(MainParameter);
             }
 
             foreach (CommandParameter option in Options)

@@ -19,9 +19,9 @@ namespace Kirkin.Tests.CommandLine
 
             parser.DefineCommand("zzz", zzz =>
             {
-                zzz.DefineOption("fizz");
-                zzz.DefineOption("buzz");
-                zzz.DefineSwitch("holy-moly", shortName: "hm");
+                zzz.AddOption("fizz");
+                zzz.AddOption("buzz");
+                zzz.AddSwitch("holy-moly", shortName: "hm");
             });
 
             string subscription = null;
@@ -29,8 +29,8 @@ namespace Kirkin.Tests.CommandLine
 
             parser.DefineCommand("sync", sync =>
             {
-                sync.DefineOption("subscription", "s");
-                sync.DefineSwitch("validate", "v");
+                sync.AddOption("subscription", "s");
+                sync.AddSwitch("validate", "v");
 
                 sync.Executed += (s, e) =>
                 {
@@ -97,8 +97,8 @@ namespace Kirkin.Tests.CommandLine
 
             parser.DefineCommand("sync", sync =>
             {
-                sync.DefineParameter("subscription");
-                sync.DefineSwitch("validate", shortName: "v");
+                sync.AddParameter("subscription");
+                sync.AddSwitch("validate", shortName: "v");
             });
 
             ICommand command = parser.Parse("sync extra --validate".Split(' '));
@@ -116,9 +116,9 @@ namespace Kirkin.Tests.CommandLine
 
             parser.DefineCommand("sync", sync =>
             {
-                sync.DefineParameter("subscription");
-                sync.DefineSwitch("validate", shortName: "v");
-                sync.DefineOption("log", shortName: "l");
+                sync.AddParameter("subscription");
+                sync.AddSwitch("validate", shortName: "v");
+                sync.AddOption("log", shortName: "l");
             });
 
             {
@@ -147,8 +147,8 @@ namespace Kirkin.Tests.CommandLine
 
             parser.DefineCommand("sync", sync =>
             {
-                sync.DefineParameter("subscription");
-                sync.DefineOption("log", shortName: "l");
+                sync.AddParameter("subscription");
+                sync.AddOption("log", shortName: "l");
             });
 
             {
@@ -177,9 +177,9 @@ namespace Kirkin.Tests.CommandLine
 
             parser.DefineCommand("sync", sync =>
             {
-                sync.DefineParameter("subscription");
-                sync.DefineSwitch("validate", shortName: "v");
-                sync.DefineOption("log", shortName: "l");
+                sync.AddParameter("subscription");
+                sync.AddSwitch("validate", shortName: "v");
+                sync.AddOption("log", shortName: "l");
             });
 
             Assert.AreEqual("sync <subscription> [-v] [-l <arg>]", parser.CommandDefinitions[0].ToString());
@@ -197,9 +197,9 @@ namespace Kirkin.Tests.CommandLine
             {
                 hello.Help = "Says hello";
 
-                hello.DefineParameterList("names");
-                hello.DefineSwitch("switch");
-                hello.DefineOptionList("colors");
+                hello.AddParameterList("names");
+                hello.AddSwitch("switch");
+                hello.AddOptionList("colors");
 
                 hello.Executed += (s, e) =>
                 {
@@ -256,9 +256,9 @@ namespace Kirkin.Tests.CommandLine
 
             parser.DefineCommand("command", c =>
             {
-                c.DefineParameter("aaa", help: "Does the zzz thing.");
-                c.DefineOption("bbb", help: "Does the uuu thing, which is totally different to the aaa thing. Totally.");
-                c.DefineSwitch("ccc", help: "Does the ccc thing.");
+                c.AddParameter("aaa", help: "Does the zzz thing.");
+                c.AddOption("bbb", help: "Does the uuu thing, which is totally different to the aaa thing. Totally.");
+                c.AddSwitch("ccc", help: "Does the ccc thing.");
             });
 
             ICommand command = parser.Parse("command --help".Split(' '));
@@ -280,9 +280,9 @@ namespace Kirkin.Tests.CommandLine
 
             parser.DefineCommand("command", c =>
             {
-                c.DefineParameter("aaa", help: "Does the zzz thing.");
-                c.DefineOption("bbb", help: "Does the uuu thing, which is totally different to the aaa thing. Totally.");
-                c.DefineSwitch("ccc", help: "Does the ccc thing.");
+                c.AddParameter("aaa", help: "Does the zzz thing.");
+                c.AddOption("bbb", help: "Does the uuu thing, which is totally different to the aaa thing. Totally.");
+                c.AddSwitch("ccc", help: "Does the ccc thing.");
             });
 
             ICommand command = parser.Parse("command --help".Split(' '));
@@ -305,9 +305,9 @@ namespace Kirkin.Tests.CommandLine
 
             parser.DefineCommand("command", c =>
             {
-                c.DefineParameter("aaa", help: "Does the zzz thing.");
-                c.DefineOption("bbb", "b", help: "Does the uuu thing, which is totally different to the aaa thing. Totally.");
-                c.DefineSwitch("ccc", "c", help: "Does the ccc thing.");
+                c.AddParameter("aaa", help: "Does the zzz thing.");
+                c.AddOption("bbb", "b", help: "Does the uuu thing, which is totally different to the aaa thing. Totally.");
+                c.AddSwitch("ccc", "c", help: "Does the ccc thing.");
             });
 
             ICommand command = parser.Parse("command --help".Split(' '));
@@ -328,8 +328,8 @@ namespace Kirkin.Tests.CommandLine
         {
             IndividualCommandDefinition definition = new IndividualCommandDefinition();
 
-            definition.DefineParameterList("names");
-            definition.DefineSwitch("hru");
+            definition.AddParameterList("names");
+            definition.AddSwitch("hru");
 
             ICommand command = definition.Parse("Stu Dru Gru --hru".Split(' '));
 
@@ -343,10 +343,10 @@ namespace Kirkin.Tests.CommandLine
         {
             IndividualCommandDefinition definition = new IndividualCommandDefinition();
 
-            definition.DefineOption("a", positional: true);
-            definition.DefineOption("b", positional: true);
-            definition.DefineSwitch("c");
-            definition.DefineOption("d", positional: true);
+            definition.AddOption("a", positional: true);
+            definition.AddOption("b", positional: true);
+            definition.AddSwitch("c");
+            definition.AddOption("d", positional: true);
 
             ICommand command = definition.Parse("aaa bbb --c --d ddd".Split(' '));
 
@@ -361,10 +361,10 @@ namespace Kirkin.Tests.CommandLine
         {
             IndividualCommandDefinition definition = new IndividualCommandDefinition();
 
-            definition.DefineParameter("a");
-            definition.DefineOption("b", positional: true);
-            definition.DefineSwitch("c");
-            definition.DefineOption("d", positional: true);
+            definition.AddParameter("a");
+            definition.AddOption("b", positional: true);
+            definition.AddSwitch("c");
+            definition.AddOption("d", positional: true);
 
             ICommand command = definition.Parse("aaa bbb --c --d ddd".Split(' '));
 
@@ -379,8 +379,8 @@ namespace Kirkin.Tests.CommandLine
         {
             IndividualCommandDefinition definition = new IndividualCommandDefinition();
 
-            definition.DefineOption("a", positional: true);
-            definition.DefineOptionList("b", positional: true);
+            definition.AddOption("a", positional: true);
+            definition.AddOptionList("b", positional: true);
 
             ICommand command = definition.Parse(new[] { "aaa" });
 
@@ -394,9 +394,9 @@ namespace Kirkin.Tests.CommandLine
         {
             IndividualCommandDefinition definition = new IndividualCommandDefinition();
 
-            definition.DefineOption("a", positional: true);
-            definition.DefineOption("b", positional: false);
-            definition.DefineOption("c", positional: true);
+            definition.AddOption("a", positional: true);
+            definition.AddOption("b", positional: false);
+            definition.AddOption("c", positional: true);
 
             ICommand command = definition.Parse("aaa ccc".Split(' '));
 
@@ -440,12 +440,12 @@ namespace Kirkin.Tests.CommandLine
         {
             CommandLineParser parser = new CommandLineParser();
 
-            parser.DefineCommandCollection("aaa", group =>
+            parser.DefineCommandCollection("aaa", collection =>
             {
-                group.Help = "group aaa.";
+                collection.Help = "group aaa.";
 
-                group.DefineCommand("bbb", cmd => cmd.Help = "command bbb.");
-                group.DefineCommand("ccc", cmd => cmd.Help = "command ccc.");
+                collection.DefineCommand("bbb", cmd => cmd.Help = "command bbb.");
+                collection.DefineCommand("ccc", cmd => cmd.Help = "command ccc.");
             });
 
             ICommand command = parser.Parse("aaa --help".Split(' '));
