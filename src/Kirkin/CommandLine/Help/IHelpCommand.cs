@@ -1,4 +1,4 @@
-﻿namespace Kirkin.CommandLine.Commands.Help
+﻿namespace Kirkin.CommandLine.Help
 {
     internal interface IHelpCommand : ICommand
     {

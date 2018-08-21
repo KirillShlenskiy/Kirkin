@@ -38,17 +38,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\Vector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Specialized\UndoRedoCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandArguments.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\IndividualCommandDefinition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\IndividualCommandDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandExecutedEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\CommandCollectionDefinition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandCollectionDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandLineParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandSyntax.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\Help\IndividualCommandDefinitionHelpCommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\Help\CommandCollectionDefinitionHelpCommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\DefaultCommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\Help\RootHelpCommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Commands\Help\IHelpCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Help\IndividualCommandDefinitionHelpCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Help\CommandCollectionDefinitionHelpCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\DefaultCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Help\RootHelpCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Help\IHelpCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ConsoleFormatter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommandDefinitionContainer.cs" />
@@ -176,6 +176,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Windows\WindowsAuthentication.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)CommandLine\Commands\Help\" />
+    <Folder Include="$(MSBuildThisFileDirectory)CommandLine\Help\" />
   </ItemGroup>
 </Project>

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Kirkin.CommandLine.Commands.Help
+namespace Kirkin.CommandLine.Help
 {
     /// <summary>
     /// Root-level app help command.

@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Kirkin.CommandLine.Commands;
-using Kirkin.CommandLine.Commands.Help;
+using Kirkin.CommandLine.Help;
 
 namespace Kirkin.CommandLine
 {

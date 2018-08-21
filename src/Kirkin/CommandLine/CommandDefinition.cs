@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Kirkin.CommandLine.Commands.Help;
+using Kirkin.CommandLine.Help;
 
 namespace Kirkin.CommandLine
 {

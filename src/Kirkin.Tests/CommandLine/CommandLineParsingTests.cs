@@ -1,8 +1,7 @@
 ﻿using System;
 
 using Kirkin.CommandLine;
-using Kirkin.CommandLine.Commands;
-using Kirkin.CommandLine.Commands.Help;
+using Kirkin.CommandLine.Help;
 
 using NUnit.Framework;
 

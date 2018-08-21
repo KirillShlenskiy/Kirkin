@@ -5,11 +5,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Kirkin.CommandLine.Commands.Help
+namespace Kirkin.CommandLine.Help
 {
-    internal sealed class IndividualCommandDefinitionHelpCommand : IHelpCommand
+    internal sealed class CommandCollectionDefinitionHelpCommand : IHelpCommand
     {
-        private readonly IndividualCommandDefinition Definition;
+        private readonly CommandCollectionDefinition Definition;
 
         public CommandArguments Args { get; }
 
@@ -21,10 +21,10 @@ namespace Kirkin.CommandLine.Commands.Help
             }
         }
 
-        internal IndividualCommandDefinitionHelpCommand(IndividualCommandDefinition definition)
+        internal CommandCollectionDefinitionHelpCommand(CommandCollectionDefinition definition)
         {
             Definition = definition;
-            Args = new CommandArguments(definition);
+            Args = new CommandArguments(null);
         }
 
         public void Execute()
@@ -60,10 +60,7 @@ namespace Kirkin.CommandLine.Commands.Help
             sb.AppendLine($"{Definition}.");
             sb.AppendLine();
 
-            Dictionary<string, string> dictionary = Definition.Parameters.ToDictionary(
-                p => (p as IParameterFormattable)?.ToLongString() ?? p.ToString(),
-                p => p.Help
-            );
+            Dictionary<string, string> dictionary = Definition.CommandDefinitions.ToDictionary(d => d.Name, d => d.Help, Definition.StringEqualityComparer);
 
             TextFormatter.FormatAsTable(dictionary, sb);
 

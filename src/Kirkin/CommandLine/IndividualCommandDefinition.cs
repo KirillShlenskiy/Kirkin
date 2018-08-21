@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Kirkin.CommandLine.Commands.Help;
+using Kirkin.CommandLine.Help;
 using Kirkin.CommandLine.Parameters;
 
-namespace Kirkin.CommandLine.Commands
+namespace Kirkin.CommandLine
 {
     /// <summary>
     /// Builder type used to configure commands.

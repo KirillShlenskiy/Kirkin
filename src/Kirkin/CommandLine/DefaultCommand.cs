@@ -1,4 +1,4 @@
-﻿namespace Kirkin.CommandLine.Commands
+﻿namespace Kirkin.CommandLine
 {
     /// <summary>
     /// Immutable facade over <see cref="IndividualCommandDefinition"/>.

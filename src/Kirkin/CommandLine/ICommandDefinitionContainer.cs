@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Kirkin.CommandLine.Commands;
-
 namespace Kirkin.CommandLine
 {
     /// <summary>
