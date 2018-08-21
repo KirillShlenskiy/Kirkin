@@ -17,7 +17,7 @@ namespace Kirkin.CommandLine.Commands.Help
         /// <summary>
         /// Parsed arguments.
         /// </summary>
-        public CommandArguments Arguments { get; }
+        public CommandArguments Args { get; }
 
         /// <summary>
         /// Returns the name of the command.
@@ -33,7 +33,7 @@ namespace Kirkin.CommandLine.Commands.Help
         internal RootHelpCommand(CommandLineParser parser)
         {
             Parser = parser;
-            Arguments = new CommandArguments(null);
+            Args = new CommandArguments(null);
         }
 
         /// <summary>

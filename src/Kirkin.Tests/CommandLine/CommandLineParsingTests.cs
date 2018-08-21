@@ -84,9 +84,9 @@ namespace Kirkin.Tests.CommandLine
             {
                 ICommand command = parser.Parse("zzz --fizz 1 /buzz ultra --holy-moly".Split(' '));
 
-                Assert.AreEqual("1", command.Arguments.GetOption("fizz"));
-                Assert.AreEqual("ultra", command.Arguments.GetOption("buzz"));
-                Assert.True(command.Arguments.GetSwitch("holy-moly"));
+                Assert.AreEqual("1", command.Args.GetOption("fizz"));
+                Assert.AreEqual("ultra", command.Args.GetOption("buzz"));
+                Assert.True(command.Args.GetSwitch("holy-moly"));
             }
         }
 
@@ -103,10 +103,10 @@ namespace Kirkin.Tests.CommandLine
 
             ICommand command = parser.Parse("sync extra --validate".Split(' '));
 
-            Assert.AreEqual("extra", (string)command.Arguments.All["subscription"]);
-            Assert.AreEqual("extra", command.Arguments.GetParameter());
-            Assert.True((bool)command.Arguments.All["validate"]);
-            Assert.True(command.Arguments.GetSwitch("validate"));
+            Assert.AreEqual("extra", (string)command.Args.All["subscription"]);
+            Assert.AreEqual("extra", command.Args.GetParameter());
+            Assert.True((bool)command.Args.All["validate"]);
+            Assert.True(command.Args.GetSwitch("validate"));
         }
 
         [Test]
@@ -124,19 +124,19 @@ namespace Kirkin.Tests.CommandLine
             {
                 ICommand command = parser.Parse("sync --validate --log zzz.txt".Split(' '));
 
-                Assert.Null(command.Arguments.All["subscription"]);
+                Assert.Null(command.Args.All["subscription"]);
             }
 
             {
                 ICommand command = parser.Parse("sync main --log zzz.txt".Split(' '));
 
-                Assert.False((bool)command.Arguments.All["validate"]);
+                Assert.False((bool)command.Args.All["validate"]);
             }
 
             {
                 ICommand command = parser.Parse("sync main --validate".Split(' '));
 
-                Assert.Null(command.Arguments.All["log"]);
+                Assert.Null(command.Args.All["log"]);
             }
         }
 
@@ -154,7 +154,7 @@ namespace Kirkin.Tests.CommandLine
             {
                 ICommand command = parser.Parse("sync --log zzz.txt".Split(' '));
 
-                Assert.AreEqual("zzz.txt", command.Arguments.All["log"]);
+                Assert.AreEqual("zzz.txt", command.Args.All["log"]);
             }
 
             //{
@@ -333,9 +333,9 @@ namespace Kirkin.Tests.CommandLine
 
             ICommand command = definition.Parse("Stu Dru Gru --hru".Split(' '));
 
-            Assert.True((bool)command.Arguments.All["hru"]);
+            Assert.True((bool)command.Args.All["hru"]);
 
-            Console.WriteLine(string.Join(", ", (string[])command.Arguments.All["names"]));
+            Console.WriteLine(string.Join(", ", (string[])command.Args.All["names"]));
         }
 
         [Test]
@@ -350,10 +350,10 @@ namespace Kirkin.Tests.CommandLine
 
             ICommand command = definition.Parse("aaa bbb --c --d ddd".Split(' '));
 
-            Assert.AreEqual("aaa", command.Arguments.GetOption("a"));
-            Assert.AreEqual("bbb", command.Arguments.GetOption("b"));
-            Assert.True(command.Arguments.GetSwitch("c"));
-            Assert.AreEqual("ddd", command.Arguments.GetOption("d"));
+            Assert.AreEqual("aaa", command.Args.GetOption("a"));
+            Assert.AreEqual("bbb", command.Args.GetOption("b"));
+            Assert.True(command.Args.GetSwitch("c"));
+            Assert.AreEqual("ddd", command.Args.GetOption("d"));
         }
 
         [Test]
@@ -368,10 +368,10 @@ namespace Kirkin.Tests.CommandLine
 
             ICommand command = definition.Parse("aaa bbb --c --d ddd".Split(' '));
 
-            Assert.AreEqual("aaa", command.Arguments.GetParameter());
-            Assert.AreEqual("bbb", command.Arguments.GetOption("b"));
-            Assert.True(command.Arguments.GetSwitch("c"));
-            Assert.AreEqual("ddd", command.Arguments.GetOption("d"));
+            Assert.AreEqual("aaa", command.Args.GetParameter());
+            Assert.AreEqual("bbb", command.Args.GetOption("b"));
+            Assert.True(command.Args.GetSwitch("c"));
+            Assert.AreEqual("ddd", command.Args.GetOption("d"));
         }
 
         [Test]
@@ -384,7 +384,7 @@ namespace Kirkin.Tests.CommandLine
 
             ICommand command = definition.Parse(new[] { "aaa" });
 
-            Assert.AreEqual("aaa", command.Arguments.GetOption("a"));
+            Assert.AreEqual("aaa", command.Args.GetOption("a"));
 
             Assert.Throws<ArgumentException>(() => definition.Parse(new[] { "aaa", "bbb" }));
         }
@@ -400,14 +400,14 @@ namespace Kirkin.Tests.CommandLine
 
             ICommand command = definition.Parse("aaa ccc".Split(' '));
 
-            Assert.AreEqual("aaa", command.Arguments.GetOption("a"));
-            Assert.AreEqual("ccc", command.Arguments.GetOption("c"));
+            Assert.AreEqual("aaa", command.Args.GetOption("a"));
+            Assert.AreEqual("ccc", command.Args.GetOption("c"));
 
             command = definition.Parse("aaa ccc --b bbb".Split(' '));
 
-            Assert.AreEqual("aaa", command.Arguments.GetOption("a"));
-            Assert.AreEqual("bbb", command.Arguments.GetOption("b"));
-            Assert.AreEqual("ccc", command.Arguments.GetOption("c"));
+            Assert.AreEqual("aaa", command.Args.GetOption("a"));
+            Assert.AreEqual("bbb", command.Args.GetOption("b"));
+            Assert.AreEqual("ccc", command.Args.GetOption("c"));
         }
 
         [Test]

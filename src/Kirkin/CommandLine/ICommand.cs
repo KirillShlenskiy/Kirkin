@@ -11,9 +11,9 @@
         string Name { get; }
 
         /// <summary>
-        /// Parsed arguments.
+        /// Parsed argument values.
         /// </summary>
-        CommandArguments Arguments { get; }
+        CommandArguments Args { get; }
 
         /// <summary>
         /// Populates any related parameter values and executes the command.

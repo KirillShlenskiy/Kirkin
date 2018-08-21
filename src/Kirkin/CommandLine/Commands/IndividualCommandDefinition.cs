@@ -277,7 +277,7 @@ namespace Kirkin.CommandLine.Commands
             Options.Add(option);
         }
 
-        internal void OnExecuted(ICommand command, CommandArguments args)
+        internal void RaiseExecutedEvent(ICommand command, CommandArguments args)
         {
             if (Executed != null)
             {

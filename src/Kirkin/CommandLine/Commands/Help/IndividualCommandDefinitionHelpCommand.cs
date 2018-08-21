@@ -11,7 +11,7 @@ namespace Kirkin.CommandLine.Commands.Help
     {
         private readonly IndividualCommandDefinition Definition;
 
-        public CommandArguments Arguments { get; }
+        public CommandArguments Args { get; }
 
         public string Name
         {
@@ -24,7 +24,7 @@ namespace Kirkin.CommandLine.Commands.Help
         internal IndividualCommandDefinitionHelpCommand(IndividualCommandDefinition definition)
         {
             Definition = definition;
-            Arguments = new CommandArguments(definition);
+            Args = new CommandArguments(definition);
         }
 
         public void Execute()

@@ -15,17 +15,17 @@
             }
         }
 
-        public CommandArguments Arguments { get; }
+        public CommandArguments Args { get; }
 
         internal DefaultCommand(IndividualCommandDefinition definition, CommandArguments arguments)
         {
             _definition = definition;
-            Arguments = arguments;
+            Args = arguments;
         }
 
         public void Execute()
         {
-            _definition.OnExecuted(this, Arguments);
+            _definition.RaiseExecutedEvent(this, Args);
         }
 
         public override string ToString()
