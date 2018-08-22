@@ -47,22 +47,20 @@ namespace Kirkin.CommandLine
             }
         }
 
-
 #if NET_40
         /// <summary>
         /// Returns the collection of subcommand definitions accessible via this instance.
         /// </summary>
         public IEnumerable<CommandDefinition> SubCommands => SubCommandParser.Commands;
-
-        IEnumerable<CommandDefinition> ICommandDefinitionContainer.Commands => SubCommands;
 #else
         /// <summary>
         /// Returns the collection of subcommand definitions accessible via this instance.
         /// </summary>
         public IReadOnlyList<CommandDefinition> SubCommands => SubCommandParser.Commands;
-
-        IReadOnlyList<CommandDefinition> ICommandDefinitionContainer.Commands => SubCommands;
 #endif
+        /// <summary>
+        /// Equality comparer used to resolve arguments and subcommands.
+        /// </summary>
         internal IEqualityComparer<string> StringEqualityComparer => SubCommandParser.StringEqualityComparer;
 
         /// <summary>
@@ -76,7 +74,7 @@ namespace Kirkin.CommandLine
         public event EventHandler<CommandExecutedEventArgs> Executed;
 
         /// <summary>
-        /// Creates a new standalone <see cref="IndividualCommandDefinition"/> instance.
+        /// Creates a new standalone <see cref="CommandDefinition"/> instance.
         /// </summary>
         public CommandDefinition(bool caseInsensitive = false)
             : this("", null, caseInsensitive ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal)
@@ -180,7 +178,7 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Defines a command with the given name.
         /// </summary>
-        public void DefineCommand(string name, Action<CommandDefinition> configureAction)
+        public void DefineSubCommand(string name, Action<CommandDefinition> configureAction)
         {
             if (MainParameter != null || Options.Any(o => o.IsPositionalParameter)) {
                 throw new InvalidOperationException("Cannot define sub-commands on a command which has positional args or main parameter.");
@@ -375,6 +373,19 @@ namespace Kirkin.CommandLine
         {
             return new CommandDefinitionHelpCommand(this);
         }
+
+        #region ICommandDefinitionContainer implementation
+#if NET_40
+        IEnumerable<CommandDefinition> ICommandDefinitionContainer.Commands => SubCommands;
+#else
+        IReadOnlyList<CommandDefinition> ICommandDefinitionContainer.Commands => SubCommands;
+#endif
+        void ICommandDefinitionContainer.DefineCommand(string name, Action<CommandDefinition> configureAction)
+        {
+            DefineSubCommand(name, configureAction);
+        }
+
+        #endregion
 
         /// <summary>
         /// Returns the formal command definition.

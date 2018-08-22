@@ -27,7 +27,7 @@ namespace Kirkin.CommandLine
         internal CommandDefinition Parent;
 
         /// <summary>
-        /// Equality comparer used by the parser to resolve commands and their arguments.
+        /// Gets or sets the case sensitivity setting of this parser.
         /// </summary>
         public bool CaseInsensitive
         {

@@ -420,7 +420,7 @@ namespace Kirkin.Tests.CommandLine
             CommandLineParser parser = new CommandLineParser();
             bool bExecuted = false;
 
-            parser.DefineCommand("aaa", builder => builder.DefineCommand("bbb", cmd => cmd.Executed += (s, e) => bExecuted = true));
+            parser.DefineCommand("aaa", builder => builder.DefineSubCommand("bbb", cmd => cmd.Executed += (s, e) => bExecuted = true));
 
             ICommand command = parser.Parse("aaa bbb".Split(' '));
 
@@ -438,14 +438,14 @@ namespace Kirkin.Tests.CommandLine
             {
                 collection.Help = "group aaa.";
 
-                collection.DefineCommand("bbb", cmd => cmd.Help = "command bbb.");
-                collection.DefineCommand("ccc", cmd => cmd.Help = "command ccc.");
+                collection.DefineSubCommand("bbb", cmd => cmd.Help = "command bbb.");
+                collection.DefineSubCommand("ccc", cmd => cmd.Help = "command ccc.");
 
-                collection.DefineCommand("ddd", ddd =>
+                collection.DefineSubCommand("ddd", ddd =>
                 {
                     ddd.Help = "command group ddd.";
 
-                    ddd.DefineCommand("eee", cmd => cmd.Help = "command eee.");
+                    ddd.DefineSubCommand("eee", cmd => cmd.Help = "command eee.");
                 });
             });
 
@@ -495,7 +495,7 @@ namespace Kirkin.Tests.CommandLine
 
                 command.Executed += (s, e) => commandExecuteCount++;
 
-                command.DefineCommand("subcommand", subcommand =>
+                command.DefineSubCommand("subcommand", subcommand =>
                 {
                     subcommand.Help = "Subcommand help.";
 
