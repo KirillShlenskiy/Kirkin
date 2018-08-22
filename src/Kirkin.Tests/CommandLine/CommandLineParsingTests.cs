@@ -438,6 +438,8 @@ namespace Kirkin.Tests.CommandLine
             {
                 collection.Help = "group aaa.";
 
+                collection.AddSwitch("iii", help: "Switch iii.");
+
                 collection.DefineSubCommand("bbb", cmd => cmd.Help = "command bbb.");
                 collection.DefineSubCommand("ccc", cmd => cmd.Help = "command ccc.");
 
@@ -453,6 +455,8 @@ namespace Kirkin.Tests.CommandLine
 
             string expected = @"Usage: Kirkin aaa <command>.
 
+    --iii    Switch iii.
+
     bbb    command bbb.
     ccc    command ccc.
     ddd    command group ddd.
@@ -461,10 +465,7 @@ namespace Kirkin.Tests.CommandLine
 
             command = parser.Parse("aaa bbb --help".Split(' '));
 
-            Assert.AreEqual(
-                "Usage: Kirkin aaa bbb." + Environment.NewLine + Environment.NewLine,
-                ((IHelpCommand)command).RenderHelpText()
-            );
+            Assert.AreEqual("Usage: Kirkin aaa bbb.", ((IHelpCommand)command).RenderHelpText());
 
             command = parser.Parse("aaa ddd --help".Split(' '));
 
@@ -476,10 +477,7 @@ namespace Kirkin.Tests.CommandLine
 
             command = parser.Parse("aaa ddd eee --help".Split(' '));
 
-            Assert.AreEqual(
-                "Usage: Kirkin aaa ddd eee." + Environment.NewLine + Environment.NewLine,
-                ((IHelpCommand)command).RenderHelpText()
-            );
+            Assert.AreEqual("Usage: Kirkin aaa ddd eee.", ((IHelpCommand)command).RenderHelpText());
         }
 
         [Test]
