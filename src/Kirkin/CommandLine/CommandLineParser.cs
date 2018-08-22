@@ -11,7 +11,7 @@ namespace Kirkin.CommandLine
     /// </summary>
     public sealed class CommandLineParser : ICommandDefinitionContainer
     {
-        private Dictionary<string, CommandDefinition> _commandDefinitions = new Dictionary<string, CommandDefinition>(StringComparer.Ordinal);
+        private Dictionary<string, CommandDefinition> _commandDefinitions;
 
         /// <summary>
         /// Equality comparer used by the parser to resolve commands and their arguments.
@@ -66,9 +66,22 @@ namespace Kirkin.CommandLine
         public bool ShowAppDetailsInHelp { get; set; }
 
         /// <summary>
+        /// Creates a new <see cref="CommandLineParser"/> instance.
+        /// </summary>
+        public CommandLineParser()
+        {
+            _commandDefinitions = new Dictionary<string, CommandDefinition>(StringComparer.Ordinal);
+        }
+
+        internal CommandLineParser(IEqualityComparer<string> stringEqualityComparer)
+        {
+            _commandDefinitions = new Dictionary<string, CommandDefinition>(stringEqualityComparer);
+        }
+
+        /// <summary>
         /// Defines a command with the given name.
         /// </summary>
-        public void DefineCommand(string name, Action<IndividualCommandDefinition> configureAction)
+        public void DefineCommand(string name, Action<CommandDefinition> configureAction)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command name cannot be empty.");
 
@@ -76,25 +89,7 @@ namespace Kirkin.CommandLine
                 throw new InvalidOperationException($"Command or command group '{name}' already defined.");
             }
 
-            IndividualCommandDefinition definition = new IndividualCommandDefinition(name, Parent, StringEqualityComparer);
-
-            configureAction(definition);
-
-            _commandDefinitions.Add(name, definition);
-        }
-
-        /// <summary>
-        /// Defines a group of commands with the given name.
-        /// </summary>
-        public void DefineCommandCollection(string name, Action<CommandCollectionDefinition> configureAction)
-        {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Command group name cannot be empty.");
-
-            if (_commandDefinitions.ContainsKey(name)) {
-                throw new InvalidOperationException($"Command or command group '{name}' already defined.");
-            }
-
-            CommandCollectionDefinition definition = new CommandCollectionDefinition(name, Parent, CaseInsensitive);
+            CommandDefinition definition = new CommandDefinition(name, Parent, StringEqualityComparer);
 
             configureAction(definition);
 

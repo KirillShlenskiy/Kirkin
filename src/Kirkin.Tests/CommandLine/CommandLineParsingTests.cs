@@ -320,7 +320,7 @@ namespace Kirkin.Tests.CommandLine
         [Test]
         public void ParseSingleCommand()
         {
-            IndividualCommandDefinition definition = new IndividualCommandDefinition();
+            CommandDefinition definition = new CommandDefinition();
 
             definition.AddParameterList("names");
             definition.AddSwitch("hru");
@@ -335,7 +335,7 @@ namespace Kirkin.Tests.CommandLine
         [Test]
         public void PositionalArgsNoParam()
         {
-            IndividualCommandDefinition definition = new IndividualCommandDefinition();
+            CommandDefinition definition = new CommandDefinition();
 
             definition.AddOption("a", positional: true);
             definition.AddOption("b", positional: true);
@@ -353,7 +353,7 @@ namespace Kirkin.Tests.CommandLine
         [Test]
         public void PositionalArgsWithParam()
         {
-            IndividualCommandDefinition definition = new IndividualCommandDefinition();
+            CommandDefinition definition = new CommandDefinition();
 
             definition.AddParameter("a");
             definition.AddOption("b", positional: true);
@@ -371,7 +371,7 @@ namespace Kirkin.Tests.CommandLine
         [Test]
         public void PositionalArgsFailForMultiValues()
         {
-            IndividualCommandDefinition definition = new IndividualCommandDefinition();
+            CommandDefinition definition = new CommandDefinition();
 
             definition.AddOption("a", positional: true);
             definition.AddOptionList("b", positional: true);
@@ -386,7 +386,7 @@ namespace Kirkin.Tests.CommandLine
         [Test]
         public void MixedPositionalAndNonPositionalArgs()
         {
-            IndividualCommandDefinition definition = new IndividualCommandDefinition();
+            CommandDefinition definition = new CommandDefinition();
 
             definition.AddOption("a", positional: true);
             definition.AddOption("b", positional: false);
@@ -420,7 +420,7 @@ namespace Kirkin.Tests.CommandLine
             CommandLineParser parser = new CommandLineParser();
             bool bExecuted = false;
 
-            parser.DefineCommandCollection("aaa", builder => builder.DefineCommand("bbb", cmd => cmd.Executed += (s, e) => bExecuted = true));
+            parser.DefineCommand("aaa", builder => builder.DefineCommand("bbb", cmd => cmd.Executed += (s, e) => bExecuted = true));
 
             ICommand command = parser.Parse("aaa bbb".Split(' '));
 
@@ -434,14 +434,14 @@ namespace Kirkin.Tests.CommandLine
         {
             CommandLineParser parser = new CommandLineParser();
 
-            parser.DefineCommandCollection("aaa", collection =>
+            parser.DefineCommand("aaa", collection =>
             {
                 collection.Help = "group aaa.";
 
                 collection.DefineCommand("bbb", cmd => cmd.Help = "command bbb.");
                 collection.DefineCommand("ccc", cmd => cmd.Help = "command ccc.");
 
-                collection.DefineCommandCollection("ddd", ddd =>
+                collection.DefineCommand("ddd", ddd =>
                 {
                     ddd.Help = "command group ddd.";
 

@@ -5,7 +5,7 @@
     /// </summary>
     internal sealed class DefaultCommand : ICommand
     {
-        private readonly IndividualCommandDefinition _definition;
+        private readonly CommandDefinition _definition;
 
         public string Name
         {
@@ -17,7 +17,7 @@
 
         public CommandArguments Args { get; }
 
-        internal DefaultCommand(IndividualCommandDefinition definition, CommandArguments arguments)
+        internal DefaultCommand(CommandDefinition definition, CommandArguments arguments)
         {
             _definition = definition;
             Args = arguments;

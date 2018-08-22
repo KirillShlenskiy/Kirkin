@@ -9,7 +9,7 @@ namespace Kirkin.CommandLine.Help
 {
     internal sealed class IndividualCommandDefinitionHelpCommand : IHelpCommand
     {
-        private readonly IndividualCommandDefinition Definition;
+        private readonly CommandDefinition Definition;
 
         public CommandArguments Args { get; }
 
@@ -21,7 +21,7 @@ namespace Kirkin.CommandLine.Help
             }
         }
 
-        internal IndividualCommandDefinitionHelpCommand(IndividualCommandDefinition definition)
+        internal IndividualCommandDefinitionHelpCommand(CommandDefinition definition)
         {
             Definition = definition;
             Args = new CommandArguments(definition);
