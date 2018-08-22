@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Kirkin.CommandLine.Help
 {
-    internal sealed class CommandCollectionDefinitionHelpCommand : IHelpCommand
+    internal sealed class CommandDefinitionHelpCommand : IHelpCommand
     {
         private readonly CommandDefinition Definition;
 
@@ -21,10 +21,10 @@ namespace Kirkin.CommandLine.Help
             }
         }
 
-        internal CommandCollectionDefinitionHelpCommand(CommandDefinition definition)
+        internal CommandDefinitionHelpCommand(CommandDefinition definition)
         {
             Definition = definition;
-            Args = new CommandArguments(null);
+            Args = new CommandArguments(definition);
         }
 
         public void Execute()
@@ -50,15 +50,21 @@ namespace Kirkin.CommandLine.Help
 
             string parents = string.Join(" ", EnumerateParentNames().Reverse());
 
-            if (!string.IsNullOrEmpty(parents))
-            {
+            if (!string.IsNullOrEmpty(parents)) {
                 sb.Append($"{parents} ");
             }
 
             sb.AppendLine($"{Definition}.");
             sb.AppendLine();
 
-            Dictionary<string, string> dictionary = Definition.Commands.ToDictionary(d => d.Name, d => d.Help, Definition.StringEqualityComparer);
+            Dictionary<string, string> dictionary = Definition.Parameters.ToDictionary(
+                p => (p as IParameterFormattable)?.ToLongString() ?? p.ToString(),
+                p => p.Help
+            );
+
+            TextFormatter.FormatAsTable(dictionary, sb);
+
+            dictionary = Definition.Commands.ToDictionary(d => d.Name, d => d.Help, Definition.StringEqualityComparer);
 
             TextFormatter.FormatAsTable(dictionary, sb);
 

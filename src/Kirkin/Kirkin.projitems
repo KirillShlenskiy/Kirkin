@@ -40,11 +40,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandArguments.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandExecutedEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandCollectionDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandLineParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandSyntax.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Help\IndividualCommandDefinitionHelpCommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Help\CommandCollectionDefinitionHelpCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Help\CommandDefinitionHelpCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\DefaultCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Help\RootHelpCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Help\IHelpCommand.cs" />

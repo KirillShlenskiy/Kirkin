@@ -262,9 +262,9 @@ namespace Kirkin.Tests.CommandLine
 
             command.Execute();
 
-            Assert.True(parser.Parse("command --help".Split(' ')) is IndividualCommandDefinitionHelpCommand);
-            Assert.True(parser.Parse("command /?".Split(' ')) is IndividualCommandDefinitionHelpCommand);
-            Assert.True(parser.Parse("command -?".Split(' ')) is IndividualCommandDefinitionHelpCommand);
+            Assert.True(parser.Parse("command --help".Split(' ')) is CommandDefinitionHelpCommand);
+            Assert.True(parser.Parse("command /?".Split(' ')) is CommandDefinitionHelpCommand);
+            Assert.True(parser.Parse("command -?".Split(' ')) is CommandDefinitionHelpCommand);
         }
 
         [Test]

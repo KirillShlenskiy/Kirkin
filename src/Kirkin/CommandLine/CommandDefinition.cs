@@ -98,6 +98,10 @@ namespace Kirkin.CommandLine
         /// </summary>
         public CommandParameter AddParameter(string name, string help = null)
         {
+            if (Commands.Any()) {
+                throw new InvalidOperationException("Cannot define parameter on a command which has sub-commands.");
+            }
+
             MainCommandParameter parameter = new MainCommandParameter(name, help);
 
             MainParameter = parameter;
@@ -110,6 +114,10 @@ namespace Kirkin.CommandLine
         /// </summary>
         public CommandParameter AddParameterList(string name, string help = null)
         {
+            if (Commands.Any()) {
+                throw new InvalidOperationException("Cannot define parameter list on a command which has sub-commands.");
+            }
+
             MainCommandParameterList parameterList = new MainCommandParameterList(name, help);
 
             MainParameter = parameterList;
@@ -122,6 +130,10 @@ namespace Kirkin.CommandLine
         /// </summary>
         public CommandParameter AddOption(string name, string shortName = null, bool positional = false, string help = null)
         {
+            if (positional && Commands.Any()) {
+                throw new InvalidOperationException("Cannot define positional parameter on a command which has sub-commands.");
+            }
+
             OptionCommandParameter option = new OptionCommandParameter(name, shortName, positional, help);
 
             RegisterOption(option);
@@ -134,6 +146,10 @@ namespace Kirkin.CommandLine
         /// </summary>
         public CommandParameter AddOptionList(string name, string shortName = null, bool positional = false, string help = null)
         {
+            if (positional && Commands.Any()) {
+                throw new InvalidOperationException("Cannot define positional parameter list on a command which has sub-commands.");
+            }
+
             OptionListCommandParameter optionList = new OptionListCommandParameter(name, shortName, positional, help);
 
             RegisterOption(optionList);
@@ -158,6 +174,10 @@ namespace Kirkin.CommandLine
         /// </summary>
         public void DefineCommand(string name, Action<CommandDefinition> configureAction)
         {
+            if (MainParameter != null || Options.Any(o => o.IsPositionalParameter)) {
+                throw new InvalidOperationException("Cannot define sub-commands on a command which has positional args or main parameter.");
+            }
+
             Parser.DefineCommand(name, configureAction);
         }
 
@@ -171,7 +191,7 @@ namespace Kirkin.CommandLine
             IEqualityComparer<string> stringEqualityComparer = OptionsByFullName.Comparer;
 
             if (args.Length == 1 && CommandSyntax.IsHelpSwitch(args[0], stringEqualityComparer)) {
-                return new IndividualCommandDefinitionHelpCommand(this);
+                return new CommandDefinitionHelpCommand(this);
             }
 
             List<List<string>> tokenGroups = new List<List<string>>();
@@ -337,7 +357,7 @@ namespace Kirkin.CommandLine
 
         internal IHelpCommand CreateHelpCommand()
         {
-            return new IndividualCommandDefinitionHelpCommand(this);
+            return new CommandDefinitionHelpCommand(this);
         }
 
         /// <summary>
