@@ -47,13 +47,21 @@ namespace Kirkin.CommandLine
             }
         }
 
-        /// <summary>
-        /// Returns the collection of command definitions supported by this parser.
-        /// </summary>
+
 #if NET_40
-        public IEnumerable<CommandDefinition> Commands => Parser.Commands;
+        /// <summary>
+        /// Returns the collection of subcommand definitions accessible via this instance.
+        /// </summary>
+        public IEnumerable<CommandDefinition> SubCommands => Parser.Commands;
+
+        IEnumerable<CommandDefinition> ICommandDefinitionContainer.Commands => SubCommands;
 #else
-        public IReadOnlyList<CommandDefinition> Commands => Parser.Commands;
+        /// <summary>
+        /// Returns the collection of subcommand definitions accessible via this instance.
+        /// </summary>
+        public IReadOnlyList<CommandDefinition> SubCommands => Parser.Commands;
+
+        IReadOnlyList<CommandDefinition> ICommandDefinitionContainer.Commands => SubCommands;
 #endif
         internal IEqualityComparer<string> StringEqualityComparer => Parser.StringEqualityComparer;
 
@@ -98,7 +106,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public CommandParameter AddParameter(string name, string help = null)
         {
-            if (Commands.Any()) {
+            if (SubCommands.Any()) {
                 throw new InvalidOperationException("Cannot define parameter on a command which has sub-commands.");
             }
 
@@ -114,7 +122,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public CommandParameter AddParameterList(string name, string help = null)
         {
-            if (Commands.Any()) {
+            if (SubCommands.Any()) {
                 throw new InvalidOperationException("Cannot define parameter list on a command which has sub-commands.");
             }
 
@@ -130,7 +138,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public CommandParameter AddOption(string name, string shortName = null, bool positional = false, string help = null)
         {
-            if (positional && Commands.Any()) {
+            if (positional && SubCommands.Any()) {
                 throw new InvalidOperationException("Cannot define positional parameter on a command which has sub-commands.");
             }
 
@@ -146,7 +154,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public CommandParameter AddOptionList(string name, string shortName = null, bool positional = false, string help = null)
         {
-            if (positional && Commands.Any()) {
+            if (positional && SubCommands.Any()) {
                 throw new InvalidOperationException("Cannot define positional parameter list on a command which has sub-commands.");
             }
 
@@ -274,7 +282,7 @@ namespace Kirkin.CommandLine
                     if (MainParameter == null || !MainParameter.SupportsMultipleValues && chunk.Count > 1)
                     {
                         // TODO: Parser == null check?
-                        if (Commands.Any()) {
+                        if (SubCommands.Any()) {
                             return Parser.Parse(args);
                         }
 
@@ -366,7 +374,7 @@ namespace Kirkin.CommandLine
         public override string ToString()
         {
             // TODO: Parser != null check?
-            if (Commands.Any()) {
+            if (SubCommands.Any()) {
                 return $"{Name} <command>";
             }
 

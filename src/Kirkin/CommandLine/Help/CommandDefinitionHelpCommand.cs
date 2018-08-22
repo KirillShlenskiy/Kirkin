@@ -64,7 +64,7 @@ namespace Kirkin.CommandLine.Help
 
             TextFormatter.FormatAsTable(dictionary, sb);
 
-            dictionary = Definition.Commands.ToDictionary(d => d.Name, d => d.Help, Definition.StringEqualityComparer);
+            dictionary = Definition.SubCommands.ToDictionary(d => d.Name, d => d.Help, Definition.StringEqualityComparer);
 
             TextFormatter.FormatAsTable(dictionary, sb);
 
