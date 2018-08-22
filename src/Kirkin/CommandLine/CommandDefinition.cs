@@ -20,7 +20,7 @@ namespace Kirkin.CommandLine
 
         private readonly Dictionary<string, CommandParameter> OptionsByFullName;
         private readonly Dictionary<string, CommandParameter> OptionsByShortName;
-        private readonly CommandLineParser Parser;
+        private readonly CommandLineParser SubCommandParser;
 
         /// <summary>
         /// The name of the command being configured.
@@ -52,18 +52,18 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Returns the collection of subcommand definitions accessible via this instance.
         /// </summary>
-        public IEnumerable<CommandDefinition> SubCommands => Parser.Commands;
+        public IEnumerable<CommandDefinition> SubCommands => SubCommandParser.Commands;
 
         IEnumerable<CommandDefinition> ICommandDefinitionContainer.Commands => SubCommands;
 #else
         /// <summary>
         /// Returns the collection of subcommand definitions accessible via this instance.
         /// </summary>
-        public IReadOnlyList<CommandDefinition> SubCommands => Parser.Commands;
+        public IReadOnlyList<CommandDefinition> SubCommands => SubCommandParser.Commands;
 
         IReadOnlyList<CommandDefinition> ICommandDefinitionContainer.Commands => SubCommands;
 #endif
-        internal IEqualityComparer<string> StringEqualityComparer => Parser.StringEqualityComparer;
+        internal IEqualityComparer<string> StringEqualityComparer => SubCommandParser.StringEqualityComparer;
 
         /// <summary>
         /// Parent command specified when this instance was created.
@@ -96,7 +96,7 @@ namespace Kirkin.CommandLine
             OptionsByFullName = new Dictionary<string, CommandParameter>(stringEqualityComparer);
             OptionsByShortName = new Dictionary<string, CommandParameter>(stringEqualityComparer);
 
-            Parser = new CommandLineParser(stringEqualityComparer) {
+            SubCommandParser = new CommandLineParser(stringEqualityComparer) {
                 Parent = this
             };
         }
@@ -186,7 +186,7 @@ namespace Kirkin.CommandLine
                 throw new InvalidOperationException("Cannot define sub-commands on a command which has positional args or main parameter.");
             }
 
-            Parser.DefineCommand(name, configureAction);
+            SubCommandParser.DefineCommand(name, configureAction);
         }
 
         /// <summary>
@@ -195,6 +195,14 @@ namespace Kirkin.CommandLine
         internal ICommand Parse(string[] args)
         {
             if (args == null) throw new ArgumentNullException(nameof(args));
+
+            if (args.Length == 0 && SubCommands.Any() && Executed == null)
+            {
+                // Rewrite as a --help command.
+                args = new[] { "--help" };
+
+                return SubCommandParser.Parse(args);
+            }
 
             IEqualityComparer<string> stringEqualityComparer = OptionsByFullName.Comparer;
 
@@ -283,7 +291,7 @@ namespace Kirkin.CommandLine
                     {
                         // TODO: Parser == null check?
                         if (SubCommands.Any()) {
-                            return Parser.Parse(args);
+                            return SubCommandParser.Parse(args);
                         }
 
                         // Positional args.

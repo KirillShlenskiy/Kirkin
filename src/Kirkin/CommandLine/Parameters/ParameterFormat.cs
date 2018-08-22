@@ -1,4 +1,4 @@
-﻿namespace Kirkin.CommandLine
+﻿namespace Kirkin.CommandLine.Parameters
 {
     /// <summary>
     /// Command parameter print format.

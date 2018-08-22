@@ -1,4 +1,4 @@
-﻿namespace Kirkin.CommandLine
+﻿namespace Kirkin.CommandLine.Parameters
 {
     internal interface IParameterFormattable
     {

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
+using Kirkin.CommandLine.Parameters;
+
 namespace Kirkin.CommandLine.Help
 {
     internal sealed class CommandDefinitionHelpCommand : IHelpCommand
@@ -54,19 +56,32 @@ namespace Kirkin.CommandLine.Help
                 sb.Append($"{parents} ");
             }
 
-            sb.AppendLine($"{Definition}.");
-            sb.AppendLine();
+            sb.Append($"{Definition}.");
 
-            Dictionary<string, string> dictionary = Definition.Parameters.ToDictionary(
+            Dictionary<string, string> paramDictionary = Definition.Parameters.ToDictionary(
                 p => (p as IParameterFormattable)?.ToLongString() ?? p.ToString(),
                 p => p.Help
             );
 
-            TextFormatter.FormatAsTable(dictionary, sb);
+            Dictionary<string, string> subCommandDictionary = Definition.SubCommands.ToDictionary(d => d.Name, d => d.Help, Definition.StringEqualityComparer);
 
-            dictionary = Definition.SubCommands.ToDictionary(d => d.Name, d => d.Help, Definition.StringEqualityComparer);
+            if (paramDictionary.Count != 0 || subCommandDictionary.Count != 0) {
+                sb.AppendLine();
+            }
 
-            TextFormatter.FormatAsTable(dictionary, sb);
+            if (paramDictionary.Count != 0)
+            {
+                sb.AppendLine();
+
+                TextFormatter.FormatAsTable(paramDictionary, sb);
+            }
+
+            if (subCommandDictionary.Count != 0)
+            {
+                sb.AppendLine();
+
+                TextFormatter.FormatAsTable(subCommandDictionary, sb);
+            }
 
             return sb.ToString();
         }

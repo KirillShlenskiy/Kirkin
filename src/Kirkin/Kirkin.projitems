@@ -50,8 +50,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommandDefinitionContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandParameter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\IParameterFormattable.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ParameterFormat.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\IParameterFormattable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\ParameterFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\MainCommandParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\CommandParameterBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\MainCommandParameterList.cs" />
