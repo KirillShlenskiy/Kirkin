@@ -201,7 +201,7 @@ namespace Kirkin.CommandLine
                 // Rewrite as a --help command.
                 args = new[] { "--help" };
 
-                return SubCommandParser.Parse(args);
+                return Parse(args);
             }
 
             IEqualityComparer<string> stringEqualityComparer = OptionsByFullName.Comparer;
