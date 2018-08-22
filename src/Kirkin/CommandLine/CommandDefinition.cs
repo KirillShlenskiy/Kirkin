@@ -33,7 +33,7 @@ namespace Kirkin.CommandLine
         public string Help { get; set; }
 
         /// <summary>
-        /// Gets all parameters and options defined by this command.
+        /// Gets all parameters, options and switches defined by this command.
         /// </summary>
         public IEnumerable<CommandParameter> Parameters
         {
