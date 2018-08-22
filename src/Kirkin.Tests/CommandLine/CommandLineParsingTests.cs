@@ -481,5 +481,47 @@ namespace Kirkin.Tests.CommandLine
                 ((IHelpCommand)command).RenderHelpText()
             );
         }
+
+        [Test]
+        public void MixedCommandAndSubCommands()
+        {
+            CommandLineParser parser = new CommandLineParser();
+            int commandExecuteCount = 0;
+            int subCommandExecuteCount = 0;
+
+            parser.DefineCommand("command", command =>
+            {
+                command.Help = "Command help.";
+
+                command.Executed += (s, e) => commandExecuteCount++;
+
+                command.DefineCommand("subcommand", subcommand =>
+                {
+                    subcommand.Help = "Subcommand help.";
+
+                    subcommand.Executed += (s, e) => subCommandExecuteCount++;
+                });
+            });
+
+            parser.Parse("command").Execute();
+
+            Assert.AreEqual(1, commandExecuteCount);
+            Assert.AreEqual(0, subCommandExecuteCount);
+
+            parser.Parse("command --help".Split(' ')).Execute();
+
+            Assert.AreEqual(1, commandExecuteCount);
+            Assert.AreEqual(0, subCommandExecuteCount);
+
+            parser.Parse("command subcommand".Split(' ')).Execute();
+
+            Assert.AreEqual(1, commandExecuteCount);
+            Assert.AreEqual(1, subCommandExecuteCount);
+
+            parser.Parse("command subcommand --help".Split(' ')).Execute();
+
+            Assert.AreEqual(1, commandExecuteCount);
+            Assert.AreEqual(1, subCommandExecuteCount);
+        }
     }
 }
