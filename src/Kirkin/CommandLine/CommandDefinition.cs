@@ -59,6 +59,21 @@ namespace Kirkin.CommandLine
         public IReadOnlyList<CommandDefinition> SubCommands => SubCommandParser.Commands;
 #endif
         /// <summary>
+        /// Returns true if the <see cref="SubCommands"/> collection is not empty.
+        /// </summary>
+        internal bool HasSubCommands
+        {
+            get
+            {
+#if NET_40
+                return SubCommandParser.Commands.Any();
+#else
+                return SubCommandParser.Commands.Count != 0;
+#endif
+            }
+        }
+
+        /// <summary>
         /// Equality comparer used to resolve arguments and subcommands.
         /// </summary>
         internal IEqualityComparer<string> StringEqualityComparer => SubCommandParser.StringEqualityComparer;
@@ -104,7 +119,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public CommandParameter AddParameter(string name, string help = null)
         {
-            if (SubCommands.Any()) {
+            if (HasSubCommands) {
                 throw new InvalidOperationException("Cannot define parameter on a command which has sub-commands.");
             }
 
@@ -120,7 +135,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public CommandParameter AddParameterList(string name, string help = null)
         {
-            if (SubCommands.Any()) {
+            if (HasSubCommands) {
                 throw new InvalidOperationException("Cannot define parameter list on a command which has sub-commands.");
             }
 
@@ -136,7 +151,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public CommandParameter AddOption(string name, string shortName = null, bool positional = false, string help = null)
         {
-            if (positional && SubCommands.Any()) {
+            if (positional && HasSubCommands) {
                 throw new InvalidOperationException("Cannot define positional parameter on a command which has sub-commands.");
             }
 
@@ -152,7 +167,7 @@ namespace Kirkin.CommandLine
         /// </summary>
         public CommandParameter AddOptionList(string name, string shortName = null, bool positional = false, string help = null)
         {
-            if (positional && SubCommands.Any()) {
+            if (positional && HasSubCommands) {
                 throw new InvalidOperationException("Cannot define positional parameter list on a command which has sub-commands.");
             }
 
@@ -194,7 +209,7 @@ namespace Kirkin.CommandLine
         {
             if (args == null) throw new ArgumentNullException(nameof(args));
 
-            if (args.Length == 0 && SubCommands.Any() && Executed == null)
+            if (args.Length == 0 && HasSubCommands && Executed == null)
             {
                 // Rewrite as a --help command.
                 args = new[] { "--help" };
@@ -287,8 +302,7 @@ namespace Kirkin.CommandLine
                     // Parameter, positional arg or subcommand.
                     if (MainParameter == null || !MainParameter.SupportsMultipleValues && chunk.Count > 1)
                     {
-                        // TODO: Parser == null check?
-                        if (SubCommands.Any()) {
+                        if (HasSubCommands) {
                             return SubCommandParser.Parse(args);
                         }
 
@@ -374,7 +388,7 @@ namespace Kirkin.CommandLine
             return new CommandDefinitionHelpCommand(this);
         }
 
-        #region ICommandDefinitionContainer implementation
+#region ICommandDefinitionContainer implementation
 #if NET_40
         IEnumerable<CommandDefinition> ICommandDefinitionContainer.Commands => SubCommands;
 #else
@@ -385,15 +399,14 @@ namespace Kirkin.CommandLine
             DefineSubCommand(name, configureAction);
         }
 
-        #endregion
+#endregion
 
         /// <summary>
         /// Returns the formal command definition.
         /// </summary>
         public override string ToString()
         {
-            // TODO: Parser != null check?
-            if (SubCommands.Any()) {
+            if (HasSubCommands) {
                 return $"{Name} <command>";
             }
 
