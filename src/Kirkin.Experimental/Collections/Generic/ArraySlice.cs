@@ -7,100 +7,83 @@ namespace Kirkin.Collections.Generic
     /// <summary>
     /// Simple read-only facade which provides access to items
     /// in the slice of an array whose bounds are defined by
-    /// this instance's offset and count.
+    /// this instance's start index and count.
     /// </summary>
-    internal struct ArraySlice<T>
+    internal readonly struct ArraySlice<T>
 #if NET_40
         : IEnumerable<T>
 #else
         : IReadOnlyList<T>
 #endif
-        , ICollection<T>
     {
         private readonly T[] _array;
-        private readonly int _offset;
+        private readonly int _start;
+        private readonly int _length;
         
-        public int Count { get; }
+        public int Length
+        {
+            get
+            {
+                return _length;
+            }
+        }
 
         public T this[int index]
         {
             get
             {
-                return _array[_offset + index];
+                return _array[_start + index];
             }
         }
 
-        public ArraySlice(T[] array, int offset)
-            : this(array, offset, array.Length - offset)
+        public ArraySlice(T[] array)
+            : this(array, 0, array.Length)
         {
         }
 
-        public ArraySlice(T[] array, int offset, int count)
+        public ArraySlice(T[] array, int start)
+            : this(array, start, array.Length - start)
+        {
+        }
+
+        public ArraySlice(T[] array, int start, int length)
         {
             if (array == null) throw new ArgumentNullException(nameof(array));
-            if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
-            if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
-            if (offset + count > array.Length) throw new ArgumentOutOfRangeException();
+            if (start < 0) throw new ArgumentOutOfRangeException(nameof(start));
+            if (length < 0) throw new ArgumentOutOfRangeException(nameof(length));
+            if (start + length > array.Length) throw new ArgumentOutOfRangeException();
 
             _array = array;
-            _offset = offset;
-            Count = count;
+            _start = start;
+            _length = length;
         }
 
         public Enumerator GetEnumerator()
         {
-            return new Enumerator(_array, _offset, Count);
+            return new Enumerator(_array, _start, Length);
         }
 
-#region IEnumerable<T> implementation
+        #region IEnumerable<T> implementation
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
-            for (int i = _offset; i < _offset + Count; i++) {
+            for (int i = _start; i < _start + _length; i++) {
                 yield return _array[i];
             }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            for (int i = _offset; i < _offset + Count; i++) {
+            for (int i = _start; i < _start + Length; i++) {
                 yield return _array[i];
             }
         }
 
-#endregion
+        #endregion
 
-#region ICollection<T> implementation
-
-        int ICollection<T>.Count
+        public bool Contains(T item)
         {
-            get
-            {
-                return Count;
-            }
-        }
-
-        bool ICollection<T>.IsReadOnly
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        void ICollection<T>.Add(T item)
-        {
-            throw new NotImplementedException();
-        }
-
-        void ICollection<T>.Clear()
-        {
-            throw new NotImplementedException();
-        }
-
-        bool ICollection<T>.Contains(T item)
-        {
-            for (int i = _offset; i < _offset + Count; i++)
+            for (int i = _start; i < _start + Length; i++)
             {
                 if (Equals(_array[i], item)) {
                     return true;
@@ -110,20 +93,32 @@ namespace Kirkin.Collections.Generic
             return false;
         }
 
-        void ICollection<T>.CopyTo(T[] array, int arrayIndex)
+        public void CopyTo(T[] array, int arrayIndex)
         {
-            for (int i = _offset; i < _offset + Count; i++) {
+            for (int i = _start; i < _start + Length; i++) {
                 array[arrayIndex++] = _array[i];
             }
         }
 
-        bool ICollection<T>.Remove(T item)
+        public ArraySlice<T> Slice(int start)
         {
-            throw new NotImplementedException();
+            return new ArraySlice<T>(_array, _start + start, Length - start);
         }
 
-#endregion
+        public ArraySlice<T> Slice(int start, int length)
+        {
+            return new ArraySlice<T>(_array, _start + start, length);
+        }
 
+#if !NET_40
+        int IReadOnlyCollection<T>.Count
+        {
+            get
+            {
+                return Length;
+            }
+        }
+#endif
         /// <summary>
         /// An array slice enumerator.
         /// </summary>
@@ -147,11 +142,11 @@ namespace Kirkin.Collections.Generic
             /// <summary>
             /// Initializes a new instance of the <see cref="Enumerator"/> struct.
             /// </summary>
-            internal Enumerator(T[] array, int offset, int length)
+            internal Enumerator(T[] array, int start, int length)
             {
                 _array = array;
-                _upperBoundExclusive = offset + length;
-                _index = offset - 1;
+                _upperBoundExclusive = start + length;
+                _index = start - 1;
             }
 
             /// <summary>
