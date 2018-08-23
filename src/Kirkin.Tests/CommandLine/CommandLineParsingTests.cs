@@ -521,5 +521,28 @@ namespace Kirkin.Tests.CommandLine
             Assert.AreEqual(1, commandExecuteCount);
             Assert.AreEqual(1, subCommandExecuteCount);
         }
+        
+        [Test]
+        public void ParseBenchmark()
+        {
+            CommandLineParser parser = new CommandLineParser();
+            int count = 0;
+
+            parser.DefineCommand("hello", command =>
+                command.DefineSubCommand("great", great =>
+                    great.DefineSubCommand("big", big =>
+                        big.DefineSubCommand("white", white =>
+                            white.DefineSubCommand("world", world => world.Executed += (s, e) => count++)
+                        )
+                    )
+                )
+            );
+
+            string[] args = new[] { "hello", "great", "big", "white", "world" };
+
+            for (int i = 0; i < 100000; i++) {
+                parser.Parse(args).Execute();
+            }
+        }
     }
 }
