@@ -34,7 +34,7 @@ namespace Kirkin.CommandLine
         public string Help { get; }
 
         /// <summary>
-        /// Creates a new <see cref="CommandParameterBase{T}"/> instance.
+        /// Creates a new <see cref="CommandParameter"/> instance.
         /// </summary>
         protected CommandParameter(string name, string shortName, bool isPositionalParameter, string help)
         {
