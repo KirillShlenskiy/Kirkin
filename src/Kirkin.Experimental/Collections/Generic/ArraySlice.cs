@@ -10,7 +10,12 @@ namespace Kirkin.Collections.Generic
     /// this instance's offset and count.
     /// </summary>
     internal struct ArraySlice<T>
-        : IReadOnlyList<T>, ICollection<T>
+#if NET_40
+        : IEnumerable<T>
+#else
+        : IReadOnlyList<T>
+#endif
+        , ICollection<T>
     {
         private readonly T[] _array;
         private readonly int _offset;
@@ -23,6 +28,11 @@ namespace Kirkin.Collections.Generic
             {
                 return _array[_offset + index];
             }
+        }
+
+        public ArraySlice(T[] array, int offset)
+            : this(array, offset, array.Length - offset)
+        {
         }
 
         public ArraySlice(T[] array, int offset, int count)
@@ -42,7 +52,7 @@ namespace Kirkin.Collections.Generic
             return new Enumerator(_array, _offset, Count);
         }
 
-        #region IEnumerable<T> implementation
+#region IEnumerable<T> implementation
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
@@ -58,9 +68,9 @@ namespace Kirkin.Collections.Generic
             }
         }
 
-        #endregion
+#endregion
 
-        #region ICollection<T> implementation
+#region ICollection<T> implementation
 
         int ICollection<T>.Count
         {
@@ -112,7 +122,7 @@ namespace Kirkin.Collections.Generic
             throw new NotImplementedException();
         }
 
-        #endregion
+#endregion
 
         /// <summary>
         /// An array slice enumerator.
