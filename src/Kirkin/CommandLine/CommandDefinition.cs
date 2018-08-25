@@ -388,7 +388,7 @@ namespace Kirkin.CommandLine
             return new CommandDefinitionHelpCommand(this);
         }
 
-#region ICommandDefinitionContainer implementation
+        #region ICommandDefinitionContainer implementation
 #if NET_40
         IEnumerable<CommandDefinition> ICommandDefinitionContainer.Commands => SubCommands;
 #else
@@ -399,7 +399,7 @@ namespace Kirkin.CommandLine
             DefineSubCommand(name, configureAction);
         }
 
-#endregion
+        #endregion
 
         /// <summary>
         /// Returns the formal command definition.

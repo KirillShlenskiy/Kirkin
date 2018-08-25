@@ -28,6 +28,22 @@ namespace Kirkin.Collections.Generic
             }
         }
 
+        public int Start
+        {
+            get
+            {
+                return _start;
+            }
+        }
+
+        public bool IsDefault
+        {
+            get
+            {
+                return _array == null;
+            }
+        }
+
         public T this[int index]
         {
             get
