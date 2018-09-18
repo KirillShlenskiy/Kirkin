@@ -72,7 +72,7 @@ namespace Kirkin.Tests.Net
 
                 using (TcpClient client = new TcpClient())
                 {
-                    await client.ConnectAsync(IPAddress.Loopback, PortNumber).ConfigureAwait(false);
+                    await client.ConnectAsync("localhost", PortNumber).ConfigureAwait(false);
 
                     NetworkStream stream = client.GetStream();
 
