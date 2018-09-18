@@ -3,7 +3,10 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+
+using Kirkin.Threading.Tasks;
 
 using NUnit.Framework;
 
@@ -30,7 +33,7 @@ namespace Kirkin.Tests.Net
 
                     while (true)
                     {
-                        using (TcpClient client = await server.AcceptTcpClientAsync().ConfigureAwait(false))
+                        using (TcpClient client = await server.AcceptTcpClientAsync().WithCancellation(CancellationToken.None).ConfigureAwait(false))
                         {
                             NetworkStream stream = client.GetStream();
 
@@ -38,7 +41,7 @@ namespace Kirkin.Tests.Net
                             {
                                 while (true)
                                 {
-                                    string line = await reader.ReadLineAsync();
+                                    string line = await reader.ReadLineAsync().ConfigureAwait(false);
 
                                     if (line == null) {
                                         break;
@@ -75,16 +78,16 @@ namespace Kirkin.Tests.Net
 
                     using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8, 4096, leaveOpen: true))
                     {
-                        await writer.WriteLineAsync("Hello");
-                        await writer.FlushAsync();
-                        await Task.Delay(1000);
-                        await writer.WriteLineAsync("Goodbye");
-                        await writer.FlushAsync();
+                        await writer.WriteLineAsync("Hello").ConfigureAwait(false);
+                        await writer.FlushAsync().ConfigureAwait(false);
+                        await Task.Delay(1000).ConfigureAwait(false);
+                        await writer.WriteLineAsync("Goodbye").ConfigureAwait(false);
+                        await writer.FlushAsync().ConfigureAwait(false);
                     }
                 }
             });
 
-            await Task.WhenAll(serverTask, clientTask);
+            await Task.WhenAll(serverTask, clientTask).ConfigureAwait(false);
         }
     }
 }
