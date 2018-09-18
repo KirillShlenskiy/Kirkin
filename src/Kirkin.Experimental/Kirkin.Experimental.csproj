@@ -102,6 +102,7 @@
     <Compile Include="Memory\Pinned.cs" />
     <Compile Include="Memory\RawCopy.cs" />
     <Compile Include="Memory\TypeSizeResolver.cs" />
+    <Compile Include="Net\TcpServer.cs" />
     <Compile Include="NonNullableString.cs" />
     <Compile Include="Optional.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
