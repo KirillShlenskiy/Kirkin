@@ -144,6 +144,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Text\TextUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Text\UrlUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Threading\Cancellation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\NamedMutex.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Threading\Tasks\ParallelTaskOptions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Threading\Tasks\ParallelTasks.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Threading\Tasks\TaskEx.cs" />
