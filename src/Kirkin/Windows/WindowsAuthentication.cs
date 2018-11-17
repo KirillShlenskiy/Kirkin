@@ -8,6 +8,7 @@ using System.Security;
 using System.Security.Principal;
 
 using Kirkin.Collections.Generic;
+using Kirkin.Functional;
 
 namespace Kirkin.Windows
 {
@@ -50,6 +51,64 @@ namespace Kirkin.Windows
             }
         }
 
+        /// <summary>
+        /// Impersonates the local or domain user.
+        /// </summary>
+        public static IDisposable Impersonate(string userName, string password)
+        {
+            string domainName = null;
+            int delimiterIndex = userName.IndexOf('\\');
+
+            if (delimiterIndex != -1)
+            {
+                domainName = userName.Substring(0, delimiterIndex);
+                userName = userName.Substring(delimiterIndex + 1);
+            }
+
+            IntPtr token = IntPtr.Zero;
+
+            // LOGON32_LOGON_NETWORK is insufficient for impersonation.
+            if (!ADVAPI32.LogonUserEx(userName, domainName, password, LOGON32_LOGON_INTERACTIVE, LOGON32_PROVIDER_DEFAULT, out token, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero)) {
+                throw new SecurityException("Authentication failed.", new Win32Exception());
+            }
+
+            try
+            {
+                // WindowsIdentity must remain alive while the impersonation context is in play.
+                WindowsIdentity windowsIdentity = new WindowsIdentity(token);
+
+                try
+                {
+                    WindowsImpersonationContext impersonationContext = windowsIdentity.Impersonate();
+
+                    return Disposable.Create(() =>
+                    {
+                        try
+                        {
+                            impersonationContext.Undo();
+                        }
+                        finally
+                        {
+                            impersonationContext.Dispose();
+                            windowsIdentity.Dispose();
+                        }
+                    });
+                }
+                catch
+                {
+                    windowsIdentity.Dispose();
+
+                    throw;
+                }
+            }
+            finally
+            {
+                if (token != IntPtr.Zero) {
+                    Kernel32.CloseHandle(token);
+                }
+            }
+        }
+
         static GenericPrincipal GenericPrincipalFromWindowsIdentity(WindowsIdentity windowsIdentity)
         {
             GenericIdentity identity = new GenericIdentity(windowsIdentity.Name);
@@ -70,8 +129,9 @@ namespace Kirkin.Windows
 
         #region Platform Invoke
 
-        const int LOGON32_LOGON_NETWORK = 3;
         const int LOGON32_PROVIDER_DEFAULT = 0;
+        const int LOGON32_LOGON_INTERACTIVE = 2;
+        const int LOGON32_LOGON_NETWORK = 3;
 
         static class ADVAPI32
         {
