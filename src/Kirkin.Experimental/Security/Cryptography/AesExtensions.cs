@@ -10,10 +10,10 @@ namespace Kirkin.Security.Cryptography
         private static readonly Encoding SafeUTF8
             = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
-        public static byte[] DecryptBytes(this Aes aes, byte[] encryptedBytes, byte[] key)
+        public static byte[] DecryptBytes(this Aes aes, byte[] encryptedBytes)
         {
             using (MemoryStream inputStream = new MemoryStream(encryptedBytes))
-            using (Stream decryptedStream = aes.DecryptStream(inputStream, key))
+            using (Stream decryptedStream = aes.DecryptStream(inputStream))
             using (MemoryStream outputStream = new MemoryStream((int)inputStream.Length))
             {
                 decryptedStream.CopyTo(outputStream);
@@ -22,7 +22,7 @@ namespace Kirkin.Security.Cryptography
             }
         }
 
-        public static Stream DecryptStream(this Aes aes, Stream encryptedStream, byte[] key, bool disposeAes = false)
+        public static Stream DecryptStream(this Aes aes, Stream encryptedStream, bool disposeAesWhenClosed = false)
         {
             byte[] iv = new byte[aes.BlockSize / 8];
 
@@ -30,18 +30,18 @@ namespace Kirkin.Security.Cryptography
                 throw new InvalidOperationException($"{aes.BlockSize}-bit IV excepted.");
             }
 
-            ICryptoTransform decryptor = aes.CreateDecryptor(key, iv);
+            ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, iv);
 
-            return new AesDecryptStream(encryptedStream, aes, decryptor, disposeAes);
+            return new AesDecryptStream(encryptedStream, aes, decryptor, disposeAesWhenClosed);
         }
 
         sealed class AesDecryptStream : CryptoStream
         {
             public Aes Aes { get; }
             public ICryptoTransform Transform { get; }
-            public bool DisposeAes { get; }
+            public bool DisposeAesWhenClosed { get; }
 
-            public AesDecryptStream(Stream stream, Aes aes, ICryptoTransform transform, bool disposeAes)
+            public AesDecryptStream(Stream stream, Aes aes, ICryptoTransform transform, bool disposeAesWhenClosed)
                 : base(stream, transform, CryptoStreamMode.Read)
             {
                 if (aes == null) throw new ArgumentNullException(nameof(aes));
@@ -49,14 +49,14 @@ namespace Kirkin.Security.Cryptography
 
                 Aes = aes;
                 Transform = transform;
-                DisposeAes = disposeAes;
+                DisposeAesWhenClosed = disposeAesWhenClosed;
             }
 
             protected override void Dispose(bool disposing)
             {
                 Transform.Dispose();
 
-                if (DisposeAes) {
+                if (DisposeAesWhenClosed) {
                     Aes.Dispose();
                 }
 
@@ -76,30 +76,166 @@ namespace Kirkin.Security.Cryptography
             }
         }
 
-        public static Stream EncryptStream(this Aes aes, Stream inputStream)
+        public static Stream EncryptStream(this Aes aes, Stream inputStream, bool disposeAesWhenClosed = false)
         {
-            MemoryStream outputStream = new MemoryStream();
-
-            aes.EncryptStream(inputStream, outputStream);
-
-            outputStream.Position = 0;
-
-            return outputStream;
+            return new AesEncryptStream(inputStream, aes, disposeAesWhenClosed);
         }
 
-        public static void EncryptStream(this Aes aes, Stream inputStream, Stream outputStream)
+        sealed class AesEncryptStream : Stream
         {
-            byte[] iv = aes.IV;
+            public Aes Aes { get; }
+            public bool DisposeAesWhenClosed { get; }
 
-            if (iv.Length != 16) {
-                throw new InvalidOperationException("Expecting IV to be 16 bytes exactly.");
+            private ICryptoTransform _encryptor;
+
+            public ICryptoTransform Encryptor
+            {
+                get
+                {
+                    if (_encryptor == null) {
+                        _encryptor = Aes.CreateEncryptor();
+                    }
+
+                    return _encryptor;
+                }
             }
 
-            outputStream.Write(iv, 0, iv.Length);
+            private long _position;
+            private Stream InputStream;
+            private CryptoStream _cryptoStream;
 
-            using (ICryptoTransform encryptor = aes.CreateEncryptor())
-            using (CryptoStream encryptStream = new CryptoStream(inputStream, encryptor, CryptoStreamMode.Read)) {
-                encryptStream.CopyTo(outputStream);
+            private CryptoStream CryptoStream
+            {
+                get
+                {
+                    if (_cryptoStream == null) {
+                        _cryptoStream = new CryptoStream(InputStream, Encryptor, CryptoStreamMode.Read);
+                    }
+
+                    return _cryptoStream;
+                }
+            }
+
+            public override bool CanRead
+            {
+                get
+                {
+                    return CryptoStream.CanRead;
+                }
+            }
+
+            public override bool CanSeek
+            {
+                get
+                {
+                    return CryptoStream.CanSeek;
+                }
+            }
+
+            public override bool CanWrite
+            {
+                get
+                {
+                    return false;
+                }
+            }
+
+            public override long Length
+            {
+                get
+                {
+                    // Actual data length is: stream length + IV length + padding.
+                    return CryptoStream.Length + Aes.BlockSize / 8;
+                }
+            }
+
+            public override long Position
+            {
+                get
+                {
+                    return _position;
+                }
+                set
+                {
+                    if (!CanSeek) throw new NotSupportedException();
+                    if (value < 0 || value > Length) throw new ArgumentOutOfRangeException();
+
+                    _position = value;
+                }
+            }
+
+            public AesEncryptStream(Stream stream, Aes aes, bool disposeAesWhenClosed)
+            {
+                InputStream = stream ?? throw new ArgumentNullException(nameof(stream));
+                Aes = aes ?? throw new ArgumentNullException(nameof(aes));
+                DisposeAesWhenClosed = disposeAesWhenClosed;
+            }
+
+            public override void Flush()
+            {
+                throw new NotSupportedException();
+            }
+
+            public override int Read(byte[] buffer, int offset, int count)
+            {
+                int totalRead = 0;
+
+                if (_position < Aes.BlockSize / 8)
+                {
+                    // Read IV.
+                    int ivCount = Aes.BlockSize / 8 - (int)_position;
+
+                    Array.Copy(Aes.IV, _position, buffer, offset, ivCount);
+
+                    totalRead += ivCount;
+                }
+
+                if (totalRead < count) {
+                    totalRead += CryptoStream.Read(buffer, offset + totalRead, count - totalRead);
+                }
+
+                _position += totalRead;
+
+                return totalRead;
+            }
+
+            public override long Seek(long offset, SeekOrigin origin)
+            {
+                if (origin == SeekOrigin.Begin)
+                {
+                    Position = offset;
+                }
+                else if (origin == SeekOrigin.Current)
+                {
+                    Position += offset;
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+
+                return Position;
+            }
+
+            public override void SetLength(long value)
+            {
+                throw new NotSupportedException();
+            }
+
+            public override void Write(byte[] buffer, int offset, int count)
+            {
+                throw new NotSupportedException();
+            }
+
+            public override void Close()
+            {
+                base.Close();
+
+                _encryptor?.Dispose();
+
+                if (DisposeAesWhenClosed) {
+                    Aes.Dispose();
+                }
             }
         }
     }
