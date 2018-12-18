@@ -26,6 +26,38 @@ namespace Kirkin.Tests.Security.Cryptography
         }
 
         [Test]
+        public void EncryptDecryptStringPerfAesCryptoServiceProvider()
+        {
+            string expectedText = "Hello!";
+
+            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+            {
+                for (int i = 0; i < 3000; i++)
+                {
+                    byte[] encryptedBytes = aes.EncryptString(expectedText);
+
+                    aes.DecryptString(encryptedBytes);
+                }
+            }
+        }
+
+        [Test]
+        public void EncryptDecryptStringPerfAesManaged()
+        {
+            string expectedText = "Hello!";
+
+            using (AesManaged aes = new AesManaged())
+            {
+                for (int i = 0; i < 3000; i++)
+                {
+                    byte[] encryptedBytes = aes.EncryptString(expectedText);
+
+                    aes.DecryptString(encryptedBytes);
+                }
+            }
+        }
+
+        [Test]
         public void StreamEncryptDecryptShort()
         {
             string expectedText = "Hello!";
@@ -95,6 +127,43 @@ namespace Kirkin.Tests.Security.Cryptography
                     }
 
                     Assert.AreEqual(expectedBytes, resultBytes);
+                }
+            }
+        }
+
+        [Test]
+        public void EncryptLargeFile()
+        {
+            string filePath = @"<path>";
+
+            using (FileStream fs = File.OpenRead(filePath))
+            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+            using (Stream encryptedStream = aes.EncryptStream(fs)) {
+                ConsumeStream(encryptedStream);
+            }
+        }
+
+        [Test]
+        public void EncryptDecryptLargeFile()
+        {
+            string filePath = @"<path>";
+
+            using (FileStream fs = File.OpenRead(filePath))
+            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+            using (Stream encryptedStream = aes.EncryptStream(fs))
+            using (Stream decryptedStream = aes.DecryptStream(encryptedStream)) {
+                ConsumeStream(decryptedStream);
+            }
+        }
+
+        private static void ConsumeStream(Stream stream)
+        {
+            byte[] buffer = new byte[81920];
+            
+            while (true)
+            {
+                if (stream.Read(buffer, 0, buffer.Length) == 0) {
+                    break;
                 }
             }
         }
