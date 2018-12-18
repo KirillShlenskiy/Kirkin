@@ -241,7 +241,10 @@ namespace Kirkin.Security.Cryptography
             {
                 base.Close();
 
+                _cryptoStream?.Close();
                 _encryptor?.Dispose();
+
+                InputStream.Close();
 
                 if (DisposeAesWhenClosed) {
                     Aes.Dispose();
