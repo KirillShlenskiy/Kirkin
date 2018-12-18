@@ -35,6 +35,11 @@ namespace Kirkin.Security.Cryptography
             return new AesDecryptStream(encryptedStream, aes, decryptor, disposeAesWhenClosed);
         }
 
+        public static string DecryptString(this Aes aes, byte[] encryptedText)
+        {
+            return SafeUTF8.GetString(aes.DecryptBytes(encryptedText));
+        }
+
         sealed class AesDecryptStream : CryptoStream
         {
             public Aes Aes { get; }
@@ -68,7 +73,7 @@ namespace Kirkin.Security.Cryptography
         {
             using (MemoryStream inputStream = new MemoryStream(bytes))
             using (Stream encryptedStream = aes.EncryptStream(inputStream))
-            using (MemoryStream outputStream = new MemoryStream((int)encryptedStream.Length))
+            using (MemoryStream outputStream = new MemoryStream())
             {
                 encryptedStream.CopyTo(outputStream);
 
@@ -79,6 +84,11 @@ namespace Kirkin.Security.Cryptography
         public static Stream EncryptStream(this Aes aes, Stream inputStream, bool disposeAesWhenClosed = false)
         {
             return new AesEncryptStream(inputStream, aes, disposeAesWhenClosed);
+        }
+
+        public static byte[] EncryptString(this Aes aes, string plainText)
+        {
+            return aes.EncryptBytes(SafeUTF8.GetBytes(plainText));
         }
 
         sealed class AesEncryptStream : Stream

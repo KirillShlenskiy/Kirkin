@@ -11,21 +11,88 @@ namespace Kirkin.Tests.Security.Cryptography
     public class AesExtensionsTests
     {
         [Test]
-        public void StreamEncryptDecrypt()
+        public void EncryptDecryptString()
+        {
+            string expectedText = "Hello!";
+
+            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+            {
+                byte[] encryptedBytes = aes.EncryptString(expectedText);
+
+                string result = aes.DecryptString(encryptedBytes);
+
+                Assert.AreEqual(expectedText, result);
+            }
+        }
+
+        [Test]
+        public void StreamEncryptDecryptShort()
+        {
+            string expectedText = "Hello!";
+            byte[] expectedBytes = Encoding.UTF8.GetBytes(expectedText);
+
+            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+            {
+                Assert.True(expectedBytes.Length < aes.BlockSize / 8, "Expected text should be shorter than one AES256 block.");
+
+                MemoryStream inputStream = new MemoryStream(expectedBytes);
+
+                using (Stream encryptedStream = aes.EncryptStream(inputStream))
+                using (Stream decryptedStream = aes.DecryptStream(encryptedStream))
+                {
+                    byte[] resultBytes = new byte[expectedBytes.Length];
+
+                    decryptedStream.Read(resultBytes, 0, resultBytes.Length);
+
+                    Assert.AreEqual(expectedBytes, resultBytes);
+                }
+            }
+        }
+
+        [Test]
+        public void StreamEncryptDecryptLong()
         {
             string expectedText = "Hello! This is a long long long long string.";
             byte[] expectedBytes = Encoding.UTF8.GetBytes(expectedText);
 
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
+                Assert.True(expectedBytes.Length > aes.BlockSize / 8, "Expected text should be longer than one AES256 block.");
+
                 MemoryStream inputStream = new MemoryStream(expectedBytes);
 
                 using (Stream encryptedStream = aes.EncryptStream(inputStream))
                 using (Stream decryptedStream = aes.DecryptStream(encryptedStream))
                 {
-                    byte[] resultBytes = new byte[decryptedStream.Length];
+                    byte[] resultBytes = new byte[expectedBytes.Length];
 
                     decryptedStream.Read(resultBytes, 0, resultBytes.Length);
+
+                    Assert.AreEqual(expectedBytes, resultBytes);
+                }
+            }
+        }
+
+        [Test]
+        public void StreamDecryptBufferSmallerThanIVLength()
+        {
+            string expectedText = "Hello! This is a long long long long string.";
+            byte[] expectedBytes = Encoding.UTF8.GetBytes(expectedText);
+
+            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+            {
+                Assert.True(expectedBytes.Length > aes.BlockSize / 8, "Expected text should be longer than one AES256 block.");
+
+                MemoryStream inputStream = new MemoryStream(expectedBytes);
+
+                using (Stream encryptedStream = aes.EncryptStream(inputStream))
+                using (Stream decryptedStream = aes.DecryptStream(encryptedStream))
+                {
+                    byte[] resultBytes = new byte[expectedBytes.Length];
+
+                    for (int i = 0; i < resultBytes.Length; i++) {
+                        decryptedStream.Read(resultBytes, i, 1);
+                    }
 
                     Assert.AreEqual(expectedBytes, resultBytes);
                 }
