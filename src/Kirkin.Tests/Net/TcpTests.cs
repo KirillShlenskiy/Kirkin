@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Kirkin.Threading.Tasks;
+using Kirkin.Net;
 
 using NUnit.Framework;
 
@@ -23,47 +23,36 @@ namespace Kirkin.Tests.Net
 
             Task serverTask = Task.Run(async () =>
             {
-                TcpListener server = new TcpListener(IPAddress.Any, PortNumber);
+                TcpServer server = new TcpServer(new IPEndPoint(IPAddress.Any, PortNumber));
+                CancellationTokenSource cts = new CancellationTokenSource();
 
-                server.Start();
-
-                try
+                await server.RunAsync(async client =>
                 {
-                    serverRunning.SetResult(true);
+                    NetworkStream stream = client.GetStream();
 
-                    while (true)
+                    using (StreamReader reader = new StreamReader(stream, Encoding.UTF8, true, 4096, leaveOpen: true))
                     {
-                        using (TcpClient client = await server.AcceptTcpClientAsync().WithCancellation(CancellationToken.None).ConfigureAwait(false))
+                        while (true)
                         {
-                            NetworkStream stream = client.GetStream();
+                            string line = await reader.ReadLineAsync().ConfigureAwait(false);
 
-                            using (StreamReader reader = new StreamReader(stream, Encoding.UTF8, true, 4096, leaveOpen: true))
+                            if (line == null) {
+                                break;
+                            }
+
+                            Console.WriteLine($"[Received] {line}");
+
+                            if (string.Equals(line, "Goodbye", StringComparison.OrdinalIgnoreCase))
                             {
-                                while (true)
-                                {
-                                    string line = await reader.ReadLineAsync().ConfigureAwait(false);
+                                Console.WriteLine("Exiting");
 
-                                    if (line == null) {
-                                        break;
-                                    }
+                                cts.Cancel();
 
-                                    Console.WriteLine($"[Received] {line}");
-
-                                    if (string.Equals(line, "Goodbye", StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        Console.WriteLine("Exiting");
-
-                                        return;
-                                    }
-                                }
+                                return;
                             }
                         }
                     }
-                }
-                finally
-                {
-                    server.Stop();
-                }
+                }, cts.Token);
             });
 
             Task clientTask = Task.Run(async () =>
