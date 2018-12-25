@@ -193,6 +193,7 @@ namespace Kirkin.Tests.Security.Cryptography
         }
 
         [Test]
+        [Ignore("Requires valid file.")]
         public void EncryptLargeFile()
         {
             string filePath = @"<path>";
@@ -205,6 +206,7 @@ namespace Kirkin.Tests.Security.Cryptography
         }
 
         [Test]
+        [Ignore("Requires valid file.")]
         public void EncryptDecryptLargeFile()
         {
             string filePath = @"<path>";
