@@ -1,4 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -20,6 +25,62 @@ namespace Kirkin.Tests.Security.Cryptography
                 byte[] encryptedBytes = aes.EncryptString(expectedText);
 
                 string result = aes.DecryptString(encryptedBytes);
+
+                Assert.AreEqual(expectedText, result);
+            }
+        }
+
+        [Test]
+        public void EncryptDecryptStringWithHMAC()
+        {
+            byte[] HashKey(byte[] key)
+            {
+                using (SHA256 sha = SHA256.Create()) {
+                    return sha.ComputeHash(key);
+                }
+            }
+
+            void AppendHmacSuffix(ref byte[] bytes, byte[] key)
+            {
+                using (HMACSHA256 hmac = new HMACSHA256(key))
+                {
+                    byte[] tag = hmac.ComputeHash(bytes);
+                    byte[] tmp = new byte[bytes.Length + tag.Length];
+
+                    Array.Copy(bytes, 0, tmp, 0, bytes.Length);
+                    Array.Copy(tag, 0, tmp, bytes.Length, tag.Length);
+
+                    bytes = tmp;
+                }
+            }
+
+            void ValidateHmacSuffix(byte[] bytes, byte[] key)
+            {
+                byte[] messageTag = new byte[32];
+
+                Array.Copy(bytes, bytes.Length - messageTag.Length, messageTag, 0, messageTag.Length);
+
+                using (HMACSHA256 hmac = new HMACSHA256(key))
+                {
+                    byte[] actualTag = hmac.ComputeHash(bytes, 0, bytes.Length - messageTag.Length);
+
+                    if (!((IStructuralEquatable)actualTag).Equals(messageTag, EqualityComparer<byte>.Default)) {
+                        throw new SecurityException("HMAC validation failed.");
+                    }
+                }
+            }
+
+            string expectedText = "Hello!";
+
+            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+            {
+                byte[] encryptedBytes = aes.EncryptString(expectedText);
+                byte[] hashedKey = HashKey(aes.Key);
+
+                AppendHmacSuffix(ref encryptedBytes, hashedKey);
+                ValidateHmacSuffix(encryptedBytes, hashedKey);
+
+                string result = aes.DecryptString(encryptedBytes.Take(32).ToArray());
 
                 Assert.AreEqual(expectedText, result);
             }
