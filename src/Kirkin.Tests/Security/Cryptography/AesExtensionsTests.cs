@@ -23,7 +23,6 @@ namespace Kirkin.Tests.Security.Cryptography
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
                 byte[] encryptedBytes = aes.EncryptString(expectedText);
-
                 string result = aes.DecryptString(encryptedBytes);
 
                 Assert.AreEqual(expectedText, result);
@@ -44,7 +43,6 @@ namespace Kirkin.Tests.Security.Cryptography
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
                 byte[] encryptedBytes = aes.EncryptString(expectedText);
-
                 string result = aes.DecryptString(encryptedBytes);
 
                 Assert.AreEqual(expectedText, result);
