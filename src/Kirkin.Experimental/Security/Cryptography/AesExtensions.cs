@@ -69,15 +69,34 @@ namespace Kirkin.Security.Cryptography
             }
         }
 
+        // Result format: iv + cipher.
         public static byte[] EncryptBytes(this Aes aes, byte[] bytes)
         {
-            using (MemoryStream inputStream = new MemoryStream(bytes))
-            using (Stream encryptedStream = aes.EncryptStream(inputStream))
-            using (MemoryStream outputStream = new MemoryStream())
+            using (ICryptoTransform transform = aes.CreateEncryptor())
             {
-                encryptedStream.CopyTo(outputStream);
+                if (!transform.CanTransformMultipleBlocks) {
+                    throw new NotSupportedException("AES encryptor does not support multi-block transforms.");
+                }
 
-                return outputStream.ToArray();
+                int blockSizeInBytes = aes.BlockSize / 8;
+                int blockCount = bytes.Length / blockSizeInBytes + 1;
+                byte[] iv = aes.IV;
+                byte[] result = new byte[iv.Length + blockCount * blockSizeInBytes];
+                int count = 0;
+                int resultOffset = iv.Length;
+
+                if (blockCount > 1)
+                {
+                    count = (blockCount - 1) * blockSizeInBytes;
+                    resultOffset += transform.TransformBlock(bytes, 0, count, result, resultOffset);
+                }
+
+                byte[] finalBlock = transform.TransformFinalBlock(bytes, count, bytes.Length - count);
+
+                Array.Copy(finalBlock, 0, result, resultOffset, finalBlock.Length);
+                Array.Copy(iv, 0, result, 0, iv.Length);
+
+                return result;
             }
         }
 

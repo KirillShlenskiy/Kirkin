@@ -31,6 +31,27 @@ namespace Kirkin.Tests.Security.Cryptography
         }
 
         [Test]
+        public void EncryptDecryptStringLong()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < 1; i++) {
+                sb.Append("Hello there. This is a multi-block string. ");
+            }
+
+            string expectedText = sb.ToString();
+
+            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+            {
+                byte[] encryptedBytes = aes.EncryptString(expectedText);
+
+                string result = aes.DecryptString(encryptedBytes);
+
+                Assert.AreEqual(expectedText, result);
+            }
+        }
+
+        [Test]
         public void EncryptDecryptStringWithHMAC()
         {
             void AppendHmacSuffix(ref byte[] bytes, byte[] key)
