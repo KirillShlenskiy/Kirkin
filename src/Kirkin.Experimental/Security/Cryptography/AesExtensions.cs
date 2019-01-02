@@ -10,16 +10,47 @@ namespace Kirkin.Security.Cryptography
         private static readonly Encoding SafeUTF8
             = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
+        // Input format: iv + cipher.
         public static byte[] DecryptBytes(this Aes aes, byte[] encryptedBytes)
         {
-            using (MemoryStream inputStream = new MemoryStream(encryptedBytes))
-            using (Stream decryptedStream = aes.DecryptStream(inputStream))
-            using (MemoryStream outputStream = new MemoryStream((int)inputStream.Length))
-            {
-                decryptedStream.CopyTo(outputStream);
+            int blockSizeInBytes = aes.BlockSize / 8;
+            byte[] iv = new byte[blockSizeInBytes];
 
-                return outputStream.ToArray();
+            Array.Copy(encryptedBytes, 0, iv, 0, iv.Length);
+
+            aes.IV = iv;
+
+            int blockCount = (encryptedBytes.Length - iv.Length) / blockSizeInBytes;
+            byte[] result = new byte[encryptedBytes.Length - iv.Length];
+            int resultLength;
+
+            using (ICryptoTransform transform = aes.CreateDecryptor())
+            {
+                if (!transform.CanTransformMultipleBlocks) {
+                    throw new NotSupportedException("AES encryptor does not support multi-block transforms.");
+                }
+
+                int resultOffset = 0;
+
+                if (blockCount > 1)
+                {
+                    int count = (blockCount - 1) * blockSizeInBytes;
+
+                    resultOffset = transform.TransformBlock(encryptedBytes, iv.Length, count, result, 0);
+                }
+
+                byte[] finalBlock = transform.TransformFinalBlock(encryptedBytes, encryptedBytes.Length - blockSizeInBytes, blockSizeInBytes);
+
+                Array.Copy(finalBlock, 0, result, resultOffset, finalBlock.Length);
+
+                resultLength = resultOffset + finalBlock.Length;
             }
+
+            if (resultLength != result.Length) {
+                Array.Resize(ref result, resultLength);
+            }
+
+            return result;
         }
 
         public static Stream DecryptStream(this Aes aes, Stream encryptedStream, bool disposeAesWhenClosed = false)

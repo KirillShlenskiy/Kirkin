@@ -34,7 +34,7 @@ namespace Kirkin.Tests.Security.Cryptography
         {
             StringBuilder sb = new StringBuilder();
 
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < 3; i++) {
                 sb.Append("Hello there. This is a multi-block string. ");
             }
 
