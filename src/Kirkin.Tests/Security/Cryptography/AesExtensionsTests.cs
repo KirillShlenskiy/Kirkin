@@ -33,13 +33,6 @@ namespace Kirkin.Tests.Security.Cryptography
         [Test]
         public void EncryptDecryptStringWithHMAC()
         {
-            byte[] HashKey(byte[] key)
-            {
-                using (SHA256 sha = SHA256.Create()) {
-                    return sha.ComputeHash(key);
-                }
-            }
-
             void AppendHmacSuffix(ref byte[] bytes, byte[] key)
             {
                 using (HMACSHA256 hmac = new HMACSHA256(key))
@@ -74,11 +67,17 @@ namespace Kirkin.Tests.Security.Cryptography
 
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
-                byte[] encryptedBytes = aes.EncryptString(expectedText);
-                byte[] hashedKey = HashKey(aes.Key);
+                HmacSha256EncryptionMacKey key = new HmacSha256EncryptionMacKey(aes.Key, "AES256_CBC_HMAC_SHA256");
 
-                AppendHmacSuffix(ref encryptedBytes, hashedKey);
-                ValidateHmacSuffix(encryptedBytes, hashedKey);
+                Assert.AreNotEqual(aes.Key, key.EncryptionKey);
+                Assert.AreNotEqual(aes.Key, key.MACKey);
+
+                aes.Key = key.EncryptionKey;
+
+                byte[] encryptedBytes = aes.EncryptString(expectedText);
+
+                AppendHmacSuffix(ref encryptedBytes, key.MACKey);
+                ValidateHmacSuffix(encryptedBytes, key.MACKey);
 
                 string result = aes.DecryptString(encryptedBytes.Take(32).ToArray());
 
