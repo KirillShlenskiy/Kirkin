@@ -84,19 +84,20 @@ namespace Kirkin.Tests.Security.Cryptography
 
             string expectedText = "Hello!";
 
+            Aes256CbcHmacSha256Key aesKey = new Aes256CbcHmacSha256Key();
+
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
-                HmacSha256EncryptionMacKey key = new HmacSha256EncryptionMacKey(aes.Key, "AES256_CBC_HMAC_SHA256");
+                Assert.AreNotEqual(aes.Key, aesKey.EncryptionKey);
+                Assert.AreNotEqual(aes.Key, aesKey.MACKey);
+                Assert.AreNotEqual(aesKey.EncryptionKey, aesKey.MACKey);
 
-                Assert.AreNotEqual(aes.Key, key.EncryptionKey);
-                Assert.AreNotEqual(aes.Key, key.MACKey);
-
-                aes.Key = key.EncryptionKey;
+                aes.Key = aesKey.EncryptionKey;
 
                 byte[] encryptedBytes = aes.EncryptString(expectedText);
 
-                AppendHmacSuffix(ref encryptedBytes, key.MACKey);
-                ValidateHmacSuffix(encryptedBytes, key.MACKey);
+                AppendHmacSuffix(ref encryptedBytes, aesKey.MACKey);
+                ValidateHmacSuffix(encryptedBytes, aesKey.MACKey);
 
                 string result = aes.DecryptString(encryptedBytes.Take(32).ToArray());
 

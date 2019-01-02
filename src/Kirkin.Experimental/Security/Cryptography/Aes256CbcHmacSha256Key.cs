@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kirkin.Security.Cryptography
 {
-    internal sealed class HmacSha256EncryptionMacKey
+    internal sealed class Aes256CbcHmacSha256Key
     {
         /// <summary>
         /// Key length in bits.
@@ -26,7 +26,12 @@ namespace Kirkin.Security.Cryptography
         /// </summary>
         public byte[] MACKey { get; }
 
-        public HmacSha256EncryptionMacKey(byte[] masterKey, string algorithmName)
+        public Aes256CbcHmacSha256Key(string algorithmName = "AES256_CBC_HMAC_SHA256")
+            : this(GenerateMasterKey(), algorithmName)
+        {
+        }
+
+        public Aes256CbcHmacSha256Key(byte[] masterKey, string algorithmName = "AES256_CBC_HMAC_SHA256")
         {
             if (masterKey == null) throw new ArgumentNullException(nameof(masterKey));
             if (masterKey.Length != KeySize / 8) throw new ArgumentException("Invalid master key length.");
@@ -49,6 +54,18 @@ namespace Kirkin.Security.Cryptography
 
             EncryptionKey = encryptionKey;
             MACKey = macKey;
+        }
+
+        static byte[] GenerateMasterKey()
+        {
+            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            {
+                byte[] key = new byte[KeySize / 8];
+
+                rng.GetBytes(key);
+
+                return key;
+            }
         }
     }
 }
