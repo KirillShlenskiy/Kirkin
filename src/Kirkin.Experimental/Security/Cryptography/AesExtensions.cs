@@ -10,8 +10,21 @@ namespace Kirkin.Security.Cryptography
         private static readonly Encoding SafeUTF8
             = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
-        // Input format: iv + cipher.
         public static byte[] DecryptBytes(this Aes aes, byte[] encryptedBytes)
+        {
+            int ivLength = aes.BlockSize / 8;
+            byte[] result = new byte[encryptedBytes.Length - ivLength];
+            int resultLength = DecryptBytes(aes, encryptedBytes, result);
+
+            if (resultLength != result.Length) {
+                Array.Resize(ref result, resultLength);
+            }
+
+            return result;
+        }
+
+        // Input format: iv + cipher.
+        internal static int DecryptBytes(Aes aes, byte[] encryptedBytes, byte[] result)
         {
             int blockSizeInBytes = aes.BlockSize / 8;
             byte[] iv = new byte[blockSizeInBytes];
@@ -21,8 +34,6 @@ namespace Kirkin.Security.Cryptography
             aes.IV = iv;
 
             int blockCount = (encryptedBytes.Length - iv.Length) / blockSizeInBytes;
-            byte[] result = new byte[encryptedBytes.Length - iv.Length];
-            int resultLength;
 
             using (ICryptoTransform transform = aes.CreateDecryptor())
             {
@@ -43,14 +54,8 @@ namespace Kirkin.Security.Cryptography
 
                 Array.Copy(finalBlock, 0, result, resultOffset, finalBlock.Length);
 
-                resultLength = resultOffset + finalBlock.Length;
+                return resultOffset + finalBlock.Length;
             }
-
-            if (resultLength != result.Length) {
-                Array.Resize(ref result, resultLength);
-            }
-
-            return result;
         }
 
         public static Stream DecryptStream(this Aes aes, Stream encryptedStream, bool disposeAesWhenClosed = false)
@@ -105,8 +110,18 @@ namespace Kirkin.Security.Cryptography
         {
             int blockSizeInBytes = aes.BlockSize / 8;
             int blockCount = bytes.Length / blockSizeInBytes + 1;
+            byte[] result = new byte[blockSizeInBytes + blockCount * blockSizeInBytes]; // iv + ciphertext.
+
+            EncryptBytes(aes, bytes, result);
+
+            return result;
+        }
+
+        internal static void EncryptBytes(Aes aes, byte[] bytes, byte[] result)
+        {
+            int blockSizeInBytes = aes.BlockSize / 8;
+            int blockCount = bytes.Length / blockSizeInBytes + 1;
             byte[] iv = aes.IV;
-            byte[] result = new byte[iv.Length + blockCount * blockSizeInBytes];
 
             Array.Copy(iv, 0, result, 0, iv.Length);
 
@@ -129,8 +144,6 @@ namespace Kirkin.Security.Cryptography
 
                 Array.Copy(finalBlock, 0, result, resultOffset, finalBlock.Length);
             }
-
-            return result;
         }
 
         public static Stream EncryptStream(this Aes aes, Stream inputStream, bool disposeAesWhenClosed = false)
