@@ -20,13 +20,12 @@ namespace Kirkin.Tests.Security.Cryptography
         {
             string expectedText = "Hello!";
 
-            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
-            {
-                byte[] encryptedBytes = aes.EncryptString(expectedText);
-                string result = aes.DecryptString(encryptedBytes);
+            Aes256CbcAlgorithm aes = new Aes256CbcAlgorithm();
+            byte[] key = CryptoRandom.GetRandomBytes(aes.KeySize / 8);
+            byte[] encryptedBytes = aes.EncryptString(expectedText, key);
+            string result = aes.DecryptString(encryptedBytes, key);
 
-                Assert.AreEqual(expectedText, result);
-            }
+            Assert.AreEqual(expectedText, result);
         }
 
         [Test]
@@ -220,7 +219,7 @@ namespace Kirkin.Tests.Security.Cryptography
             using (FileStream fs = File.OpenRead(filePath))
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             using (Stream encryptedStream = aes.EncryptStream(fs)) {
-                ConsumeStream(encryptedStream);
+                encryptedStream.CopyTo(Stream.Null);
             }
         }
 
@@ -234,19 +233,7 @@ namespace Kirkin.Tests.Security.Cryptography
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             using (Stream encryptedStream = aes.EncryptStream(fs))
             using (Stream decryptedStream = aes.DecryptStream(encryptedStream)) {
-                ConsumeStream(decryptedStream);
-            }
-        }
-
-        private static void ConsumeStream(Stream stream)
-        {
-            byte[] buffer = new byte[81920];
-            
-            while (true)
-            {
-                if (stream.Read(buffer, 0, buffer.Length) == 0) {
-                    break;
-                }
+                decryptedStream.CopyTo(Stream.Null);
             }
         }
     }
