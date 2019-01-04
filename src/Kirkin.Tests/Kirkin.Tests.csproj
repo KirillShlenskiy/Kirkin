@@ -198,6 +198,7 @@
     <Compile Include="Refs\RefTests.cs" />
     <Compile Include="Scratchpad.cs" />
     <Compile Include="Security\Cryptography\AesExtensionsTests.cs" />
+    <Compile Include="Security\Cryptography\SymmetricAlgorithmTests.cs" />
     <Compile Include="Serialization\XmlSerializerTests.cs" />
     <Compile Include="StringCompareTests.cs" />
     <Compile Include="Text\TextTests.cs" />

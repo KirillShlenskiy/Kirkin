@@ -20,12 +20,13 @@ namespace Kirkin.Tests.Security.Cryptography
         {
             string expectedText = "Hello!";
 
-            Aes256CbcAlgorithm aes = new Aes256CbcAlgorithm();
-            byte[] key = CryptoRandom.GetRandomBytes(aes.KeySize / 8);
-            byte[] encryptedBytes = aes.EncryptString(expectedText, key);
-            string result = aes.DecryptString(encryptedBytes, key);
+            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+            {
+                byte[] encryptedBytes = aes.EncryptString(expectedText);
+                string result = aes.DecryptString(encryptedBytes);
 
-            Assert.AreEqual(expectedText, result);
+                Assert.AreEqual(expectedText, result);
+            }
         }
 
         [Test]

@@ -58,14 +58,7 @@ namespace Kirkin.Security.Cryptography
 
         static byte[] GenerateMasterKey()
         {
-            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
-            {
-                byte[] key = new byte[KeySize / 8];
-
-                rng.GetBytes(key);
-
-                return key;
-            }
+            return CryptoRandom.GetRandomBytes(KeySize / 8);
         }
     }
 }
