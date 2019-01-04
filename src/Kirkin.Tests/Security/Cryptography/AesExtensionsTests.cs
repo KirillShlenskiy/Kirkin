@@ -106,6 +106,21 @@ namespace Kirkin.Tests.Security.Cryptography
         }
 
         [Test]
+        public void EncryptDecryptStringPerfAes256CbcAlgorithm()
+        {
+            string expectedText = "Hello!";
+            Aes256CbcAlgorithm aes = new Aes256CbcAlgorithm();
+            byte[] key = Aes256CbcAlgorithm.GenerateKey();
+
+            for (int i = 0; i < 3000; i++)
+            {
+                byte[] encryptedBytes = aes.EncryptString(expectedText, key);
+
+                aes.DecryptString(encryptedBytes, key);
+            }
+        }
+
+        [Test]
         public void EncryptDecryptStringPerfAesCryptoServiceProvider()
         {
             string expectedText = "Hello!";

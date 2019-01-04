@@ -12,7 +12,7 @@ namespace Kirkin.Tests.Security.Cryptography
         public void Aes256CbcAlgorithmTests()
         {
             Aes256CbcAlgorithm aes = new Aes256CbcAlgorithm();
-            byte[] key = CryptoRandom.GetRandomBytes(aes.KeySize / 8);
+            byte[] key = Aes256CbcAlgorithm.GenerateKey();
 
             for (int i = 1; i < 256; i++)
             {

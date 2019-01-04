@@ -10,6 +10,11 @@ namespace Kirkin.Security.Cryptography
     public sealed class Aes256CbcAlgorithm : SymmetricAlgorithm
     {
         /// <summary>
+        /// Generates a random 256-bit key which can be used by an <see cref="Aes256CbcAlgorithm"/> instance.
+        /// </summary>
+        public static byte[] GenerateKey() => CryptoRandom.GetRandomBytes(32);
+
+        /// <summary>
         /// 256 bits/32 bytes (AES 256).
         /// </summary>
         public override int KeySize => 256;
