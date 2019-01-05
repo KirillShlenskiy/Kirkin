@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Security.Cryptography;
+
 using Kirkin.Security.Cryptography;
 
 using NUnit.Framework;
@@ -36,6 +38,13 @@ namespace Kirkin.Tests.Security.Cryptography
                     byte[] decrypted = aes.DecryptBytes(ciphertext);
 
                     Assert.AreEqual(plaintext, decrypted);
+
+                    // Allow tampering.
+                    unchecked {
+                        ciphertext[0]++;
+                    };
+
+                    aes.DecryptBytes(ciphertext);
                 }
             }
         }
@@ -79,6 +88,13 @@ namespace Kirkin.Tests.Security.Cryptography
                     byte[] decrypted = aes.DecryptBytes(ciphertext);
 
                     Assert.AreEqual(plaintext, decrypted);
+
+                    // Detect tampering.
+                    unchecked {
+                        ciphertext[0]++;
+                    };
+
+                    Assert.Throws<ArgumentException>(() => aes.DecryptBytes(ciphertext));
                 }
             }
         }
