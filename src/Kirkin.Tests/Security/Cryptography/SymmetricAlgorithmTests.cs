@@ -1,10 +1,13 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 
 using Kirkin.Security.Cryptography;
 
 using NUnit.Framework;
+
+using SymmetricAlgorithm = Kirkin.Security.Cryptography.SymmetricAlgorithm;
 
 namespace Kirkin.Tests.Security.Cryptography
 {
@@ -95,6 +98,57 @@ namespace Kirkin.Tests.Security.Cryptography
                     };
 
                     Assert.Throws<ArgumentException>(() => aes.DecryptBytes(ciphertext));
+                }
+            }
+        }
+
+        [Test]
+        public void Aes256CbcAlgorithmTransform()
+        {
+            using (Aes256CbcAlgorithm aes = new Aes256CbcAlgorithm()) {
+                CheckEncryptDecryptTransforms(aes);
+            }
+        }
+
+        [Test]
+        public void Aes256CbcHmacSha256AlgorithmTransform()
+        {
+            using (Aes256CbcAlgorithm aes = new Aes256CbcHmacSha256Algorithm()) {
+                CheckEncryptDecryptTransforms(aes);
+            }
+        }
+
+        private static void CheckEncryptDecryptTransforms(SymmetricAlgorithm algorithm)
+        {
+            for (int i = 1; i < 256; i++)
+            {
+                byte[] plaintext = Enumerable.Range(0, i).Select(n => (byte)n).ToArray();
+                byte[] ciphertext;
+                    
+                using (MemoryStream encryptedStream = new MemoryStream())
+                {
+                    using (ICryptoTransform encryptor = algorithm.CreateEncryptor())
+                    using (CryptoStream encryptStream = new CryptoStream(encryptedStream, encryptor, CryptoStreamMode.Write)) {
+                        encryptStream.Write(plaintext, 0, plaintext.Length);
+                    }
+
+                    ciphertext = encryptedStream.ToArray();
+
+                    byte[] decrypted = algorithm.DecryptBytes(ciphertext);
+
+                    Assert.AreEqual(plaintext, decrypted);
+                }
+
+                using (MemoryStream decryptedStream = new MemoryStream())
+                {
+                    using (ICryptoTransform decryptor = algorithm.CreateDecryptor())
+                    using (CryptoStream decryptStream = new CryptoStream(decryptedStream, decryptor, CryptoStreamMode.Write)) {
+                        decryptStream.Write(ciphertext, 0, ciphertext.Length);
+                    }
+
+                    byte[] decrypted = decryptedStream.ToArray();
+
+                    Assert.AreEqual(plaintext, decrypted);
                 }
             }
         }

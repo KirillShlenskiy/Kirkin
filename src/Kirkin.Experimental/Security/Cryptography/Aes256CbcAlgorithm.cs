@@ -49,13 +49,13 @@ namespace Kirkin.Security.Cryptography
         /// Encrypts the given plaintext bytes.
         /// </summary>
         /// <returns>Number of bytes written to the output buffer.</returns>
-        protected internal override int EncryptBytes(byte[] plaintextBytes, byte[] output, int outputOffset)
+        protected internal override int EncryptBytes(in ArraySegment<byte> plaintext, byte[] output, int outputOffset)
         {
             byte[] iv = CryptoRandom.GetRandomBytes(Aes256Cbc.BlockSizeInBytes);
 
             Array.Copy(iv, 0, output, outputOffset, iv.Length);
 
-            int ciphertextBytesWritten = Aes256Cbc.EncryptBytes(plaintextBytes.AsArraySegment(), Key, iv, output, outputOffset + iv.Length);
+            int ciphertextBytesWritten = Aes256Cbc.EncryptBytes(plaintext, Key, iv, output, outputOffset + iv.Length);
 
             return iv.Length + ciphertextBytesWritten;
         }
@@ -64,17 +64,18 @@ namespace Kirkin.Security.Cryptography
         /// Decrypts the given ciphertext bytes.
         /// </summary>
         /// <returns>Number of bytes written to the output buffer.</returns>
-        protected internal override int DecryptBytes(byte[] ciphertextBytes, byte[] output, int outputOffset)
+        protected internal override int DecryptBytes(in ArraySegment<byte> ciphertext, byte[] output, int outputOffset)
         {
             byte[] iv = new byte[Aes256Cbc.BlockSizeInBytes];
 
-            Array.Copy(ciphertextBytes, 0, iv, 0, iv.Length);
+            Array.Copy(ciphertext.Array, ciphertext.Offset, iv, 0, iv.Length);
 
             int ciphertextOffset = iv.Length;
-            int ciphertextLength = ciphertextBytes.Length - iv.Length;
-            ArraySegment<byte> ciphertext = new ArraySegment<byte>(ciphertextBytes, ciphertextOffset, ciphertextLength);
+            int ciphertextLength = ciphertext.Count - iv.Length;
 
-            return Aes256Cbc.DecryptBytes(ciphertext, Key, iv, output, 0);
+            ArraySegment<byte> ciphertextSlice = new ArraySegment<byte>(ciphertext.Array, ciphertext.Offset + ciphertextOffset, ciphertextLength);
+
+            return Aes256Cbc.DecryptBytes(ciphertextSlice, Key, iv, output, 0);
         }
 
         protected internal override int MaxEncryptOutputBufferSize(byte[] plaintextBytes)

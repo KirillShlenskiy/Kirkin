@@ -34,7 +34,7 @@ namespace Kirkin.Security.Cryptography
         /// Encrypts the given plaintext bytes.
         /// </summary>
         /// <returns>Number of bytes written to the output buffer.</returns>
-        protected internal override int EncryptBytes(byte[] plaintextBytes, byte[] output, int outputOffset)
+        protected internal override int EncryptBytes(in ArraySegment<byte> plaintext, byte[] output, int outputOffset)
         {
             byte[] iv = CryptoRandom.GetRandomBytes(Aes256Cbc.BlockSizeInBytes);
 
@@ -47,7 +47,7 @@ namespace Kirkin.Security.Cryptography
             using (Aes256CbcHmacSha256Key derivedKey = new Aes256CbcHmacSha256Key(Key))
             {
                 // Write ciphertext.
-                bytesWritten += Aes256Cbc.EncryptBytes(plaintextBytes.AsArraySegment(), derivedKey.EncryptionKey, iv, output, iv.Length);
+                bytesWritten += Aes256Cbc.EncryptBytes(plaintext, derivedKey.EncryptionKey, iv, output, iv.Length);
 
                 // MAC of the IV + ciphertext portion.
                 using (HMACSHA256 hmac = new HMACSHA256(derivedKey.MACKey)) {
@@ -64,13 +64,13 @@ namespace Kirkin.Security.Cryptography
         /// Decrypts the given ciphertext bytes.
         /// </summary>
         /// <returns>Number of bytes written to the output buffer.</returns>
-        protected internal override int DecryptBytes(byte[] ciphertextBytes, byte[] output, int outputOffset)
+        protected internal override int DecryptBytes(in ArraySegment<byte> ciphertext, byte[] output, int outputOffset)
         {
             byte[] iv = new byte[Aes256Cbc.BlockSizeInBytes];
             byte[] expectedHash = new byte[MAC_LENGTH_IN_BYTES];
 
-            Array.Copy(ciphertextBytes, 0, iv, 0, iv.Length);
-            Array.Copy(ciphertextBytes, ciphertextBytes.Length - MAC_LENGTH_IN_BYTES, expectedHash, 0, MAC_LENGTH_IN_BYTES);
+            Array.Copy(ciphertext.Array, ciphertext.Offset, iv, 0, iv.Length);
+            Array.Copy(ciphertext.Array, ciphertext.Offset + ciphertext.Count - MAC_LENGTH_IN_BYTES, expectedHash, 0, MAC_LENGTH_IN_BYTES);
 
             using (Aes256CbcHmacSha256Key derivedKey = new Aes256CbcHmacSha256Key(Key))
             {
@@ -78,16 +78,16 @@ namespace Kirkin.Security.Cryptography
 
                 // MAC of the IV + ciphertext portion.
                 using (HMACSHA256 hmac = new HMACSHA256(derivedKey.MACKey)) {
-                    actualHash = hmac.ComputeHash(ciphertextBytes, 0, ciphertextBytes.Length - MAC_LENGTH_IN_BYTES);
+                    actualHash = hmac.ComputeHash(ciphertext.Array, ciphertext.Offset, ciphertext.Count - MAC_LENGTH_IN_BYTES);
                 }
 
                 if (!((IStructuralEquatable)expectedHash).Equals(actualHash, EqualityComparer<byte>.Default)) {
                     throw new ArgumentException("MAC validation failed.");
                 }
 
-                ArraySegment<byte> ciphertext = new ArraySegment<byte>(ciphertextBytes, iv.Length, ciphertextBytes.Length - iv.Length - MAC_LENGTH_IN_BYTES);
+                ArraySegment<byte> ciphertextSlice = new ArraySegment<byte>(ciphertext.Array, ciphertext.Offset + iv.Length, ciphertext.Count - iv.Length - MAC_LENGTH_IN_BYTES);
 
-                return Aes256Cbc.DecryptBytes(ciphertext, derivedKey.EncryptionKey, iv, output, 0);
+                return Aes256Cbc.DecryptBytes(ciphertextSlice, derivedKey.EncryptionKey, iv, output, 0);
             }
         }
 

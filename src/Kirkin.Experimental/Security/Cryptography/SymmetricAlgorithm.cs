@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Kirkin.Security.Cryptography
@@ -6,7 +7,7 @@ namespace Kirkin.Security.Cryptography
     /// <summary>
     /// Base class for symmetric encryption algorithms.
     /// </summary>
-    public abstract class SymmetricAlgorithm : IDisposable
+    public abstract partial class SymmetricAlgorithm : IDisposable
     {
         private static readonly Encoding SafeUTF8
             = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
@@ -28,7 +29,7 @@ namespace Kirkin.Security.Cryptography
         {
             int length = MaxEncryptOutputBufferSize(plaintextBytes);
             byte[] output = new byte[length];
-            int resultLength = EncryptBytes(plaintextBytes, output, 0);
+            int resultLength = EncryptBytes(plaintextBytes.AsArraySegment(), output, 0);
 
             if (resultLength != output.Length) {
                 Array.Resize(ref output, resultLength);
@@ -48,13 +49,29 @@ namespace Kirkin.Security.Cryptography
         }
 
         /// <summary>
+        /// Creates a <see cref="ICryptoTransform"/> which can be used to encrypt streams.
+        /// </summary>
+        internal ICryptoTransform CreateEncryptor()
+        {
+            return new SymmetricAlgorithmEncryptTransform(this);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="ICryptoTransform"/> which can be used to decrypt streams.
+        /// </summary>
+        internal ICryptoTransform CreateDecryptor()
+        {
+            return new SymmetricAlgorithmDecryptTransform(this);
+        }
+
+        /// <summary>
         /// Decrypts the given ciphertext bytes.
         /// </summary>
         public byte[] DecryptBytes(byte[] ciphertextBytes)
         {
             int length = MaxDecryptOutputBufferSize(ciphertextBytes);
             byte[] output = new byte[length];
-            int resultLength = DecryptBytes(ciphertextBytes, output, 0);
+            int resultLength = DecryptBytes(ciphertextBytes.AsArraySegment(), output, 0);
 
             if (resultLength != output.Length) {
                 Array.Resize(ref output, resultLength);
@@ -73,8 +90,8 @@ namespace Kirkin.Security.Cryptography
             return SafeUTF8.GetString(plaintextBytes);
         }
 
-        protected internal abstract int EncryptBytes(byte[] plaintextBytes, byte[] output, int outputOffset);
-        protected internal abstract int DecryptBytes(byte[] ciphertextBytes, byte[] output, int outputOffset);
+        protected internal abstract int EncryptBytes(in ArraySegment<byte> plaintext, byte[] output, int outputOffset);
+        protected internal abstract int DecryptBytes(in ArraySegment<byte> ciphertextBytes, byte[] output, int outputOffset);
         protected internal abstract int MaxEncryptOutputBufferSize(byte[] plaintextBytes);
         protected internal abstract int MaxDecryptOutputBufferSize(byte[] ciphertextBytes);
 
