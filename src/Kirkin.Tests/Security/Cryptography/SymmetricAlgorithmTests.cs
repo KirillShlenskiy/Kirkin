@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-
+using System.Security.Cryptography;
 using Kirkin.Security.Cryptography;
 
 using NUnit.Framework;
@@ -9,18 +9,31 @@ namespace Kirkin.Tests.Security.Cryptography
     public class SymmetricAlgorithmTests
     {
         [Test]
-        public void Aes256CbcAlgorithmTests()
+        public void Aes256CbcAlgorithmMultiLength()
         {
             using (Aes256CbcAlgorithm aes = new Aes256CbcAlgorithm())
             {
                 for (int i = 1; i < 256; i++)
                 {
                     byte[] plaintext = Enumerable.Range(0, i).Select(n => (byte)n).ToArray();
-                    byte[] cyphertext = aes.EncryptBytes(plaintext);
+                    byte[] ciphertext = aes.EncryptBytes(plaintext);
 
-                    Assert.AreNotEqual(plaintext, cyphertext);
+                    Assert.AreNotEqual(plaintext, ciphertext);
 
-                    byte[] decrypted = aes.DecryptBytes(cyphertext);
+                    using (AesCryptoServiceProvider provider = new AesCryptoServiceProvider())
+                    {
+                        byte[] iv = ciphertext.Take(Aes256Cbc.BlockSizeInBytes).ToArray();
+                        byte[] cipher = ciphertext.Skip(iv.Length).ToArray();
+
+                        using (ICryptoTransform transform = provider.CreateEncryptor(aes.Key, iv))
+                        {
+                            byte[] result = transform.TransformFinalBlock(plaintext, 0, plaintext.Length);
+
+                            Assert.AreEqual(cipher, result);
+                        }
+                    }
+
+                    byte[] decrypted = aes.DecryptBytes(ciphertext);
 
                     Assert.AreEqual(plaintext, decrypted);
                 }
@@ -28,18 +41,32 @@ namespace Kirkin.Tests.Security.Cryptography
         }
 
         [Test]
-        public void Aes256CbcHmacSha256AlgorithmTests()
+        public void Aes256CbcHmacSha256AlgorithmMultiLength()
         {
             using (Aes256CbcHmacSha256Algorithm aes = new Aes256CbcHmacSha256Algorithm())
             {
                 for (int i = 1; i < 256; i++)
                 {
                     byte[] plaintext = Enumerable.Range(0, i).Select(n => (byte)n).ToArray();
-                    byte[] cyphertext = aes.EncryptBytes(plaintext);
+                    byte[] ciphertext = aes.EncryptBytes(plaintext);
 
-                    Assert.AreNotEqual(plaintext, cyphertext);
+                    Assert.AreNotEqual(plaintext, ciphertext);
 
-                    byte[] decrypted = aes.DecryptBytes(cyphertext);
+                    using (AesCryptoServiceProvider provider = new AesCryptoServiceProvider())
+                    {
+                        byte[] iv = ciphertext.Take(Aes256Cbc.BlockSizeInBytes).ToArray();
+                        byte[] cipher = ciphertext.Skip(iv.Length).Take(ciphertext.Length - iv.Length - 32).ToArray();
+
+                        using (Aes256CbcHmacSha256Key derivedKey = new Aes256CbcHmacSha256Key(aes.Key))
+                        using (ICryptoTransform transform = provider.CreateEncryptor(derivedKey.EncryptionKey, iv))
+                        {
+                            byte[] result = transform.TransformFinalBlock(plaintext, 0, plaintext.Length);
+
+                            Assert.AreEqual(cipher, result);
+                        }
+                    }
+
+                    byte[] decrypted = aes.DecryptBytes(ciphertext);
 
                     Assert.AreEqual(plaintext, decrypted);
                 }
