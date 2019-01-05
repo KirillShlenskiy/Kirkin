@@ -8,6 +8,8 @@ namespace Kirkin.Security.Cryptography
     /// </summary>
     public class Aes256CbcAlgorithm : SymmetricAlgorithm
     {
+        private byte[] _key;
+
         /// <summary>
         /// 256 bits/32 bytes (AES 256).
         /// </summary>
@@ -19,16 +21,26 @@ namespace Kirkin.Security.Cryptography
         public override int BlockSize => Aes256Cbc.BlockSizeInBytes * 8;
 
         /// <summary>
-        /// 256-bit encryption key specified when this instance was created.
+        /// Copy of the 256-bit encryption key specified when this instance was created.
         /// </summary>
-        public byte[] Key { get; private set; }
+        public byte[] Key
+        {
+            get
+            {
+                byte[] keyCopy = new byte[_key.Length];
+
+                Array.Copy(_key, 0, keyCopy, 0, _key.Length);
+
+                return keyCopy;
+            }
+        }
 
         /// <summary>
         /// Creates a new <see cref="Aes256CbcAlgorithm"/> instance with a randomly-generated key.
         /// </summary>
         public Aes256CbcAlgorithm()
         {
-            Key = Aes256Cbc.GenerateKey();
+            _key = Aes256Cbc.GenerateKey();
         }
 
         /// <summary>
@@ -42,7 +54,7 @@ namespace Kirkin.Security.Cryptography
 
             Array.Copy(key, 0, keyCopy, 0, key.Length);
 
-            Key = keyCopy;
+            _key = keyCopy;
         }
 
         /// <summary>
@@ -97,9 +109,9 @@ namespace Kirkin.Security.Cryptography
         {
             base.Dispose(disposing);
 
-            Array.Clear(Key, 0, Key.Length);
+            Array.Clear(_key, 0, _key.Length);
 
-            Key = null;
+            _key = null;
         }
     }
 }
