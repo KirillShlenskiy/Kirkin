@@ -21,7 +21,7 @@ namespace Kirkin.Security.Cryptography
         /// <summary>
         /// 256-bit encryption key specified when this instance was created.
         /// </summary>
-        public byte[] Key { get; }
+        public byte[] Key { get; private set; }
 
         /// <summary>
         /// Creates a new <see cref="Aes256CbcAlgorithm"/> instance with a randomly-generated key.
@@ -96,7 +96,10 @@ namespace Kirkin.Security.Cryptography
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
+
             Array.Clear(Key, 0, Key.Length);
+
+            Key = null;
         }
     }
 }

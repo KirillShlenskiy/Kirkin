@@ -23,12 +23,12 @@ namespace Kirkin.Security.Cryptography
         /// <summary>
         /// 256-bit key used for plaintext encryption.
         /// </summary>
-        public byte[] EncryptionKey { get; }
+        public byte[] EncryptionKey { get; private set; }
 
         /// <summary>
         /// 256-bit key used for MAC encryption.
         /// </summary>
-        public byte[] MACKey { get; }
+        public byte[] MACKey { get; private set; }
 
         public Aes256CbcHmacSha256Key(string algorithmName = "AES256_CBC_HMAC_SHA256")
             : this(GenerateMasterKey(), algorithmName)
@@ -68,7 +68,10 @@ namespace Kirkin.Security.Cryptography
         public void Dispose()
         {
             Array.Clear(EncryptionKey, 0, EncryptionKey.Length);
+            EncryptionKey = null;
+
             Array.Clear(MACKey, 0, MACKey.Length);
+            MACKey = null;
         }
     }
 }

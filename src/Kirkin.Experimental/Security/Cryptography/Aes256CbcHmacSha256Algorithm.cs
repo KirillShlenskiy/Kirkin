@@ -100,11 +100,5 @@ namespace Kirkin.Security.Cryptography
         {
             return base.MaxDecryptOutputBufferSize(ciphertextBytes) - MAC_LENGTH_IN_BYTES; // iv + ciphertext + MAC.
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-            Array.Clear(Key, 0, Key.Length);
-        }
     }
 }
