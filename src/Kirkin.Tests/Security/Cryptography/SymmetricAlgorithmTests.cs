@@ -56,13 +56,23 @@ namespace Kirkin.Tests.Security.Cryptography
                     {
                         byte[] iv = ciphertext.Take(Aes256Cbc.BlockSizeInBytes).ToArray();
                         byte[] cipher = ciphertext.Skip(iv.Length).Take(ciphertext.Length - iv.Length - 32).ToArray();
+                        byte[] expectedHash = ciphertext.Skip(ciphertext.Length - 32).ToArray();
 
                         using (Aes256CbcHmacSha256Key derivedKey = new Aes256CbcHmacSha256Key(aes.Key))
-                        using (ICryptoTransform transform = provider.CreateEncryptor(derivedKey.EncryptionKey, iv))
                         {
-                            byte[] result = transform.TransformFinalBlock(plaintext, 0, plaintext.Length);
+                            using (ICryptoTransform transform = provider.CreateEncryptor(derivedKey.EncryptionKey, iv))
+                            {
+                                byte[] result = transform.TransformFinalBlock(plaintext, 0, plaintext.Length);
 
-                            Assert.AreEqual(cipher, result);
+                                Assert.AreEqual(cipher, result);
+                            }
+
+                            using (HMACSHA256 hmac = new HMACSHA256(derivedKey.MACKey))
+                            {
+                                byte[] actualHash = hmac.ComputeHash(iv.Concat(cipher).ToArray());
+
+                                Assert.AreEqual(expectedHash, actualHash);
+                            }
                         }
                     }
 
