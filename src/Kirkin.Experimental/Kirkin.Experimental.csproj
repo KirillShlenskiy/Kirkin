@@ -114,6 +114,7 @@
     <Compile Include="Refs\Ref.cs" />
     <Compile Include="Refs\ValueRef.cs" />
     <Compile Include="NonWOW64Registry.cs" />
+    <Compile Include="Security\Cryptography\Aes256Cbc.cs" />
     <Compile Include="Security\Cryptography\Aes256CbcAlgorithm.cs" />
     <Compile Include="Security\Cryptography\AesExtensions.cs" />
     <Compile Include="Security\Cryptography\Aes256CbcHmacSha256Key.cs" />

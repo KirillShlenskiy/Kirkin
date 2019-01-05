@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Security.Cryptography;
-using System.Threading;
 
 namespace Kirkin.Security.Cryptography
-{
+{  
     /// <summary>
     /// Symmetric crypto algorithm implementation which uses the AES256 CBC cipher,
     /// PKCS7 padding and prefixes the ciphertext with the random IV in plain text.
@@ -14,21 +12,6 @@ namespace Kirkin.Security.Cryptography
         /// Generates a random 256-bit key which can be used by an <see cref="Aes256CbcAlgorithm"/> instance.
         /// </summary>
         public static byte[] GenerateKey() => CryptoRandom.GetRandomBytes(32);
-
-        private static readonly ThreadLocal<Aes> s_aes256_cbc_pkcs7 = new ThreadLocal<Aes>(() =>
-        {
-            Aes aes = CryptoFactories.AesFactory();
-
-            aes.Mode = CipherMode.CBC;
-            aes.Padding = PaddingMode.PKCS7;
-
-            return aes;
-        });
-
-        /// <summary>
-        /// Shared thread local AES256 CBC PKCS7 instance.
-        /// </summary>
-        internal static Aes AES256_CBC_PKCS7 => s_aes256_cbc_pkcs7.Value;
 
         /// <summary>
         /// 256 bits/32 bytes (AES 256).
@@ -78,29 +61,7 @@ namespace Kirkin.Security.Cryptography
 
             Array.Copy(iv, 0, output, 0, iv.Length);
 
-            using (ICryptoTransform transform = AES256_CBC_PKCS7.CreateEncryptor(Key, iv))
-            {
-                if (!transform.CanTransformMultipleBlocks) {
-                    throw new NotSupportedException("AES encryptor does not support multi-block transforms.");
-                }
-
-                int blockCount = plaintextBytes.Length / blockSizeInBytes + 1;
-                int outputOffset = iv.Length;
-
-                if (blockCount > 1)
-                {
-                    int count = (blockCount - 1) * blockSizeInBytes;
-
-                    outputOffset += transform.TransformBlock(plaintextBytes, 0, count, output, outputOffset);
-                }
-
-                int finalBlockIndex = (blockCount - 1) * blockSizeInBytes;
-                byte[] finalBlock = transform.TransformFinalBlock(plaintextBytes, finalBlockIndex, plaintextBytes.Length - finalBlockIndex);
-
-                Array.Copy(finalBlock, 0, output, outputOffset, finalBlock.Length);
-
-                return outputOffset + finalBlock.Length;
-            }
+            return Aes256Cbc.EncryptBytes(plaintextBytes, Key, iv, output, iv.Length);
         }
 
         /// <summary>
@@ -114,28 +75,7 @@ namespace Kirkin.Security.Cryptography
 
             Array.Copy(ciphertextBytes, 0, iv, 0, iv.Length);
 
-            using (ICryptoTransform transform = AES256_CBC_PKCS7.CreateDecryptor(Key, iv))
-            {
-                if (!transform.CanTransformMultipleBlocks) {
-                    throw new NotSupportedException("AES encryptor does not support multi-block transforms.");
-                }
-
-                int blockCount = (ciphertextBytes.Length - iv.Length) / blockSizeInBytes;
-                int outputOffset = 0;
-
-                if (blockCount > 1)
-                {
-                    int count = (blockCount - 1) * blockSizeInBytes;
-
-                    outputOffset = transform.TransformBlock(ciphertextBytes, iv.Length, count, output, 0);
-                }
-
-                byte[] finalBlock = transform.TransformFinalBlock(ciphertextBytes, ciphertextBytes.Length - blockSizeInBytes, blockSizeInBytes);
-
-                Array.Copy(finalBlock, 0, output, outputOffset, finalBlock.Length);
-
-                return outputOffset + finalBlock.Length;
-            }
+            return Aes256Cbc.DecryptBytes(ciphertextBytes, Key, iv, output, 0);
         }
 
         protected internal override int MaxEncryptOutputBufferSize(byte[] plaintextBytes)
