@@ -29,62 +29,49 @@ namespace Kirkin.Security.Cryptography
         /// </summary>
         public static byte[] GenerateKey() => CryptoRandom.GetRandomBytes(KeySizeInBytes);
 
-        internal static int EncryptBytes(ArraySegment<byte> plaintext, byte[] key, byte[] iv, byte[] output, int outputOffset)
+        internal static int EncryptBytes(in ArraySegment<byte> plaintext, byte[] key, byte[] iv, byte[] output, int outputOffset)
         {
-            using (ICryptoTransform transform = AES256_CBC_PKCS7.CreateEncryptor(key, iv))
-            {
-                if (!transform.CanTransformMultipleBlocks) {
-                    throw new NotSupportedException("AES encryptor does not support multi-block transforms.");
-                }
-
-                int blockCount = plaintext.Count / BlockSizeInBytes + 1;
-                int bytesWritten = 0;
-
-                if (blockCount > 1)
-                {
-                    int count = (blockCount - 1) * BlockSizeInBytes;
-
-                    bytesWritten += transform.TransformBlock(plaintext.Array, plaintext.Offset, count, output, outputOffset);
-                }
-
-                int finalBlockIndex = plaintext.Offset + (blockCount - 1) * BlockSizeInBytes;
-                byte[] finalBlock = transform.TransformFinalBlock(plaintext.Array, finalBlockIndex, plaintext.Offset + plaintext.Count - finalBlockIndex);
-
-                Array.Copy(finalBlock, 0, output, outputOffset + bytesWritten, finalBlock.Length);
-
-                bytesWritten += finalBlock.Length;
-
-                return bytesWritten;
+            using (ICryptoTransform transform = AES256_CBC_PKCS7.CreateEncryptor(key, iv)) {
+                return ApplyTransform(plaintext, transform, output, outputOffset);
             }
         }
 
-        internal static int DecryptBytes(ArraySegment<byte> ciphertext, byte[] key, byte[] iv, byte[] output, int outputOffset)
+        internal static int DecryptBytes(in ArraySegment<byte> ciphertext, byte[] key, byte[] iv, byte[] output, int outputOffset)
         {
-            using (ICryptoTransform transform = AES256_CBC_PKCS7.CreateDecryptor(key, iv))
-            {
-                if (!transform.CanTransformMultipleBlocks) {
-                    throw new NotSupportedException("AES encryptor does not support multi-block transforms.");
-                }
-
-                int blockCount = ciphertext.Count / BlockSizeInBytes;
-                int bytesWritten = 0;
-
-                if (blockCount > 1)
-                {
-                    int count = (blockCount - 1) * BlockSizeInBytes;
-
-                    bytesWritten += transform.TransformBlock(ciphertext.Array, ciphertext.Offset, count, output, outputOffset);
-                }
-
-                int finalBlockIndex = ciphertext.Offset + (blockCount - 1) * BlockSizeInBytes;
-                byte[] finalBlock = transform.TransformFinalBlock(ciphertext.Array, finalBlockIndex, BlockSizeInBytes);
-
-                Array.Copy(finalBlock, 0, output, outputOffset + bytesWritten, finalBlock.Length);
-
-                bytesWritten += finalBlock.Length;
-
-                return bytesWritten;
+            using (ICryptoTransform transform = AES256_CBC_PKCS7.CreateDecryptor(key, iv)) {
+                return ApplyTransform(ciphertext, transform, output, outputOffset);
             }
+        }
+
+        private static int ApplyTransform(in ArraySegment<byte> input, ICryptoTransform transform, byte[] output, int outputOffset)
+        {
+            if (!transform.CanTransformMultipleBlocks) {
+                throw new NotSupportedException("AES encryptor does not support multi-block transforms.");
+            }
+
+            int blockCount = input.Count / BlockSizeInBytes;
+
+            if (input.Count % BlockSizeInBytes != 0) {
+                blockCount++;
+            }
+
+            int bytesWritten = 0;
+
+            if (blockCount > 1)
+            {
+                int count = (blockCount - 1) * BlockSizeInBytes;
+
+                bytesWritten += transform.TransformBlock(input.Array, input.Offset, count, output, outputOffset);
+            }
+
+            int finalBlockIndex = input.Offset + (blockCount - 1) * BlockSizeInBytes;
+            byte[] finalBlock = transform.TransformFinalBlock(input.Array, finalBlockIndex, input.Offset + input.Count - finalBlockIndex);
+
+            Array.Copy(finalBlock, 0, output, outputOffset + bytesWritten, finalBlock.Length);
+
+            bytesWritten += finalBlock.Length;
+
+            return bytesWritten;
         }
     }
 }
