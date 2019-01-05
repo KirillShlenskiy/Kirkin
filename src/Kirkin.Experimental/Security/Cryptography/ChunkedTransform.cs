@@ -24,17 +24,21 @@ namespace Kirkin.Security.Cryptography
                 throw new ArgumentException($"Input count must be a multiple of {InputBlockSize}.");
             }
 
-            int bytesWritten = 0;
+            int bytesWrittenToOutput = 0;
 
             while (inputCount > 0)
             {
-                int count = TransformChunk(new ArraySegment<byte>(inputBuffer, inputOffset + bytesWritten, InputBlockSize), outputBuffer, outputOffset);
+                ArraySegment<byte> chunk = new ArraySegment<byte>(inputBuffer, inputOffset, InputBlockSize);
 
-                bytesWritten += count;
-                inputCount -= count;
+                bytesWrittenToOutput += TransformChunk(chunk, outputBuffer, outputOffset + bytesWrittenToOutput);
+                inputCount -= InputBlockSize;
             }
 
-            return bytesWritten;
+            if (bytesWrittenToOutput < outputBuffer.Length) {
+                throw new InvalidOperationException("Incomplete block write.");
+            }
+
+            return bytesWrittenToOutput;
         }
 
         public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
