@@ -84,8 +84,7 @@ namespace Kirkin.Tests.Security.Cryptography
 
             string expectedText = "Hello!";
 
-            Aes256CbcHmacSha256Key aesKey = new Aes256CbcHmacSha256Key();
-
+            using (Aes256CbcHmacSha256Key aesKey = new Aes256CbcHmacSha256Key())
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
                 Assert.AreNotEqual(aes.Key, aesKey.EncryptionKey);

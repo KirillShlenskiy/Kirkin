@@ -6,7 +6,7 @@ namespace Kirkin.Security.Cryptography
 {
     internal static class Aes256Cbc
     {
-        private const int BlockSizeInBytes = 16;
+        internal const int BlockSizeInBytes = 16;
 
         private static readonly ThreadLocal<Aes> s_aes256_cbc_pkcs7 = new ThreadLocal<Aes>(() =>
         {

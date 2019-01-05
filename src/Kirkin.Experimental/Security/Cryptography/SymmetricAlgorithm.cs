@@ -28,7 +28,7 @@ namespace Kirkin.Security.Cryptography
         {
             int length = MaxEncryptOutputBufferSize(plaintextBytes);
             byte[] output = new byte[length];
-            int resultLength = EncryptBytes(plaintextBytes, output);
+            int resultLength = EncryptBytes(plaintextBytes, output, 0);
 
             if (resultLength != output.Length) {
                 Array.Resize(ref output, resultLength);
@@ -54,7 +54,7 @@ namespace Kirkin.Security.Cryptography
         {
             int length = MaxDecryptOutputBufferSize(ciphertextBytes);
             byte[] output = new byte[length];
-            int resultLength = DecryptBytes(ciphertextBytes, output);
+            int resultLength = DecryptBytes(ciphertextBytes, output, 0);
 
             if (resultLength != output.Length) {
                 Array.Resize(ref output, resultLength);
@@ -73,8 +73,8 @@ namespace Kirkin.Security.Cryptography
             return SafeUTF8.GetString(plaintextBytes);
         }
 
-        protected internal abstract int EncryptBytes(byte[] plaintextBytes, byte[] output);
-        protected internal abstract int DecryptBytes(byte[] ciphertextBytes, byte[] output);
+        protected internal abstract int EncryptBytes(byte[] plaintextBytes, byte[] output, int outputOffset);
+        protected internal abstract int DecryptBytes(byte[] ciphertextBytes, byte[] output, int outputOffset);
         protected internal abstract int MaxEncryptOutputBufferSize(byte[] plaintextBytes);
         protected internal abstract int MaxDecryptOutputBufferSize(byte[] ciphertextBytes);
 

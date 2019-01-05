@@ -116,6 +116,7 @@
     <Compile Include="NonWOW64Registry.cs" />
     <Compile Include="Security\Cryptography\Aes256Cbc.cs" />
     <Compile Include="Security\Cryptography\Aes256CbcAlgorithm.cs" />
+    <Compile Include="Security\Cryptography\Aes256CbcHmacSha256Algorithm.cs" />
     <Compile Include="Security\Cryptography\AesExtensions.cs" />
     <Compile Include="Security\Cryptography\Aes256CbcHmacSha256Key.cs" />
     <Compile Include="Security\Cryptography\CryptoFactories.cs" />

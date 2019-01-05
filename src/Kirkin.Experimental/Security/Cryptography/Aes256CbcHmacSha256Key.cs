@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kirkin.Security.Cryptography
 {
-    internal sealed class Aes256CbcHmacSha256Key
+    internal sealed class Aes256CbcHmacSha256Key : IDisposable
     {
         /// <summary>
         /// Key length in bits.
@@ -59,6 +59,12 @@ namespace Kirkin.Security.Cryptography
         static byte[] GenerateMasterKey()
         {
             return CryptoRandom.GetRandomBytes(KeySize / 8);
+        }
+
+        public void Dispose()
+        {
+            Array.Clear(EncryptionKey, 0, EncryptionKey.Length);
+            Array.Clear(MACKey, 0, MACKey.Length);
         }
     }
 }
