@@ -4,6 +4,10 @@ using System.Text;
 
 namespace Kirkin.Security.Cryptography
 {
+    /// <summary>
+    /// Key derivation mechanism which produces a 256-bit AES encryption
+    /// key and a 256-bit MAC key from a single 256-bit master key.
+    /// </summary>
     internal sealed class Aes256CbcHmacSha256Key : IDisposable
     {
         /// <summary>
@@ -34,7 +38,7 @@ namespace Kirkin.Security.Cryptography
         public Aes256CbcHmacSha256Key(byte[] masterKey, string algorithmName = "AES256_CBC_HMAC_SHA256")
         {
             if (masterKey == null) throw new ArgumentNullException(nameof(masterKey));
-            if (masterKey.Length != KeySize / 8) throw new ArgumentException("Invalid master key length.");
+            if (masterKey.Length != Aes256Cbc.KeySizeInBytes) throw new ArgumentException("Invalid master key length.");
             if (string.IsNullOrEmpty(algorithmName)) throw new ArgumentException("Algorithm name cannot be empty.");
 
             MasterKey = masterKey;
@@ -58,7 +62,7 @@ namespace Kirkin.Security.Cryptography
 
         static byte[] GenerateMasterKey()
         {
-            return CryptoRandom.GetRandomBytes(KeySize / 8);
+            return CryptoRandom.GetRandomBytes(Aes256Cbc.KeySizeInBytes);
         }
 
         public void Dispose()

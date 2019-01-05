@@ -8,13 +8,14 @@ namespace Kirkin.Security.Cryptography
     /// <summary>
     /// Symmetric crypto algorithm implementation which uses the AES256 CBC cipher,
     /// PKCS7 padding and prefixes the ciphertext with the random IV in plain text.
+    /// Appends HMAC hash of the IV + ciphertext to the output.
     /// </summary>
     public sealed class Aes256CbcHmacSha256Algorithm : Aes256CbcAlgorithm
     {
         private const int MAC_LENGTH_IN_BYTES = 32; // 256 bits.
 
         /// <summary>
-        /// Creates a new <see cref="Aes256CbcAlgorithm"/> instance with a randomly-generated key.
+        /// Creates a new <see cref="Aes256CbcHmacSha256Algorithm"/> instance with a randomly-generated key.
         /// </summary>
         public Aes256CbcHmacSha256Algorithm()
             : base()
@@ -22,7 +23,7 @@ namespace Kirkin.Security.Cryptography
         }
 
         /// <summary>
-        /// Creates a new <see cref="Aes256CbcAlgorithm"/> instance with the given key.
+        /// Creates a new <see cref="Aes256CbcHmacSha256Algorithm"/> instance with the given key.
         /// </summary>
         public Aes256CbcHmacSha256Algorithm(byte[] key)
             : base(key)
@@ -35,8 +36,7 @@ namespace Kirkin.Security.Cryptography
         /// <returns>Number of bytes written to the output buffer.</returns>
         protected internal override int EncryptBytes(byte[] plaintextBytes, byte[] output, int outputOffset)
         {
-            int blockSizeInBytes = BlockSize / 8;
-            byte[] iv = CryptoRandom.GetRandomBytes(blockSizeInBytes);
+            byte[] iv = CryptoRandom.GetRandomBytes(Aes256Cbc.BlockSizeInBytes);
 
             // Write IV.
             Array.Copy(iv, 0, output, 0, iv.Length);
@@ -66,8 +66,7 @@ namespace Kirkin.Security.Cryptography
         /// <returns>Number of bytes written to the output buffer.</returns>
         protected internal override int DecryptBytes(byte[] ciphertextBytes, byte[] output, int outputOffset)
         {
-            int blockSizeInBytes = BlockSize / 8;
-            byte[] iv = new byte[blockSizeInBytes];
+            byte[] iv = new byte[Aes256Cbc.BlockSizeInBytes];
             byte[] expectedHash = new byte[MAC_LENGTH_IN_BYTES];
 
             Array.Copy(ciphertextBytes, 0, iv, 0, iv.Length);
