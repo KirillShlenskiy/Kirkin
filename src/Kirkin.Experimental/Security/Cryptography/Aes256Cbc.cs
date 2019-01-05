@@ -45,10 +45,6 @@ namespace Kirkin.Security.Cryptography
 
         private static int ApplyTransform(in ArraySegment<byte> input, ICryptoTransform transform, byte[] output, int outputOffset)
         {
-            if (!transform.CanTransformMultipleBlocks) {
-                throw new NotSupportedException("AES encryptor does not support multi-block transforms.");
-            }
-
             int blockCount = input.Count / BlockSizeInBytes;
 
             if (input.Count % BlockSizeInBytes != 0) {
@@ -57,7 +53,7 @@ namespace Kirkin.Security.Cryptography
 
             int bytesWritten = 0;
 
-            if (blockCount > 1)
+            if (blockCount > 1 && transform.CanTransformMultipleBlocks)
             {
                 int count = (blockCount - 1) * BlockSizeInBytes;
 
