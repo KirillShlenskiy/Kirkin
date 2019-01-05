@@ -47,7 +47,7 @@ namespace Kirkin.Security.Cryptography
             using (Aes256CbcHmacSha256Key derivedKey = new Aes256CbcHmacSha256Key(Key))
             {
                 // Write ciphertext.
-                bytesWritten += Aes256Cbc.EncryptBytes(plaintextBytes, 0, plaintextBytes.Length, derivedKey.EncryptionKey, iv, output, iv.Length);
+                bytesWritten += Aes256Cbc.EncryptBytes(plaintextBytes.AsArraySegment(), derivedKey.EncryptionKey, iv, output, iv.Length);
 
                 // MAC of the IV + ciphertext portion.
                 using (HMACSHA256 hmac = new HMACSHA256(derivedKey.MACKey)) {
@@ -85,7 +85,9 @@ namespace Kirkin.Security.Cryptography
                     throw new ArgumentException("MAC validation failed.");
                 }
 
-                return Aes256Cbc.DecryptBytes(ciphertextBytes, iv.Length, ciphertextBytes.Length - iv.Length - MAC_LENGTH_IN_BYTES, derivedKey.EncryptionKey, iv, output, 0);
+                ArraySegment<byte> ciphertext = new ArraySegment<byte>(ciphertextBytes, iv.Length, ciphertextBytes.Length - iv.Length - MAC_LENGTH_IN_BYTES);
+
+                return Aes256Cbc.DecryptBytes(ciphertext, derivedKey.EncryptionKey, iv, output, 0);
             }
         }
 

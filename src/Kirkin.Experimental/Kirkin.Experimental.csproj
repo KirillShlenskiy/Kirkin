@@ -119,6 +119,7 @@
     <Compile Include="Security\Cryptography\Aes256CbcHmacSha256Algorithm.cs" />
     <Compile Include="Security\Cryptography\AesExtensions.cs" />
     <Compile Include="Security\Cryptography\Aes256CbcHmacSha256Key.cs" />
+    <Compile Include="Security\Cryptography\ArrayExtensions.cs" />
     <Compile Include="Security\Cryptography\CryptoFactories.cs" />
     <Compile Include="Security\Cryptography\CryptoRandom.cs" />
     <Compile Include="Security\Cryptography\SymmetricAlgorithm.cs" />

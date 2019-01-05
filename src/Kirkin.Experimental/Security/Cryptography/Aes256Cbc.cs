@@ -27,9 +27,9 @@ namespace Kirkin.Security.Cryptography
         /// <summary>
         /// Generates a random 256-bit key which can be used by an <see cref="Aes256CbcAlgorithm"/> instance.
         /// </summary>
-        public static byte[] GenerateKey() => CryptoRandom.GetRandomBytes(Aes256Cbc.KeySizeInBytes);
+        public static byte[] GenerateKey() => CryptoRandom.GetRandomBytes(KeySizeInBytes);
 
-        internal static int EncryptBytes(byte[] plaintextBytes, int plaintextOffset, int plaintextCount, byte[] key, byte[] iv, byte[] output, int outputOffset)
+        internal static int EncryptBytes(ArraySegment<byte> plaintext, byte[] key, byte[] iv, byte[] output, int outputOffset)
         {
             using (ICryptoTransform transform = AES256_CBC_PKCS7.CreateEncryptor(key, iv))
             {
@@ -37,18 +37,18 @@ namespace Kirkin.Security.Cryptography
                     throw new NotSupportedException("AES encryptor does not support multi-block transforms.");
                 }
 
-                int blockCount = plaintextCount / BlockSizeInBytes + 1;
+                int blockCount = plaintext.Count / BlockSizeInBytes + 1;
                 int bytesWritten = 0;
 
                 if (blockCount > 1)
                 {
                     int count = (blockCount - 1) * BlockSizeInBytes;
 
-                    bytesWritten += transform.TransformBlock(plaintextBytes, plaintextOffset, count, output, outputOffset);
+                    bytesWritten += transform.TransformBlock(plaintext.Array, plaintext.Offset, count, output, outputOffset);
                 }
 
-                int finalBlockIndex = plaintextOffset + (blockCount - 1) * BlockSizeInBytes;
-                byte[] finalBlock = transform.TransformFinalBlock(plaintextBytes, finalBlockIndex, plaintextOffset + plaintextCount - finalBlockIndex);
+                int finalBlockIndex = plaintext.Offset + (blockCount - 1) * BlockSizeInBytes;
+                byte[] finalBlock = transform.TransformFinalBlock(plaintext.Array, finalBlockIndex, plaintext.Offset + plaintext.Count - finalBlockIndex);
 
                 Array.Copy(finalBlock, 0, output, outputOffset + bytesWritten, finalBlock.Length);
 
@@ -58,7 +58,7 @@ namespace Kirkin.Security.Cryptography
             }
         }
 
-        internal static int DecryptBytes(byte[] ciphertextBytes, int ciphertextOffset, int ciphertextCount, byte[] key, byte[] iv, byte[] output, int outputOffset)
+        internal static int DecryptBytes(ArraySegment<byte> ciphertext, byte[] key, byte[] iv, byte[] output, int outputOffset)
         {
             using (ICryptoTransform transform = AES256_CBC_PKCS7.CreateDecryptor(key, iv))
             {
@@ -66,18 +66,18 @@ namespace Kirkin.Security.Cryptography
                     throw new NotSupportedException("AES encryptor does not support multi-block transforms.");
                 }
 
-                int blockCount = ciphertextCount / BlockSizeInBytes;
+                int blockCount = ciphertext.Count / BlockSizeInBytes;
                 int bytesWritten = 0;
 
                 if (blockCount > 1)
                 {
                     int count = (blockCount - 1) * BlockSizeInBytes;
 
-                    bytesWritten += transform.TransformBlock(ciphertextBytes, ciphertextOffset, count, output, outputOffset);
+                    bytesWritten += transform.TransformBlock(ciphertext.Array, ciphertext.Offset, count, output, outputOffset);
                 }
 
-                int finalBlockIndex = ciphertextOffset + (blockCount - 1) * BlockSizeInBytes;
-                byte[] finalBlock = transform.TransformFinalBlock(ciphertextBytes, finalBlockIndex, BlockSizeInBytes);
+                int finalBlockIndex = ciphertext.Offset + (blockCount - 1) * BlockSizeInBytes;
+                byte[] finalBlock = transform.TransformFinalBlock(ciphertext.Array, finalBlockIndex, BlockSizeInBytes);
 
                 Array.Copy(finalBlock, 0, output, outputOffset + bytesWritten, finalBlock.Length);
 

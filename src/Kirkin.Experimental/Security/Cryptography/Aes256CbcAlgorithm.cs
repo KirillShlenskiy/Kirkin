@@ -55,7 +55,7 @@ namespace Kirkin.Security.Cryptography
 
             Array.Copy(iv, 0, output, outputOffset, iv.Length);
 
-            int ciphertextBytesWritten = Aes256Cbc.EncryptBytes(plaintextBytes, 0, plaintextBytes.Length, Key, iv, output, outputOffset + iv.Length);
+            int ciphertextBytesWritten = Aes256Cbc.EncryptBytes(plaintextBytes.AsArraySegment(), Key, iv, output, outputOffset + iv.Length);
 
             return iv.Length + ciphertextBytesWritten;
         }
@@ -72,8 +72,9 @@ namespace Kirkin.Security.Cryptography
 
             int ciphertextOffset = iv.Length;
             int ciphertextLength = ciphertextBytes.Length - iv.Length;
+            ArraySegment<byte> ciphertext = new ArraySegment<byte>(ciphertextBytes, ciphertextOffset, ciphertextLength);
 
-            return Aes256Cbc.DecryptBytes(ciphertextBytes, ciphertextOffset, ciphertextLength, Key, iv, output, 0);
+            return Aes256Cbc.DecryptBytes(ciphertext, Key, iv, output, 0);
         }
 
         protected internal override int MaxEncryptOutputBufferSize(byte[] plaintextBytes)
