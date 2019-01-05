@@ -31,6 +31,7 @@ namespace Kirkin.Security.Cryptography
                 ArraySegment<byte> chunk = new ArraySegment<byte>(inputBuffer, inputOffset, InputBlockSize);
 
                 bytesWrittenToOutput += TransformChunk(chunk, outputBuffer, outputOffset + bytesWrittenToOutput);
+                inputOffset += InputBlockSize;
                 inputCount -= InputBlockSize;
             }
 

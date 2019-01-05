@@ -87,7 +87,7 @@ namespace Kirkin.Security.Cryptography
 
             ArraySegment<byte> ciphertextSlice = new ArraySegment<byte>(ciphertext.Array, ciphertext.Offset + ciphertextOffset, ciphertextLength);
 
-            return Aes256Cbc.DecryptBytes(ciphertextSlice, Key, iv, output, 0);
+            return Aes256Cbc.DecryptBytes(ciphertextSlice, Key, iv, output, outputOffset);
         }
 
         protected internal override int MaxEncryptOutputBufferSize(byte[] plaintextBytes)
@@ -109,9 +109,12 @@ namespace Kirkin.Security.Cryptography
         {
             base.Dispose(disposing);
 
-            Array.Clear(_key, 0, _key.Length);
+            if (_key != null)
+            {
+                Array.Clear(_key, 0, _key.Length);
 
-            _key = null;
+                _key = null;
+            }
         }
     }
 }

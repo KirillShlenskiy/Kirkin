@@ -172,9 +172,8 @@ namespace Kirkin.Tests.Security.Cryptography
         private static void CheckEncryptDecryptTransformsLarge(SymmetricAlgorithm algorithm)
         {
             // Work with messages that either fit into single chunk, or not.
-            foreach (double i in new[] { 0.9, 1.0, 1.1, 2.1 })
+            foreach (double chunkFillRatio in new[] { 0.9, 1.0, 1.1, 2.1 })
             {
-                int chunkSize;
                 byte[] plaintext;
                 byte[] ciphertext;
 
@@ -182,9 +181,7 @@ namespace Kirkin.Tests.Security.Cryptography
                 {
                     using (ICryptoTransform encryptor = algorithm.CreateEncryptor())
                     {
-                        chunkSize = encryptor.InputBlockSize;
-
-                        int plaintextLength = (int)(chunkSize * i);
+                        int plaintextLength = (int)(ChunkedTransform.DefaultChunkSize * chunkFillRatio);
 
                         plaintext = Enumerable.Range(0, plaintextLength).Select(n => (byte)n).ToArray();
 
@@ -196,7 +193,7 @@ namespace Kirkin.Tests.Security.Cryptography
                     ciphertext = encryptedStream.ToArray();
                 }
 
-                using (MemoryStream decryptedStream = new MemoryStream())
+                using (MemoryStream decryptedStream = new MemoryStream(ciphertext.Length))
                 {
                     using (ICryptoTransform decryptor = algorithm.CreateDecryptor())
                     using (CryptoStream decryptStream = new CryptoStream(decryptedStream, decryptor, CryptoStreamMode.Write)) {
