@@ -9,14 +9,9 @@ namespace Kirkin.Security.Cryptography
     public class Aes256CbcAlgorithm : SymmetricAlgorithm
     {
         /// <summary>
-        /// Generates a random 256-bit key which can be used by an <see cref="Aes256CbcAlgorithm"/> instance.
-        /// </summary>
-        public static byte[] GenerateKey() => CryptoRandom.GetRandomBytes(Aes256Cbc.BlockSizeInBytes);
-
-        /// <summary>
         /// 256 bits/32 bytes (AES 256).
         /// </summary>
-        public override int KeySize => 256;
+        public override int KeySize => Aes256Cbc.KeySizeInBytes * 8;
 
         /// <summary>
         /// 128 bit/16 bytes (AES standard).
@@ -33,7 +28,7 @@ namespace Kirkin.Security.Cryptography
         /// </summary>
         public Aes256CbcAlgorithm()
         {
-            Key = GenerateKey();
+            Key = Aes256Cbc.GenerateKey();
         }
 
         /// <summary>
@@ -60,7 +55,9 @@ namespace Kirkin.Security.Cryptography
 
             Array.Copy(iv, 0, output, outputOffset, iv.Length);
 
-            return Aes256Cbc.EncryptBytes(plaintextBytes, Key, iv, output, outputOffset + iv.Length);
+            int ciphertextBytesWritten = Aes256Cbc.EncryptBytes(plaintextBytes, 0, plaintextBytes.Length, Key, iv, output, outputOffset + iv.Length);
+
+            return iv.Length + ciphertextBytesWritten;
         }
 
         /// <summary>
@@ -73,7 +70,10 @@ namespace Kirkin.Security.Cryptography
 
             Array.Copy(ciphertextBytes, 0, iv, 0, iv.Length);
 
-            return Aes256Cbc.DecryptBytes(ciphertextBytes, Key, iv, output, 0);
+            int ciphertextOffset = iv.Length;
+            int ciphertextLength = ciphertextBytes.Length - iv.Length;
+
+            return Aes256Cbc.DecryptBytes(ciphertextBytes, ciphertextOffset, ciphertextLength, Key, iv, output, 0);
         }
 
         protected internal override int MaxEncryptOutputBufferSize(byte[] plaintextBytes)
