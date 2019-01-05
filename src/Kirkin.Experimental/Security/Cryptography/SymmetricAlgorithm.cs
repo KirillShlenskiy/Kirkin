@@ -6,7 +6,7 @@ namespace Kirkin.Security.Cryptography
     /// <summary>
     /// Base class for symmetric encryption algorithms.
     /// </summary>
-    public abstract class SymmetricAlgorithm
+    public abstract class SymmetricAlgorithm : IDisposable
     {
         private static readonly Encoding SafeUTF8
             = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
@@ -22,13 +22,13 @@ namespace Kirkin.Security.Cryptography
         public abstract int BlockSize { get; }
 
         /// <summary>
-        /// Encrypts the given plaintext bytes using the given key.
+        /// Encrypts the given plaintext bytes.
         /// </summary>
-        public byte[] EncryptBytes(byte[] plaintextBytes, byte[] key)
+        public byte[] EncryptBytes(byte[] plaintextBytes)
         {
             int length = MaxEncryptOutputBufferSize(plaintextBytes);
             byte[] output = new byte[length];
-            int resultLength = EncryptBytes(plaintextBytes, key, output);
+            int resultLength = EncryptBytes(plaintextBytes, output);
 
             if (resultLength != output.Length) {
                 Array.Resize(ref output, resultLength);
@@ -38,23 +38,23 @@ namespace Kirkin.Security.Cryptography
         }
 
         /// <summary>
-        /// Encrypts the given plaintext bytes using the given key.
+        /// Encrypts the given plaintext bytes.
         /// </summary>
-        public byte[] EncryptString(string plaintextString, byte[] key)
+        public byte[] EncryptString(string plaintextString)
         {
             byte[] plaintextBytes = SafeUTF8.GetBytes(plaintextString);
 
-            return EncryptBytes(plaintextBytes, key);
+            return EncryptBytes(plaintextBytes);
         }
 
         /// <summary>
-        /// Decrypts the given ciphertext bytes using the given key.
+        /// Decrypts the given ciphertext bytes.
         /// </summary>
-        public byte[] DecryptBytes(byte[] ciphertextBytes, byte[] key)
+        public byte[] DecryptBytes(byte[] ciphertextBytes)
         {
             int length = MaxDecryptOutputBufferSize(ciphertextBytes);
             byte[] output = new byte[length];
-            int resultLength = DecryptBytes(ciphertextBytes, key, output);
+            int resultLength = DecryptBytes(ciphertextBytes, output);
 
             if (resultLength != output.Length) {
                 Array.Resize(ref output, resultLength);
@@ -64,18 +64,33 @@ namespace Kirkin.Security.Cryptography
         }
 
         /// <summary>
-        /// Decrypts the given ciphertext bytes using the given key.
+        /// Decrypts the given ciphertext bytes.
         /// </summary>
-        public string DecryptString(byte[] ciphertextBytes, byte[] key)
+        public string DecryptString(byte[] ciphertextBytes)
         {
-            byte[] plaintextBytes = DecryptBytes(ciphertextBytes, key);
+            byte[] plaintextBytes = DecryptBytes(ciphertextBytes);
 
             return SafeUTF8.GetString(plaintextBytes);
         }
 
-        protected internal abstract int EncryptBytes(byte[] plaintextBytes, byte[] key, byte[] output);
-        protected internal abstract int DecryptBytes(byte[] ciphertextBytes, byte[] key, byte[] output);
+        protected internal abstract int EncryptBytes(byte[] plaintextBytes, byte[] output);
+        protected internal abstract int DecryptBytes(byte[] ciphertextBytes, byte[] output);
         protected internal abstract int MaxEncryptOutputBufferSize(byte[] plaintextBytes);
         protected internal abstract int MaxDecryptOutputBufferSize(byte[] ciphertextBytes);
+
+        /// <summary>
+        /// Releases the resources used by this instance.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        /// <summary>
+        /// Releases the resources used by this instance.
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+        }
     }
 }

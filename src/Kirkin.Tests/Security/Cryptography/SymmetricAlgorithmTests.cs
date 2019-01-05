@@ -11,19 +11,19 @@ namespace Kirkin.Tests.Security.Cryptography
         [Test]
         public void Aes256CbcAlgorithmTests()
         {
-            Aes256CbcAlgorithm aes = new Aes256CbcAlgorithm();
-            byte[] key = Aes256CbcAlgorithm.GenerateKey();
-
-            for (int i = 1; i < 256; i++)
+            using (Aes256CbcAlgorithm aes = new Aes256CbcAlgorithm())
             {
-                byte[] plaintext = Enumerable.Range(0, i).Select(n => (byte)n).ToArray();
-                byte[] cyphertext = aes.EncryptBytes(plaintext, key);
+                for (int i = 1; i < 256; i++)
+                {
+                    byte[] plaintext = Enumerable.Range(0, i).Select(n => (byte)n).ToArray();
+                    byte[] cyphertext = aes.EncryptBytes(plaintext);
 
-                Assert.AreNotEqual(plaintext, cyphertext);
+                    Assert.AreNotEqual(plaintext, cyphertext);
 
-                byte[] decrypted = aes.DecryptBytes(cyphertext, key);
+                    byte[] decrypted = aes.DecryptBytes(cyphertext);
 
-                Assert.AreEqual(plaintext, decrypted);
+                    Assert.AreEqual(plaintext, decrypted);
+                }
             }
         }
     }

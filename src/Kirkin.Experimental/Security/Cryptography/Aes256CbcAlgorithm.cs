@@ -41,22 +41,44 @@ namespace Kirkin.Security.Cryptography
         public override int BlockSize => 128;
 
         /// <summary>
-        /// Encrypts the given plaintext bytes using the given key.
+        /// Encryption key specified when this instance was created.
+        /// </summary>
+        public byte[] Key { get; }
+
+        /// <summary>
+        /// Creates a new <see cref="Aes256CbcAlgorithm"/> instance with a randomly-generated key.
+        /// </summary>
+        public Aes256CbcAlgorithm()
+        {
+            Key = GenerateKey();
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="Aes256CbcAlgorithm"/> instance with the given key.
+        /// </summary>
+        public Aes256CbcAlgorithm(byte[] key)
+        {
+            if (key.Length != 32) throw new ArgumentException("Invalid key length.");
+
+            byte[] keyCopy = new byte[key.Length];
+
+            Array.Copy(key, 0, keyCopy, 0, key.Length);
+
+            Key = keyCopy;
+        }
+
+        /// <summary>
+        /// Encrypts the given plaintext bytes.
         /// </summary>
         /// <returns>Number of bytes written to the output buffer.</returns>
-        protected internal override int EncryptBytes(byte[] plaintextBytes, byte[] key, byte[] output)
+        protected internal override int EncryptBytes(byte[] plaintextBytes, byte[] output)
         {
             int blockSizeInBytes = BlockSize / 8;
-            byte[] iv = new byte[blockSizeInBytes];
-
-            // Reuse?
-            using (RandomNumberGenerator rng = CryptoFactories.RngFactory()) {
-                rng.GetBytes(iv);
-            }
+            byte[] iv = CryptoRandom.GetRandomBytes(blockSizeInBytes);
 
             Array.Copy(iv, 0, output, 0, iv.Length);
 
-            using (ICryptoTransform transform = AES256_CBC_PKCS7.CreateEncryptor(key, iv))
+            using (ICryptoTransform transform = AES256_CBC_PKCS7.CreateEncryptor(Key, iv))
             {
                 if (!transform.CanTransformMultipleBlocks) {
                     throw new NotSupportedException("AES encryptor does not support multi-block transforms.");
@@ -82,17 +104,17 @@ namespace Kirkin.Security.Cryptography
         }
 
         /// <summary>
-        /// Decrypts the given ciphertext bytes using the given key.
+        /// Decrypts the given ciphertext bytes.
         /// </summary>
         /// <returns>Number of bytes written to the output buffer.</returns>
-        protected internal override int DecryptBytes(byte[] ciphertextBytes, byte[] key, byte[] output)
+        protected internal override int DecryptBytes(byte[] ciphertextBytes, byte[] output)
         {
             int blockSizeInBytes = BlockSize / 8;
             byte[] iv = new byte[blockSizeInBytes];
 
             Array.Copy(ciphertextBytes, 0, iv, 0, iv.Length);
 
-            using (ICryptoTransform transform = AES256_CBC_PKCS7.CreateDecryptor(key, iv))
+            using (ICryptoTransform transform = AES256_CBC_PKCS7.CreateDecryptor(Key, iv))
             {
                 if (!transform.CanTransformMultipleBlocks) {
                     throw new NotSupportedException("AES encryptor does not support multi-block transforms.");
@@ -130,6 +152,12 @@ namespace Kirkin.Security.Cryptography
             int ivLength = BlockSize / 8;
 
             return ciphertextBytes.Length - ivLength;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            Array.Clear(Key, 0, Key.Length);
         }
     }
 }
