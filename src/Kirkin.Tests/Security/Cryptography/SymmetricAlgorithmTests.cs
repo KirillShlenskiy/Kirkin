@@ -103,22 +103,22 @@ namespace Kirkin.Tests.Security.Cryptography
         }
 
         [Test]
-        public void Aes256CbcAlgorithmTransform()
+        public void Aes256CbcAlgorithmTransformSmall()
         {
             using (Aes256CbcAlgorithm aes = new Aes256CbcAlgorithm()) {
-                CheckEncryptDecryptTransforms(aes);
+                CheckEncryptDecryptTransformsSmall(aes);
             }
         }
 
         [Test]
-        public void Aes256CbcHmacSha256AlgorithmTransform()
+        public void Aes256CbcHmacSha256AlgorithmTransformSmall()
         {
             using (Aes256CbcAlgorithm aes = new Aes256CbcHmacSha256Algorithm()) {
-                CheckEncryptDecryptTransforms(aes);
+                CheckEncryptDecryptTransformsSmall(aes);
             }
         }
 
-        private static void CheckEncryptDecryptTransforms(SymmetricAlgorithm algorithm)
+        private static void CheckEncryptDecryptTransformsSmall(SymmetricAlgorithm algorithm)
         {
             for (int i = 1; i < 256; i++)
             {
@@ -137,6 +137,63 @@ namespace Kirkin.Tests.Security.Cryptography
                     byte[] decrypted = algorithm.DecryptBytes(ciphertext);
 
                     Assert.AreEqual(plaintext, decrypted);
+                }
+
+                using (MemoryStream decryptedStream = new MemoryStream())
+                {
+                    using (ICryptoTransform decryptor = algorithm.CreateDecryptor())
+                    using (CryptoStream decryptStream = new CryptoStream(decryptedStream, decryptor, CryptoStreamMode.Write)) {
+                        decryptStream.Write(ciphertext, 0, ciphertext.Length);
+                    }
+
+                    byte[] decrypted = decryptedStream.ToArray();
+
+                    Assert.AreEqual(plaintext, decrypted);
+                }
+            }
+        }
+
+        [Test]
+        public void Aes256CbcAlgorithmTransformLarge()
+        {
+            using (Aes256CbcAlgorithm aes = new Aes256CbcAlgorithm()) {
+                CheckEncryptDecryptTransformsLarge(aes);
+            }
+        }
+
+        [Test]
+        public void Aes256CbcHmacSha256AlgorithmTransformLarge()
+        {
+            using (Aes256CbcAlgorithm aes = new Aes256CbcHmacSha256Algorithm()) {
+                CheckEncryptDecryptTransformsLarge(aes);
+            }
+        }
+
+        private static void CheckEncryptDecryptTransformsLarge(SymmetricAlgorithm algorithm)
+        {
+            // Work with messages that either fit into single chunk, or not.
+            foreach (double i in new[] { 0.9, 1.0, 1.1, 2.1 })
+            {
+                int chunkSize;
+                byte[] plaintext;
+                byte[] ciphertext;
+
+                using (MemoryStream encryptedStream = new MemoryStream())
+                {
+                    using (ICryptoTransform encryptor = algorithm.CreateEncryptor())
+                    {
+                        chunkSize = encryptor.InputBlockSize;
+
+                        int plaintextLength = (int)(chunkSize * i);
+
+                        plaintext = Enumerable.Range(0, plaintextLength).Select(n => (byte)n).ToArray();
+
+                        using (CryptoStream encryptStream = new CryptoStream(encryptedStream, encryptor, CryptoStreamMode.Write)) {
+                            encryptStream.Write(plaintext, 0, plaintext.Length);
+                        }
+                    }
+
+                    ciphertext = encryptedStream.ToArray();
                 }
 
                 using (MemoryStream decryptedStream = new MemoryStream())
