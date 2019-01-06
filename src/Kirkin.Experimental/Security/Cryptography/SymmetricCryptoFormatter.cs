@@ -7,9 +7,9 @@ using Kirkin.Security.Cryptography.Internal;
 namespace Kirkin.Security.Cryptography
 {
     /// <summary>
-    /// Base class for symmetric encryption algorithms.
+    /// Base class for symmetric encryption message formatters.
     /// </summary>
-    public abstract partial class SymmetricAlgorithm : IDisposable
+    public abstract partial class SymmetricCryptoFormatter : IDisposable
     {
         private static readonly Encoding SafeUTF8
             = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
@@ -45,7 +45,7 @@ namespace Kirkin.Security.Cryptography
         /// </summary>
         internal ICryptoTransform CreateEncryptor()
         {
-            return new SymmetricAlgorithmEncryptTransform(this);
+            return new SymmetricEncryptTransform(this);
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Kirkin.Security.Cryptography
         /// </summary>
         internal ICryptoTransform CreateDecryptor()
         {
-            return new SymmetricAlgorithmDecryptTransform(this);
+            return new SymmetricDecryptTransform(this);
         }
 
         /// <summary>

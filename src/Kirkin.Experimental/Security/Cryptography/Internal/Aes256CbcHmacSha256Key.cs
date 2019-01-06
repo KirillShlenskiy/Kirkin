@@ -38,7 +38,7 @@ namespace Kirkin.Security.Cryptography.Internal
         public Aes256CbcHmacSha256Key(byte[] masterKey, string algorithmName = "AES256_CBC_HMAC_SHA256")
         {
             if (masterKey == null) throw new ArgumentNullException(nameof(masterKey));
-            if (masterKey.Length != Aes256Cbc.KeySizeInBytes) throw new ArgumentException("Invalid master key length.");
+            if (masterKey.Length != Aes256.KeySizeInBytes) throw new ArgumentException("Invalid master key length.");
             if (string.IsNullOrEmpty(algorithmName)) throw new ArgumentException("Algorithm name cannot be empty.");
 
             MasterKey = masterKey;
@@ -62,7 +62,7 @@ namespace Kirkin.Security.Cryptography.Internal
 
         static byte[] GenerateMasterKey()
         {
-            return CryptoRandom.GetRandomBytes(Aes256Cbc.KeySizeInBytes);
+            return CryptoRandom.GetRandomBytes(Aes256.KeySizeInBytes);
         }
 
         public void Dispose()

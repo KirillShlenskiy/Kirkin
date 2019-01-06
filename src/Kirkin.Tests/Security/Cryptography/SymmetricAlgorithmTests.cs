@@ -8,16 +8,16 @@ using Kirkin.Security.Cryptography.Internal;
 
 using NUnit.Framework;
 
-using SymmetricAlgorithm = Kirkin.Security.Cryptography.SymmetricAlgorithm;
+using SymmetricCryptoFormatter = Kirkin.Security.Cryptography.SymmetricCryptoFormatter;
 
 namespace Kirkin.Tests.Security.Cryptography
 {
     public class SymmetricAlgorithmTests
     {
         [Test]
-        public void Aes256CbcAlgorithmMultiLength()
+        public void Aes256CbcMultiLength()
         {
-            using (Aes256CbcAlgorithm aes = new Aes256CbcAlgorithm())
+            using (Aes256Cbc aes = new Aes256Cbc())
             {
                 for (int i = 1; i < 256; i++)
                 {
@@ -28,7 +28,7 @@ namespace Kirkin.Tests.Security.Cryptography
 
                     using (AesCryptoServiceProvider provider = new AesCryptoServiceProvider())
                     {
-                        byte[] iv = ciphertext.Take(Aes256Cbc.BlockSizeInBytes).ToArray();
+                        byte[] iv = ciphertext.Take(Aes256.BlockSizeInBytes).ToArray();
                         byte[] cipher = ciphertext.Skip(iv.Length).ToArray();
 
                         using (ICryptoTransform transform = provider.CreateEncryptor(aes.Key, iv))
@@ -54,9 +54,9 @@ namespace Kirkin.Tests.Security.Cryptography
         }
 
         [Test]
-        public void Aes256CbcHmacSha256AlgorithmMultiLength()
+        public void Aes256CbcHmacSha256MultiLength()
         {
-            using (Aes256CbcHmacSha256Algorithm aes = new Aes256CbcHmacSha256Algorithm())
+            using (Aes256CbcHmacSha256 aes = new Aes256CbcHmacSha256())
             {
                 for (int i = 1; i < 256; i++)
                 {
@@ -67,7 +67,7 @@ namespace Kirkin.Tests.Security.Cryptography
 
                     using (AesCryptoServiceProvider provider = new AesCryptoServiceProvider())
                     {
-                        byte[] iv = ciphertext.Take(Aes256Cbc.BlockSizeInBytes).ToArray();
+                        byte[] iv = ciphertext.Take(Aes256.BlockSizeInBytes).ToArray();
                         byte[] cipher = ciphertext.Skip(iv.Length).Take(ciphertext.Length - iv.Length - 32).ToArray();
                         byte[] expectedHash = ciphertext.Skip(ciphertext.Length - 32).ToArray();
 
@@ -104,22 +104,22 @@ namespace Kirkin.Tests.Security.Cryptography
         }
 
         [Test]
-        public void Aes256CbcAlgorithmTransformSmall()
+        public void Aes256CbcTransformSmall()
         {
-            using (Aes256CbcAlgorithm aes = new Aes256CbcAlgorithm()) {
+            using (Aes256Cbc aes = new Aes256Cbc()) {
                 CheckEncryptDecryptTransformsSmall(aes);
             }
         }
 
         [Test]
-        public void Aes256CbcHmacSha256AlgorithmTransformSmall()
+        public void Aes256CbcHmacSha256TransformSmall()
         {
-            using (Aes256CbcAlgorithm aes = new Aes256CbcHmacSha256Algorithm()) {
+            using (Aes256Cbc aes = new Aes256CbcHmacSha256()) {
                 CheckEncryptDecryptTransformsSmall(aes);
             }
         }
 
-        private static void CheckEncryptDecryptTransformsSmall(SymmetricAlgorithm algorithm)
+        private static void CheckEncryptDecryptTransformsSmall(SymmetricCryptoFormatter algorithm)
         {
             for (int i = 1; i < 256; i++)
             {
@@ -155,22 +155,22 @@ namespace Kirkin.Tests.Security.Cryptography
         }
 
         [Test]
-        public void Aes256CbcAlgorithmTransformLarge()
+        public void Aes256CbcTransformLarge()
         {
-            using (Aes256CbcAlgorithm aes = new Aes256CbcAlgorithm()) {
+            using (Aes256Cbc aes = new Aes256Cbc()) {
                 CheckEncryptDecryptTransformsLarge(aes);
             }
         }
 
         [Test]
-        public void Aes256CbcHmacSha256AlgorithmTransformLarge()
+        public void Aes256CbcHmacSha256TransformLarge()
         {
-            using (Aes256CbcAlgorithm aes = new Aes256CbcHmacSha256Algorithm()) {
+            using (Aes256Cbc aes = new Aes256CbcHmacSha256()) {
                 CheckEncryptDecryptTransformsLarge(aes);
             }
         }
 
-        private static void CheckEncryptDecryptTransformsLarge(SymmetricAlgorithm algorithm)
+        private static void CheckEncryptDecryptTransformsLarge(SymmetricCryptoFormatter algorithm)
         {
             // Work with messages that either fit into single chunk, or not.
             foreach (double chunkFillRatio in new[] { 0.9, 1.0, 1.1, 2.1 })

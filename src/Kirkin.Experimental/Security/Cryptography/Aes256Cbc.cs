@@ -8,7 +8,7 @@ namespace Kirkin.Security.Cryptography
     /// Symmetric crypto algorithm implementation which uses the AES256 CBC cipher,
     /// PKCS7 padding and prefixes the ciphertext with the random IV in plain text.
     /// </summary>
-    public class Aes256CbcAlgorithm : SymmetricAlgorithm
+    public class Aes256Cbc : SymmetricCryptoFormatter
     {
         private byte[] _key;
 
@@ -28,17 +28,17 @@ namespace Kirkin.Security.Cryptography
         }
 
         /// <summary>
-        /// Creates a new <see cref="Aes256CbcAlgorithm"/> instance with a randomly-generated key.
+        /// Creates a new <see cref="Aes256Cbc"/> instance with a randomly-generated key.
         /// </summary>
-        public Aes256CbcAlgorithm()
+        public Aes256Cbc()
         {
-            _key = Aes256Cbc.GenerateKey();
+            _key = Aes256.GenerateKey();
         }
 
         /// <summary>
-        /// Creates a new <see cref="Aes256CbcAlgorithm"/> instance with the given 256-bit key.
+        /// Creates a new <see cref="Aes256Cbc"/> instance with the given 256-bit key.
         /// </summary>
-        public Aes256CbcAlgorithm(byte[] key)
+        public Aes256Cbc(byte[] key)
         {
             if (key.Length != 32) throw new ArgumentException("Invalid key length.");
 
@@ -55,11 +55,11 @@ namespace Kirkin.Security.Cryptography
         /// <returns>Number of bytes written to the output buffer.</returns>
         protected internal override int EncryptBytes(in ArraySegment<byte> plaintext, byte[] output, int outputOffset)
         {
-            byte[] iv = CryptoRandom.GetRandomBytes(Aes256Cbc.BlockSizeInBytes);
+            byte[] iv = CryptoRandom.GetRandomBytes(Aes256.BlockSizeInBytes);
 
             Array.Copy(iv, 0, output, outputOffset, iv.Length);
 
-            int ciphertextBytesWritten = Aes256Cbc.EncryptBytes(plaintext, Key, iv, output, outputOffset + iv.Length);
+            int ciphertextBytesWritten = Aes256.EncryptBytesCbcPkcs7(plaintext, Key, iv, output, outputOffset + iv.Length);
 
             return iv.Length + ciphertextBytesWritten;
         }
@@ -70,7 +70,7 @@ namespace Kirkin.Security.Cryptography
         /// <returns>Number of bytes written to the output buffer.</returns>
         protected internal override int DecryptBytes(in ArraySegment<byte> ciphertext, byte[] output, int outputOffset)
         {
-            byte[] iv = new byte[Aes256Cbc.BlockSizeInBytes];
+            byte[] iv = new byte[Aes256.BlockSizeInBytes];
 
             Array.Copy(ciphertext.Array, ciphertext.Offset, iv, 0, iv.Length);
 
@@ -79,20 +79,20 @@ namespace Kirkin.Security.Cryptography
 
             ArraySegment<byte> ciphertextSlice = new ArraySegment<byte>(ciphertext.Array, ciphertext.Offset + ciphertextOffset, ciphertextLength);
 
-            return Aes256Cbc.DecryptBytes(ciphertextSlice, Key, iv, output, outputOffset);
+            return Aes256.DecryptBytesCbcPkcs7(ciphertextSlice, Key, iv, output, outputOffset);
         }
 
         protected internal override int MaxEncryptOutputBufferSize(byte[] plaintextBytes)
         {
-            int ivLength = Aes256Cbc.BlockSizeInBytes;
-            int blockCount = plaintextBytes.Length / Aes256Cbc.BlockSizeInBytes + 1;
+            int ivLength = Aes256.BlockSizeInBytes;
+            int blockCount = plaintextBytes.Length / Aes256.BlockSizeInBytes + 1;
 
-            return ivLength + blockCount * Aes256Cbc.BlockSizeInBytes; // iv + ciphertext.
+            return ivLength + blockCount * Aes256.BlockSizeInBytes; // iv + ciphertext.
         }
 
         protected internal override int MaxDecryptOutputBufferSize(byte[] ciphertextBytes)
         {
-            int ivLength = Aes256Cbc.BlockSizeInBytes;
+            int ivLength = Aes256.BlockSizeInBytes;
 
             return ciphertextBytes.Length - ivLength;
         }

@@ -12,22 +12,22 @@ namespace Kirkin.Security.Cryptography
     /// PKCS7 padding and prefixes the ciphertext with the random IV in plain text.
     /// Appends HMAC hash of the IV + ciphertext to the output.
     /// </summary>
-    public sealed class Aes256CbcHmacSha256Algorithm : Aes256CbcAlgorithm
+    public sealed class Aes256CbcHmacSha256 : Aes256Cbc
     {
         private const int MAC_LENGTH_IN_BYTES = 32; // 256 bits.
 
         /// <summary>
-        /// Creates a new <see cref="Aes256CbcHmacSha256Algorithm"/> instance with a randomly-generated key.
+        /// Creates a new <see cref="Aes256CbcHmacSha256"/> instance with a randomly-generated key.
         /// </summary>
-        public Aes256CbcHmacSha256Algorithm()
+        public Aes256CbcHmacSha256()
             : base()
         {
         }
 
         /// <summary>
-        /// Creates a new <see cref="Aes256CbcHmacSha256Algorithm"/> instance with the given key.
+        /// Creates a new <see cref="Aes256CbcHmacSha256"/> instance with the given key.
         /// </summary>
-        public Aes256CbcHmacSha256Algorithm(byte[] key)
+        public Aes256CbcHmacSha256(byte[] key)
             : base(key)
         {
         }
@@ -38,7 +38,7 @@ namespace Kirkin.Security.Cryptography
         /// <returns>Number of bytes written to the output buffer.</returns>
         protected internal override int EncryptBytes(in ArraySegment<byte> plaintext, byte[] output, int outputOffset)
         {
-            byte[] iv = CryptoRandom.GetRandomBytes(Aes256Cbc.BlockSizeInBytes);
+            byte[] iv = CryptoRandom.GetRandomBytes(Aes256.BlockSizeInBytes);
 
             // Write IV.
             Array.Copy(iv, 0, output, outputOffset, iv.Length);
@@ -49,7 +49,7 @@ namespace Kirkin.Security.Cryptography
             using (Aes256CbcHmacSha256Key derivedKey = new Aes256CbcHmacSha256Key(Key))
             {
                 // Write ciphertext.
-                bytesWritten += Aes256Cbc.EncryptBytes(plaintext, derivedKey.EncryptionKey, iv, output, outputOffset + iv.Length);
+                bytesWritten += Aes256.EncryptBytesCbcPkcs7(plaintext, derivedKey.EncryptionKey, iv, output, outputOffset + iv.Length);
 
                 // MAC of the IV + ciphertext portion.
                 using (HMACSHA256 hmac = new HMACSHA256(derivedKey.MACKey)) {
@@ -68,7 +68,7 @@ namespace Kirkin.Security.Cryptography
         /// <returns>Number of bytes written to the output buffer.</returns>
         protected internal override int DecryptBytes(in ArraySegment<byte> ciphertext, byte[] output, int outputOffset)
         {
-            byte[] iv = new byte[Aes256Cbc.BlockSizeInBytes];
+            byte[] iv = new byte[Aes256.BlockSizeInBytes];
             byte[] expectedHash = new byte[MAC_LENGTH_IN_BYTES];
 
             Array.Copy(ciphertext.Array, ciphertext.Offset, iv, 0, iv.Length);
@@ -89,7 +89,7 @@ namespace Kirkin.Security.Cryptography
 
                 ArraySegment<byte> ciphertextSlice = new ArraySegment<byte>(ciphertext.Array, ciphertext.Offset + iv.Length, ciphertext.Count - iv.Length - MAC_LENGTH_IN_BYTES);
 
-                return Aes256Cbc.DecryptBytes(ciphertextSlice, derivedKey.EncryptionKey, iv, output, outputOffset);
+                return Aes256.DecryptBytesCbcPkcs7(ciphertextSlice, derivedKey.EncryptionKey, iv, output, outputOffset);
             }
         }
 

@@ -110,7 +110,7 @@ namespace Kirkin.Tests.Security.Cryptography
         {
             string expectedText = "Hello!";
 
-            using (Aes256CbcAlgorithm aes = new Aes256CbcAlgorithm())
+            using (Aes256Cbc aes = new Aes256Cbc())
             {
                 for (int i = 0; i < 3000; i++)
                 {
@@ -126,7 +126,7 @@ namespace Kirkin.Tests.Security.Cryptography
         {
             string expectedText = "Hello!";
 
-            using (Aes256CbcAlgorithm aes = new Aes256CbcHmacSha256Algorithm())
+            using (Aes256Cbc aes = new Aes256CbcHmacSha256())
             {
                 for (int i = 0; i < 3000; i++)
                 {
@@ -280,7 +280,7 @@ namespace Kirkin.Tests.Security.Cryptography
             byte[] key = null;
 
             using (FileStream fs = File.OpenRead(filePath))
-            using (Aes256CbcAlgorithm aes = new Aes256CbcHmacSha256Algorithm())
+            using (Aes256Cbc aes = new Aes256CbcHmacSha256())
             {
                 using (ICryptoTransform encryptor = aes.CreateEncryptor())
                 using (CryptoStream encryptStream = new CryptoStream(fs, encryptor, CryptoStreamMode.Read))
@@ -292,7 +292,7 @@ namespace Kirkin.Tests.Security.Cryptography
             }
 
             using (FileStream fs = File.OpenRead(encryptedFilePath))
-            using (Aes256CbcAlgorithm aes = new Aes256CbcHmacSha256Algorithm(key))
+            using (Aes256Cbc aes = new Aes256CbcHmacSha256(key))
             using (ICryptoTransform decryptor = aes.CreateDecryptor())
             using (CryptoStream decryptStream = new CryptoStream(fs, decryptor, CryptoStreamMode.Read))
             {
