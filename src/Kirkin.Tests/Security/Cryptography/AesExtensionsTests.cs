@@ -282,7 +282,7 @@ namespace Kirkin.Tests.Security.Cryptography
             using (FileStream fs = File.OpenRead(filePath))
             using (Aes256Cbc aes = new Aes256CbcHmacSha256())
             {
-                using (ICryptoTransform encryptor = aes.CreateEncryptor())
+                using (ICryptoTransform encryptor = new SymmetricEncryptTransform(aes))
                 using (CryptoStream encryptStream = new CryptoStream(fs, encryptor, CryptoStreamMode.Read))
                 using (FileStream outputStream = File.Create(encryptedFilePath)) {
                     encryptStream.CopyTo(outputStream);
@@ -293,7 +293,7 @@ namespace Kirkin.Tests.Security.Cryptography
 
             using (FileStream fs = File.OpenRead(encryptedFilePath))
             using (Aes256Cbc aes = new Aes256CbcHmacSha256(key))
-            using (ICryptoTransform decryptor = aes.CreateDecryptor())
+            using (ICryptoTransform decryptor = new SymmetricDecryptTransform(aes))
             using (CryptoStream decryptStream = new CryptoStream(fs, decryptor, CryptoStreamMode.Read))
             {
                 string decryptedFileName = $"{Path.GetFileNameWithoutExtension(filePath)}_dec{Path.GetExtension(filePath)}";

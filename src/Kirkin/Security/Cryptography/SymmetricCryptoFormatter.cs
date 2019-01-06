@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography;
 using System.Text;
 
 using Kirkin.Security.Cryptography.Internal;
@@ -38,22 +37,6 @@ namespace Kirkin.Security.Cryptography
             byte[] plaintextBytes = SafeUTF8.GetBytes(plaintextString);
 
             return EncryptBytes(plaintextBytes);
-        }
-
-        /// <summary>
-        /// Creates a <see cref="ICryptoTransform"/> which can be used to encrypt streams.
-        /// </summary>
-        internal ICryptoTransform CreateEncryptor()
-        {
-            return new SymmetricEncryptTransform(this);
-        }
-
-        /// <summary>
-        /// Creates a <see cref="ICryptoTransform"/> which can be used to decrypt streams.
-        /// </summary>
-        internal ICryptoTransform CreateDecryptor()
-        {
-            return new SymmetricDecryptTransform(this);
         }
 
         /// <summary>
