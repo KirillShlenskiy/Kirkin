@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Kirkin.Security.Cryptography.Internal;
+
 namespace Kirkin.Security.Cryptography
 {  
     /// <summary>
@@ -44,7 +46,7 @@ namespace Kirkin.Security.Cryptography
         }
 
         /// <summary>
-        /// Creates a new <see cref="Aes256CbcAlgorithm"/> instance with the given key.
+        /// Creates a new <see cref="Aes256CbcAlgorithm"/> instance with the given 256-bit key.
         /// </summary>
         public Aes256CbcAlgorithm(byte[] key)
         {

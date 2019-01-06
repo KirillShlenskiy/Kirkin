@@ -2,6 +2,8 @@
 using System.Security.Cryptography;
 using System.Text;
 
+using Kirkin.Security.Cryptography.Internal;
+
 namespace Kirkin.Security.Cryptography
 {
     /// <summary>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 
 using Kirkin.Security.Cryptography;
+using Kirkin.Security.Cryptography.Internal;
 
 using NUnit.Framework;
 

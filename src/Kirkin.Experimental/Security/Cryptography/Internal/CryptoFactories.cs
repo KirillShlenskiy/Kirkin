@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace Kirkin.Security.Cryptography
+namespace Kirkin.Security.Cryptography.Internal
 {
     internal static class CryptoFactories
     {

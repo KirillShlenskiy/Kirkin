@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Kirkin.Collections.Generic;
+using Kirkin.Security.Cryptography.Internal;
 
 namespace Kirkin.Security.Cryptography
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-namespace Kirkin.Security.Cryptography
+namespace Kirkin.Security.Cryptography.Internal
 {
     internal static class ArrayExtensions
     {

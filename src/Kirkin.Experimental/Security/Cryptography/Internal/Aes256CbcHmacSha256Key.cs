@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Kirkin.Security.Cryptography
+namespace Kirkin.Security.Cryptography.Internal
 {
     /// <summary>
     /// Key derivation mechanism which produces a 256-bit AES encryption

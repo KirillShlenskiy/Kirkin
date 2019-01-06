@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 
 using Kirkin.Collections.Generic;
 
-namespace Kirkin.Security.Cryptography
+namespace Kirkin.Security.Cryptography.Internal
 {
     internal abstract class ChunkedTransform : ICryptoTransform
     {

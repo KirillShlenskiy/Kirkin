@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Threading;
 
-namespace Kirkin.Security.Cryptography
+namespace Kirkin.Security.Cryptography.Internal
 {
     internal static class Aes256Cbc
     {

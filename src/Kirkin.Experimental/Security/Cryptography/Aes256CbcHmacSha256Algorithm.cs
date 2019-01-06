@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
+using Kirkin.Security.Cryptography.Internal;
+
 namespace Kirkin.Security.Cryptography
 {  
     /// <summary>

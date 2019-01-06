@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace Kirkin.Security.Cryptography
+namespace Kirkin.Security.Cryptography.Internal
 {
     internal static class CryptoRandom
     {
