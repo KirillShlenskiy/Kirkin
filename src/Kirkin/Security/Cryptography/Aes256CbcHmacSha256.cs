@@ -93,11 +93,17 @@ namespace Kirkin.Security.Cryptography
             }
         }
 
+        /// <summary>
+        /// Determines the maximum encrypted message length for the given plaintext.
+        /// </summary>
         protected internal override int MaxEncryptOutputBufferSize(byte[] plaintextBytes)
         {
             return base.MaxEncryptOutputBufferSize(plaintextBytes) + MAC_LENGTH_IN_BYTES; // iv + ciphertext + MAC.
         }
 
+        /// <summary>
+        /// Determines the maximum decrypted message length for the given ciphertext.
+        /// </summary>
         protected internal override int MaxDecryptOutputBufferSize(byte[] ciphertextBytes)
         {
             return base.MaxDecryptOutputBufferSize(ciphertextBytes) - MAC_LENGTH_IN_BYTES; // iv + ciphertext + MAC.

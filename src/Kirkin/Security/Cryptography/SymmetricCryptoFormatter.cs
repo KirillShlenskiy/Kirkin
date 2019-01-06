@@ -82,9 +82,26 @@ namespace Kirkin.Security.Cryptography
             return SafeUTF8.GetString(plaintextBytes);
         }
 
+        /// <summary>
+        /// Encrypts the given plaintext bytes.
+        /// </summary>
+        /// <returns>Number of bytes written to the output buffer.</returns>
         protected internal abstract int EncryptBytes(in ArraySegment<byte> plaintext, byte[] output, int outputOffset);
+
+        /// <summary>
+        /// Decrypts the given ciphertext bytes.
+        /// </summary>
+        /// <returns>Number of bytes written to the output buffer.</returns>
         protected internal abstract int DecryptBytes(in ArraySegment<byte> ciphertextBytes, byte[] output, int outputOffset);
+
+        /// <summary>
+        /// Determines the maximum encrypted message length for the given plaintext.
+        /// </summary>
         protected internal abstract int MaxEncryptOutputBufferSize(byte[] plaintextBytes);
+
+        /// <summary>
+        /// Determines the maximum decrypted message length for the given ciphertext.
+        /// </summary>
         protected internal abstract int MaxDecryptOutputBufferSize(byte[] ciphertextBytes);
 
         /// <summary>

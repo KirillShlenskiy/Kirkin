@@ -82,6 +82,9 @@ namespace Kirkin.Security.Cryptography
             return Aes256.DecryptBytesCbcPkcs7(ciphertextSlice, Key, iv, output, outputOffset);
         }
 
+        /// <summary>
+        /// Determines the maximum encrypted message length for the given plaintext.
+        /// </summary>
         protected internal override int MaxEncryptOutputBufferSize(byte[] plaintextBytes)
         {
             int ivLength = Aes256.BlockSizeInBytes;
@@ -90,6 +93,9 @@ namespace Kirkin.Security.Cryptography
             return ivLength + blockCount * Aes256.BlockSizeInBytes; // iv + ciphertext.
         }
 
+        /// <summary>
+        /// Determines the maximum decrypted message length for the given ciphertext.
+        /// </summary>
         protected internal override int MaxDecryptOutputBufferSize(byte[] ciphertextBytes)
         {
             int ivLength = Aes256.BlockSizeInBytes;
@@ -97,6 +103,9 @@ namespace Kirkin.Security.Cryptography
             return ciphertextBytes.Length - ivLength;
         }
 
+        /// <summary>
+        /// Clears the key material and releases resources used by this instance.
+        /// </summary>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
