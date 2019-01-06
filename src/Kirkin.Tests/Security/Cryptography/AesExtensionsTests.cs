@@ -268,5 +268,40 @@ namespace Kirkin.Tests.Security.Cryptography
                 decryptedStream.CopyTo(Stream.Null);
             }
         }
+
+        [Test]
+        [Ignore("Requires valid file.")]
+        public void EncryptDecryptLargeFileHMAC()
+        {
+            string filePath = @"<path>";
+            string encryptedFilePath = $"{filePath}.enc";
+
+            byte[] key = null;
+
+            using (FileStream fs = File.OpenRead(filePath))
+            using (Aes256CbcAlgorithm aes = new Aes256CbcHmacSha256Algorithm())
+            {
+                using (ICryptoTransform encryptor = aes.CreateEncryptor())
+                using (CryptoStream encryptStream = new CryptoStream(fs, encryptor, CryptoStreamMode.Read))
+                using (FileStream outputStream = File.Create(encryptedFilePath)) {
+                    encryptStream.CopyTo(outputStream);
+                }
+
+                key = aes.Key;
+            }
+
+            using (FileStream fs = File.OpenRead(encryptedFilePath))
+            using (Aes256CbcAlgorithm aes = new Aes256CbcHmacSha256Algorithm(key))
+            using (ICryptoTransform decryptor = aes.CreateDecryptor())
+            using (CryptoStream decryptStream = new CryptoStream(fs, decryptor, CryptoStreamMode.Read))
+            {
+                string decryptedFileName = $"{Path.GetFileNameWithoutExtension(filePath)}_dec{Path.GetExtension(filePath)}";
+                string decryptedFilePath = Path.Combine(Path.GetDirectoryName(filePath), decryptedFileName);
+
+                using (FileStream outputStream = File.Open(decryptedFilePath, FileMode.Create, FileAccess.Write)) {
+                    decryptStream.CopyTo(outputStream);
+                }
+            }
+        }
     }
 }
