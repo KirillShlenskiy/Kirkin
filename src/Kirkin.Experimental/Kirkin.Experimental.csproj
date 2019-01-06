@@ -116,6 +116,8 @@
     <Compile Include="Refs\Ref.cs" />
     <Compile Include="Refs\ValueRef.cs" />
     <Compile Include="NonWOW64Registry.cs" />
+    <Compile Include="Security\Cryptography\Aes256CbcHmacSha256.cs" />
+    <Compile Include="Security\Cryptography\Internal\Aes256CbcHmacSha256Key.cs" />
     <Compile Include="Security\Cryptography\AesExtensions.cs" />
     <Compile Include="Serialization\Serializer.cs" />
     <Compile Include="Serialization\XmlSerializer.cs" />
