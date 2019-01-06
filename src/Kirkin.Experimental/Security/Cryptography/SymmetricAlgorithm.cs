@@ -15,16 +15,6 @@ namespace Kirkin.Security.Cryptography
             = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
         /// <summary>
-        /// Key size, in bits.
-        /// </summary>
-        public abstract int KeySize { get; }
-
-        /// <summary>
-        /// Block size, in bits.
-        /// </summary>
-        public abstract int BlockSize { get; }
-
-        /// <summary>
         /// Encrypts the given plaintext bytes.
         /// </summary>
         public byte[] EncryptBytes(byte[] plaintextBytes)

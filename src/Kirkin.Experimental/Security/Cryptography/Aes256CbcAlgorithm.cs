@@ -13,16 +13,6 @@ namespace Kirkin.Security.Cryptography
         private byte[] _key;
 
         /// <summary>
-        /// 256 bits/32 bytes (AES 256).
-        /// </summary>
-        public override int KeySize => Aes256Cbc.KeySizeInBytes * 8;
-
-        /// <summary>
-        /// 128 bit/16 bytes (AES standard).
-        /// </summary>
-        public override int BlockSize => Aes256Cbc.BlockSizeInBytes * 8;
-
-        /// <summary>
         /// Copy of the 256-bit encryption key specified when this instance was created.
         /// </summary>
         public byte[] Key
