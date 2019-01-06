@@ -59,8 +59,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\OptionListCommandParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\SwitchCommandParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\TextFormatter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Cryptography\AES256Encryption.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Cryptography\ICryptoKernel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\DataColumnLite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\DataColumnLiteCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\DataRowLite.cs" />
@@ -141,6 +139,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)Reflection\PropertyAccessorFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reflection\PropertyAccessorFactory`1.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reflection\PropertyList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Security\Cryptography\Aes256Cbc.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Security\Cryptography\Aes256CbcHmacSha256.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Security\Cryptography\Internal\Aes256.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Security\Cryptography\Internal\Aes256CbcHmacSha256Key.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Security\Cryptography\Internal\ArrayExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Security\Cryptography\Internal\ChunkedTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Security\Cryptography\Internal\CryptoFactories.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Security\Cryptography\Internal\CryptoRandom.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Security\Cryptography\Internal\SymmetricDecryptTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Security\Cryptography\Internal\SymmetricEncryptTransforms.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Security\Cryptography\SymmetricCryptoFormatter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Text\TextUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Text\UrlUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Threading\Cancellation.cs" />
