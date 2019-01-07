@@ -13,6 +13,7 @@ namespace Kirkin.Tests.Data.SqlClient
     public class SqlCacheScratchpad
     {
         [Test]
+        [Ignore("Early work.")]
         public void BasicSelect()
         {
             SqlCache cache = new SqlCache();
