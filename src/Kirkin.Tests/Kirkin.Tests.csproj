@@ -151,6 +151,7 @@
     <Compile Include="Experimental\CastleCodegenTests.cs" />
     <Compile Include="Experimental\ClassStructAsyncCopyPerf.cs" />
     <Compile Include="Experimental\ClrMdTests.cs" />
+    <Compile Include="Experimental\RsaTests.cs" />
     <Compile Include="LambdaTests.cs" />
     <Compile Include="Media\FFmpegClientTests.cs" />
     <Compile Include="Experimental\ImmutableArrayFactoryTests.cs" />
@@ -233,13 +234,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Kirkin.Experimental\Kirkin.Experimental.csproj">
-      <Project>{3f7562a4-86cb-4172-a7d1-fb0c6e2545ef}</Project>
-      <Name>Kirkin.Experimental</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Build\Kirkin-NET_45\Kirkin-NET_45.csproj">
       <Project>{71ff1be9-c99f-416f-a030-0aa846687e75}</Project>
       <Name>Kirkin-NET_45</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kirkin.Experimental\Kirkin.Experimental.csproj">
+      <Project>{3f7562a4-86cb-4172-a7d1-fb0c6e2545ef}</Project>
+      <Name>Kirkin.Experimental</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
