@@ -16,17 +16,17 @@ namespace Kirkin.Security.Cryptography
         /// <summary>
         /// Block size, in bytes.
         /// </summary>
-        protected abstract int BlockSize { get; }
+        protected internal abstract int BlockSize { get; }
 
         /// <summary>
         /// Message prefix length, in bytes.
         /// </summary>
-        protected abstract int MessagePrefixLength { get; }
+        protected internal abstract int MessagePrefixLength { get; }
 
         /// <summary>
         /// Message suffix length, in bytes.
         /// </summary>
-        protected abstract int MessageSuffixLength { get; }
+        protected internal abstract int MessageSuffixLength { get; }
 
         /// <summary>
         /// Encrypts the given plaintext bytes.
@@ -99,7 +99,7 @@ namespace Kirkin.Security.Cryptography
         {
             int blockCount = plaintextBytes.Length / BlockSize + 1;
 
-            return MessagePrefixLength + blockCount * BlockSize + MessageSuffixLength; // iv + ciphertext.
+            return MessagePrefixLength + blockCount * BlockSize + MessageSuffixLength;
         }
 
         /// <summary>

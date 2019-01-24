@@ -19,7 +19,7 @@ namespace Kirkin.Security.Cryptography
         /// <summary>
         /// Returns the MAC length - 32 bytes (256 bits).
         /// </summary>
-        protected override int SuffixLength => MAC_LENGTH_IN_BYTES;
+        protected internal override int MessageSuffixLength => MAC_LENGTH_IN_BYTES;
 
         /// <summary>
         /// Creates a new <see cref="Aes256CbcHmacSha256"/> instance with a randomly-generated key.

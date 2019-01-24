@@ -15,17 +15,17 @@ namespace Kirkin.Security.Cryptography
         /// <summary>
         /// Returns AES block size - 16 bytes (128 bits).
         /// </summary>
-        protected override int BlockSize => Aes256.BlockSizeInBytes;
+        protected internal override int BlockSize => Aes256.BlockSizeInBytes;
 
         /// <summary>
         /// Returns the IV length - 16 bytes (128 bits).
         /// </summary>
-        protected override int MessagePrefixLength => Aes256.BlockSizeInBytes;
+        protected internal override int MessagePrefixLength => Aes256.BlockSizeInBytes;
 
         /// <summary>
         /// Returns zero (no suffix).
         /// </summary>
-        protected override int MessageSuffixLength => 0;
+        protected internal override int MessageSuffixLength => 0;
 
         /// <summary>
         /// Copy of the 256-bit encryption key specified when this instance was created.
