@@ -17,6 +17,11 @@ namespace Kirkin.Security.Cryptography
         private const int MAC_LENGTH_IN_BYTES = 32; // 256 bits.
 
         /// <summary>
+        /// Returns the MAC length - 32 bytes (256 bits).
+        /// </summary>
+        protected override int SuffixLength => MAC_LENGTH_IN_BYTES;
+
+        /// <summary>
         /// Creates a new <see cref="Aes256CbcHmacSha256"/> instance with a randomly-generated key.
         /// </summary>
         public Aes256CbcHmacSha256()
@@ -91,22 +96,6 @@ namespace Kirkin.Security.Cryptography
 
                 return Aes256.DecryptBytesCbcPkcs7(ciphertextSlice, derivedKey.EncryptionKey, iv, output, outputOffset);
             }
-        }
-
-        /// <summary>
-        /// Determines the maximum encrypted message length for the given plaintext.
-        /// </summary>
-        protected internal override int MaxEncryptOutputBufferSize(byte[] plaintextBytes)
-        {
-            return base.MaxEncryptOutputBufferSize(plaintextBytes) + MAC_LENGTH_IN_BYTES; // iv + ciphertext + MAC.
-        }
-
-        /// <summary>
-        /// Determines the maximum decrypted message length for the given ciphertext.
-        /// </summary>
-        protected internal override int MaxDecryptOutputBufferSize(byte[] ciphertextBytes)
-        {
-            return base.MaxDecryptOutputBufferSize(ciphertextBytes) - MAC_LENGTH_IN_BYTES; // iv + ciphertext + MAC.
         }
     }
 }

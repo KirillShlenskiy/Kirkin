@@ -14,6 +14,33 @@ namespace Kirkin.Security.Cryptography
             = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
         /// <summary>
+        /// Block size, in bytes.
+        /// </summary>
+        protected abstract int BlockSize { get; }
+
+        /// <summary>
+        /// Message prefix length, in bytes.
+        /// </summary>
+        protected abstract int PrefixLength { get; }
+
+        /// <summary>
+        /// Message suffix length, in bytes.
+        /// </summary>
+        protected abstract int SuffixLength { get; }
+
+        /// <summary>
+        /// Encrypts the given plaintext bytes.
+        /// </summary>
+        /// <returns>Number of bytes written to the output buffer.</returns>
+        protected internal abstract int EncryptBytes(in ArraySegment<byte> plaintext, byte[] output, int outputOffset);
+
+        /// <summary>
+        /// Decrypts the given ciphertext bytes.
+        /// </summary>
+        /// <returns>Number of bytes written to the output buffer.</returns>
+        protected internal abstract int DecryptBytes(in ArraySegment<byte> ciphertextBytes, byte[] output, int outputOffset);
+
+        /// <summary>
         /// Encrypts the given plaintext bytes.
         /// </summary>
         public byte[] EncryptBytes(byte[] plaintextBytes)
@@ -66,26 +93,22 @@ namespace Kirkin.Security.Cryptography
         }
 
         /// <summary>
-        /// Encrypts the given plaintext bytes.
-        /// </summary>
-        /// <returns>Number of bytes written to the output buffer.</returns>
-        protected internal abstract int EncryptBytes(in ArraySegment<byte> plaintext, byte[] output, int outputOffset);
-
-        /// <summary>
-        /// Decrypts the given ciphertext bytes.
-        /// </summary>
-        /// <returns>Number of bytes written to the output buffer.</returns>
-        protected internal abstract int DecryptBytes(in ArraySegment<byte> ciphertextBytes, byte[] output, int outputOffset);
-
-        /// <summary>
         /// Determines the maximum encrypted message length for the given plaintext.
         /// </summary>
-        protected internal abstract int MaxEncryptOutputBufferSize(byte[] plaintextBytes);
+        internal int MaxEncryptOutputBufferSize(byte[] plaintextBytes)
+        {
+            int blockCount = plaintextBytes.Length / BlockSize + 1;
+
+            return PrefixLength + blockCount * BlockSize + SuffixLength; // iv + ciphertext.
+        }
 
         /// <summary>
         /// Determines the maximum decrypted message length for the given ciphertext.
         /// </summary>
-        protected internal abstract int MaxDecryptOutputBufferSize(byte[] ciphertextBytes);
+        internal int MaxDecryptOutputBufferSize(byte[] ciphertextBytes)
+        {
+            return ciphertextBytes.Length - PrefixLength - SuffixLength;
+        }
 
         /// <summary>
         /// Releases the resources used by this instance.

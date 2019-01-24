@@ -13,6 +13,21 @@ namespace Kirkin.Security.Cryptography
         private byte[] _key;
 
         /// <summary>
+        /// Returns AES block size - 16 bytes (128 bits).
+        /// </summary>
+        protected override int BlockSize => Aes256.BlockSizeInBytes;
+
+        /// <summary>
+        /// Returns the IV length - 16 bytes (128 bits).
+        /// </summary>
+        protected override int PrefixLength => Aes256.BlockSizeInBytes;
+
+        /// <summary>
+        /// Returns zero (no suffix).
+        /// </summary>
+        protected override int SuffixLength => 0;
+
+        /// <summary>
         /// Copy of the 256-bit encryption key specified when this instance was created.
         /// </summary>
         public byte[] Key
@@ -80,27 +95,6 @@ namespace Kirkin.Security.Cryptography
             ArraySegment<byte> ciphertextSlice = new ArraySegment<byte>(ciphertext.Array, ciphertext.Offset + ciphertextOffset, ciphertextLength);
 
             return Aes256.DecryptBytesCbcPkcs7(ciphertextSlice, Key, iv, output, outputOffset);
-        }
-
-        /// <summary>
-        /// Determines the maximum encrypted message length for the given plaintext.
-        /// </summary>
-        protected internal override int MaxEncryptOutputBufferSize(byte[] plaintextBytes)
-        {
-            int ivLength = Aes256.BlockSizeInBytes;
-            int blockCount = plaintextBytes.Length / Aes256.BlockSizeInBytes + 1;
-
-            return ivLength + blockCount * Aes256.BlockSizeInBytes; // iv + ciphertext.
-        }
-
-        /// <summary>
-        /// Determines the maximum decrypted message length for the given ciphertext.
-        /// </summary>
-        protected internal override int MaxDecryptOutputBufferSize(byte[] ciphertextBytes)
-        {
-            int ivLength = Aes256.BlockSizeInBytes;
-
-            return ciphertextBytes.Length - ivLength;
         }
 
         /// <summary>
