@@ -55,7 +55,7 @@ namespace Kirkin.Security.Cryptography
         /// </summary>
         public Aes256Cbc(byte[] key)
         {
-            if (key.Length != 32) throw new ArgumentException("Invalid key length.");
+            if (key.Length != Aes256.KeySizeInBytes) throw new ArgumentException("Invalid key length.");
 
             byte[] keyCopy = new byte[key.Length];
 
