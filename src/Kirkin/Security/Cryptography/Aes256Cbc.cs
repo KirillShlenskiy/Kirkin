@@ -20,12 +20,12 @@ namespace Kirkin.Security.Cryptography
         /// <summary>
         /// Returns the IV length - 16 bytes (128 bits).
         /// </summary>
-        protected override int PrefixLength => Aes256.BlockSizeInBytes;
+        protected override int MessagePrefixLength => Aes256.BlockSizeInBytes;
 
         /// <summary>
         /// Returns zero (no suffix).
         /// </summary>
-        protected override int SuffixLength => 0;
+        protected override int MessageSuffixLength => 0;
 
         /// <summary>
         /// Copy of the 256-bit encryption key specified when this instance was created.

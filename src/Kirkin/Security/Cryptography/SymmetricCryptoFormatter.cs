@@ -21,12 +21,12 @@ namespace Kirkin.Security.Cryptography
         /// <summary>
         /// Message prefix length, in bytes.
         /// </summary>
-        protected abstract int PrefixLength { get; }
+        protected abstract int MessagePrefixLength { get; }
 
         /// <summary>
         /// Message suffix length, in bytes.
         /// </summary>
-        protected abstract int SuffixLength { get; }
+        protected abstract int MessageSuffixLength { get; }
 
         /// <summary>
         /// Encrypts the given plaintext bytes.
@@ -99,7 +99,7 @@ namespace Kirkin.Security.Cryptography
         {
             int blockCount = plaintextBytes.Length / BlockSize + 1;
 
-            return PrefixLength + blockCount * BlockSize + SuffixLength; // iv + ciphertext.
+            return MessagePrefixLength + blockCount * BlockSize + MessageSuffixLength; // iv + ciphertext.
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace Kirkin.Security.Cryptography
         /// </summary>
         internal int MaxDecryptOutputBufferSize(byte[] ciphertextBytes)
         {
-            return ciphertextBytes.Length - PrefixLength - SuffixLength;
+            return ciphertextBytes.Length - MessagePrefixLength - MessageSuffixLength;
         }
 
         /// <summary>
