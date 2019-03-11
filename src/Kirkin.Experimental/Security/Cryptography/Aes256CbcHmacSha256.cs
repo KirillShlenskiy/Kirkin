@@ -10,7 +10,7 @@ namespace Kirkin.Security.Cryptography
     /// <summary>
     /// Symmetric crypto algorithm implementation which uses the AES256 CBC cipher,
     /// PKCS7 padding and prefixes the ciphertext with the random IV in plain text.
-    /// Appends HMAC hash of the IV + ciphertext to the output.
+    /// Appends HMAC-SHA256 hash of the IV + ciphertext to the output.
     /// </summary>
     public sealed class Aes256CbcHmacSha256 : Aes256Cbc
     {

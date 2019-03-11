@@ -15,7 +15,7 @@ namespace Kirkin.Security.Cryptography.Internal
                 // MaxEncryptOutputBufferSize of an empty array represents pure overhead.
                 int formatOverhead = Formatter.MaxEncryptOutputBufferSize(Array<byte>.Empty);
 
-                return (ChunkSize - formatOverhead) / Aes256.BlockSizeInBytes * Aes256.BlockSizeInBytes;
+                return (ChunkSize - formatOverhead) / Formatter.BlockSize * Formatter.BlockSize;
             }
         }
 
