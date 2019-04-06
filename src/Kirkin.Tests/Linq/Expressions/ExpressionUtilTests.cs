@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
+
 using Kirkin.Linq.Expressions;
 
 using NUnit.Framework;
@@ -16,7 +17,7 @@ namespace Kirkin.Tests.Linq.Expressions
             var value = typeof(Dummy).GetProperty("Value");
 
             Assert.AreEqual(value, ExpressionUtil.Member<Dummy, string>(d => d.Value));
-            Assert.AreEqual(value, ExpressionUtil.Member<string>(() => dummy.Value));
+            Assert.AreEqual(value, ExpressionUtil.Member(() => dummy.Value));
             Assert.AreEqual(value, ExpressionUtil.Member<Dummy>(d => d.Value));
 
             Expression<Func<object>> expr = () => new Dummy().Value;
@@ -31,7 +32,7 @@ namespace Kirkin.Tests.Linq.Expressions
             var id = typeof(Dummy).GetProperty("ID");
 
             Assert.AreEqual(id, ExpressionUtil.Member<Dummy, int>(d => d.ID));
-            Assert.AreEqual(id, ExpressionUtil.Member<int>(() => dummy.ID));
+            Assert.AreEqual(id, ExpressionUtil.Member(() => dummy.ID));
             Assert.AreEqual(id, ExpressionUtil.Member<Dummy>(d => d.ID));
 
             Expression<Func<object>> expr = () => new Dummy().ID;
@@ -45,7 +46,7 @@ namespace Kirkin.Tests.Linq.Expressions
             var dummy = new Dummy();
 
             Assert.AreEqual("Value", ExpressionUtil.Member<Dummy, string>(d => d.Value).Name);
-            Assert.AreEqual("Value", ExpressionUtil.Member<string>(() => dummy.Value).Name);
+            Assert.AreEqual("Value", ExpressionUtil.Member(() => dummy.Value).Name);
             Assert.AreEqual("Value", ExpressionUtil.Member<Dummy>(d => d.Value).Name);
 
             Expression<Func<object>> expr = () => new Dummy().Value;
@@ -59,7 +60,7 @@ namespace Kirkin.Tests.Linq.Expressions
             var dummy = new Dummy();
 
             Assert.AreEqual("ID", ExpressionUtil.Member<Dummy, int>(d => d.ID).Name);
-            Assert.AreEqual("ID", ExpressionUtil.Member<int>(() => dummy.ID).Name);
+            Assert.AreEqual("ID", ExpressionUtil.Member(() => dummy.ID).Name);
             Assert.AreEqual("ID", ExpressionUtil.Member<Dummy>(d => d.ID).Name);
 
             Expression<Func<object>> expr = () => new Dummy().ID;
@@ -74,7 +75,7 @@ namespace Kirkin.Tests.Linq.Expressions
             var value = typeof(Dummy).GetProperty("Value");
 
             Assert.AreEqual(value, ExpressionUtil.Property<Dummy, string>(d => d.Value));
-            Assert.AreEqual(value, ExpressionUtil.Property<string>(() => dummy.Value));
+            Assert.AreEqual(value, ExpressionUtil.Property(() => dummy.Value));
             Assert.AreEqual(value, ExpressionUtil.Property<Dummy>(d => d.Value));
 
             Expression<Func<object>> expr = () => new Dummy().Value;
@@ -89,7 +90,7 @@ namespace Kirkin.Tests.Linq.Expressions
             var id = typeof(Dummy).GetProperty("ID");
 
             Assert.AreEqual(id, ExpressionUtil.Property<Dummy, int>(d => d.ID));
-            Assert.AreEqual(id, ExpressionUtil.Property<int>(() => dummy.ID));
+            Assert.AreEqual(id, ExpressionUtil.Property(() => dummy.ID));
             Assert.AreEqual(id, ExpressionUtil.Property<Dummy>(d => d.ID));
 
             Expression<Func<object>> expr = () => new Dummy().ID;
