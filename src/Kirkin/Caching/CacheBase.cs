@@ -20,7 +20,7 @@ namespace Kirkin.Caching
         /// <summary>
         /// Provides direct access to the current value stored by this instance (valid or otherwise).
         /// </summary>
-        protected T CurrentValue
+        protected T CurrentValueRaw
         {
             get
             {
@@ -68,11 +68,7 @@ namespace Kirkin.Caching
                 // This lock gives us LazyCache semantics.
                 // If multiple calls to Value arrive at the same time,
                 // only one gets to create and store the value.
-                bool lockTaken = false;
-
-                Monitor.Enter(ValueGenerationLock, ref lockTaken);
-
-                try
+                lock (ValueGenerationLock)
                 {
                     T value;
 
@@ -98,12 +94,6 @@ namespace Kirkin.Caching
 
                     // An Invalidate call happened while we were generating the value.
                     // We will release and re-obtain the lock and try again.
-                }
-                finally
-                {
-                    if (lockTaken) {
-                        Monitor.Exit(ValueGenerationLock);
-                    }
                 }
             }
         }
