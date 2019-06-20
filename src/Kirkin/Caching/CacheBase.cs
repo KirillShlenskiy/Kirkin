@@ -70,9 +70,7 @@ namespace Kirkin.Caching
                 // only one gets to create and store the value.
                 bool lockTaken = false;
 
-                if (ValueGenerationLock != null) {
-                    Monitor.Enter(ValueGenerationLock, ref lockTaken);
-                }
+                Monitor.Enter(ValueGenerationLock, ref lockTaken);
 
                 try
                 {

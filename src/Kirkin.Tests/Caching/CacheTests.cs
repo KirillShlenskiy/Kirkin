@@ -35,20 +35,6 @@ namespace Kirkin.Tests.Caching
             }
         }
 
-        //[Test]
-        //public void ClosureBenchmarkPublicationOnly()
-        //{
-        //    int value = 0;
-        //    ICache<int> cache = Cache.Create(() => value + 1, CacheThreadSafetyMode.PublicationOnly);
-
-        //    for (int i = 0; i < Iterations; i++)
-        //    {
-        //        Assert.False(cache.IsValid);
-        //        Assert.AreEqual(1, cache.Value);
-        //        cache.Invalidate();
-        //    }
-        //}
-
         [Test]
         public void ParametrisedBenchmark()
         {
@@ -83,7 +69,7 @@ namespace Kirkin.Tests.Caching
         [Test]
         public void AutoExpireCacheBenchmarks()
         {
-            var cache = new AutoExpireCache<int>(() => 42, Timeout.InfiniteTimeSpan);
+            AutoExpireCache<int> cache = new AutoExpireCache<int>(() => 42, Timeout.InfiniteTimeSpan);
 
             for (int i = 0; i < 100000; i++)
             {
@@ -95,13 +81,13 @@ namespace Kirkin.Tests.Caching
         [Test]
         public void LazyConcurrency()
         {
-            for (var i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++)
             {
-                var valueFactoryCount = 0;
+                int valueFactoryCount = 0;
 
-                var cache = Cache.Create(() =>
+                ICache<string> cache = Cache.Create(() =>
                 {
-                    var cnt = Interlocked.Increment(ref valueFactoryCount);
+                    int cnt = Interlocked.Increment(ref valueFactoryCount);
 
                     Thread.Sleep(250);
 
@@ -123,15 +109,13 @@ namespace Kirkin.Tests.Caching
 
                 cache.Invalidate();
 
-                var values = new ConcurrentBag<string>();
+                ConcurrentBag<string> values = new ConcurrentBag<string>();
 
-                var invalidateThread = new Thread(() =>
+                Task invalidateTask = Task.Run(() =>
                 {
                     Thread.Sleep(100);
                     cache.Invalidate();
                 });
-
-                invalidateThread.Start();
 
                 Parallel.Invoke(
                     () => values.Add(cache.Value),
@@ -140,78 +124,16 @@ namespace Kirkin.Tests.Caching
                     () => values.Add(cache.Value)
                 );
 
-                invalidateThread.Join();
+                invalidateTask.GetAwaiter().GetResult();
 
                 Assert.AreEqual(4, values.Count);
 
-                foreach (var value in values)
+                foreach (string value in values)
                 {
                     Assert.AreEqual("3", value);
                 }
             }
         }
-
-        //[Test]
-        //public void InterlockedConcurrency()
-        //{
-        //    for (var i = 0; i < 10; i++)
-        //    {
-        //        var valueFactoryCount = 0;
-
-        //        var cache = Cache.Create(
-        //            () =>
-        //            {
-        //                var cnt = Interlocked.Increment(ref valueFactoryCount);
-
-        //                Thread.Sleep(250);
-
-        //                return cnt.ToString();
-        //            },
-        //            CacheThreadSafetyMode.PublicationOnly
-        //        );
-
-        //        string v = "0";
-
-        //        Parallel.Invoke(
-        //            () => v = cache.Value,
-        //            () => v = cache.Value,
-        //            () => v = cache.Value,
-        //            () => v = cache.Value,
-        //            () => v = cache.Value
-        //        );
-
-        //        Assert.AreEqual(5, valueFactoryCount);
-        //        //Assert.AreEqual("5", v); - this number will be completely random.
-
-        //        cache.Invalidate();
-
-        //        var values = new ConcurrentBag<string>();
-
-        //        var invalidateThread = new Thread(() =>
-        //        {
-        //            Thread.Sleep(100);
-        //            cache.Invalidate();
-        //        });
-
-        //        invalidateThread.Start();
-
-        //        Parallel.Invoke(
-        //            () => values.Add(cache.Value),
-        //            () => values.Add(cache.Value),
-        //            () => values.Add(cache.Value),
-        //            () => values.Add(cache.Value)
-        //        );
-
-        //        invalidateThread.Join();
-
-        //        Assert.AreEqual(4, values.Count);
-
-        //        //foreach (var value in values)
-        //        //{
-        //        //    Assert.AreEqual("3", value);
-        //        //}
-        //    }
-        //}
 
         [Test]
         public void AutoExpireCache()
@@ -221,7 +143,7 @@ namespace Kirkin.Tests.Caching
             ICache<string> cache = new AutoExpireCache<string>(
                 () =>
                 {
-                    var val = Interlocked.Increment(ref obj);
+                    int val = Interlocked.Increment(ref obj);
 
                     Thread.Sleep(20);
 
@@ -246,7 +168,7 @@ namespace Kirkin.Tests.Caching
             Assert.False(cache.IsValid);
 
             // Invalidation in flight.
-            var skipOneTask = Task.Run(() => cache.Value);
+            Task<string> skipOneTask = Task.Run(() => cache.Value);
 
             Thread.Sleep(10);
             cache.Invalidate();
