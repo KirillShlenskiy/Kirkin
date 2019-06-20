@@ -26,7 +26,7 @@ namespace Kirkin.Tests.Net
                 TcpServer server = new TcpServer(new IPEndPoint(IPAddress.Any, PortNumber));
                 CancellationTokenSource cts = new CancellationTokenSource();
 
-                await server.RunAsync(async client =>
+                Task runTask = server.RunAsync(async client =>
                 {
                     NetworkStream stream = client.GetStream();
 
@@ -53,6 +53,10 @@ namespace Kirkin.Tests.Net
                         }
                     }
                 }, cts.Token);
+
+                serverRunning.SetResult(true);
+
+                await runTask.ConfigureAwait(false);
             });
 
             Task clientTask = Task.Run(async () =>
