@@ -136,6 +136,7 @@
     <Compile Include="Collections\Generic\CollectionIterationTests.cs" />
     <Compile Include="Collections\Generic\EnumerableUtilTests.cs" />
     <Compile Include="Collections\Generic\KeyedCollectionTests.cs" />
+    <Compile Include="Collections\Generic\StructEnumeratorFinderTests.cs" />
     <Compile Include="Collections\Generic\TinyBufferTests.cs" />
     <Compile Include="Collections\Generic\UndoRedoCollectionTests.cs" />
     <Compile Include="Collections\Generic\VectorTests.cs" />
