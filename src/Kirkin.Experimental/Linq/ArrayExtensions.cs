@@ -90,6 +90,36 @@ namespace Kirkin.Linq
         }
 
         /// <summary>
+        /// Returns the number of elements in the collection.
+        /// </summary>
+        public static int Count<T>(this T[] array)
+        {
+            return array.Length;
+        }
+
+        /// <summary>
+        /// Returns the number of elements in the collection matching the given predicate.
+        /// </summary>
+        public static int Count<T>(this T[] array, Func<T, bool> predicate)
+        {
+            if (predicate == null) throw new ArgumentNullException(nameof(predicate));
+
+            int count = 0;
+
+            foreach (T item in array)
+            {
+                if (predicate(item))
+                {
+                    checked {
+                        count++;
+                    }
+                }
+            }
+
+            return count;
+        }
+
+        /// <summary>
         /// Returns the element at a specified index in a sequence.
         /// </summary>
         public static T ElementAt<T>(this T[] array, int index)

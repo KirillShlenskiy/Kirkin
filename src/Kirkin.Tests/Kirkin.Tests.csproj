@@ -161,6 +161,7 @@
     <Compile Include="Experimental\ClassStructAsyncCopyPerf.cs" />
     <Compile Include="Experimental\ClrMdTests.cs" />
     <Compile Include="Experimental\RsaTests.cs" />
+    <Compile Include="Linq\WhereEnumerableTests.cs" />
     <Compile Include="LambdaTests.cs" />
     <Compile Include="Media\FFmpegClientTests.cs" />
     <Compile Include="Experimental\ImmutableArrayFactoryTests.cs" />
