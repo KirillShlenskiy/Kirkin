@@ -25,11 +25,11 @@ namespace Kirkin.CommandLine.Parameters
             return Array<string>.Empty;
         }
 
-        public override string[] ParseArgsImpl(List<string> args)
+        public override ParseArgResult<string[]> ParseArgsImpl(List<string> args)
         {
-            if (args.Count == 0) return GetDefaultValueImpl();
+            if (args.Count == 0) return new ParseArgResult<string[]>(GetDefaultValueImpl());
 
-            return args.ToArray();
+            return new ParseArgResult<string[]>(args.ToArray());
         }
 
         public override string ToString()

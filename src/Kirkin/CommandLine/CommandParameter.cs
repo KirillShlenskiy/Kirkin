@@ -60,6 +60,6 @@ namespace Kirkin.CommandLine
         /// <summary>
         /// Parses the given arguments and converts them to an appropriate value.
         /// </summary>
-        internal abstract object ParseArgs(List<string> args);
+        internal abstract IParseArgResult ParseArgs(List<string> args);
     }
 }

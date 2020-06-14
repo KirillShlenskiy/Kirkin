@@ -254,8 +254,10 @@ namespace Kirkin.CommandLine
             HashSet<CommandParameter> seenParameters = new HashSet<CommandParameter>();
             Dictionary<string, object> argValues = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
-            foreach (List<string> chunk in tokenGroups)
+            for (int i = 0; i < tokenGroups.Count; i++)
             {
+                List<string> chunk = tokenGroups[i];
+
                 if (chunk[0].StartsWith("-") || chunk[0].StartsWith("/"))
                 {
                     // Option.
@@ -295,7 +297,20 @@ namespace Kirkin.CommandLine
                     }
 
                     chunk.RemoveAt(0);
-                    argValues.Add(option.Name, option.ParseArgs(chunk));
+
+                    IParseArgResult argParseResult = option.ParseArgs(chunk);
+
+                    if (argParseResult.ExpectingMoreValues)
+                    {
+                        if (i + 1 < tokenGroups.Count && tokenGroups[i + 1].Count == 1)
+                        {
+                            // Steal next chunk.
+                            chunk = tokenGroups[++i];
+                            argParseResult = option.ParseArgs(chunk);
+                        }
+                    }
+
+                    argValues.Add(option.Name, argParseResult.Value);
                 }
                 else
                 {
@@ -330,7 +345,14 @@ namespace Kirkin.CommandLine
 
                             seenParameters.Add(option);
                             chunk.RemoveAt(0);
-                            argValues.Add(option.Name, option.ParseArgs(singleArg));
+
+                            IParseArgResult argParseResult = option.ParseArgs(singleArg);
+
+                            if (argParseResult.ExpectingMoreValues) {
+                                throw new InvalidOperationException($"{option.Name} parsing failed. Expecting another value after initial pass.");
+                            }
+
+                            argValues.Add(option.Name, argParseResult.Value);
                         }
                     }
                     else
@@ -339,7 +361,9 @@ namespace Kirkin.CommandLine
                             throw new InvalidOperationException("Duplicate parameter value.");
                         }
 
-                        argValues.Add(MainParameter.Name, MainParameter.ParseArgs(chunk));
+                        IParseArgResult argParseResult = MainParameter.ParseArgs(chunk);
+
+                        argValues.Add(MainParameter.Name, argParseResult.Value);
                     }
                 }
             }

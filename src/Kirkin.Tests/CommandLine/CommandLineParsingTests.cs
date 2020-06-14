@@ -521,7 +521,49 @@ namespace Kirkin.Tests.CommandLine
             Assert.AreEqual(1, commandExecuteCount);
             Assert.AreEqual(1, subCommandExecuteCount);
         }
-        
+
+        [Test]
+        public void ParseExplicitlyNamedOptionValueWithSlashes()
+        {
+            CommandLineParser parser = new CommandLineParser();
+
+            parser.DefineCommand("command", cmd =>
+            {
+                cmd.Help = "Command help.";
+
+                cmd.AddParameter("arg");
+                cmd.AddSwitch("test");
+                cmd.AddOption("path", positional: true);
+                cmd.AddOption("residual");
+            });
+
+            ICommand command = parser.Parse("command", "dummy", "--test", "--path", "/backups/db.bak", "--residual", "residualvalue");
+
+            Assert.AreEqual(command.Args.GetParameter(), "dummy");
+            Assert.True(command.Args.GetSwitch("test"));
+            Assert.AreEqual(command.Args.GetOption("path"), "/backups/db.bak");
+            Assert.AreEqual(command.Args.GetOption("residual"), "residualvalue");
+        }
+
+        [Test]
+        public void ParseImplicitPositionalOptionValueWithSlashes()
+        {
+            CommandLineParser parser = new CommandLineParser();
+
+            parser.DefineCommand("command", cmd =>
+            {
+                cmd.Help = "Command help.";
+
+                cmd.AddParameter("arg");
+                cmd.AddSwitch("test");
+                cmd.AddOption("path", positional: true);
+            });
+
+            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() => parser.Parse("command", "dummy", "--test", "/backups/db.bak"));
+
+            Assert.AreEqual(ex.Message, "Unknown option 'backups/db.bak'.");
+        }
+
         [Test]
         public void ParseBenchmark()
         {

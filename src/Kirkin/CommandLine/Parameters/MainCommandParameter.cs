@@ -19,12 +19,12 @@ namespace Kirkin.CommandLine.Parameters
         {
         }
 
-        public override string ParseArgsImpl(List<string> args)
+        public override ParseArgResult<string> ParseArgsImpl(List<string> args)
         {
-            if (args.Count == 0) return null;
+            if (args.Count == 0) return new ParseArgResult<string>(null);
             if (args.Count > 1) throw new InvalidOperationException("Multiple parameter values are not supported.");
 
-            return args[0];
+            return new ParseArgResult<string>(args[0]);
         }
 
         public override string ToString()

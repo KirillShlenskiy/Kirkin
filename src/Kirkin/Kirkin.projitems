@@ -50,6 +50,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ICommandDefinitionContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\CommandParameter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\IParseArgResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\IParameterFormattable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\ParameterFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\MainCommandParameter.cs" />
@@ -57,6 +58,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\MainCommandParameterList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\OptionCommandParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\OptionListCommandParameter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandLine\ParseArgResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\Parameters\SwitchCommandParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandLine\TextFormatter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\DataColumnLite.cs" />

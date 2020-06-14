@@ -19,7 +19,7 @@ namespace Kirkin.CommandLine.Parameters
         /// <summary>
         /// Parses the given arguments and converts them to an appropriate value.
         /// </summary>
-        public abstract T ParseArgsImpl(List<string> args);
+        public abstract ParseArgResult<T> ParseArgsImpl(List<string> args);
 
         /// <summary>
         /// Returns the default value to be used when the parameter, switch or option is omitted.
@@ -32,7 +32,7 @@ namespace Kirkin.CommandLine.Parameters
         /// <summary>
         /// Parses the given arguments and converts them to an appropriate value.
         /// </summary>
-        internal override object ParseArgs(List<string> args)
+        internal override IParseArgResult ParseArgs(List<string> args)
         {
             return ParseArgsImpl(args);
         }
