@@ -1,7 +1,7 @@
 ﻿namespace Kirkin.CommandLine
 {
     /// <summary>
-    /// Immutable facade over <see cref="IndividualCommandDefinition"/>.
+    /// Immutable facade over <see cref="CommandDefinition"/>.
     /// </summary>
     internal sealed class DefaultCommand : ICommand
     {

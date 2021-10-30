@@ -228,7 +228,7 @@ namespace Kirkin.CommandLine
 
             foreach (string arg in args)
             {
-                if (currentTokenGroup == null || arg.StartsWith("-") || arg.StartsWith("/"))
+                if (currentTokenGroup == null || arg.StartsWith("-"))
                 {
                     currentTokenGroup = new List<string>();
 
@@ -258,7 +258,7 @@ namespace Kirkin.CommandLine
             {
                 List<string> chunk = tokenGroups[i];
 
-                if (chunk[0].StartsWith("-") || chunk[0].StartsWith("/"))
+                if (chunk[0].StartsWith("-"))
                 {
                     // Option.
                     CommandParameter option = null;
@@ -266,14 +266,6 @@ namespace Kirkin.CommandLine
                     if (chunk[0].StartsWith("--"))
                     {
                         string fullName = chunk[0].Substring(2);
-
-                        if (!OptionsByFullName.TryGetValue(fullName, out option)) {
-                            throw new InvalidOperationException($"Unknown option '{fullName}'.");
-                        }
-                    }
-                    else if (chunk[0].StartsWith("/"))
-                    {
-                        string fullName = chunk[0].Substring(1);
 
                         if (!OptionsByFullName.TryGetValue(fullName, out option)) {
                             throw new InvalidOperationException($"Unknown option '{fullName}'.");

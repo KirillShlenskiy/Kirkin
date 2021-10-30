@@ -41,7 +41,7 @@ namespace Kirkin.Tests.CommandLine
             Assert.Throws<InvalidOperationException>(() => parser.Parse("uuu"));
 
             {
-                ICommand command = parser.Parse("sync --subscription main /VALIDATE TRUE".Split(' '));
+                ICommand command = parser.Parse("sync --subscription main --VALIDATE TRUE".Split(' '));
 
                 Assert.Null(subscription);
                 Assert.False(validate);
@@ -81,7 +81,7 @@ namespace Kirkin.Tests.CommandLine
 
             // Alternative arg syntax.
             {
-                ICommand command = parser.Parse("zzz --fizz 1 /buzz ultra --holy-moly".Split(' '));
+                ICommand command = parser.Parse("zzz --fizz 1 --buzz ultra --holy-moly".Split(' '));
 
                 Assert.AreEqual("1", command.Args.GetOption("fizz"));
                 Assert.AreEqual("ultra", command.Args.GetOption("buzz"));
@@ -231,7 +231,7 @@ namespace Kirkin.Tests.CommandLine
             command.Execute();
 
             Assert.True(parser.Parse("--help") is RootHelpCommand);
-            Assert.True(parser.Parse("/?") is RootHelpCommand);
+            Assert.True(parser.Parse("-?") is RootHelpCommand);
             Assert.True(parser.Parse(new string[0]) is RootHelpCommand);
             Assert.True(parser.Parse("") is RootHelpCommand);
 
@@ -263,7 +263,6 @@ namespace Kirkin.Tests.CommandLine
             command.Execute();
 
             Assert.True(parser.Parse("command --help".Split(' ')) is CommandDefinitionHelpCommand);
-            Assert.True(parser.Parse("command /?".Split(' ')) is CommandDefinitionHelpCommand);
             Assert.True(parser.Parse("command -?".Split(' ')) is CommandDefinitionHelpCommand);
         }
 
@@ -559,9 +558,10 @@ namespace Kirkin.Tests.CommandLine
                 cmd.AddOption("path", positional: true);
             });
 
-            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() => parser.Parse("command", "dummy", "--test", "/backups/db.bak"));
+            ICommand command = parser.Parse("command", "dummy", "/backups/db.bak", "--test");
 
-            Assert.AreEqual(ex.Message, "Unknown option 'backups/db.bak'.");
+            Assert.That(command.Args.GetOption("path"), Is.EqualTo("/backups/db.bak"));
+            Assert.That(command.Args.GetSwitch("test"), Is.True);
         }
 
         [Test]
