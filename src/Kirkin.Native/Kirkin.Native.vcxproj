@@ -23,7 +23,7 @@
     <ProjectGuid>{7EB1CF3F-5FBB-42D8-84A0-9E9B8248B67E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>KirkinNative</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
