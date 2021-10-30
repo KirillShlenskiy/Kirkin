@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyDescription("Core Kirkin component library")]
-[assembly: AssemblyCopyright("Copyright © Kirill Shlenskiy 2020")]
+[assembly: AssemblyCopyright("Copyright © Kirill Shlenskiy 2021")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle("Kirkin")]
 [assembly: AssemblyProduct("Kirkin")]
 [assembly: AssemblyCompany("Kirill Shlenskiy")]
-[assembly: AssemblyVersion("2.1.0")]
+[assembly: AssemblyVersion("2.2.0")]
 #endif
 
 // Allow unit testing internal members.
